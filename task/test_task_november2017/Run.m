@@ -1,6 +1,6 @@
 %BDM task
 %will run the task outlined in the set parameters
-function [full_output, experiment_summary] = Run(testmode, trial, parameters, fractals, bidspace_texture, reverse_bidspace, bidspace_info, bidspace_bounding_box, fixation_cross, fixation_cross_info, fixation_box, screen_info, full_output, experiment_summary, task_window)
+function results = Run()
 %set initial trial values (see below)
 %needed here for first trial
 if trial == 1

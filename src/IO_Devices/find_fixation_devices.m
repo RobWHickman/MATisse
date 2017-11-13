@@ -3,16 +3,16 @@
 %can be by testing the joystick is stationary, or that it saccades to a
 %fixation cross
 %the testing equivalent uses a 'mous esaccade' to the fixation cross
-function hardware = find_fixation_devices(testmode, fixation_test)
+function hardware = find_fixation_devices(hardware)
 
 %if not testing use joystick/eye tracker
-if testmode.Value == 0
-    if fixation_test == 'joystick'
+if hardware.inputs.settings.testmode == 0
+    if hardware.inputs.settings.fixation_test == 'joystick'
         %find the joystick
         hardware.inputs.joystick = find_joystick(200, 'analog');
         hardware.devices.fixation = 'JOYSTICK';
         display('found joystick');
-    elseif fixation_test == 'eye_tracker'
+    elseif hardware.inputs.settings.fixation_test == 'eye_tracker'
         %find the eye tracker
         hardware.devices.fixation = 'EYE_TRACKER';
         display('have not coded up eye tracker yet!');
@@ -25,10 +25,10 @@ else
 end
 
 %only if using the joystick for fixation testing
-if testmode.Value == 0 && fixation_test == 'joystick'
-    %set the joystick parameters
-    hardware.inputs.settings.joystick_scalar = 25; %also defines keyboard sensitivity
-    hardware.inputs.settings.joystick_sensitivity = 0.1;
-    hardware.inputs.settings.joystick_x_bias = -0.1;
-    hardware.inputs.settings.joystick_y_bias = -0.1;
-end
+% if hardware.inputs.settings.testmode == 0 && hardware.inputs.settings.fixation_test == 'joystick'
+%     %set the joystick parameters
+%     hardware.inputs.settings.joystick_scalar = 25; %also defines keyboard sensitivity
+%     hardware.inputs.settings.joystick_sensitivity = 0.1;
+%     hardware.inputs.settings.joystick_x_bias = -0.1;
+%     hardware.inputs.settings.joystick_y_bias = -0.1;
+% end

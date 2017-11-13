@@ -1,12 +1,12 @@
 %small function to find the devices that will be used to maniplate the task
 %this will be either the joystick or the keyboard in either the x or y
 %dimension
-function hardware = find_bidding_devices(testmode, direction)
+function hardware = find_bidding_devices(hardware)
 
 %which dimension ofthe screen is used for bidding?
 %n.b. up/right is 'more' (this might need to change for PTB)
-if direction == 'y'
-    if testmode.Value == 0
+if hardware.inputs.settings.direction == 'y'
+    if hardware.inputs.settings.testmode == 0
         %find the joystick
         hardware.inputs.joystick = find_joystick(200, 'analog');
         hardware.devices.bidding = 'JOYSTICK_Y';
@@ -19,8 +19,8 @@ if direction == 'y'
         hardware.devices.bidding = 'KEYBOARD_UD';
         display('set keyboard');
     end
-elseif direction == 'x'
-    if testmode.Value == 0
+elseif hardware.inputs.settings.direction == 'x'
+    if hardware.inputs.settings.testmode == 0
         %find the joystick
         hardware.inputs.joystick = find_joystick(200, 'analog');
         hardware.devices.bidding = 'JOYSTICK_X';
@@ -36,14 +36,14 @@ elseif direction == 'x'
 
 
 %set the joystick parameters
-hardware.inputs.settings.joystick_scalar = 25; %also defines keyboard sensitivity
-hardware.inputs.settings.joystick_sensitivity = 0.1;
+hardware.inputs.hardware.inputs.settings.joystick_scalar = 25; %also defines keyboard sensitivity
+hardware.inputs.hardware.inputs.settings.joystick_sensitivity = 0.1;
 
-%set the bias on the joystick manually
-if testmode.Value == 0
-    hardware.inputs.settings.joystick_x_bias = -0.1;
-    hardware.inputs.settings.joystick_y_bias = -0.1;
-else %if using keyboard there is no bias
-    hardware.inputs.settings.joystick_x_bias = 0;
-    hardware.inputs.settings.joystick_y_bias = 0;
-end
+% %set the bias on the joystick manually
+% if hardware.inputs.settings.testmode == 0
+%     hardware.inputs.hardware.inputs.settings.joystick_x_bias = -0.1;
+%     hardware.inputs.hardware.inputs.settings.joystick_y_bias = -0.1;
+% else %if using keyboard there is no bias
+%     hardware.inputs.hardware.inputs.settings.joystick_x_bias = 0;
+%     hardware.inputs.hardware.inputs.settings.joystick_y_bias = 0;
+% end

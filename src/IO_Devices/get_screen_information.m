@@ -10,10 +10,10 @@ hardware.outputs.screen_info.task_monitor = experimental_monitor;
 %find how many monitors are connected
 %should be two
 hardware.outputs.screen_info.screens = Screen('Screens');
-hardware.outputs.screen_info.number = max(screen_info.screens);
+hardware.outputs.screen_info.screen_number = max(screen_info.screens);
 
 %throw an error if this isn't the case
-if hardware.outputs.screen_info.number ~= 2
+if hardware.outputs.screen_info.screen_number ~= 2
     display('ensure that exactly two screens are connected!!!');
 end
 
@@ -24,7 +24,7 @@ hardware.outputs.screen_info.hz = Screen('NominalFrameRate', experimental_monito
 hardware.outputs.screen_info.bg_col = WhiteIndex(experimental_monitor) / 2;
 
 %get the screen dimensions
-[hardware.outputs.screen_info.width, hardware.outputs.screen_info.height] = Screen('WindowSize', screen_info.task_monitor);
+[hardware.outputs.screen_info.width, hardware.outputs.screen_info.height] = Screen('WindowSize', hardware.outputs.screen_info.task_monitor);
 
 %get some useful constants about the task screen for positioning stuff
 hardware.outputs.screen_info.percent_x = hardware.outputs.screen_info.width/ 100;
