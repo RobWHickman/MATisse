@@ -1,33 +1,30 @@
 %BDM task
 %will run the task outlined in the set parameters
-function results = Run()
+function results = Run(parameters, stimuli, hardware, results, task_window)
 %set initial trial values (see below)
 %needed here for first trial
-if trial == 1
-    trial_values = set_initial_trial_values(fractals, parameters, bidspace_info, screen_info);
+if parameters.total_trials < 1
+    [parameters, results.trial_values] = set_initial_trial_values(parameters, stimuli, hardware);
 end
 
 %   SET UP TRIAL
 % EPOCH 7 - end trial and set values for new trial
 %we start with the final epoch during which everything is set for the
 %coming trial
-for frame = 1:(parameters.timings.epoch7.frames )%+ trial_values.epoch7_delay)
+for frame = 1:(parameters.timings.Frames('epoch7') + parameters.timings.Delay('epoch7'))
     %draw the seventh epoch
-    draw_epoch_7(screen_info, parameters, task_window);
+    draw_epoch_7(hardware, parameters, task_window);
     %get trial values for the offer, computer bid and random monkey bid
     %start position
     %also the random delays at the end of epochs 3 and 7
-    trial_values = set_initial_trial_values(fractals, parameters, bidspace_info, screen_info);
-
-    %save the real screen positions of these bids into the bidspace info
-    bidspace_info.monkey_bid_position = screen_info.height - trial_values.starting_bid_value - 270;
-    bidspace_info.computer_bid_position = screen_info.height - trial_values.computer_bid_value - 270;
+    [parameters, results.trial_values] = set_initial_trial_values(parameters, stimuli, hardware);
 
     %select the correct fractal for the trial and generate a texture
-    [trial_fractal, trial_fractal_info] = select_fractal(fractals, screen_info, task_window, trial_values);
+    stimuli = select_fractal(parameters, stimuli, hardware, task_window);
+    display(stimuli);
+    display(stimuli.trial);
+    display(hardware.outputs.screen_info);
 
-    %reset the bidspace for the new trial
-    bidspace_info = reset_bidspace(bidspace_info, parameters);
     %generate the reversed bidspace budget for if the monkey wins
     [reverse_bidspace_texture, bidspace_info] = generate_reverse_bidspace(reverse_bidspace, bidspace_info, trial_values, task_window);
     Screen('Flip', task_window);

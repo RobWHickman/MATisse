@@ -33,7 +33,7 @@ elseif hardware.inputs.settings.direction == 'x'
         hardware.devices.bidding = 'KEYBOARD_LR';
         display('set keyboard');
     end
-
+end
 
 %set the joystick parameters
 hardware.inputs.hardware.inputs.settings.joystick_scalar = 25; %also defines keyboard sensitivity

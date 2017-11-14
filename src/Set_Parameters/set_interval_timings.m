@@ -3,19 +3,12 @@
 %the time length (s) of each epoch
 %how much this might be extended by +/- (s)
 %what each epoch is 'doing'
-
-%this is not a function to be run, it's probably best to manually edit the
-%tables as you copy a new task directory
-%this is just if you need to quickly re-initialise a table and save it
-%because you've lost any copies or whatever
+function interval_times = set_interval_timings()
 interval_times = table([1;1;1;1.5;6;1;1;4],...
-    [0;0;0;0;0;0;0;0],...
+    [0;0;0;0.5;0;0;0;2],...
     {'fixation';'fractal_display';'bidspace_display';'bid_bad_display';'bidding_phase';'display_result';'payout';'intertrial_interval'},...
     'VariableNames',{'Time','PlusMinus','Description'},...
     'RowNames',{'epoch1','epoch2','epoch3','epoch4','epoch5','epoch6','epoch7','epoch8'});
 
 %save it in the current working directory
-save intervals.mat interval_times
-
-%how to access a column/row nicely for use in code later
-interval_times.Time('epoch1') %get the length of epoch 1 in seconds
+save interval_times.mat interval_times

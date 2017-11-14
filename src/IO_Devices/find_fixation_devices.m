@@ -3,7 +3,7 @@
 %can be by testing the joystick is stationary, or that it saccades to a
 %fixation cross
 %the testing equivalent uses a 'mous esaccade' to the fixation cross
-function hardware = find_fixation_devices(hardware)
+function hardware = find_fixation_devices(hardware, task_window)
 
 %if not testing use joystick/eye tracker
 if hardware.inputs.settings.testmode == 0

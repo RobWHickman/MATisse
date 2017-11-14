@@ -12,17 +12,17 @@ if(fractal_info.number < 1)
 end
 
 %create the empty array
-fractals{fractal_info.number,1} = [];
+fractal_images{fractal_info.number,1} = [];
 
 %for each image, load it and add to the array
 %each fractal is scaled to 75% of the screen height
 for image = 1:fractal_info.number
     full_size_fractal = imread([settings.images_path all_images(image).name]);
     image_size = size(full_size_fractal);
-    image_scalar = (screen_info.height * 0.75) / image_size(2);
-    fractals{image} = imresize(full_size_fractal, image_scalar);
+    image_scalar = (screen_info.height * 0.5) / image_size(2);
+    fractal_images{image} = imresize(full_size_fractal, image_scalar);
 end
 
 %prepare for output as one object
-fractals.fractals = fractals;
+fractals.fractals = fractal_images;
 fractals.fractal_info = fractal_info;
