@@ -26,22 +26,21 @@ for frame = 1:(parameters.timings.Frames('epoch7') + parameters.timings.Delay('e
     display(hardware.outputs.screen_info);
 
     %generate the reversed bidspace budget for if the monkey wins
-    [reverse_bidspace_texture, bidspace_info] = generate_reverse_bidspace(reverse_bidspace, bidspace_info, trial_values, task_window);
+    stimuli = generate_reverse_bidspace(parameters, stimuli, task_window);
     Screen('Flip', task_window);
 end
 
 % EPOCH 1 - fixation cross
-for frame = 1:(parameters.timings.epoch1.frames)
+for frame = 1:(parameters.timings.Frames('epoch1') + parameters.timings.Delay('epoch1'))
     %draw the first epoch
-    draw_epoch_1(fixation_cross, fixation_cross_info, fixation_box, screen_info, task_window);
+    draw_epoch_1(stimuli, hardware, task_window);
     %check if the monkey is fixating on the cross
-    [trial_values.fixation, trial_values.fixation_vector] = check_monkey_fixation(parameters, trial_values, fixation_box, task_window);
-    trial_values.stationary = check_joystick_stationary(parameters, trial_values, testmode);
+    [parameters, results] = check_fixation(parameters, stimuli, results);
     Screen('Flip', task_window);
 end
 
 %continue with task if monkey fixates
-if true(trial_values.fixation & trial_values.stationary)
+if true(parameters.task_checks.Status('fixation') & parameters.task_checks.Status('hold_joystick'))
 % EPOCH 2 - display fractal
 for frame = 1:parameters.timings.epoch2.frames
     Screen('DrawTexture', task_window, trial_fractal, [], trial_fractal_info.position, 0);
