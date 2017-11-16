@@ -1,5 +1,5 @@
 %set the basic task parameters
-function parameters = set_experiment_parameters(hardware_settings)
+function parameters = set_experiment_parameters(parameters, hardware)
 
 %an upper limit on the number of correct trials to run
 parameters.correct_trials = 5;
@@ -18,7 +18,7 @@ parameters.settings.bid_timeout = 1;
 parameters.settings.max_pause = 2;
 
 %if in testmode, don't check for hold_joystick
-if hardware_settings.testmode
+if hardware.inputs.settings.testmode
     task_checks.Status('hold_joystick') = true;
 end
    

@@ -8,6 +8,4 @@ if parameters.total_trials < 1
     results.experiment_metadata.hardware = hardware;
     results.experiment_metadata.stimuli = stimuli;
     
-    %text output
-    display('experiment metadata set!');
 end

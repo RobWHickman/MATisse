@@ -9,8 +9,8 @@ function [] = draw_epoch_6_lose(parameters, stimuli, hardware, results, task_win
 Screen('FrameRect', task_window, [hardware.outputs.screen_info.white], stimuli.bidspace.bidspace_bounding_box, stimuli.bidspace.bidspace_info.bounding_width);
 Screen('DrawTexture', task_window, stimuli.bidspace.bidspace_texture, [], stimuli.bidspace.bidspace_info.position, 0);
 
-vertical_position_monkey_bid = (results.trial_values.current_bid * (stimuli.bidspace.bidspace_info.position(2) - stimuli.bidspace.bidspace_info.position(4))) + stimuli.bidspace.bidspace_info.position(4);
-round(vertical_position_monkey_bid); %+y_adjust
+vertical_position_monkey_bid = (results.trial_results.monkey_bid * (stimuli.bidspace.bidspace_info.position(2) - stimuli.bidspace.bidspace_info.position(4))) + stimuli.bidspace.bidspace_info.position(4);
+round(vertical_position_monkey_bid);
 vertical_position_computer_bid = (parameters.single_trial_values.computer_bid_value * (stimuli.bidspace.bidspace_info.position(2) - stimuli.bidspace.bidspace_info.position(4))) + stimuli.bidspace.bidspace_info.position(4);
 round(vertical_position_computer_bid); %+y_adjust
 

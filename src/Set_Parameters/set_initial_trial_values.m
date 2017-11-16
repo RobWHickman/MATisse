@@ -1,4 +1,4 @@
-function [parameters, trial_values] = set_initial_trial_values(parameters, stimuli, hardware)
+function [parameters, results] = set_initial_trial_values(parameters, stimuli, hardware, results)
 %get the offer value for the trial
 single_trial_values.offer_value = randi(stimuli.fractals.fractal_info.number);
 
@@ -25,17 +25,19 @@ parameters.single_trial_values = single_trial_values;
 %fix the bidding vector but allow it to merge if the fixation fails
 %probably not a huge problem in actual modig because will always be
 %gathering data
-placeholder = NaN;
-%rep this for the number of frames
 trial_values.bidding_vector = [];
 trial_values.fixation_vector = [];
 
 %also initialise the trial results
 trial_values.stationary_frame_count = 0;
-trial_values.y_adjust = 0;
+trial_results.y_adjust = 0;
 %assume bid is NA until bidding phase
-trial_values.current_bid = NaN;
+trial_results.monkey_bid = NaN;
 
 %set the trial values for the task checks from the parameters master table
 trial_values.task_checks = parameters.task_checks;
+
+%set the trial_values and trial_results to results
+results.trial_values = trial_values;
+results.trial_results = trial_results;
 

@@ -1,19 +1,20 @@
-%BDM task
-%will run the task outlined in the set parameters
+%BDM task function
 function [results, parameters] = Run(parameters, stimuli, hardware, results, task_window)
 %set initial trial values (see below)
 %needed here for first trial
 if parameters.total_trials < 1
-    [parameters, results.trial_values] = set_initial_trial_values(parameters, stimuli, hardware);
+    [parameters, results] = set_initial_trial_values(parameters, stimuli, hardware, results);
 end
 
+%% EPOCHS %%
+%% the different epochs in the task if all checks are met %%
 for frame = 1:(parameters.timings.Frames('epoch8') + parameters.timings.Delay('epoch8'))
     %draw the seventh epoch
     draw_epoch_8(hardware, task_window);
     %get trial values for the offer, computer bid and random monkey bid
     %start position
     %also the random delays at the end of epochs 3 and 7
-    [parameters, results.trial_values] = set_initial_trial_values(parameters, stimuli, hardware);
+    [parameters, results] = set_initial_trial_values(parameters, stimuli, hardware, results);
 
     %select the correct fractal for the trial and generate a texture
     stimuli = select_fractal(parameters, stimuli, hardware, task_window);
@@ -66,17 +67,14 @@ if ~results.trial_values.task_checks.Status('no_bid_activity')
 if results.trial_values.task_checks.Status('targeted_offer')
 for frame = 1:(parameters.timings.Frames('epoch6') + parameters.timings.Delay('epoch6'))
     %draw the result of the auction depending if monkey wins or not
-    if(results.trial_values.current_bid > parameters.single_trial_values.computer_bid_value)
+    if(results.trial_results.monkey_bid > parameters.single_trial_values.computer_bid_value)
         draw_epoch_6_win(parameters, stimuli, hardware, results, task_window);
     else
         draw_epoch_6_lose(parameters, stimuli, hardware, results, task_window);
     end
+    
+    %assign the payouts to the monkey
     Screen('Flip', task_window);
-
-    %calculate budgets/rewards
-    %results.trial_values = assign_results(results);
-    %generate beeps to indicate outcomes
-    %hardware.outputs.sound = assign_beeps(trial_values);
 end
 
 for frame = 1:(parameters.timings.Frames('epoch7') + parameters.timings.Delay('epoch7'))
@@ -84,11 +82,12 @@ for frame = 1:(parameters.timings.Frames('epoch7') + parameters.timings.Delay('e
     Screen('Flip', task_window);
 end
 
-%FAIL EPOCHS
+%% FAIL EPOCHS %%
+%% if a check fails these error epochs will be shown %%
 else
 %if bidding activity fails
+display('BIDDING FAIL');
 for frame = 1:(sum(parameters.timings.Frames(5:8)) + sum(parameters.timings.Delay(5:8)) + ((3 - parameters.settings.bid_timeout) * hardware.outputs.screen_info.hz))
-    display('BIDDING FAIL');
     draw_error_epoch(hardware, task_window)
     Screen('Flip', task_window);
 end
@@ -96,8 +95,8 @@ end
 
 else
 %if bid finalisation fails
+display('FINIALISATION FAIL');
 for frame = 1:(sum(parameters.timings.Frames(6:8)) + sum(parameters.timings.Delay(6:8)) + (3 * hardware.outputs.screen_info.hz))
-    display('FINIALISATION FAIL');
     draw_error_epoch(hardware, task_window)
     Screen('Flip', task_window);
 end
@@ -105,9 +104,22 @@ end
     
 else
 %if fixation fails
+display('FIXATION FAIL');
 for frame = 1:(sum(parameters.timings.Frames(2:8)) + sum(parameters.timings.Delay(2:8)) + (3 * hardware.outputs.screen_info.hz))
-    display('FIXATION FAIL');
     draw_error_epoch(hardware, task_window)
     Screen('Flip', task_window);
 end
 end
+
+%%Set the data
+results = assign_payouts(parameters, results);
+results = assign_experiment_metadata(parameters, stimuli, hardware, results);
+results = assign_outputs(results);
+
+display(results);
+display(results.trial_values);
+display(results.trial_results);
+display(results.full_output_table);
+display(results.experiment_summary);
+display(results.experiment_metadata);
+

@@ -1,7 +1,7 @@
-function parameters = get_all_parameters(hardware)
+function parameters = get_all_parameters(parameters, hardware)
 
 %get the basic parameters for the experiment
-parameters = set_experiment_parameters(hardware.inputs.settings);
+parameters = set_experiment_parameters(parameters, hardware);
 
 %get the rest of the parameters
 %timings- which need to be multiplied by the monitor refresh rate

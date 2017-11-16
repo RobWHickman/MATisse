@@ -2,7 +2,7 @@
 %loads as much as possible without opening a task window
 %gets information on the screen being used and task parameters (how many
 %trials/ which monitor/ etc.)
-function [parameters, stimuli, hardware, results, task_window] =  Generate(hardware)
+function [parameters, stimuli, hardware, results, task_window] =  Generate(parameters, hardware)
 %open a psychtoolbox screen for the task
 %set it to black for now
 [task_window, task_windowrect] = PsychImaging('OpenWindow', hardware.outputs.screen_info.screen_number, 0);
@@ -17,7 +17,7 @@ hardware = get_task_devices(hardware, task_window);
 stimuli = load_stimuli(hardware, task_window);
 
 %get the parameters for the task
-parameters = get_all_parameters(hardware);
+parameters = get_all_parameters(parameters, hardware);
 
 %iniatilise the results tables
 %initialise the output table

@@ -121,7 +121,7 @@ guidata(hObject, handles);
 function Gen_button_Callback(hObject, eventdata, handles)
 if isfield(handles.parameters,'save_info')
     disp('Generating Experiment...')
-    [handles.parameters, handles.stimuli, handles.hardware, handles.results, handles.task_window] =  Generate(handles.hardware);
+    [handles.parameters, handles.stimuli, handles.hardware, handles.results, handles.task_window] =  Generate(handles.parameters, handles.hardware);
 else
     disp('save_info not found! Did you remember to run Set?')
 end
@@ -163,7 +163,7 @@ end
 %really if everything is going right there should only be one file per
 %monkey per day
 function Save_button_Callback(hObject, eventdata, handles)
-save_data(handles.save_info, handles.full_output, handles.experiment_summary);
+save_data(handles.parameters, handles.results);
 display('data saved!');
 
 
@@ -308,11 +308,7 @@ guidata(hObject, handles);
 
 % --- Executes on button press in pushbutton10.
 function pushbutton10_Callback(hObject, eventdata, handles)
-display(handles.hardware.inputs);
-%display(handles.parameters);
-%display(handles.stimuli);
-%display(handles.results.trial_values);
-
+display(handles.parameters.save_info);
 
 
 

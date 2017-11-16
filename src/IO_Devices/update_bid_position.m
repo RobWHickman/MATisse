@@ -36,21 +36,21 @@ if ~results.trial_values.task_checks.Status('no_bid_activity') && ~results.trial
         else
             %prevent overshoot
             if keyCode(hardware.inputs.keyboard.more_key) &&...
-                    initial_bid_position + results.trial_values.y_adjust > stimuli.bidspace.bidspace_info.position(2) 
+                    initial_bid_position + results.trial_results.y_adjust > stimuli.bidspace.bidspace_info.position(2) 
                 %reset the count
                 results.trial_values.stationary_frame_count = 0;
                 %adjust bar adjustment
                 frame_adjust = -hardware.inputs.settings.joystick_scalar;
                 %if we overshoot bring the y adjust back to max it can be
-                if initial_bid_position + results.trial_values.y_adjust + frame_adjust < stimuli.bidspace.bidspace_info.position(2)
-                    frame_adjust = stimuli.bidspace.bidspace_info.position(2) - (initial_bid_position + results.trial_values.y_adjust);
+                if initial_bid_position + results.trial_results.y_adjust + frame_adjust < stimuli.bidspace.bidspace_info.position(2)
+                    frame_adjust = stimuli.bidspace.bidspace_info.position(2) - (initial_bid_position + results.trial_results.y_adjust);
                 end
             elseif keyCode(hardware.inputs.keyboard.less_key) &&...
-                    initial_bid_position + results.trial_values.y_adjust < stimuli.bidspace.bidspace_info.position(4) 
+                    initial_bid_position + results.trial_results.y_adjust < stimuli.bidspace.bidspace_info.position(4)
                 results.trial_values.stationary_frame_count = 0;
                 frame_adjust = hardware.inputs.settings.joystick_scalar;
-                if initial_bid_position + results.trial_values.y_adjust + frame_adjust > stimuli.bidspace.bidspace_info.position(4)
-                    frame_adjust = stimuli.bidspace.bidspace_info.position(4) - (initial_bid_position + results.trial_values.y_adjust);
+                if initial_bid_position + results.trial_results.y_adjust + frame_adjust > stimuli.bidspace.bidspace_info.position(4)
+                    frame_adjust = stimuli.bidspace.bidspace_info.position(4) - (initial_bid_position + results.trial_results.y_adjust);
                 end
             else
                 %if some random key is pressed
@@ -64,34 +64,32 @@ if ~results.trial_values.task_checks.Status('no_bid_activity') && ~results.trial
         end
     %% JOYSTICK %%
     else
-        %look for joystick movement greater than the snesitivity threshold
-        display(joystick_movement);
-        if abs(joystick_movement + joystick_bias) < parameters.inputs.joystick_sensitivity
+        %look for joystick movement greater than the sensitivity threshold
+        if abs(joystick_movement + joystick_bias) < hardware.inputs.settings.joystick_sensitivty
             %start counting
-            bidspace_info.frame_count = bidspace_info.frame_count + 1;
+            results.trial_values.stationary_frame_count = results.trial_values.stationary_frame_count + 1;
             %if count reaches max for a pause in movement time out the bidding
-            if bidspace_info.frame_count == bidspace_info.max_pause
+            if results.trial_values.stationary_frame_count == parameters.settings.max_pause * hardware.outputs.screen_info.hz
                 %stop bidding and change bar colour
-                trial_values.bidding_phase = false;
-                %bidspace_info.bidding_colour = [parameters.screen.white 0 0];
+                results.trial_values.task_checks.Status('targeted_offer') = true;
+                stimuli.bidspace.bidspace_info.bidding_colour = [0 0 hardware.outputs.screen_info.white];
             end
             output_frame_adjust = frame_adjust;
         else
-            %obviously have to limit this etc.
-            if joystick_movement + joystick_bias > parameters.inputs.joystick_sensitivity
+            if joystick_movement + joystick_bias > hardware.inputs.settings.joystick_sensitivty
                 %reset the count
-                bidspace_info.frame_count = 0;
+                results.trial_values.stationary_frame_count = 0;
                 %adjust bar adjustment
-                frame_adjust = -parameters.inputs.joystick_scalar;
+                frame_adjust = -hardware.inputs.settings.joystick_scalar;
                 %if we overshoot bring the y adjust back to max it can be
-                if bidspace_info.monkey_bid_position + bidspace_info.y_adjust + frame_adjust < bidspace_info.position(2)
-                    frame_adjust = bidspace_info.position(2) - (bidspace_info.monkey_bid_position + bidspace_info.y_adjust);
+                if initial_bid_position + results.trial_results.y_adjust + frame_adjust < stimuli.bidspace.bidspace_info.position(2)
+                    frame_adjust = stimuli.bidspace.bidspace_info.position(2) - (initial_bid_position + results.trial_results.y_adjust);
                 end
             else 
-                bidspace_info.frame_count = 0;
-                frame_adjust = parameters.inputs.joystick_scalar;
-                if bidspace_info.monkey_bid_position + bidspace_info.y_adjust + frame_adjust > bidspace_info.position(4)
-                    frame_adjust = bidspace_info.position(4) - (bidspace_info.monkey_bid_position + bidspace_info.y_adjust);
+                results.trial_values.stationary_frame_count = 0;
+                frame_adjust = hardware.inputs.settings.joystick_scalar;
+                if initial_bid_position + results.trial_results.y_adjust + frame_adjust > stimuli.bidspace.bidspace_info.position(4)
+                    frame_adjust = stimuli.bidspace.bidspace_info.position(4) - (initial_bid_position + results.trial_results.y_adjust);
                 end
             end
         end
@@ -101,7 +99,7 @@ else
 end
 
 %update the y_adjust for the frame
-results.trial_values.y_adjust = results.trial_values.y_adjust + frame_adjust;
+results.trial_results.y_adjust = results.trial_results.y_adjust + frame_adjust;
 %add this to the vector
 results.trial_values.bidding_vector = [results.trial_values.bidding_vector, output_frame_adjust];
 
@@ -112,5 +110,5 @@ results.trial_values.task_checks.Status('no_bid_activity') = true;
 end
     
 %update the value of the bid
-results.trial_values.current_bid = (stimuli.bidspace.bidspace_info.position(4) - (initial_bid_position + results.trial_values.y_adjust))...
+results.trial_results.monkey_bid = (stimuli.bidspace.bidspace_info.position(4) - (initial_bid_position + results.trial_results.y_adjust))...
     / stimuli.bidspace.bidspace_info.height;
