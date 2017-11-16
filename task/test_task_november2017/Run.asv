@@ -51,19 +51,18 @@ end
 
 for frame = 1:(parameters.timings.Frames('epoch5') + parameters.timings.Delay('epoch5'))
     draw_epoch_5(parameters, stimuli, hardware, results, task_window);
+    display(parameters.single_trial_values.starting_bid_value);
+    display(stimuli.bidspace.bidspace_info.position(4) - (stimuli.bidspace.bidspace_info.height * parameters.single_trial_values.computer_bid_value));
+    display(results.trial_values.current_bid);
+     display(stimuli.bidspace.bidspace_info.position);
+    display(stimuli.bidspace.bidspace_info.position);
     [results, stimuli] = update_bid_position(hardware, results, parameters, stimuli);
-    if results.trial_values.task_checks.Status('no_bid_activity')
-        break
-    end
     Screen('Flip', task_window);
 end
 
-%only progress if there was bidding activity in the first x seconds
-if ~results.trial_values.task_checks.Status('no_bid_activity')
+%deleter this
+%results.trial_values.final_bid = parameters.single_trial_values.starting_bid_value;
 
-%only progress if a bid has been finished (i.e. a sufficient pause at the
-%end)
-if results.trial_values.task_checks.Status('targeted_offer')
 for frame = 1:(parameters.timings.Frames('epoch6') + parameters.timings.Delay('epoch6'))
     %draw the result of the auction depending if monkey wins or not
     if(results.trial_values.current_bid > parameters.single_trial_values.computer_bid_value)
@@ -84,29 +83,8 @@ for frame = 1:(parameters.timings.Frames('epoch7') + parameters.timings.Delay('e
     Screen('Flip', task_window);
 end
 
-%FAIL EPOCHS
 else
-%if bidding activity fails
-for frame = 1:(sum(parameters.timings.Frames(5:8)) + sum(parameters.timings.Delay(5:8)) + ((3 - parameters.settings.bid_timeout) * hardware.outputs.screen_info.hz))
-    display('BIDDING FAIL');
-    draw_error_epoch(hardware, task_window)
-    Screen('Flip', task_window);
-end
-end
-
-else
-%if bid finalisation fails
-for frame = 1:(sum(parameters.timings.Frames(6:8)) + sum(parameters.timings.Delay(6:8)) + (3 * hardware.outputs.screen_info.hz))
-    display('FINIALISATION FAIL');
-    draw_error_epoch(hardware, task_window)
-    Screen('Flip', task_window);
-end
-end
-    
-else
-%if fixation fails
 for frame = 1:(sum(parameters.timings.Frames(2:8)) + sum(parameters.timings.Delay(2:8)) + (3 * hardware.outputs.screen_info.hz))
-    display('FIXATION FAIL');
     draw_error_epoch(hardware, task_window)
     Screen('Flip', task_window);
 end

@@ -9,13 +9,13 @@ parameters.correct_trials = 5;
 task_checks = table([false;true;false;false],...
     {'monkey_fixated_on_cross';'monkey_holding_joystick_still';'monkey_bidding_activity';'monkey_bid_targeted'},...
     'VariableNames',{'Status','Description'},...
-    'RowNames',{'fixation';'hold_joystick';'bid_activity';'targeted_offer'});
+    'RowNames',{'fixation';'hold_joystick';'no_bid_activity';'targeted_offer'});
 parameters.task_checks = task_checks;
 
 %various small extra settings
 %how long the monkey has to make a bid before the timeout in s
 parameters.settings.bid_timeout = 1;
-parameters.settings.max_pause = 1;
+parameters.settings.max_pause = 2;
 
 %if in testmode, don't check for hold_joystick
 if hardware_settings.testmode

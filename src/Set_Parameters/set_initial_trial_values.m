@@ -27,7 +27,7 @@ parameters.single_trial_values = single_trial_values;
 %gathering data
 placeholder = NaN;
 %rep this for the number of frames
-trial_values.bidding_vector = placeholder(ceil((1:parameters.timings.Frames('epoch4'))/parameters.timings.Frames('epoch4')));
+trial_values.bidding_vector = [];
 trial_values.fixation_vector = [];
 
 %also initialise the trial results

@@ -19,18 +19,17 @@ initial_bid_position = stimuli.bidspace.bidspace_info.position(4) - ...
     (stimuli.bidspace.bidspace_info.height * parameters.single_trial_values.starting_bid_value);
 
 %update the bid position using arrow keys
-if ~results.trial_values.task_checks.Status('no_bid_activity') && ~results.trial_values.task_checks.Status('targeted_offer')
-    %% KEYBOARD %%
+if false(results.trial_values.task_checks.Status('bid_activity') & results.trial_values.task_checks.Status('targeted_offer'))
     if hardware.inputs.settings.testmode
         %if no key is pressed
         if keyIsDown == 0
             %start counting
             results.trial_values.stationary_frame_count = results.trial_values.stationary_frame_count + 1;
             %if count reaches max for a pause in movement time out the bidding
-            if results.trial_values.stationary_frame_count == parameters.settings.max_pause * hardware.outputs.screen_info.hz
+            if results.trial_values.stationary_frame_count == parameters.settings.bid_timeout * hardware.outsputs.screen_info.hz
                 %stop bidding and change bar colour
                 results.trial_values.task_checks.Status('targeted_offer') = true;
-                stimuli.bidspace.bidspace_info.bidding_colour = [0 0 hardware.outputs.screen_info.white];
+                stimuli.bidspace.bidspace_info.bidding_colour = [0 0 parameters.screen.white];
             end
             output_frame_adjust = frame_adjust;
         else
@@ -55,14 +54,13 @@ if ~results.trial_values.task_checks.Status('no_bid_activity') && ~results.trial
             else
                 %if some random key is pressed
                 results.trial_values.stationary_frame_count = results.trial_values.stationary_frame_count + 1;
-                if results.trial_values.stationary_frame_count == parameters.settings.max_pause * hardware.outputs.screen_info.hz
+                if results.trial_values.stationary_frame_count == parameters.settings.bid_timeout * hardware.outsputs.screen_info.hz
                     results.trial_values.task_checks.Status('targeted_offer') = true;
-                    stimuli.bidspace.bidspace_info.bidding_colour = [0 0 hardware.outputs.screen_info.white];
+                    stimuli.bidspace.bidspace_info.bidding_colour = [0 0 parameters.screen.white];
                 end
             end
             output_frame_adjust = frame_adjust;
         end
-    %% JOYSTICK %%
     else
         %look for joystick movement greater than the snesitivity threshold
         display(joystick_movement);
@@ -105,12 +103,6 @@ results.trial_values.y_adjust = results.trial_values.y_adjust + frame_adjust;
 %add this to the vector
 results.trial_values.bidding_vector = [results.trial_values.bidding_vector, output_frame_adjust];
 
-%test if every value of the bidding vector is zero past a timeout
-if all(results.trial_values.bidding_vector == 0) && ...
-        results.trial_values.stationary_frame_count == parameters.settings.bid_timeout * hardware.outputs.screen_info.hz
-results.trial_values.task_checks.Status('no_bid_activity') = true;
-end
-    
 %update the value of the bid
-results.trial_values.current_bid = (stimuli.bidspace.bidspace_info.position(4) - (initial_bid_position + results.trial_values.y_adjust))...
+results.trial_values.current_bid = ((initial_bid_position + results.trial_values.y_adjust) - stimuli.bidspace.bidspace_info.position(2))...
     / stimuli.bidspace.bidspace_info.height;
