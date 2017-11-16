@@ -21,7 +21,7 @@ parameters = get_all_parameters(hardware);
 
 %iniatilise the results tables
 %initialise the output table
-results.full_output.full_output_table = [];
+results.full_output_table = [];
 results.experiment_summary = [];
 %start on 0 total water/juice
 results.experiment_summary.total_water = 0;

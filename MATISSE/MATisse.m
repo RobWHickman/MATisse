@@ -134,42 +134,30 @@ guidata(hObject, handles);
 %trial so don't change halfway through)
 %also spits out the current means for each fractal to update the GUI
 function Run_button_Callback(hObject, eventdata, handles)
-button_state = get(hObject,'Value');
-if button_state == get(hObject,'Max')
-    disp('Running Trials...')
-    %if no trial variable is found it means we havent run the script yet,
-    %so set the total trials to zero
-    if ~exist('trial')
+display('running!');
+if get(hObject,'Value')
+    if ~isfield(handles.parameters, 'total_trials')
+        display('trials not found!');
         handles.parameters.total_trials = 0;
     end
-    set(handles.Run_button,'string','running!','enable','on','BackgroundColor','green');
-    while get(hObject,'Value') && handles.results.experiment_summary.correct <= handles.parameters.correct_trials
-        %run a single trial
-        handles.results = Run(handles.parameters, handles.stimuli, handles.hardware, handles.results, handles.task_window);
-        %about 60ms of dead space here
-        %save the output
-        guidata(hObject, handles);
-        %update the graph
-        axes(handles.BidHistory_axes);
-        bar(handles.experiment_summary.means);
-        %update the text
-        set(handles.text32, 'String', handles.parameters.total_trials);
-        set(handles.text31, 'String', handles.experiment_summary.correct);
-        set(handles.text30, 'String', handles.experiment_summary.error);
-        set(handles.text26, 'String', handles.experiment_summary.percent_correct);
-        set(handles.text33, 'String', handles.experiment_summary.rewarded);
-        set(handles.text34, 'String', handles.experiment_summary.not_rewarded);
-        set(handles.text37, 'String', handles.experiment_summary.total_water);
-        set(handles.text38, 'String', handles.experiment_summary.total_juice);
-        %update the app information
+    display(handles.parameters.total_trials);
+    while get(hObject,'Value') && handles.parameters.total_trials < 10
+        set(handles.Run_button,'string','running...','enable','on','BackgroundColor','[1, 0, 1]');
+        [handles.results, handles.parameters] = Run(handles.parameters, handles.stimuli, handles.hardware, handles.results, handles.task_window);
+        if handles.parameters.total_trials < 1
+            handles.results = assign_experiment_metadata(handles.parameters, handles.stimuli, handles.hardware, handles.results);
+        end
         handles.parameters.total_trials = handles.parameters.total_trials + 1;
-        drawnow
+        display('trial number:');
+        display(handles.parameters.total_trials);
+        guidata(hObject, handles);
+        drawnow;
     end
-    %a screen to show whilst paused
-    draw_pause_screen(handles.hardware, handles.task_window);
-    %change the button to show we've paused the experiment
-    set(handles.Run_button,'string','Paused...','enable','on','BackgroundColor','[1, 1, 1]');
+    set(handles.Run_button,'string','stopped...','enable','on','BackgroundColor','[1, 1, 1]');
+    drawnow;
+    guidata(hObject, handles);
 end
+
 
 %quick function that saves the output from the experiment
 %really if everything is going right there should only be one file per
@@ -320,10 +308,7 @@ guidata(hObject, handles);
 
 % --- Executes on button press in pushbutton10.
 function pushbutton10_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton10 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-display(handles.results.experiment_summary);
+display(handles.hardware.inputs.mouse);
 
 
 
@@ -372,5 +357,7 @@ guidata(hObject, handles);
 function Joystick_fixation_CreateFcn(hObject, eventdata, handles)
 handles.hardware.inputs.settings.fixation_test = 'eye_tracker';
 guidata(hObject, handles);
+
+
 
 

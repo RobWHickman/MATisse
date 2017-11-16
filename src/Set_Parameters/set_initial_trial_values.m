@@ -1,8 +1,6 @@
 function [parameters, trial_values] = set_initial_trial_values(parameters, stimuli, hardware)
 %get the offer value for the trial
-display(stimuli);
-display(stimuli.fractals);
-single_trial_values.offer_value = randi(length(stimuli.fractals.fractal_info.number));
+single_trial_values.offer_value = randi(stimuli.fractals.fractal_info.number);
 
 %generate a random bid to start at
 single_trial_values.starting_bid_value = rand(1);
@@ -35,4 +33,7 @@ trial_values.fixation_vector = [];
 %also initialise the trial results
 trial_values.frame_count = 0;
 trial_values.y_adjust = 0;
+
+%set the trial values for the task checks from the parameters master table
+trial_values.task_checks = parameters.task_checks;
 

@@ -2,7 +2,7 @@
 %these are generated from a grating that is stretched to be rectangular
 %one forms the template for the bidspace and the reverse indicates to the
 %monkey the remaining budget in the win condition
-function bidspace = generate_bidspace(settings, screen_info, task_window, frame_width)
+function bidspace = generate_bidspace(settings, screen_info, task_window)
 %read the bidspace image in
 bidspace_image = imread(fullfile(settings.images_path, settings.bidspace_images));
 
@@ -23,7 +23,9 @@ end
 
 %crop the image to a good size for the experiment
 %image should be repeating so cropping doesnt affect presentation
-bidspace_image = imcrop(bidspace_image, [0 0 screen_info.width/6 screen_info.height/1.25]);
+%+5 to avoid the black edges
+screen_width_fraction = 5; %1/5th of the screen
+bidspace_image = imcrop(bidspace_image, [5 5 screen_info.width/screen_width_fraction+5 screen_info.height/1.25+5]);
 %generate a flipped image to show spent budget
 reverse_bidspace = flipdim(bidspace_image ,2);
 
@@ -36,16 +38,16 @@ bidspace_info.width = image_size(2);
 %set the coordinates for the bidspace image
 bidspace_info.position = [((screen_info.width /2) + (screen_info.percent_x * 10)),...
     (screen_info.height - bidspace_info.height)/2,...
-    ((screen_info.width /2) + (screen_info.percent_x * 10)) + screen_info.width/6,...
+    ((screen_info.width /2) + (screen_info.percent_x * 10)) + screen_info.width/screen_width_fraction,...
     screen_info.height - ((screen_info.height - bidspace_info.height)/2)];
 
 %make it into a texture
 bidspace_texture = Screen('MakeTexture', task_window, bidspace_image);
 
 %generate a white frame for the bidspace to help the monkey focus
-shift_outwards = frame_width / 2;
-bidspace_frame = bidspace_info.position + shift_outwards;
-bidspace_frame(1:2) = bidspace_frame(1:2) - 2 * shift_outwards;
+bidspace_info.bounding_width = screen_info.percent_x;
+bidspace_frame = bidspace_info.position + bidspace_info.bounding_width;
+bidspace_frame(1:2) = bidspace_frame(1:2) - 2 * bidspace_info.bounding_width;
 [bidspace_xcenter, bidspace_ycenter] = RectCenter(bidspace_info.position);
 bidspace_bounding_box = CenterRectOnPointd(bidspace_frame, bidspace_xcenter, bidspace_ycenter);
 

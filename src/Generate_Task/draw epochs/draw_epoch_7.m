@@ -1,10 +1,7 @@
-%function to draw the seventh epoch- the final epoch with a light grey
-%screen
-%takes the fixation cross, its info and the fixation box generated before
-%the trials start running
-function [] = draw_epoch_7(hardware, parameters, task_window)
+%function to draw the fifth epoch- the result of the bidding
+%this function is called if the monkey wins i.e. if its bid is higher than
+%that of the computer
+function [] = draw_epoch_7(hardware, task_window)
 
-%fill with a lighter grey than other epochs
-Screen('FillRect', task_window, hardware.outputs.screen_info.bg_col + (hardware.outputs.screen_info.white / 5))
+Screen('FillRect', task_window, [hardware.outputs.screen_info.white/5, hardware.outputs.screen_info.white/5, hardware.outputs.screen_info.white/2]);
 Screen('DrawingFinished', task_window);
-end
