@@ -35,6 +35,9 @@ image_size = size(bidspace_image);
 bidspace_info.height = image_size(1);
 bidspace_info.width = image_size(2);
 
+%set the default (red) colour for the bar during bidding activity
+bidspace_info.bidding_colour = [screen_info.white 0 0];
+
 %set the coordinates for the bidspace image
 bidspace_info.position = [((screen_info.width /2) + (screen_info.percent_x * 10)),...
     (screen_info.height - bidspace_info.height)/2,...

@@ -50,19 +50,22 @@ for frame = 1:(parameters.timings.Frames('epoch4') + parameters.timings.Delay('e
 end
 
 for frame = 1:(parameters.timings.Frames('epoch5') + parameters.timings.Delay('epoch5'))
-    draw_epoch_5(parameters, stimuli, hardware, task_window);
+    draw_epoch_5(parameters, stimuli, hardware, results, task_window);
+    display(results.trial_values.current_bid);
+    display(stimuli.bidspace.bidspace_info.position);
+    [results, stimuli] = update_bid_position(hardware, results, parameters, stimuli);
     Screen('Flip', task_window);
 end
 
 %deleter this
-results.trial_values.final_bid = parameters.single_trial_values.starting_bid_value;
+%results.trial_values.final_bid = parameters.single_trial_values.starting_bid_value;
 
 for frame = 1:(parameters.timings.Frames('epoch6') + parameters.timings.Delay('epoch6'))
     %draw the result of the auction depending if monkey wins or not
-    if(results.trial_values.final_bid > parameters.single_trial_values.computer_bid_value)
-        draw_epoch_6_win(parameters, stimuli, hardware, task_window);
+    if(results.trial_values.current_bid > parameters.single_trial_values.computer_bid_value)
+        draw_epoch_6_win(parameters, stimuli, hardware, results, task_window);
     else
-        draw_epoch_6_lose(parameters, stimuli, hardware, task_window);
+        draw_epoch_6_lose(parameters, stimuli, hardware, results, task_window);
     end
     Screen('Flip', task_window);
 

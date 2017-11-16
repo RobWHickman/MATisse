@@ -31,8 +31,10 @@ trial_values.bidding_vector = placeholder(ceil((1:parameters.timings.Frames('epo
 trial_values.fixation_vector = [];
 
 %also initialise the trial results
-trial_values.frame_count = 0;
+trial_values.stationary_frame_count = 0;
 trial_values.y_adjust = 0;
+%assume bid is NA until bidding phase
+trial_values.current_bid = NaN;
 
 %set the trial values for the task checks from the parameters master table
 trial_values.task_checks = parameters.task_checks;

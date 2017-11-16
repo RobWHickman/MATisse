@@ -308,7 +308,10 @@ guidata(hObject, handles);
 
 % --- Executes on button press in pushbutton10.
 function pushbutton10_Callback(hObject, eventdata, handles)
-display(handles.hardware.inputs.mouse);
+display(handles.hardware.inputs);
+%display(handles.parameters);
+%display(handles.stimuli);
+%display(handles.results.trial_values);
 
 
 
