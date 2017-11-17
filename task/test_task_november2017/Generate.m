@@ -24,7 +24,7 @@ parameters = get_all_parameters(parameters, hardware);
 results.full_output_table = [];
 results.experiment_summary = [];
 %start on 0 total water/juice
-results.experiment_summary.total_water = 0;
-results.experiment_summary.total_juice = 0;
+results.experiment_summary.total_budget = 0;
+results.experiment_summary.total_reward = 0;
 results.experiment_summary.correct = 0;
 

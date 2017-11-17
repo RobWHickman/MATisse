@@ -27,3 +27,17 @@ results.last_trial.trial_results = results.trial_results;
 results = rmfield(results,{'trial_values','trial_results'});
 
 %get the data about the experiment progression to update the gui
+results.experiment_summary.means = grpstats(results.full_output_table.trial_results.monkey_final_bid, results.full_output_table.trial_results.offer_value);
+results.experiment_summary.correct = sum(~isnan(results.full_output_table.trial_results.win));
+results.experiment_summary.error = sum(isnan(results.full_output_table.trial_results.win));
+results.experiment_summary.percent_correct  = (results.experiment_summary.correct/ (results.experiment_summary.correct + results.experiment_summary.error)) * 100;
+results.experiment_summary.rewarded = sum(results.full_output_table.trial_results.win == 1);
+results.experiment_summary.not_rewarded = sum(results.full_output_table.trial_results.win == 0);
+
+%update the amounts of liquid given out if a winning trial
+if ~isnan(results.last_trial.trial_results.win)
+    results.experiment_summary.total_budget = results.experiment_summary.total_budget + results.last_trial.trial_results.budget_liquid;
+    if results.last_trial.trial_results.win == 1
+        results.experiment_summary.total_reward = results.experiment_summary.total_reward + results.last_trial.trial_results.reward_liquid;
+    end
+end

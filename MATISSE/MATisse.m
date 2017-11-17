@@ -151,6 +151,20 @@ if get(hObject,'Value')
         display('trial number:');
         display(handles.parameters.total_trials);
         guidata(hObject, handles);
+        
+        %update the graph
+        axes(handles.BidHistory_axes);
+        bar(handles.results.experiment_summary.means);
+        %update the text
+        set(handles.text32, 'String', handles.parameters.total_trials);
+        set(handles.text31, 'String', handles.results.experiment_summary.correct);
+        set(handles.text30, 'String', handles.results.experiment_summary.error);
+        set(handles.text26, 'String', handles.results.experiment_summary.percent_correct);
+        set(handles.text33, 'String', handles.results.experiment_summary.rewarded);
+        set(handles.text34, 'String', handles.results.experiment_summary.not_rewarded);
+        set(handles.text37, 'String', handles.results.experiment_summary.total_budget);
+        set(handles.text38, 'String', handles.results.experiment_summary.total_reward);
+
         drawnow;
     end
     set(handles.Run_button,'string','stopped...','enable','on','BackgroundColor','[1, 1, 1]');

@@ -69,8 +69,10 @@ for frame = 1:(parameters.timings.Frames('epoch6') + parameters.timings.Delay('e
     %draw the result of the auction depending if monkey wins or not
     if(results.trial_results.monkey_bid > parameters.single_trial_values.computer_bid_value)
         draw_epoch_6_win(parameters, stimuli, hardware, results, task_window);
+        results.trial_results.win = 1;
     else
         draw_epoch_6_lose(parameters, stimuli, hardware, results, task_window);
+        results.trial_results.win = 0;
     end
     
     %in the spare time assign the payouts for the next epoch
@@ -83,23 +85,23 @@ for frame = 1:(parameters.timings.Frames('epoch7') + parameters.timings.Delay('e
     %on first frame payout the budget
     if frame == 1
         if hardware.inputs.settings.testmode
-            sound_payout(hardware, results, 'budget');
+            results = sound_payout(hardware, results, 'budget');
         else
-            release_liquid(parameters, hardware, results, 'budget');
+            results = release_liquid(parameters, hardware, results, 'budget');
         end
     %on last frame payout the reward
     elseif frame == (parameters.timings.Frames('epoch7') + parameters.timings.Delay('epoch7'))
         if hardware.inputs.settings.testmode
-            sound_payout(hardware, results, 'reward');
+            results = sound_payout(hardware, results, 'reward');
         else
-            release_liquid(parameters, hardware, results, 'reward');
+            results = release_liquid(parameters, hardware, results, 'reward');
         end
     end
     
     draw_epoch_7(hardware, task_window);
     %set the final bid as the current bid at this point
     results.trial_results.monkey_final_bid = results.trial_results.monkey_bid;
-    results.trial_results.task_failure = NaN;
+    results.trial_results.task_failure = {NaN};
     
     Screen('Flip', task_window);
 end

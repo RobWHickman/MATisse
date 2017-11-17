@@ -5,10 +5,11 @@ results.trial_results.remaining_budget = NaN;
 results.trial_results.reward = NaN;
 results.trial_results.computer_bid = NaN;
 results.trial_results.offer_value = parameters.single_trial_values.offer_value;
+results.trial_results.win = NaN;
+results.trial_results.budget_liquid = NaN;
+results.trial_results.reward_liquid = NaN;
 
 results.trial_results.monkey_final_bid = NaN;
-
-
 
 %set the failure point as the point at which the monkey failed the task
 if ~results.trial_values.task_checks.Status('fixation')
