@@ -308,7 +308,7 @@ guidata(hObject, handles);
 
 % --- Executes on button press in pushbutton10.
 function pushbutton10_Callback(hObject, eventdata, handles)
-display(handles.parameters.save_info);
+display(handles.hardware.inputs.keyboard);
 
 
 

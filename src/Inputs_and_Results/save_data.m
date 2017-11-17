@@ -10,7 +10,7 @@ function [] = save_data(parameters, results)
 save_info = parameters.save_info;
 
 %smaller results of just the trial results
-compact_results = results.trial_results;
+compact_results = results.full_output_table.trial_results;
 
 %save the data
 save(fullfile(save_info.output_folder, regexprep(char(strcat(string(datetime('now')), save_info.experimenter, '_', save_info.primate, 'COMPACT_RESULTS.mat')), ":", "")), 'compact_results');

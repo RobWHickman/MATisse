@@ -73,22 +73,47 @@ for frame = 1:(parameters.timings.Frames('epoch6') + parameters.timings.Delay('e
         draw_epoch_6_lose(parameters, stimuli, hardware, results, task_window);
     end
     
-    %assign the payouts to the monkey
+    %in the spare time assign the payouts for the next epoch
+    results = assign_payouts(parameters, results);
+
     Screen('Flip', task_window);
 end
 
 for frame = 1:(parameters.timings.Frames('epoch7') + parameters.timings.Delay('epoch7'))
+    %on first frame payout the budget
+    if frame == 1
+        if hardware.inputs.settings.testmode
+            sound_payout(hardware, results, 'budget');
+        else
+            release_liquid(parameters, hardware, results, 'budget');
+        end
+    %on last frame payout the reward
+    elseif frame == (parameters.timings.Frames('epoch7') + parameters.timings.Delay('epoch7'))
+        if hardware.inputs.settings.testmode
+            sound_payout(hardware, results, 'reward');
+        else
+            release_liquid(parameters, hardware, results, 'reward');
+        end
+    end
+    
     draw_epoch_7(hardware, task_window);
+    %set the final bid as the current bid at this point
+    results.trial_results.monkey_final_bid = results.trial_results.monkey_bid;
+    results.trial_results.task_failure = NaN;
+    
     Screen('Flip', task_window);
 end
+
 
 %% FAIL EPOCHS %%
 %% if a check fails these error epochs will be shown %%
 else
 %if bidding activity fails
 display('BIDDING FAIL');
+sound_error_tone(hardware);
 for frame = 1:(sum(parameters.timings.Frames(5:8)) + sum(parameters.timings.Delay(5:8)) + ((3 - parameters.settings.bid_timeout) * hardware.outputs.screen_info.hz))
     draw_error_epoch(hardware, task_window)
+    results = assign_error_results(parameters, results);
     Screen('Flip', task_window);
 end
 end
@@ -96,8 +121,10 @@ end
 else
 %if bid finalisation fails
 display('FINIALISATION FAIL');
+sound_error_tone(hardware);
 for frame = 1:(sum(parameters.timings.Frames(6:8)) + sum(parameters.timings.Delay(6:8)) + (3 * hardware.outputs.screen_info.hz))
     draw_error_epoch(hardware, task_window)
+    results = assign_error_results(parameters, results);
     Screen('Flip', task_window);
 end
 end
@@ -105,21 +132,14 @@ end
 else
 %if fixation fails
 display('FIXATION FAIL');
+sound_error_tone(hardware);
 for frame = 1:(sum(parameters.timings.Frames(2:8)) + sum(parameters.timings.Delay(2:8)) + (3 * hardware.outputs.screen_info.hz))
     draw_error_epoch(hardware, task_window)
+    results = assign_error_results(parameters, results);
     Screen('Flip', task_window);
 end
 end
 
 %%Set the data
-results = assign_payouts(parameters, results);
 results = assign_experiment_metadata(parameters, stimuli, hardware, results);
 results = assign_outputs(results);
-
-display(results);
-display(results.trial_values);
-display(results.trial_results);
-display(results.full_output_table);
-display(results.experiment_summary);
-display(results.experiment_metadata);
-
