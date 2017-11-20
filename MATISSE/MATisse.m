@@ -28,6 +28,10 @@ end
 
 % --- Executes just before MATisse is made visible.
 function MATisse_OpeningFcn(hObject, eventdata, handles, varargin)
+%suppress common warnings we dont care about
+warning('off','daq:digitalio:adaptormismatch')
+warning('off','daq:analoginput:adaptormismatch')
+
 % Choose default command line output for MATisse
 handles.output = hObject;
 
@@ -66,7 +70,7 @@ display(strcat('Experimenter Changed to: ', handles.parameters.save_info.experim
 guidata(hObject, handles);
 %set the default
 function Set_Experimenter_CreateFcn(hObject, eventdata, handles)
-handles.parameters.save_info.experimenter = "Robert";
+handles.parameters.save_info.experimenter = 'Robert';
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
@@ -81,7 +85,7 @@ display(strcat('Primate Changed to: ', handles.parameters.save_info.primate))
 guidata(hObject, handles);
 %set the default
 function Set_Primate_CreateFcn(hObject, eventdata, handles)
-handles.parameters.save_info.primate = "some_monkey";
+handles.parameters.save_info.primate = 'some_monkey';
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
@@ -245,31 +249,46 @@ joystick = find_joystick(200, 'analog');
 pause(1);
 %get the current joystick voltages (when stationary)
 test_data = peekdata(joystick,30);
-test_data_x = test_data(:,1);
+test_data_x = test_data(:,1)
 display('remaining x bias:');
-joy_x   = -(mean(test_data_x)) + handles.hardware.inputs.settings.joystick_x_bias
-test_data_y = test_data(:,2);
+joy_x   = mean(test_data_x) + str2double(handles.hardware.inputs.settings.joystick_x_bias)
+test_data_y = test_data(:,2)
 display('remaining y bias:');
-joy_y   = -(mean(test_data_y)) + handles.hardware.inputs.settings.joystick_y_bias
+joy_y   = -(mean(test_data_y)) + str2double(handles.hardware.inputs.settings.joystick_y_bias)
 
 %edit the bias in the GUI
 function Set_Y_Bias_Callback(hObject, eventdata, handles)
 clear handles.hardware.inputs.settings.joystick_y_bias;
 handles.hardware.inputs.settings.joystick_y_bias = get(handles.Set_Y_Bias,'String');
+display('set new joystick Y bias');
 guidata(hObject, handles);
 function Set_X_Bias_Callback(hObject, eventdata, handles)
 clear handles.hardware.inputs.settings.joystick_x_bias;
 handles.hardware.inputs.settings.joystick_x_bias = get(handles.Set_X_Bias,'String');
+display('set new joystick X bias');
 guidata(hObject, handles);
 function Set_Y_Bias_CreateFcn(hObject, eventdata, handles)
 %set defalt bias to 0
-handles.hardware.inputs.settings.joystick_y_bias = 0;
+handles.hardware.inputs.settings.joystick_y_bias = '0';
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
 guidata(hObject, handles);
 function Set_X_Bias_CreateFcn(hObject, eventdata, handles)
-handles.hardware.inputs.settings.joystick_x_bias = 0;
+handles.hardware.inputs.settings.joystick_x_bias = '0';
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+guidata(hObject, handles);
+
+%set the joystick sensitivity
+function Joystick_sensitivty_Callback(hObject, eventdata, handles)
+clear handles.hardware.inputs.settings.joystick_sensitivity;
+handles.hardware.inputs.settings.joystick_sensitivity = get(handles.Joystick_sensitivty,'String');
+display('set new joystick sensitivity');
+guidata(hObject, handles);
+function Joystick_sensitivty_CreateFcn(hObject, eventdata, handles)
+handles.hardware.inputs.settings.joystick_sensitivity = '0.01';
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
@@ -280,11 +299,13 @@ guidata(hObject, handles);
 %this will overwrite the results so run it before running the task
 function Solenoid_button_Callback(hObject, eventdata, handles)
 if ~isfield(handles, 'results')
-    hardware = find_solenoid();
-    results = release_liquid('no_parameters', hardware, 'no_results', 'test_tap')
+    handles.hardware = find_solenoid(handles.hardware);
+    fake_results = release_liquid('no_parameters', handles.hardware, 'no_results', 'test_tap');
 else
     display('results field exists! run test solenoid before running task to prevent overwriting')
 end
+%set the buttons state back to 0 (off)
+set(handles.Solenoid_button,'value',0);
 
 %choose which solenoid to test when calling 'test solenoid'
 %in the current set up there are 3 taps
@@ -357,12 +378,7 @@ guidata(hObject, handles);
 
 %display_button
 function pushbutton10_Callback(hObject, eventdata, handles)
-display(handles.parameters.targeting);
-if handles.parameters.targeting
-    display('lolll')
-else
-    display('nooo')
-end
+display(handles.hardware.outputs.reward_output);
 
 
 
@@ -431,3 +447,6 @@ guidata(hObject, handles);
 function Offer_targeting_CreateFcn(hObject, eventdata, handles)
 handles.hardware.testmode = 0;
 guidata(hObject, handles);
+
+
+

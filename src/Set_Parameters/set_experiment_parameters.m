@@ -6,7 +6,7 @@ parameters.correct_trials = 5;
 
 %set up the failure points for the task
 %all default to false
-task_checks = table([false;true;false;false;true],...
+task_checks = table([false;false;false;false;true],...
     {'monkey_fixated_on_cross';'monkey_holding_joystick_still';'monkey_bidding_activity';'monkey_bid_stabilised';'monkey_bid_targeted'},...
     'VariableNames',{'Status','Description'},...
     'RowNames',{'fixation';'hold_joystick';'no_bid_activity';'stabilised_offer';'targeted_offer'});
@@ -21,7 +21,7 @@ if hardware.testmode
     task_checks.Status('hold_joystick') = true;
 end
 %if in targeting mode change the targeted_offer to false
-if parameters.targeting
+if isfield(parameters, 'targeting')
     task_checks.Status('targeted_offer') = false;
 end
 parameters.task_checks = task_checks;

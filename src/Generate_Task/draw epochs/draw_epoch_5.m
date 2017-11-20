@@ -9,8 +9,8 @@ vertical_position = (results.trial_results.monkey_bid * (stimuli.bidspace.bidspa
 round(vertical_position);
 
 %draw the targeting box if the value for the test if false
-if parameters.targeting
-    Screen('BlendFunction', task_window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
+if isfield(parameters, 'targeting')
+    %Screen('BlendFunction', task_window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
     if ~results.trial_values.task_checks.Status('targeted_offer')
     Screen('FillRect', task_window, stimuli.target_box.colour, ...
                 [stimuli.target_box.position(1), stimuli.target_box.position(2) + parameters.single_trial_values.target_value_shift,...

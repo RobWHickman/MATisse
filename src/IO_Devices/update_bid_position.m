@@ -5,10 +5,10 @@ else
     joystick_movement = peekdata(hardware.inputs.joystick, 4);
     if hardware.inputs.settings.direction == 'y'
         joystick_movement = -mean(joystick_movement(:,2));
-        joystick_bias = hardware.inputs.settings.joystick_y_bias;
+        joystick_bias = str2num(hardware.inputs.settings.joystick_y_bias);
     elseif hardware.inputs.settings.direction == 'x'
         joystick_movement = -mean(joystick_movement(:,1));
-        joystick_bias = hardware.inputs.settings.joystick_x_bias;
+        joystick_bias = str2num(hardware.inputs.settings.joystick_x_bias);
     end
 end
 
@@ -65,7 +65,7 @@ if ~results.trial_values.task_checks.Status('no_bid_activity') && ~results.trial
     %% JOYSTICK %%
     else
         %look for joystick movement greater than the sensitivity threshold
-        if abs(joystick_movement + joystick_bias) < hardware.inputs.settings.joystick_sensitivty
+        if abs(joystick_movement + joystick_bias) < hardware.inputs.settings.joystick_sensitivity
             %start counting
             results.trial_values.stationary_frame_count = results.trial_values.stationary_frame_count + 1;
             %if count reaches max for a pause in movement time out the bidding
@@ -76,7 +76,7 @@ if ~results.trial_values.task_checks.Status('no_bid_activity') && ~results.trial
             end
             output_frame_adjust = frame_adjust;
         else
-            if joystick_movement + joystick_bias > hardware.inputs.settings.joystick_sensitivty
+            if joystick_movement + joystick_bias > hardware.inputs.settings.joystick_sensitivity
                 %reset the count
                 results.trial_values.stationary_frame_count = 0;
                 %adjust bar adjustment
@@ -85,12 +85,14 @@ if ~results.trial_values.task_checks.Status('no_bid_activity') && ~results.trial
                 if initial_bid_position + results.trial_results.y_adjust + frame_adjust < stimuli.bidspace.bidspace_info.position(2)
                     frame_adjust = stimuli.bidspace.bidspace_info.position(2) - (initial_bid_position + results.trial_results.y_adjust);
                 end
+                output_frame_adjust = frame_adjust;
             else 
                 results.trial_values.stationary_frame_count = 0;
                 frame_adjust = hardware.inputs.settings.joystick_scalar;
                 if initial_bid_position + results.trial_results.y_adjust + frame_adjust > stimuli.bidspace.bidspace_info.position(4)
                     frame_adjust = stimuli.bidspace.bidspace_info.position(4) - (initial_bid_position + results.trial_results.y_adjust);
                 end
+                output_frame_adjust = frame_adjust;
             end
         end
      end

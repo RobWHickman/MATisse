@@ -8,24 +8,23 @@ function results = release_liquid(parameters, hardware, results, payout)
 m = 1; %m is the gradient of the calibration curve
 c = 0; %c is the addec onstant of the calibration curve
 
-if payout == 'budget'
+if strcmp(payout, 'budget')
     results.trial_results.budget_liquid = results.trial_results.remaining_budget * 1; %change this when converting from %budget into amounts
     tap_open_time = (results.trial_results.budget_liquid - c) / m;
     tap = 1;
 
-elseif payout == 'reward'
+elseif strcmp(payout, 'reward')
     results.trial_results.reward_liquid = results.trial_results.reward * 1; %change this when converting from %budget into amounts
     tap_open_time = (results.trial_results.reward_liquid - c) / m;
-    if parameters.save_info.primate == 'Ulysses'
+    if strcmp(parameters.save_info.primate, 'Ulysses')
         tap = 2;
-    elseif parameters.save_info.primate == 'Vicer'
+    elseif strcmp(parameters.save_info.primate, 'Vicer')
         tap = 3;
     end
-elseif payout == 'test_tap'
+    
+elseif strcmp(payout, 'test_tap')
     tap_open_time = hardware.outputs.settings.test_open_time;
     tap = hardware.outputs.settings.test_tap;
-    results.tap = tap;
-    results.tap_open_time = tap_open_time;
     display('opening test solenoid- n.b. results have been cleared');
 end
     
@@ -41,11 +40,11 @@ else
 end
 
 %open the tap
-putvalue(hardware.outputs.solenoid, tap_open)
+putvalue(hardware.outputs.reward_output, tap_open)
 
 %wait with the tap open
 WaitSecs(tap_open_time);
 
 %close the tap
 reset = [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0];
-putvalue(hardware.outputs.solenoid, reset)
+putvalue(hardware.outputs.reward_output, reset)

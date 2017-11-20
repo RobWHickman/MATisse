@@ -7,12 +7,12 @@ function hardware = find_fixation_devices(hardware, task_window)
 
 %if not testing use joystick/eye tracker
 if hardware.testmode == 0
-    if hardware.inputs.settings.fixation_test == 'joystick'
+    if strcmp(hardware.inputs.settings.fixation_test, 'joystick')
         %find the joystick
         hardware.inputs.joystick = find_joystick(200, 'analog');
         hardware.devices.fixation = 'JOYSTICK';
         display('found joystick');
-    elseif hardware.inputs.settings.fixation_test == 'eye_tracker'
+    elseif strcmp(hardware.inputs.settings.fixation_test, 'eye_tracker')
         %find the eye tracker
         hardware.devices.fixation = 'EYE_TRACKER';
         display('have not coded up eye tracker yet!');

@@ -1,6 +1,6 @@
 %function to grab the solenoid given the set up in 313
 %doesnt maintain the handshake stuff- see Modig
-function hardware = find_solenoid()
+function hardware = find_solenoid(hardware)
 %find the device
 solenoid = digitalio('nidaq','Dev1');
 %add the output lines
