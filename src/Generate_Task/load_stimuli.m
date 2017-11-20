@@ -11,6 +11,8 @@ stimuli.settings.bidspace_overhang = 20;
 %fractals
 stimuli.fractals = load_fractal_images(stimuli.settings, hardware.outputs.screen_info);
 %generate the bidspace
+%the bar is also considered part of the bidspace for ease of storing
+%variables
 stimuli.bidspace = generate_bidspace(stimuli.settings, hardware.outputs.screen_info, task_window);
 %generate a fixation cross
 %get rid of magic numbers which correspond to:

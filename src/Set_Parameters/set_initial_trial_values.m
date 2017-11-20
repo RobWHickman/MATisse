@@ -18,6 +18,10 @@ parameters.timings.Delay = times(parameters.timings.PlusMinus * 2, rand(height(p
 %convert this into frames
 parameters.timings.Delay = round(parameters.timings.Delay * hardware.outputs.screen_info.hz);
 
+%generate the random value for the target box
+%shifts the box down from the top of the bidspace by x amount
+single_trial_values.target_value_shift = rand() * ((stimuli.bidspace.bidspace_info.position(4) - stimuli.target_box.length) - stimuli.bidspace.bidspace_info.position(2));
+
 %output the trial values with the updated timings table using parent
 parameters.single_trial_values = single_trial_values;
 
@@ -36,7 +40,6 @@ trial_results.monkey_bid = NaN;
 
 %set the trial values for the task checks from the parameters master table
 trial_values.task_checks = parameters.task_checks;
-display(trial_values.task_checks.Status('targeted_offer'));
 
 %set the trial_values and trial_results to results
 results.trial_values = trial_values;

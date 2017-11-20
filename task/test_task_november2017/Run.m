@@ -57,8 +57,7 @@ for frame = 1:(parameters.timings.Frames('epoch5') + parameters.timings.Delay('e
     if results.trial_values.task_checks.Status('no_bid_activity')
         break
     end
-    display(results.trial_values.task_checks.Status('targeted_offer'));
-    results = check_targeted_offer(results, stimuli);
+    results = check_targeted_offer(parameters, results, stimuli);
     Screen('Flip', task_window);
 end
 

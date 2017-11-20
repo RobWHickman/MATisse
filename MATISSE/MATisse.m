@@ -149,7 +149,8 @@ if get(hObject,'Value')
         end
         handles.parameters.total_trials = handles.parameters.total_trials + 1;
         display('trial number:');
-        display(handles.parameters.total_trials);
+        %the trials are zero indexed so add one
+        display(handles.parameters.total_trials + 1);
         guidata(hObject, handles);
         
         %update the graph
@@ -164,9 +165,12 @@ if get(hObject,'Value')
         set(handles.text34, 'String', handles.results.experiment_summary.not_rewarded);
         set(handles.text37, 'String', handles.results.experiment_summary.total_budget);
         set(handles.text38, 'String', handles.results.experiment_summary.total_reward);
-
+        
+        %update the GUI with these fields
         drawnow;
     end
+    %if the task is paused by hitting the button again
+    %n.b. only pauses at the end of a trial
     set(handles.Run_button,'string','stopped...','enable','on','BackgroundColor','[1, 1, 1]');
     drawnow;
     guidata(hObject, handles);
