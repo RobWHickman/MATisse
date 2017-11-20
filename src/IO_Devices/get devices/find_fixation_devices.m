@@ -6,7 +6,7 @@
 function hardware = find_fixation_devices(hardware, task_window)
 
 %if not testing use joystick/eye tracker
-if hardware.inputs.settings.testmode == 0
+if hardware.testmode == 0
     if hardware.inputs.settings.fixation_test == 'joystick'
         %find the joystick
         hardware.inputs.joystick = find_joystick(200, 'analog');
@@ -25,7 +25,7 @@ else
 end
 
 %only if using the joystick for fixation testing
-% if hardware.inputs.settings.testmode == 0 && hardware.inputs.settings.fixation_test == 'joystick'
+% if hardware.testmode == 0 && hardware.inputs.settings.fixation_test == 'joystick'
 %     %set the joystick parameters
 %     hardware.inputs.settings.joystick_scalar = 25; %also defines keyboard sensitivity
 %     hardware.inputs.settings.joystick_sensitivity = 0.1;

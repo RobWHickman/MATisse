@@ -2,7 +2,7 @@
 %returns a boolean that is true if they fixated and false if they did not
 function [parameters, results] = check_fixation(parameters, stimuli, results, hardware, task_window)
 
-if hardware.inputs.settings.testmode == 0
+if hardware.testmode == 0
     if hardware.inputs.settings.fixation_test == 'joystick'
         [results.trial_values.task_checks.Status('hold_joystick'), results] = check_joystick_stationary(parameters, hardware, results);
     elseif hardware.inputs.settings.fixation_test == 'eye_tracker'

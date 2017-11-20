@@ -21,6 +21,12 @@ elseif payout == 'reward'
     elseif parameters.save_info.primate == 'Vicer'
         tap = 3;
     end
+elseif payout == 'test_tap'
+    tap_open_time = hardware.outputs.settings.test_open_time;
+    tap = hardware.outputs.settings.test_tap;
+    results.tap = tap;
+    results.tap_open_time = tap_open_time;
+    display('opening test solenoid- n.b. results have been cleared');
 end
     
 %chose which solenoid port to open (change to 1)

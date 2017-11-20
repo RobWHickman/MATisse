@@ -6,6 +6,8 @@ function [parameters, stimuli, hardware, results, task_window] =  Generate(param
 %open a psychtoolbox screen for the task
 %set it to black for now
 [task_window, task_windowrect] = PsychImaging('OpenWindow', hardware.outputs.screen_info.screen_number, 0);
+Screen('BlendFunction', task_window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
+
 %set psychtoolbox to be the computers priority
 %Priority(MaxPriority(task_window));
 

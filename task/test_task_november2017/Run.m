@@ -46,16 +46,19 @@ for frame = 1:(parameters.timings.Frames('epoch3') + parameters.timings.Delay('e
 end
 
 for frame = 1:(parameters.timings.Frames('epoch4') + parameters.timings.Delay('epoch4'))
-    draw_epoch_4(parameters, stimuli, hardware, task_window);
+    draw_epoch_4(parameters, stimuli, hardware, results, task_window);
     Screen('Flip', task_window);
 end
 
 for frame = 1:(parameters.timings.Frames('epoch5') + parameters.timings.Delay('epoch5'))
     draw_epoch_5(parameters, stimuli, hardware, results, task_window);
     [results, stimuli] = update_bid_position(hardware, results, parameters, stimuli);
+    %if there hasn't been any bid activity break out of the loop
     if results.trial_values.task_checks.Status('no_bid_activity')
         break
     end
+    display(results.trial_values.task_checks.Status('targeted_offer'));
+    results = check_targeted_offer(results, stimuli);
     Screen('Flip', task_window);
 end
 
@@ -64,7 +67,12 @@ if ~results.trial_values.task_checks.Status('no_bid_activity')
 
 %only progress if a bid has been finished (i.e. a sufficient pause at the
 %end)
+if results.trial_values.task_checks.Status('stabilised_offer')
+    
+%only progress if the bid was targeted properly (if no targeting this will
+%default to true)
 if results.trial_values.task_checks.Status('targeted_offer')
+    
 for frame = 1:(parameters.timings.Frames('epoch6') + parameters.timings.Delay('epoch6'))
     %draw the result of the auction depending if monkey wins or not
     if(results.trial_results.monkey_bid > parameters.single_trial_values.computer_bid_value)
@@ -84,14 +92,14 @@ end
 for frame = 1:(parameters.timings.Frames('epoch7') + parameters.timings.Delay('epoch7'))
     %on first frame payout the budget
     if frame == 1
-        if hardware.inputs.settings.testmode
+        if hardware.testmode
             results = sound_payout(hardware, results, 'budget');
         else
             results = release_liquid(parameters, hardware, results, 'budget');
         end
     %on last frame payout the reward
     elseif frame == (parameters.timings.Frames('epoch7') + parameters.timings.Delay('epoch7'))
-        if hardware.inputs.settings.testmode
+        if hardware.testmode
             results = sound_payout(hardware, results, 'reward');
         else
             results = release_liquid(parameters, hardware, results, 'reward');
@@ -110,10 +118,10 @@ end
 %% FAIL EPOCHS %%
 %% if a check fails these error epochs will be shown %%
 else
-%if bidding activity fails
-display('BIDDING FAIL');
+%if bid is not targeted
+display('TARGETING FAIL');
 sound_error_tone(hardware);
-for frame = 1:(sum(parameters.timings.Frames(5:8)) + sum(parameters.timings.Delay(5:8)) + ((3 - parameters.settings.bid_timeout) * hardware.outputs.screen_info.hz))
+for frame = 1:(sum(parameters.timings.Frames(6:8)) + sum(parameters.timings.Delay(6:8)) + (3 * hardware.outputs.screen_info.hz))
     draw_error_epoch(hardware, task_window)
     results = assign_error_results(parameters, results);
     Screen('Flip', task_window);
@@ -130,7 +138,18 @@ for frame = 1:(sum(parameters.timings.Frames(6:8)) + sum(parameters.timings.Dela
     Screen('Flip', task_window);
 end
 end
-    
+
+else
+%if bidding activity fails
+display('BIDDING FAIL');
+sound_error_tone(hardware);
+for frame = 1:(sum(parameters.timings.Frames(5:8)) + sum(parameters.timings.Delay(5:8)) + ((3 - parameters.settings.bid_timeout) * hardware.outputs.screen_info.hz))
+    draw_error_epoch(hardware, task_window)
+    results = assign_error_results(parameters, results);
+    Screen('Flip', task_window);
+end
+end
+
 else
 %if fixation fails
 display('FIXATION FAIL');

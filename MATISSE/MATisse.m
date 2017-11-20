@@ -213,20 +213,20 @@ sca;
 %mouse and keyboard can be used to run experiments
 %is piped into Generate() as either a 0 (testmode off) or a 1 (testmode)
 function Mode_button_Callback(hObject, eventdata, handles)
-clear handles.hardware.inputs.settings.testmode;
+clear handles.hardware.testmode;
 button_state = get(hObject,'Value');
 if button_state == get(hObject,'Max')
 	set(handles.Mode_button,'string','Test ON','enable','on','BackgroundColor','green');
-    handles.hardware.inputs.settings.testmode = 1;
+    handles.hardware.testmode = 1;
     %display(handles.Mode_button.Value);
 elseif button_state == get(hObject,'Min')
 	set(handles.Mode_button,'string','Test OFF','enable','on','BackgroundColor','red');
-    handles.hardware.inputs.settings.testmode = 0;
-    %display(handles.hardware.inputs.settings.testmode.Value);
+    handles.hardware.testmode = 0;
+    %display(handles.hardware.testmode.Value);
 end
 guidata(hObject, handles);
 function Mode_button_CreateFcn(hObject, eventdata, handles)
-handles.hardware.inputs.settings.testmode = 0;
+handles.hardware.testmode = 0;
 guidata(hObject, handles);
 
 %tests the bias on the joystick
@@ -272,14 +272,45 @@ end
 guidata(hObject, handles);
 
 %test that the solenoids are functional
+%will run the solenoid functions from the task
+%this will overwrite the results so run it before running the task
 function Solenoid_button_Callback(hObject, eventdata, handles)
+if ~isfield(handles, 'results')
+    hardware = find_solenoid();
+    results = release_liquid('no_parameters', hardware, 'no_results', 'test_tap')
+else
+    display('results field exists! run test solenoid before running task to prevent overwriting')
+end
 
-%choose which solenoid to test
+%choose which solenoid to test when calling 'test solenoid'
+%in the current set up there are 3 taps
+%see release_liquid in IO_Devices
 function Set_Solenoid_Callback(hObject, eventdata, handles)
+clear handles.hardware.outputs.settings.test_tap;
+handles.hardware.outputs.settings.test_tap = str2num(get(handles.Set_Solenoid,'String'));
+display(strcat('test solenoid tap changed to', num2str(handles.hardware.outputs.settings.test_tap)));
+guidata(hObject, handles);
 function Set_Solenoid_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+%set default tap to test to 1
+handles.hardware.outputs.settings.test_tap = 1;
+guidata(hObject, handles);
+%also set the length for the solenoid to open when in test mode
+function Solenoid_open_time_Callback(hObject, eventdata, handles)
+clear handles.hardware.outputs.settings.test_open_time;
+handles.hardware.outputs.settings.test_open_time = str2num(get(handles.Solenoid_open_time,'String'));
+display(strcat('test solenoid opening time changed to', num2str(handles.hardware.outputs.settings.test_open_time)));
+guidata(hObject, handles);
+function Solenoid_open_time_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+%set default tap opening time to 1s
+handles.hardware.outputs.settings.test_open_time = 1;
+guidata(hObject, handles);
+
 
 %allow the user to specify the monitor to use for the experimental task
 %defaults to monitor number 2
@@ -320,10 +351,14 @@ guidata(hObject, handles);
 
 
 
-% --- Executes on button press in pushbutton10.
+%display_button
 function pushbutton10_Callback(hObject, eventdata, handles)
-display(handles.hardware.inputs.keyboard);
-
+display(handles.parameters.targeting);
+if handles.parameters.targeting
+    display('lolll')
+else
+    display('nooo')
+end
 
 
 
@@ -371,6 +406,24 @@ function Joystick_fixation_CreateFcn(hObject, eventdata, handles)
 handles.hardware.inputs.settings.fixation_test = 'eye_tracker';
 guidata(hObject, handles);
 
-
-
-
+%whether or not the monekys bid must be targeted to a semi-transparent
+%recatngle within the bidspace
+%activiates check targeting and updates the task_checks in parameters
+%the drawing functions in these epochs are found in targeting_epochs within
+%the generate_task folder
+function Offer_targeting_Callback(hObject, eventdata, handles)
+clear handles.parameters.targeting;
+button_state = get(hObject,'Value');
+if button_state == get(hObject,'Max')
+	set(handles.Offer_targeting,'string','Targeting ON','enable','on','BackgroundColor','green');
+    handles.parameters.targeting = 1;
+    %display(handles.Mode_button.Value);
+elseif button_state == get(hObject,'Min')
+	set(handles.Offer_targeting,'string','Targeting OFF','enable','on','BackgroundColor','red');
+    handles.parameters.targeting = 0;
+    %display(handles.hardware.testmode.Value);
+end
+guidata(hObject, handles);
+function Offer_targeting_CreateFcn(hObject, eventdata, handles)
+handles.hardware.testmode = 0;
+guidata(hObject, handles);

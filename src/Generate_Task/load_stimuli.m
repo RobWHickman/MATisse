@@ -16,3 +16,6 @@ stimuli.bidspace = generate_bidspace(stimuli.settings, hardware.outputs.screen_i
 %get rid of magic numbers which correspond to:
 %length, thickness, colour and surrounding box scalar
 stimuli.fixation_cross = generate_fixation_cross(7, 2, [1 1 1], 5, hardware.outputs.screen_info);
+
+%if need to generate a target box, do it here
+stimuli.target_box = generate_target_box(stimuli, hardware);

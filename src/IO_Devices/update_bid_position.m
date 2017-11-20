@@ -1,5 +1,5 @@
 function [results, stimuli] = update_bid_position(hardware, results, parameters, stimuli)
-if hardware.inputs.settings.testmode
+if hardware.testmode
     [keyIsDown, secs, keyCode] = KbCheck;
 else
     joystick_movement = peekdata(hardware.inputs.joystick, 4);
@@ -19,9 +19,9 @@ initial_bid_position = stimuli.bidspace.bidspace_info.position(4) - ...
     (stimuli.bidspace.bidspace_info.height * parameters.single_trial_values.starting_bid_value);
 
 %update the bid position using arrow keys
-if ~results.trial_values.task_checks.Status('no_bid_activity') && ~results.trial_values.task_checks.Status('targeted_offer')
+if ~results.trial_values.task_checks.Status('no_bid_activity') && ~results.trial_values.task_checks.Status('stabilised_offer')
     %% KEYBOARD %%
-    if hardware.inputs.settings.testmode
+    if hardware.testmode
         %if no key is pressed
         if keyIsDown == 0
             %start counting
@@ -29,7 +29,7 @@ if ~results.trial_values.task_checks.Status('no_bid_activity') && ~results.trial
             %if count reaches max for a pause in movement time out the bidding
             if results.trial_values.stationary_frame_count == parameters.settings.max_pause * hardware.outputs.screen_info.hz
                 %stop bidding and change bar colour
-                results.trial_values.task_checks.Status('targeted_offer') = true;
+                results.trial_values.task_checks.Status('stabilised_offer') = true;
                 stimuli.bidspace.bidspace_info.bidding_colour = [0 0 hardware.outputs.screen_info.white];
             end
             output_frame_adjust = frame_adjust;
@@ -56,7 +56,7 @@ if ~results.trial_values.task_checks.Status('no_bid_activity') && ~results.trial
                 %if some random key is pressed
                 results.trial_values.stationary_frame_count = results.trial_values.stationary_frame_count + 1;
                 if results.trial_values.stationary_frame_count == parameters.settings.max_pause * hardware.outputs.screen_info.hz
-                    results.trial_values.task_checks.Status('targeted_offer') = true;
+                    results.trial_values.task_checks.Status('stabilised_offer') = true;
                     stimuli.bidspace.bidspace_info.bidding_colour = [0 0 hardware.outputs.screen_info.white];
                 end
             end
@@ -71,7 +71,7 @@ if ~results.trial_values.task_checks.Status('no_bid_activity') && ~results.trial
             %if count reaches max for a pause in movement time out the bidding
             if results.trial_values.stationary_frame_count == parameters.settings.max_pause * hardware.outputs.screen_info.hz
                 %stop bidding and change bar colour
-                results.trial_values.task_checks.Status('targeted_offer') = true;
+                results.trial_values.task_checks.Status('stabilised_offer') = true;
                 stimuli.bidspace.bidspace_info.bidding_colour = [0 0 hardware.outputs.screen_info.white];
             end
             output_frame_adjust = frame_adjust;

@@ -36,6 +36,7 @@ trial_results.monkey_bid = NaN;
 
 %set the trial values for the task checks from the parameters master table
 trial_values.task_checks = parameters.task_checks;
+display(trial_values.task_checks.Status('targeted_offer'));
 
 %set the trial_values and trial_results to results
 results.trial_values = trial_values;

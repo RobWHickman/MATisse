@@ -6,7 +6,7 @@ function hardware = find_bidding_devices(hardware)
 %which dimension ofthe screen is used for bidding?
 %n.b. up/right is 'more' (this might need to change for PTB)
 if hardware.inputs.settings.direction == 'y'
-    if hardware.inputs.settings.testmode == 0
+    if hardware.testmode == 0
         %find the joystick
         hardware.inputs.joystick = find_joystick(200, 'analog');
         hardware.devices.bidding = 'JOYSTICK_Y';
@@ -20,7 +20,7 @@ if hardware.inputs.settings.direction == 'y'
         display('set keyboard');
     end
 elseif hardware.inputs.settings.direction == 'x'
-    if hardware.inputs.settings.testmode == 0
+    if hardware.testmode == 0
         %find the joystick
         hardware.inputs.joystick = find_joystick(200, 'analog');
         hardware.devices.bidding = 'JOYSTICK_X';
@@ -40,7 +40,7 @@ hardware.inputs.settings.joystick_scalar = 25; %also defines keyboard sensitivit
 hardware.inputs.settings.joystick_sensitivity = 0.1;
 
 % %set the bias on the joystick manually
-% if hardware.inputs.settings.testmode == 0
+% if hardware.testmode == 0
 %     hardware.inputs.hardware.inputs.settings.joystick_x_bias = -0.1;
 %     hardware.inputs.hardware.inputs.settings.joystick_y_bias = -0.1;
 % else %if using keyboard there is no bias

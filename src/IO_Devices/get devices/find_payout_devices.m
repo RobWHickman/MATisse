@@ -1,6 +1,6 @@
 function hardware = find_payout_devices(hardware)
 
-if hardware.inputs.settings.testmode
+if hardware.testmode
     %add stuff here if possible to actually look for and find speakers
     hardware.outputs.reward_output.speakers = 'speakers';
 else
