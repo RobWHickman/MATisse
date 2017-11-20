@@ -14,4 +14,3 @@ parameters.save_info.working_directory = uigetdir(pwd, 'task scripts directory')
 
 %change into this directory
 cd(parameters.save_info.working_directory)
-end

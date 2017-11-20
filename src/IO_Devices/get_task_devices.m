@@ -1,3 +1,6 @@
+%function to set which devices are to be used for each section of the task
+%indicates what hardware should be used for each subtask and sets some
+%variables for those hardware
 function hardware = get_task_devices(hardware, task_window)
 
 %get the screen and its info

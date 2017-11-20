@@ -1,4 +1,14 @@
+%big function to update the bid each frame using an input device- either
+%the keyboard (testmode) or the joystick in a determined direction
+%three major parts- the top determines what the program should look for and
+%the settings
+%the second part updates the frame adjust based on if the joystick/keyboard
+%is pointing up/down and also counts the frames without movement (to
+%finalise the bid)
+%the final part uses this to update the bidding vector and the current
+%value of the monkey bid
 function [results, stimuli] = update_bid_position(hardware, results, parameters, stimuli)
+%if using testmode look for keystrokes
 if hardware.testmode
     [keyIsDown, secs, keyCode] = KbCheck;
 else
