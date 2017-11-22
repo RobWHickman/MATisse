@@ -21,7 +21,10 @@ elseif ~results.trial_values.task_checks.Status('hold_joystick')
 elseif results.trial_values.task_checks.Status('no_bid_activity')
     results.trial_results.task_failure = {'no_bid'};
 
-elseif ~results.trial_values.task_checks.Status('targeted_offer')
+elseif ~results.trial_values.task_checks.Status('stabilised_offer')
     results.trial_results.task_failure = {'unfinished_bidding'};
+
+elseif ~results.trial_values.task_checks.Status('targeted_offer')
+    results.trial_results.task_failure = {'non_targeted_bidding'};
     
 end

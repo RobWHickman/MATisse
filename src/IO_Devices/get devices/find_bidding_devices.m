@@ -36,8 +36,8 @@ elseif hardware.inputs.settings.direction == 'x'
 end
 
 %set the joystick parameters
-hardware.inputs.settings.joystick_scalar = 25; %also defines keyboard sensitivity
-hardware.inputs.settings.joystick_sensitivity = 0.1;
+hardware.inputs.settings.joystick_scalar = 12; %also defines keyboard sensitivity
+%hardware.inputs.settings.joystick_sensitivity = 0.1;
 
 % %set the bias on the joystick manually
 % if hardware.testmode == 0

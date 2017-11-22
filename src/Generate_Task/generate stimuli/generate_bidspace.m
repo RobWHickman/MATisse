@@ -38,9 +38,9 @@ bidspace_info.width = image_size(2);
 %set the default (red) colour for the bar during bidding activity
 %also set the thickness of bar during bidding
 bidspace_info.bidding_colour = [screen_info.white 0 0];
-bidspace_info.bidding_thickness = 5;
+bidspace_info.bidding_thickness = 15;
 %how much the rect will grow by (x2) when bid is confirmed
-bidspace_info.bidding_growth = 5;
+bidspace_info.bidding_growth = 10;
 
 %set the coordinates for the bidspace image
 bidspace_info.position = [((screen_info.width /2) + (screen_info.percent_x * 10)),...

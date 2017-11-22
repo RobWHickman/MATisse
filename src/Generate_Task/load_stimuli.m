@@ -2,7 +2,7 @@ function stimuli = load_stimuli(hardware, task_window)
 
 %get the stimuli
 stimuli.settings.images_path = '../../images/';
-stimuli.settings.fractal_images = 'RA*.jpg';
+stimuli.settings.fractal_images = 'RL*.jpg';
 stimuli.settings.bidspace_images = 'hatched2.jpg';
 stimuli.settings.bidspace_overhang = 20;
 
@@ -17,7 +17,7 @@ stimuli.bidspace = generate_bidspace(stimuli.settings, hardware.outputs.screen_i
 %generate a fixation cross
 %get rid of magic numbers which correspond to:
 %length, thickness, colour and surrounding box scalar
-stimuli.fixation_cross = generate_fixation_cross(7, 2, [1 1 1], 5, hardware.outputs.screen_info);
+stimuli.fixation_cross = generate_fixation_cross(25, 8, [hardware.outputs.screen_info.white hardware.outputs.screen_info.white 0], 5, hardware.outputs.screen_info);
 
 %if need to generate a target box, do it here
 stimuli.target_box = generate_target_box(stimuli, hardware);

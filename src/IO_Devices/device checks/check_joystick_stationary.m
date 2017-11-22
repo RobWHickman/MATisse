@@ -4,6 +4,7 @@ function results = check_joystick_stationary(parameters, hardware, results)
 joystick_movement = peekdata(hardware.inputs.joystick, 4);
 joystick_mean = -mean(joystick_movement(:,2));
 
+%check if the joystick voltage is subthreshold
 if abs(joystick_mean + str2double(hardware.inputs.settings.joystick_y_bias)) > hardware.inputs.settings.joystick_sensitivity
    results.trial_values.task_checks.Status('hold_joystick') = 0;
 else

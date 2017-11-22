@@ -145,7 +145,7 @@ if get(hObject,'Value')
         handles.parameters.total_trials = 0;
     end
     display(handles.parameters.total_trials);
-    while get(hObject,'Value') && handles.parameters.total_trials < 10
+    while get(hObject,'Value') && handles.parameters.total_trials < 1000
         set(handles.Run_button,'string','running...','enable','on','BackgroundColor','[1, 0, 1]');
         [handles.results, handles.parameters] = Run(handles.parameters, handles.stimuli, handles.hardware, handles.results, handles.task_window);
         if handles.parameters.total_trials < 1
@@ -284,11 +284,11 @@ guidata(hObject, handles);
 %set the joystick sensitivity
 function Joystick_sensitivty_Callback(hObject, eventdata, handles)
 clear handles.hardware.inputs.settings.joystick_sensitivity;
-handles.hardware.inputs.settings.joystick_sensitivity = get(handles.Joystick_sensitivty,'String');
+handles.hardware.inputs.settings.joystick_sensitivity = str2num(get(handles.Joystick_sensitivty,'String'));
 display('set new joystick sensitivity');
 guidata(hObject, handles);
 function Joystick_sensitivty_CreateFcn(hObject, eventdata, handles)
-handles.hardware.inputs.settings.joystick_sensitivity = '0.01';
+handles.hardware.inputs.settings.joystick_sensitivity = str2num('0.01');
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
@@ -378,7 +378,7 @@ guidata(hObject, handles);
 
 %display_button
 function pushbutton10_Callback(hObject, eventdata, handles)
-display(handles.hardware.outputs.reward_output);
+display(handles.hardware.inputs.settings);
 
 
 
