@@ -40,7 +40,7 @@ if ~results.trial_values.task_checks.Status('no_bid_activity') && ~results.trial
             if results.trial_values.stationary_frame_count == parameters.settings.max_pause * hardware.outputs.screen_info.hz
                 %stop bidding and change bar colour
                 results.trial_values.task_checks.Status('stabilised_offer') = true;
-                stimuli.bidspace.bidspace_info.bidding_colour = [0 0 hardware.outputs.screen_info.white];
+                stimuli.bidspace.bidspace_info.bidding_colour = [hardware.outputs.screen_info.white/2 0 0];
             end
             output_frame_adjust = frame_adjust;
         else
@@ -67,7 +67,7 @@ if ~results.trial_values.task_checks.Status('no_bid_activity') && ~results.trial
                 results.trial_values.stationary_frame_count = results.trial_values.stationary_frame_count + 1;
                 if results.trial_values.stationary_frame_count == parameters.settings.max_pause * hardware.outputs.screen_info.hz
                     results.trial_values.task_checks.Status('stabilised_offer') = true;
-                    stimuli.bidspace.bidspace_info.bidding_colour = [0 0 hardware.outputs.screen_info.white];
+                    stimuli.bidspace.bidspace_info.bidding_colour = [hardware.outputs.screen_info.white/2 0 0];
                 end
             end
             output_frame_adjust = frame_adjust;
@@ -82,7 +82,7 @@ if ~results.trial_values.task_checks.Status('no_bid_activity') && ~results.trial
             if results.trial_values.stationary_frame_count == parameters.settings.max_pause * hardware.outputs.screen_info.hz
                 %stop bidding and change bar colour
                 results.trial_values.task_checks.Status('stabilised_offer') = true;
-                stimuli.bidspace.bidspace_info.bidding_colour = [0 0 hardware.outputs.screen_info.white];
+                stimuli.bidspace.bidspace_info.bidding_colour = [hardware.outputs.screen_info.white/2 0 0];
             end
             output_frame_adjust = frame_adjust;
         else

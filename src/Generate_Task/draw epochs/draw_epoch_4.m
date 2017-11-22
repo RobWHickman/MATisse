@@ -22,7 +22,7 @@ end
 %     stimuli.bidspace.bidspace_info.position(3) +  hardware.outputs.screen_info.percent_y * 5, vertical_position, 6.5);
 
 %draw the bidding line as a rect
-Screen('FillRect', task_window, [hardware.outputs.screen_info.white/2, 0, 0],...
+Screen('FillRect', task_window, [0, 0, 0],... %black before bidding starts
     [stimuli.bidspace.bidspace_info.position(1) - hardware.outputs.screen_info.percent_y * 5, vertical_position - stimuli.bidspace.bidspace_info.bidding_thickness,...
     stimuli.bidspace.bidspace_info.position(3) +  hardware.outputs.screen_info.percent_y * 5, vertical_position + stimuli.bidspace.bidspace_info.bidding_thickness]);
 
