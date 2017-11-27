@@ -384,7 +384,7 @@ guidata(hObject, handles);
 
 %display_button
 function pushbutton10_Callback(hObject, eventdata, handles)
-display(handles.parameters);
+display(handles.stimuli.bidspace.bidspace_info);
 
 
 
