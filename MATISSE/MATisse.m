@@ -246,15 +246,15 @@ daqreset();
 %get the joystick data
 joystick = find_joystick(200, 'analog');
 %start(joystick); %throw an error- not sure why
-pause(1);
+pause(0.2);
 %get the current joystick voltages (when stationary)
 test_data = peekdata(joystick,30);
-test_data_x = test_data(:,1)
+test_data_x = test_data(:,1);
 display('remaining x bias:');
 joy_x   = mean(test_data_x) + str2double(handles.hardware.inputs.settings.joystick_x_bias)
-test_data_y = test_data(:,2)
+test_data_y = test_data(:,2);
 display('remaining y bias:');
-joy_y   = -(mean(test_data_y)) + str2double(handles.hardware.inputs.settings.joystick_y_bias)
+joy_y   = (mean(test_data_y)) + str2double(handles.hardware.inputs.settings.joystick_y_bias)
 
 %edit the bias in the GUI
 function Set_Y_Bias_Callback(hObject, eventdata, handles)
