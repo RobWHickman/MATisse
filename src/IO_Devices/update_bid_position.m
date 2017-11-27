@@ -90,7 +90,13 @@ if ~results.trial_values.task_checks.Status('no_bid_activity') && ~results.trial
                 %reset the count
                 results.trial_values.stationary_frame_count = 0;
                 %adjust bar adjustment
-                frame_adjust = -hardware.inputs.settings.joystick_scalar;
+                %if using binary joystick this is just the scalar, else
+                %take a percentage of the scalar
+                if hardware.inputs.settings.joystick_velocity == 0
+                    frame_adjust = -hardware.inputs.settings.joystick_scalar;
+                else
+                    frame_adjust = (joystick_movement / 0.6) * hardware.inputs.settings.joystick_scalar;
+                end
                 %if we overshoot bring the y adjust back to max it can be
                 if initial_bid_position + results.trial_results.y_adjust + frame_adjust < stimuli.bidspace.bidspace_info.position(2)
                     frame_adjust = stimuli.bidspace.bidspace_info.position(2) - (initial_bid_position + results.trial_results.y_adjust);
@@ -98,7 +104,11 @@ if ~results.trial_values.task_checks.Status('no_bid_activity') && ~results.trial
                 output_frame_adjust = frame_adjust;
             else 
                 results.trial_values.stationary_frame_count = 0;
-                frame_adjust = hardware.inputs.settings.joystick_scalar;
+                if hardware.inputs.settings.joystick_velocity == 0
+                    frame_adjust = hardware.inputs.settings.joystick_scalar;
+                else
+                    frame_adjust = (joystick_movement / 0.6) * hardware.inputs.settings.joystick_scalar;
+                end
                 if initial_bid_position + results.trial_results.y_adjust + frame_adjust > stimuli.bidspace.bidspace_info.position(4)
                     frame_adjust = stimuli.bidspace.bidspace_info.position(4) - (initial_bid_position + results.trial_results.y_adjust);
                 end

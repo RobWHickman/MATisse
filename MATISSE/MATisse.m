@@ -450,3 +450,23 @@ guidata(hObject, handles);
 
 
 
+
+
+%toggle button to decide if the joystick is simply binary (forward and back the same amount each frame)
+%or if it has acceleration (the further forward the joystick, the more the bar moves)
+function Joystick_movement_Callback(hObject, eventdata, handles)
+clear handles.hardware.inputs.settings.joystick_velocity;
+button_state = get(hObject,'Value');
+if button_state == get(hObject,'Max')
+	set(handles.Joystick_movement,'string','Velocity Joystick','enable','on','BackgroundColor','green');
+    handles.hardware.inputs.settings.joystick_velocity = 1;
+    %display(handles.Mode_button.Value);
+elseif button_state == get(hObject,'Min')
+	set(handles.Joystick_movement,'string','Binary Joystick','enable','on','BackgroundColor','red');
+    handles.hardware.inputs.settings.joystick_velocity = 0;
+end
+guidata(hObject, handles);
+%set default to binary
+function Joystick_movement_CreateFcn(hObject, eventdata, handles)
+handles.hardware.inputs.settings.joystick_velocity = 0;
+guidata(hObject, handles);
