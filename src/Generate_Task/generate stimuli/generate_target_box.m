@@ -2,7 +2,7 @@
 %to be used as a target for monkey bidding
 function target_box = generate_target_box(stimuli, hardware)
 
-target_box_box_length = 100; %change this to a random value
+target_box_box_length = stimuli.bidspace.bidspace_info.height / 1.1; %change this to a random value
 
 %generates the upper (in space not value) limit on the targeting box
 target_box_y1 = stimuli.bidspace.bidspace_info.position(2);

@@ -6,6 +6,8 @@ if parameters.total_trials < 1
     [parameters, results] = set_initial_trial_values(parameters, stimuli, hardware, results);
 end
 
+%pass_all_tests = 1; %for calibration
+
 %% EPOCHS %%
 %% the different epochs in the task if all checks are met %%
 for frame = 1:(parameters.timings.Frames('epoch8') + parameters.timings.Delay('epoch8'))
@@ -35,6 +37,8 @@ end
 
 %continue with task if monkey fixates
 if true(results.trial_values.task_checks.Status('fixation') & results.trial_values.task_checks.Status('hold_joystick'))
+%if pass_all_tests
+
 for frame = 1:(parameters.timings.Frames('epoch2') + parameters.timings.Delay('epoch2'))
     draw_epoch_2(stimuli, task_window);
     Screen('Flip', task_window);
@@ -64,16 +68,20 @@ for frame = 1:(parameters.timings.Frames('epoch5') + parameters.timings.Delay('e
     Screen('Flip', task_window);
 end
 
+%pass all test = 1 %for testing
 %only progress if there was bidding activity in the first x seconds
 if ~results.trial_values.task_checks.Status('no_bid_activity')
-
+%if pass_all_tests
+    
 %only progress if a bid has been finished (i.e. a sufficient pause at the
 %end)
 if results.trial_values.task_checks.Status('stabilised_offer')
+%if pass_all_tests
     
 %only progress if the bid was targeted properly (if no targeting this will
 %default to true)
 if results.trial_values.task_checks.Status('targeted_offer')
+%if pass_all_tests
     
 for frame = 1:(parameters.timings.Frames('epoch6') + parameters.timings.Delay('epoch6'))
     %draw the result of the auction depending if monkey wins or not
@@ -162,6 +170,12 @@ for frame = 1:(sum(parameters.timings.Frames(2:8)) + sum(parameters.timings.Dela
     Screen('Flip', task_window);
 end
 end
+
+%close textures
+%make this into a function
+Screen('Close', stimuli.trial.trial_fractal_texture)
+Screen('Close', stimuli.trial.reverse_bidspace_texture)
+
 
 %%Set the data
 results = assign_experiment_metadata(parameters, stimuli, hardware, results);
