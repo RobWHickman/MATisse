@@ -27,12 +27,18 @@ elseif strcmp(payout, 'reward')
 
 %pays out a manually assigned tap via the GUI    
 elseif strcmp(payout, 'test_tap')
+    tap_open_time = hardware.outputs.settings.test_open_time;
+    tap = hardware.outputs.settings.test_tap;
+    display('opening test solenoid- n.b. results have been cleared');
+
+%pays out a manually assigned tap via the GUI but 100x for calibration  
+elseif strcmp(payout, 'calibrate')
     WaitSecs(5); %for calibration
     tap_open_time = hardware.outputs.settings.test_open_time;
     tap = hardware.outputs.settings.test_tap;
     display('opening test solenoid- n.b. results have been cleared');
 end
-    
+
 %chose which solenoid port to open (change to 1)
 %there is a fourth solenoid but it isnt hooked up
 if tap == 1 %water
@@ -54,3 +60,18 @@ WaitSecs(tap_open_time);
 %close the tap
 reset = [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0];
 putvalue(hardware.outputs.reward_output, reset)
+
+%if calibrating, do this 99 more times
+% if strcmp(payout, 'calibrate')
+% for calibration_loop = 1:99
+%    %open the tap
+%     putvalue(hardware.outputs.reward_output, tap_open)
+% 
+%     %wait with the tap open
+%     WaitSecs(tap_open_time);
+% 
+%     %close the tap
+%     reset = [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0];
+%     putvalue(hardware.outputs.reward_output, reset)
+% end
+% end

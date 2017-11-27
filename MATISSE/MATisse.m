@@ -300,7 +300,13 @@ guidata(hObject, handles);
 function Solenoid_button_Callback(hObject, eventdata, handles)
 if ~isfield(handles, 'results')
     handles.hardware = find_solenoid(handles.hardware);
-    fake_results = release_liquid('no_parameters', handles.hardware, 'no_results', 'test_tap');
+    if handles.hardware.outputs.settings.calibration == 0
+        fake_results = release_liquid('no_parameters', handles.hardware, 'no_results', 'test_tap');
+    elseif handles.hardware.outputs.settings.calibration == 1
+        fake_results = release_liquid('no_parameters', handles.hardware, 'no_results', 'calibrate');
+    else
+        display('illegal solenoid test state');
+    end
 else
     display('results field exists! run test solenoid before running task to prevent overwriting')
 end
@@ -378,7 +384,7 @@ guidata(hObject, handles);
 
 %display_button
 function pushbutton10_Callback(hObject, eventdata, handles)
-display(handles.hardware.inputs.settings);
+display(handles.parameters);
 
 
 
@@ -407,6 +413,7 @@ guidata(hObject, handles);
 
 %set the method of fixation
 function Joystick_fixation_Callback(hObject, eventdata, handles)
+clear handles.hardware.inputs.settings.fixation_test;
 joystick_fixation = get(handles.Joystick_fixation, 'Value');
 if joystick_fixation == 1
     handles.hardware.inputs.settings.fixation_test = 'joystick';
@@ -415,7 +422,8 @@ else
 end
 guidata(hObject, handles);
 function Eye_fixation_Callback(hObject, eventdata, handles)
-eye_fixation = get(handles.Joystick_fixation, 'Value');
+clear handles.hardware.inputs.settings.fixation_test;
+eye_fixation = get(handles.Eye_fixation, 'Value');
 if eye_fixation == 1
     handles.hardware.inputs.settings.fixation_test = 'eye_tracker';
 else
@@ -423,6 +431,7 @@ else
 end
 guidata(hObject, handles);
 function Joystick_fixation_CreateFcn(hObject, eventdata, handles)
+%set default to be eyetracker
 handles.hardware.inputs.settings.fixation_test = 'eye_tracker';
 guidata(hObject, handles);
 
@@ -470,3 +479,21 @@ guidata(hObject, handles);
 function Joystick_movement_CreateFcn(hObject, eventdata, handles)
 handles.hardware.inputs.settings.joystick_velocity = 0;
 guidata(hObject, handles);
+
+
+function Solenoid_calibration_Callback(hObject, eventdata, handles)
+clear handles.hardware.outputs.settings.calibration;
+button_state = get(hObject,'Value');
+if button_state == get(hObject,'Max')
+	set(handles.Solenoid_calibration,'string','','enable','on','BackgroundColor','green');
+    handles.hardware.outputs.settings.calibration = 1;
+    %display(handles.Mode_button.Value);
+elseif button_state == get(hObject,'Min')
+	set(handles.Solenoid_calibration,'string','','enable','on','BackgroundColor','red');
+    handles.hardware.outputs.settings.calibration = 0;
+end
+guidata(hObject, handles);
+function Solenoid_calibration_CreateFcn(hObject, eventdata, handles)
+handles.hardware.outputs.settings.calibration = 0;
+guidata(hObject, handles);
+
