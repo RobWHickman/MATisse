@@ -35,15 +35,10 @@ elseif hardware.inputs.settings.direction == 'x'
     end
 end
 
-%set the joystick parameters
-hardware.inputs.settings.joystick_scalar = 8; %also defines keyboard sensitivity
-%hardware.inputs.settings.joystick_sensitivity = 0.1;
-
-% %set the bias on the joystick manually
-% if hardware.testmode == 0
-%     hardware.inputs.hardware.inputs.settings.joystick_x_bias = -0.1;
-%     hardware.inputs.hardware.inputs.settings.joystick_y_bias = -0.1;
-% else %if using keyboard there is no bias
-%     hardware.inputs.hardware.inputs.settings.joystick_x_bias = 0;
-%     hardware.inputs.hardware.inputs.settings.joystick_y_bias = 0;
-% end
+%set the joystick parameters if not already (they should be set by the GUI)
+if ~isfield(hardware.inputs.settings, 'joystick_scalar')
+    hardware.inputs.settings.joystick_scalar = 8; %also defines keyboard sensitivity
+end
+if ~isfield(hardware.inputs.settings, 'joystick_sensitivity')
+    hardware.inputs.settings.joystick_sensitivity = 0.01;
+end

@@ -247,13 +247,20 @@ joystick = find_joystick(200, 'analog');
 %start(joystick); %throw an error- not sure why
 pause(0.2);
 %get the current joystick voltages (when stationary)
-test_data = peekdata(joystick,30);
+test_data = peekdata(joystick,60);
 test_data_x = test_data(:,1);
 display('remaining x bias:');
 joy_x   = mean(test_data_x) + str2double(handles.hardware.inputs.settings.joystick_x_bias)
 test_data_y = test_data(:,2);
 display('remaining y bias:');
 joy_y   = (mean(test_data_y)) + str2double(handles.hardware.inputs.settings.joystick_y_bias)
+%automatically update the x and y bias and the gui with these values
+%can be overridden manually after
+set(handles.Set_X_Bias,'String', str(joy_x));
+handles.hardware.inputs.settings.joystick_x_bias = get(handles.Set_X_Bias,'String');
+set(handles.Set_Y_Bias,'String', str(joy_y));
+handles.hardware.inputs.settings.joystick_y_bias = get(handles.Set_Y_Bias,'String');
+guidata(hObject, handles);
 
 %edit the bias in the GUI
 function Set_Y_Bias_Callback(hObject, eventdata, handles)
@@ -292,6 +299,21 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 guidata(hObject, handles);
+
+%set the joystick scalar (how fast it makes the bar travel)
+function Joystick_scalar_Callback(hObject, eventdata, handles)
+clear handles.hardware.inputs.settings.joystick_scalar;
+handles.hardware.inputs.settings.joystick_scalar = str2num(get(handles.Joystick_scalar,'String'));
+display('set new joystick scalar');
+guidata(hObject, handles);
+%default is 8
+function Joystick_scalar_CreateFcn(hObject, eventdata, handles)
+handles.hardware.inputs.settings.joystick_scalar = str2num('8');
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+guidata(hObject, handles);
+
 
 %test that the solenoids are functional
 %will run the solenoid functions from the task
@@ -495,4 +517,5 @@ guidata(hObject, handles);
 function Solenoid_calibration_CreateFcn(hObject, eventdata, handles)
 handles.hardware.outputs.settings.calibration = 0;
 guidata(hObject, handles);
+
 
