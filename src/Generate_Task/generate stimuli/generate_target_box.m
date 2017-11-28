@@ -3,12 +3,12 @@
 function target_box = generate_target_box(stimuli, hardware, results)
 
 %simple version
-%target_box_box_length = stimuli.bidspace.bidspace_info.height / 1.1; %change this to a random value
+target_box_box_length = stimuli.bidspace.bidspace_info.height / 1.1; %change this to a random value
 
-minimum_size = 100;
-maximum_size = stimuli.bidspace.bidspace_info.height / 1.1;
+%minimum_size = 100;
+%maximum_size = stimuli.bidspace.bidspace_info.height / 1.1;
 
-target_box_box_length = ((maximum_size - minimum_size) - ((maximum_size - minimum_size) * (1/ (1 + exp(1) ^ -((correct-20)/5))))) + minimum_size;
+%target_box_box_length = ((maximum_size - minimum_size) - ((maximum_size - minimum_size) * (1/ (1 + exp(1) ^ -((correct-20)/5))))) + minimum_size;
  
 %generates the upper (in space not value) limit on the targeting box
 target_box_y1 = stimuli.bidspace.bidspace_info.position(2);

@@ -17,7 +17,7 @@ else
         joystick_movement = mean(joystick_movement(:,2));
         joystick_bias = str2num(hardware.inputs.settings.joystick_y_bias);
     elseif hardware.inputs.settings.direction == 'x'
-        joystick_movement = -mean(joystick_movement(:,1));
+        joystick_movement = mean(joystick_movement(:,1));
         joystick_bias = str2num(hardware.inputs.settings.joystick_x_bias);
     end
 end

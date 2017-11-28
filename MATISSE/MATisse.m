@@ -129,7 +129,6 @@ if isfield(handles.parameters,'save_info')
 else
     disp('save_info not found! Did you remember to run Set?')
 end
-display(handles.parameters.correct_trials);
 guidata(hObject, handles);
 
 %function to actually run the task
