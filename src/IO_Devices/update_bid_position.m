@@ -86,7 +86,7 @@ if ~results.trial_values.task_checks.Status('no_bid_activity') && ~results.trial
             end
             output_frame_adjust = frame_adjust;
         else
-            if joystick_movement + joystick_bias > hardware.inputs.settings.joystick_sensitivity
+            if joystick_movement + joystick_bias < hardware.inputs.settings.joystick_sensitivity
                 %reset the count
                 results.trial_values.stationary_frame_count = 0;
                 %adjust bar adjustment

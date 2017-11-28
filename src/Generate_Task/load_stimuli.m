@@ -20,4 +20,6 @@ stimuli.bidspace = generate_bidspace(stimuli.settings, hardware.outputs.screen_i
 stimuli.fixation_cross = generate_fixation_cross(25, 8, [hardware.outputs.screen_info.white hardware.outputs.screen_info.white 0], 5, hardware.outputs.screen_info);
 
 %if need to generate a target box, do it here
+%for a static target_box
+%moved to run.m for generating a box that shrinks as monkey improves
 stimuli.target_box = generate_target_box(stimuli, hardware);
