@@ -62,16 +62,20 @@ reset = [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0];
 putvalue(hardware.outputs.reward_output, reset)
 
 %if calibrating, do this 99 more times
-% if strcmp(payout, 'calibrate')
-% for calibration_loop = 1:99
-%    %open the tap
-%     putvalue(hardware.outputs.reward_output, tap_open)
-% 
-%     %wait with the tap open
-%     WaitSecs(tap_open_time);
-% 
-%     %close the tap
-%     reset = [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0];
-%     putvalue(hardware.outputs.reward_output, reset)
-% end
-% end
+if strcmp(payout, 'calibrate')
+for calibration_loop = 1:99
+   %open the tap
+    putvalue(hardware.outputs.reward_output, tap_open)
+
+    %wait with the tap open
+    WaitSecs(tap_open_time);
+
+    %close the tap
+    reset = [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0];
+    putvalue(hardware.outputs.reward_output, reset)
+    
+    %wait a little each loop
+    %WaitSecs(0.1); %not really necessary but good to check its looping
+    %properly
+end
+end
