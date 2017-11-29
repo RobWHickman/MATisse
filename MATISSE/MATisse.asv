@@ -505,17 +505,11 @@ guidata(hObject, handles);
 %target box
 function Targetbox_startsize_Callback(hObject, eventdata, handles)
 clear handles.parameters.targeting.startsize;
-%must be between zero and one
-if  str2num(get(handles.Targetbox_startsize,'String')) > 1 |...
-        str2num(get(handles.Targetbox_startsize,'String')) < 0
-    display('Must be a percentage! (between 0 and 1)');
-else
-    handles.parameters.targeting.startsize = str2num(get(handles.Targetbox_startsize,'String'));
-    display(strcat('Targetbox Startsize changed to: ', num2str(handles.parameters.targeting.startsize)));
-end
+handles.parameters.targeting.startsize = str2num(get(handles.Targetbox_startsize,'String'));
+display(strcat('Targetbox S: ', handles.parameters.save_info.experimenter))
 guidata(hObject, handles);
 function Targetbox_startsize_CreateFcn(hObject, eventdata, handles)
-handles.parameters.targeting.startsize = str2num('0.5');
+handles.parameters.targeting.startsize = str2num(get(handles.Targetbox_startsize,'String'));
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
