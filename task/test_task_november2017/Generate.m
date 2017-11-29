@@ -3,6 +3,10 @@
 %gets information on the screen being used and task parameters (how many
 %trials/ which monitor/ etc.)
 function [parameters, stimuli, hardware, results, task_window] =  Generate(parameters, hardware)
+Screen('Preference', 'SkipSyncTests', 1);
+Screen('Preference', 'SkipSyncTests', 2);
+
+
 %open a psychtoolbox screen for the task
 %set it to black for now
 [task_window, task_windowrect] = PsychImaging('OpenWindow', hardware.outputs.screen_info.screen_number, 0);

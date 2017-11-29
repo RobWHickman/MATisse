@@ -3,9 +3,6 @@ function [results, parameters] = Run(parameters, stimuli, hardware, results, tas
 %set initial trial values (see below)
 %needed here for first trial
 if parameters.total_trials < 1
-    %generate the target box for the task
-    %stimuli.target_box = generate_target_box(stimuli, hardware, results);
-
     [parameters, results] = set_initial_trial_values(parameters, stimuli, hardware, results);
 end
 
@@ -19,12 +16,12 @@ for frame = 1:(parameters.timings.Frames('epoch8') + parameters.timings.Delay('e
     %get trial values for the offer, computer bid and random monkey bid
     %start position
     %also the random delays at the end of epochs 3 and 7
-    
-    %generate the target box for the task
-    %stimuli.target_box = generate_target_box(stimuli, hardware, results);
-
     [parameters, results] = set_initial_trial_values(parameters, stimuli, hardware, results);
-
+    
+    if parameters.total_trials > 0 && ~parameters.targeting.static
+        stimuli.target_box = generate_target_box(parameters, stimuli, hardware, results.experiment_summary.correct);
+    end
+    
     %select the correct fractal for the trial and generate a texture
     stimuli = select_fractal(parameters, stimuli, hardware, task_window);
 

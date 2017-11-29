@@ -412,7 +412,7 @@ guidata(hObject, handles);
 
 %display_button
 function pushbutton10_Callback(hObject, eventdata, handles)
-display(handles.parameters.task_checks);
+display(handles.parameters.targeting.static);
 
 %set the direction of bidding
 function X_axis_bidding_Callback(hObject, eventdata, handles)
@@ -501,7 +501,7 @@ guidata(hObject, handles);
 %starts at the initial size
 function Static_targetbox_Callback(hObject, eventdata, handles)
 clear handles.parameters.targeting.static;
-static_targetbox = get(handles.Filled_targetbox, 'Value');
+static_targetbox = get(handles.Static_targetbox, 'Value');
 handles.parameters.targeting.static = static_targetbox;
 guidata(hObject, handles);
 function Static_targetbox_CreateFcn(hObject, eventdata, handles)
