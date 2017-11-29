@@ -29,7 +29,8 @@ initial_bid_position = stimuli.bidspace.bidspace_info.position(4) - ...
     (stimuli.bidspace.bidspace_info.height * parameters.single_trial_values.starting_bid_value);
 
 %update the bid position using arrow keys
-if ~results.trial_values.task_checks.Status('no_bid_activity') && ~results.trial_values.task_checks.Status('stabilised_offer')
+if (~results.trial_values.task_checks.Status('no_bid_activity') | ~results.trial_values.task_checks.Requirement('no_bid_activity')) &&...
+        (~results.trial_values.task_checks.Status('stabilised_offer') | ~results.trial_values.task_checks.Requirement('stabilised_offer'))
     %% KEYBOARD %%
     if hardware.testmode
         %if no key is pressed

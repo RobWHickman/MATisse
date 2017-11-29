@@ -126,6 +126,13 @@ function Gen_button_Callback(hObject, eventdata, handles)
 if isfield(handles.parameters,'save_info')
     disp('Generating Experiment...')
     [handles.parameters, handles.stimuli, handles.hardware, handles.results, handles.task_window] =  Generate(handles.parameters, handles.hardware);
+    %update the task checks with the values of the checkboxes
+    requirement_vector = [get(handles.Fixation_check, 'Value'),...
+        get(handles.Centered_check, 'Value'),...
+        get(handles.Bidding_check, 'Value'),...
+        get(handles.Finalised_check, 'Value'),...
+        get(handles.Targeted_check, 'Value')];
+    handles.parameters.task_checks.Requirement = requirement_vector';
 else
     disp('save_info not found! Did you remember to run Set?')
 end
@@ -247,18 +254,18 @@ joystick = find_joystick(200, 'analog');
 %start(joystick); %throw an error- not sure why
 pause(0.2);
 %get the current joystick voltages (when stationary)
-test_data = peekdata(joystick,60);
+test_data = peekdata(joystick,120);
 test_data_x = test_data(:,1);
 display('remaining x bias:');
-joy_x   = mean(test_data_x) + str2double(handles.hardware.inputs.settings.joystick_x_bias)
+joy_x   = mean(test_data_x)
 test_data_y = test_data(:,2);
 display('remaining y bias:');
-joy_y   = (mean(test_data_y)) + str2double(handles.hardware.inputs.settings.joystick_y_bias)
+joy_y   = (mean(test_data_y))
 %automatically update the x and y bias and the gui with these values
 %can be overridden manually after
-set(handles.Set_X_Bias,'String', str(joy_x));
+set(handles.Set_X_Bias,'String', num2str(-joy_x));
 handles.hardware.inputs.settings.joystick_x_bias = get(handles.Set_X_Bias,'String');
-set(handles.Set_Y_Bias,'String', str(joy_y));
+set(handles.Set_Y_Bias,'String', num2str(-joy_y));
 handles.hardware.inputs.settings.joystick_y_bias = get(handles.Set_Y_Bias,'String');
 guidata(hObject, handles);
 
@@ -405,10 +412,7 @@ guidata(hObject, handles);
 
 %display_button
 function pushbutton10_Callback(hObject, eventdata, handles)
-display(handles.parameters.targeting.startsize);
-
-
-
+display(handles.parameters.task_checks);
 
 %set the direction of bidding
 function X_axis_bidding_Callback(hObject, eventdata, handles)
@@ -448,12 +452,12 @@ eye_fixation = get(handles.Eye_fixation, 'Value');
 if eye_fixation == 1
     handles.hardware.inputs.settings.fixation_test = 'eye_tracker';
 else
-    handles.hardware.inputs.settings.fixation_test = 'fixation';
+    handles.hardware.inputs.settings.fixation_test = 'joystick';
 end
 guidata(hObject, handles);
 function Joystick_fixation_CreateFcn(hObject, eventdata, handles)
 %set default to be eyetracker
-handles.hardware.inputs.settings.fixation_test = 'eye_tracker';
+handles.hardware.inputs.settings.fixation_test = 'joystick';
 guidata(hObject, handles);
 
 %whether or not the monekys bid must be targeted to a semi-transparent
@@ -467,11 +471,14 @@ button_state = get(hObject,'Value');
 if button_state == get(hObject,'Max')
 	set(handles.Offer_targeting,'string','Targeting ON','enable','on','BackgroundColor','green');
     handles.parameters.targeting.requirement = 1;
+    %turn the targeting check on
+    set(handles.Targeted_check,'value',1);
     %display(handles.Mode_button.Value);
 elseif button_state == get(hObject,'Min')
 	set(handles.Offer_targeting,'string','Targeting OFF','enable','on','BackgroundColor','red');
     handles.parameters.targeting.requirement = 0;
-    %display(handles.hardware.testmode.Value);
+    %turn the targeting check off
+    set(handles.Targeted_check,'value',0);
 end
 guidata(hObject, handles);
 function Offer_targeting_CreateFcn(hObject, eventdata, handles)
@@ -566,3 +573,11 @@ guidata(hObject, handles);
 
 
 
+
+%checkboxes controlling which task checks to use
+%don't need any code
+function Centered_check_Callback(hObject, eventdata, handles)
+function Fixation_check_Callback(hObject, eventdata, handles)
+function Bidding_check_Callback(hObject, eventdata, handles)
+function Finalised_check_Callback(hObject, eventdata, handles)
+function Targeted_check_Callback(hObject, eventdata, handles)

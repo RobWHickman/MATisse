@@ -44,7 +44,8 @@ for frame = 1:(parameters.timings.Frames('epoch1') + parameters.timings.Delay('e
 end
 
 %continue with task if monkey fixates
-if true(results.trial_values.task_checks.Status('fixation') & results.trial_values.task_checks.Status('hold_joystick'))
+if (results.trial_values.task_checks.Status('fixation') | ~results.trial_values.task_checks.Requirement('fixation')) &&...
+        (results.trial_values.task_checks.Status('hold_joystick') | ~results.trial_values.task_checks.Requirement('hold_joystick'));
 %if pass_all_tests
 
 for frame = 1:(parameters.timings.Frames('epoch2') + parameters.timings.Delay('epoch2'))
@@ -67,10 +68,10 @@ for frame = 1:(parameters.timings.Frames('epoch5') + parameters.timings.Delay('e
     draw_epoch_5(parameters, stimuli, hardware, results, task_window);
     [results, stimuli] = update_bid_position(hardware, results, parameters, stimuli);
     %if there hasn't been any bid activity break out of the loop
-    if results.trial_values.task_checks.Status('no_bid_activity')
+    if results.trial_values.task_checks.Status('no_bid_activity') && results.trial_values.task_checks.Requirement('no_bid_activity')
         break
     end
-    if isfield(parameters, 'targeting')
+    if results.trial_values.task_checks.Requirement('targeted_offer') == 1
         results = check_targeted_offer(parameters, results, stimuli);
     end
     Screen('Flip', task_window);
@@ -78,17 +79,15 @@ end
 
 %pass all test = 1 %for testing
 %only progress if there was bidding activity in the first x seconds
-%if ~results.trial_values.task_checks.Status('no_bid_activity')
-%if pass_all_tests
+if ~results.trial_values.task_checks.Status('no_bid_activity') | ~results.trial_values.task_checks.Requirement('no_bid_activity') 
     
 %only progress if a bid has been finished (i.e. a sufficient pause at the
 %end)
-%if results.trial_values.task_checks.Status('stabilised_offer')
-%if pass_all_tests
-    
+if results.trial_values.task_checks.Status('stabilised_offer') | ~results.trial_values.task_checks.Requirement('stabilised_offer')
+
 %only progress if the bid was targeted properly (if no targeting this will
 %default to true)
-if results.trial_values.task_checks.Status('targeted_offer')
+if results.trial_values.task_checks.Status('targeted_offer') | ~results.trial_values.task_checks.Requirement('targeted_offer')
 %if pass_all_tests
     
 for frame = 1:(parameters.timings.Frames('epoch6') + parameters.timings.Delay('epoch6'))
@@ -146,27 +145,27 @@ for frame = 1:(sum(parameters.timings.Frames(6:8)) + sum(parameters.timings.Dela
 end
 end
 
-% else
-% %if bid finalisation fails
-% display('FINIALISATION FAIL');
-% sound_error_tone(hardware);
-% for frame = 1:(sum(parameters.timings.Frames(6:8)) + sum(parameters.timings.Delay(6:8)) + (3 * hardware.outputs.screen_info.hz))
-%     draw_error_epoch(hardware, task_window)
-%     results = assign_error_results(parameters, results);
-%     Screen('Flip', task_window);
-% end
-% end
-% 
-% else
-% %if bidding activity fails
-% display('BIDDING FAIL');
-% sound_error_tone(hardware);
-% for frame = 1:(sum(parameters.timings.Frames(5:8)) + sum(parameters.timings.Delay(5:8)) + ((3 - parameters.settings.bid_timeout) * hardware.outputs.screen_info.hz))
-%     draw_error_epoch(hardware, task_window)
-%     results = assign_error_results(parameters, results);
-%     Screen('Flip', task_window);
-% end
-% end
+else
+%if bid finalisation fails
+display('FINIALISATION FAIL');
+sound_error_tone(hardware);
+for frame = 1:(sum(parameters.timings.Frames(6:8)) + sum(parameters.timings.Delay(6:8)) + (3 * hardware.outputs.screen_info.hz))
+    draw_error_epoch(hardware, task_window)
+    results = assign_error_results(parameters, results);
+    Screen('Flip', task_window);
+end
+end
+
+else
+%if bidding activity fails
+display('BIDDING FAIL');
+sound_error_tone(hardware);
+for frame = 1:(sum(parameters.timings.Frames(5:8)) + sum(parameters.timings.Delay(5:8)) + ((3 - parameters.settings.bid_timeout) * hardware.outputs.screen_info.hz))
+    draw_error_epoch(hardware, task_window)
+    results = assign_error_results(parameters, results);
+    Screen('Flip', task_window);
+end
+end
 
 else
 %if fixation fails

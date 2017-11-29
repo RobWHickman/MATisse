@@ -14,14 +14,12 @@ task_checks = table([false;false;false;false;true],...
 %various small extra settings
 %how long the monkey has to make a bid before the timeout in s
 parameters.settings.bid_timeout = 2;
-parameters.settings.max_pause = 2.1;
+parameters.settings.max_pause = 1.0;
 
-%if in testmode, don't check for hold_joystick
+%if in testmode, don't check for hold_joystick no matter what
 if hardware.testmode
-    task_checks.Status('hold_joystick') = true;
-end
-%if in targeting mode change the targeted_offer to false
-if isfield(parameters, 'targeting')
-    task_checks.Status('targeted_offer') = false;
+    results.trial_values.task_checks.Requirement('hold_joystick') = 0;
 end
 parameters.task_checks = task_checks;
+
+

@@ -1,9 +1,9 @@
 %function to generate a semi transparent box randomly within the bidspace 
 %to be used as a target for monkey bidding
-function target_box = generate_target_box(stimuli, hardware)
+function target_box = generate_target_box(parameters, stimuli, hardware)
 
 %simple version
-target_box_box_length = stimuli.bidspace.bidspace_info.height / 6; %change this to a random value
+target_box_box_length = stimuli.bidspace.bidspace_info.height * parameters.targeting.startsize; %change this to a random value
 
 %minimum_size = stimuli.bidspace.bidspace_info.height * 0.1;
 %maximum_size = stimuli.bidspace.bidspace_info.height * 0.9;

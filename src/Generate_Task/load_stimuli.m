@@ -1,4 +1,4 @@
-function stimuli = load_stimuli(hardware, task_window)
+function stimuli = load_stimuli(parameters, hardware, task_window)
 
 %get the stimuli
 stimuli.settings.images_path = '../../images/';
@@ -22,4 +22,4 @@ stimuli.fixation_cross = generate_fixation_cross(25, 8, [hardware.outputs.screen
 %if need to generate a target box, do it here
 %for a static target_box
 %moved to run.m for generating a box that shrinks as monkey improves
-stimuli.target_box = generate_target_box(stimuli, hardware);
+stimuli.target_box = generate_target_box(parameters, stimuli, hardware);
