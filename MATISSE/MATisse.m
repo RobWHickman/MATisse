@@ -32,6 +32,13 @@ function MATisse_OpeningFcn(hObject, eventdata, handles, varargin)
 warning('off','daq:digitalio:adaptormismatch')
 warning('off','daq:analoginput:adaptormismatch')
 
+%set the background picture
+%commented for now as is super messy
+% axes(handles.background)
+% matisse_image = imread('../../MATISSE/matisse.jpg');
+% image(matisse_image)
+% axis off
+% axis image
 % Choose default command line output for MATisse
 handles.output = hObject;
 
@@ -581,3 +588,12 @@ function Fixation_check_Callback(hObject, eventdata, handles)
 function Bidding_check_Callback(hObject, eventdata, handles)
 function Finalised_check_Callback(hObject, eventdata, handles)
 function Targeted_check_Callback(hObject, eventdata, handles)
+
+
+% --- Executes during object creation, after setting all properties.
+function background_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to background (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: place code in OpeningFcn to populate background
