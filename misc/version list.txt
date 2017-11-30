@@ -1,0 +1,7 @@
+Version List
+
+v1.0.0 - 30th November 2017
+
+- working BDM and targeting task used on Ulysses and Vicer
+- still many bugs and not incluiding Marius tasks or binary choice
+- crashes after about 60 runs due to lack of memory
