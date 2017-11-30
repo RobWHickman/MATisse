@@ -20,7 +20,7 @@ if parameters.targeting.requirement == 1
         elseif parameters.targeting.filled == 0
             Screen('FrameRect', task_window, stimuli.target_box.colour, ...
                 [stimuli.target_box.position(1), stimuli.target_box.position(2) + parameters.single_trial_values.target_value_shift,...
-                stimuli.target_box.position(3), stimuli.target_box.position(4) + parameters.single_trial_values.target_value_shift], 35);
+                stimuli.target_box.position(3), stimuli.target_box.position(4) + parameters.single_trial_values.target_value_shift], 12);
         end
     elseif results.trial_values.task_checks.Status('targeted_offer')
         if parameters.targeting.filled == 1
@@ -30,7 +30,7 @@ if parameters.targeting.requirement == 1
         elseif parameters.targeting.filled == 0
             Screen('FrameRect', task_window, [0 hardware.outputs.screen_info.white 0],...
                 [stimuli.target_box.position(1), stimuli.target_box.position(2) + parameters.single_trial_values.target_value_shift,...
-                stimuli.target_box.position(3), stimuli.target_box.position(4) + parameters.single_trial_values.target_value_shift], 35);
+                stimuli.target_box.position(3), stimuli.target_box.position(4) + parameters.single_trial_values.target_value_shift], 12);
         end
     end
 end
