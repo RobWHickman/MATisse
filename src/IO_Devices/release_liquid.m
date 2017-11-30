@@ -17,12 +17,12 @@ if strcmp(payout, 'budget')
 
 %payout the reward tap (depends on the monkey)
 elseif strcmp(payout, 'reward')
-    results.trial_results.reward_liquid = results.trial_results.reward * 0.15; %increments of 0.15ml of juice
+    results.trial_results.reward_liquid = ((results.trial_results.reward * 2) - 1) * 0.15; %increments of 0.15ml of juice
     tap_open_time = (results.trial_results.reward_liquid) / simple_divider ;
     if strcmp(parameters.save_info.primate, 'Ulysses')
         tap = 2;
     elseif strcmp(parameters.save_info.primate, 'Vicer')
-        tap = 3;
+        tap = 2;
     end
 
 %pays out a manually assigned tap via the GUI    
@@ -30,8 +30,15 @@ elseif strcmp(payout, 'test_tap')
     tap_open_time = hardware.outputs.settings.test_open_time;
     tap = hardware.outputs.settings.test_tap;
     display('opening test solenoid- n.b. results have been cleared');
+
+%pays out a manually assigned tap via the GUI but 100x for calibration  
+elseif strcmp(payout, 'calibrate')
+    WaitSecs(5); %for calibration
+    tap_open_time = hardware.outputs.settings.test_open_time;
+    tap = hardware.outputs.settings.test_tap;
+    display('opening test solenoid- n.b. results have been cleared');
 end
-    
+
 %chose which solenoid port to open (change to 1)
 %there is a fourth solenoid but it isnt hooked up
 if tap == 1 %water
@@ -53,3 +60,22 @@ WaitSecs(tap_open_time);
 %close the tap
 reset = [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0];
 putvalue(hardware.outputs.reward_output, reset)
+
+%if calibrating, do this 99 more times
+if strcmp(payout, 'calibrate')
+for calibration_loop = 1:99
+   %open the tap
+    putvalue(hardware.outputs.reward_output, tap_open)
+
+    %wait with the tap open
+    WaitSecs(tap_open_time);
+
+    %close the tap
+    reset = [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0];
+    putvalue(hardware.outputs.reward_output, reset)
+    
+    %wait a little each loop
+    %WaitSecs(0.1); %not really necessary but good to check its looping
+    %properly
+end
+end

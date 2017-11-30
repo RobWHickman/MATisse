@@ -32,6 +32,13 @@ function MATisse_OpeningFcn(hObject, eventdata, handles, varargin)
 warning('off','daq:digitalio:adaptormismatch')
 warning('off','daq:analoginput:adaptormismatch')
 
+%set the background picture
+%commented for now as is super messy
+% axes(handles.background)
+% matisse_image = imread('../../MATISSE/matisse.jpg');
+% image(matisse_image)
+% axis off
+% axis image
 % Choose default command line output for MATisse
 handles.output = hObject;
 
@@ -126,10 +133,16 @@ function Gen_button_Callback(hObject, eventdata, handles)
 if isfield(handles.parameters,'save_info')
     disp('Generating Experiment...')
     [handles.parameters, handles.stimuli, handles.hardware, handles.results, handles.task_window] =  Generate(handles.parameters, handles.hardware);
+    %update the task checks with the values of the checkboxes
+    requirement_vector = [get(handles.Fixation_check, 'Value'),...
+        get(handles.Centered_check, 'Value'),...
+        get(handles.Bidding_check, 'Value'),...
+        get(handles.Finalised_check, 'Value'),...
+        get(handles.Targeted_check, 'Value')];
+    handles.parameters.task_checks.Requirement = requirement_vector';
 else
     disp('save_info not found! Did you remember to run Set?')
 end
-display(handles.parameters.correct_trials);
 guidata(hObject, handles);
 
 %function to actually run the task
@@ -246,15 +259,22 @@ daqreset();
 %get the joystick data
 joystick = find_joystick(200, 'analog');
 %start(joystick); %throw an error- not sure why
-pause(1);
+pause(0.2);
 %get the current joystick voltages (when stationary)
-test_data = peekdata(joystick,30);
-test_data_x = test_data(:,1)
+test_data = peekdata(joystick,120);
+test_data_x = test_data(:,1);
 display('remaining x bias:');
-joy_x   = mean(test_data_x) + str2double(handles.hardware.inputs.settings.joystick_x_bias)
-test_data_y = test_data(:,2)
+joy_x   = mean(test_data_x)
+test_data_y = test_data(:,2);
 display('remaining y bias:');
-joy_y   = -(mean(test_data_y)) + str2double(handles.hardware.inputs.settings.joystick_y_bias)
+joy_y   = (mean(test_data_y))
+%automatically update the x and y bias and the gui with these values
+%can be overridden manually after
+set(handles.Set_X_Bias,'String', num2str(-joy_x));
+handles.hardware.inputs.settings.joystick_x_bias = get(handles.Set_X_Bias,'String');
+set(handles.Set_Y_Bias,'String', num2str(-joy_y));
+handles.hardware.inputs.settings.joystick_y_bias = get(handles.Set_Y_Bias,'String');
+guidata(hObject, handles);
 
 %edit the bias in the GUI
 function Set_Y_Bias_Callback(hObject, eventdata, handles)
@@ -294,13 +314,34 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 guidata(hObject, handles);
 
+%set the joystick scalar (how fast it makes the bar travel)
+function Joystick_scalar_Callback(hObject, eventdata, handles)
+clear handles.hardware.inputs.settings.joystick_scalar;
+handles.hardware.inputs.settings.joystick_scalar = str2num(get(handles.Joystick_scalar,'String'));
+display('set new joystick scalar');
+guidata(hObject, handles);
+%default is 8
+function Joystick_scalar_CreateFcn(hObject, eventdata, handles)
+handles.hardware.inputs.settings.joystick_scalar = str2num('8');
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+guidata(hObject, handles);
+
+
 %test that the solenoids are functional
 %will run the solenoid functions from the task
 %this will overwrite the results so run it before running the task
 function Solenoid_button_Callback(hObject, eventdata, handles)
 if ~isfield(handles, 'results')
     handles.hardware = find_solenoid(handles.hardware);
-    fake_results = release_liquid('no_parameters', handles.hardware, 'no_results', 'test_tap');
+    if handles.hardware.outputs.settings.calibration == 0
+        fake_results = release_liquid('no_parameters', handles.hardware, 'no_results', 'test_tap');
+    elseif handles.hardware.outputs.settings.calibration == 1
+        fake_results = release_liquid('no_parameters', handles.hardware, 'no_results', 'calibrate');
+    else
+        display('illegal solenoid test state');
+    end
 else
     display('results field exists! run test solenoid before running task to prevent overwriting')
 end
@@ -378,10 +419,7 @@ guidata(hObject, handles);
 
 %display_button
 function pushbutton10_Callback(hObject, eventdata, handles)
-display(handles.hardware.inputs.settings);
-
-
-
+display(handles.parameters.targeting.static);
 
 %set the direction of bidding
 function X_axis_bidding_Callback(hObject, eventdata, handles)
@@ -407,6 +445,7 @@ guidata(hObject, handles);
 
 %set the method of fixation
 function Joystick_fixation_Callback(hObject, eventdata, handles)
+clear handles.hardware.inputs.settings.fixation_test;
 joystick_fixation = get(handles.Joystick_fixation, 'Value');
 if joystick_fixation == 1
     handles.hardware.inputs.settings.fixation_test = 'joystick';
@@ -415,15 +454,17 @@ else
 end
 guidata(hObject, handles);
 function Eye_fixation_Callback(hObject, eventdata, handles)
-eye_fixation = get(handles.Joystick_fixation, 'Value');
+clear handles.hardware.inputs.settings.fixation_test;
+eye_fixation = get(handles.Eye_fixation, 'Value');
 if eye_fixation == 1
     handles.hardware.inputs.settings.fixation_test = 'eye_tracker';
 else
-    handles.hardware.inputs.settings.fixation_test = 'fixation';
+    handles.hardware.inputs.settings.fixation_test = 'joystick';
 end
 guidata(hObject, handles);
 function Joystick_fixation_CreateFcn(hObject, eventdata, handles)
-handles.hardware.inputs.settings.fixation_test = 'eye_tracker';
+%set default to be eyetracker
+handles.hardware.inputs.settings.fixation_test = 'joystick';
 guidata(hObject, handles);
 
 %whether or not the monekys bid must be targeted to a semi-transparent
@@ -432,21 +473,127 @@ guidata(hObject, handles);
 %the drawing functions in these epochs are found in targeting_epochs within
 %the generate_task folder
 function Offer_targeting_Callback(hObject, eventdata, handles)
-clear handles.parameters.targeting;
+clear handles.parameters.targeting.requirement;
 button_state = get(hObject,'Value');
 if button_state == get(hObject,'Max')
 	set(handles.Offer_targeting,'string','Targeting ON','enable','on','BackgroundColor','green');
-    handles.parameters.targeting = 1;
+    handles.parameters.targeting.requirement = 1;
+    %turn the targeting check on
+    set(handles.Targeted_check,'value',1);
     %display(handles.Mode_button.Value);
 elseif button_state == get(hObject,'Min')
 	set(handles.Offer_targeting,'string','Targeting OFF','enable','on','BackgroundColor','red');
-    handles.parameters.targeting = 0;
-    %display(handles.hardware.testmode.Value);
+    handles.parameters.targeting.requirement = 0;
+    %turn the targeting check off
+    set(handles.Targeted_check,'value',0);
 end
 guidata(hObject, handles);
 function Offer_targeting_CreateFcn(hObject, eventdata, handles)
-handles.hardware.testmode = 0;
+handles.parameters.targeting.requirement = 0;
+guidata(hObject, handles);
+
+%parameters for the targeting
+%should the targetbox be filled or just an outline
+function Filled_targetbox_Callback(hObject, eventdata, handles)
+clear handles.parameters.targeting.filled;
+filled_targetbox = get(handles.Filled_targetbox, 'Value');
+handles.parameters.targeting.filled = filled_targetbox;
+guidata(hObject, handles);
+function Filled_targetbox_CreateFcn(hObject, eventdata, handles)
+handles.parameters.targeting.filled = 1;
+guidata(hObject, handles);
+
+%should the targetbox shrink as the monkey gets more results correct
+%shrinks to max 10% of the bidspace
+%starts at the initial size
+function Static_targetbox_Callback(hObject, eventdata, handles)
+clear handles.parameters.targeting.static;
+static_targetbox = get(handles.Static_targetbox, 'Value');
+handles.parameters.targeting.static = static_targetbox;
+guidata(hObject, handles);
+function Static_targetbox_CreateFcn(hObject, eventdata, handles)
+handles.parameters.targeting.static = 1;
+guidata(hObject, handles);
+
+%the size of the static box or the initial (max) size of the shrinking
+%target box
+function Targetbox_startsize_Callback(hObject, eventdata, handles)
+clear handles.parameters.targeting.startsize;
+%must be between zero and one
+if  str2num(get(handles.Targetbox_startsize,'String')) > 1 |...
+        str2num(get(handles.Targetbox_startsize,'String')) < 0
+    display('Must be a percentage! (between 0 and 1)');
+else
+    handles.parameters.targeting.startsize = str2num(get(handles.Targetbox_startsize,'String'));
+    display(strcat('Targetbox Startsize changed to: ', num2str(handles.parameters.targeting.startsize)));
+end
+guidata(hObject, handles);
+function Targetbox_startsize_CreateFcn(hObject, eventdata, handles)
+handles.parameters.targeting.startsize = str2num('0.5');
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
 guidata(hObject, handles);
 
 
 
+
+
+%toggle button to decide if the joystick is simply binary (forward and back the same amount each frame)
+%or if it has acceleration (the further forward the joystick, the more the bar moves)
+function Joystick_movement_Callback(hObject, eventdata, handles)
+clear handles.hardware.inputs.settings.joystick_velocity;
+button_state = get(hObject,'Value');
+if button_state == get(hObject,'Max')
+	set(handles.Joystick_movement,'string','Velocity Joystick','enable','on','BackgroundColor','green');
+    handles.hardware.inputs.settings.joystick_velocity = 1;
+    %display(handles.Mode_button.Value);
+elseif button_state == get(hObject,'Min')
+	set(handles.Joystick_movement,'string','Binary Joystick','enable','on','BackgroundColor','red');
+    handles.hardware.inputs.settings.joystick_velocity = 0;
+end
+guidata(hObject, handles);
+%set default to binary
+function Joystick_movement_CreateFcn(hObject, eventdata, handles)
+handles.hardware.inputs.settings.joystick_velocity = 0;
+guidata(hObject, handles);
+
+
+function Solenoid_calibration_Callback(hObject, eventdata, handles)
+clear handles.hardware.outputs.settings.calibration;
+button_state = get(hObject,'Value');
+if button_state == get(hObject,'Max')
+	set(handles.Solenoid_calibration,'string','','enable','on','BackgroundColor','green');
+    handles.hardware.outputs.settings.calibration = 1;
+    %display(handles.Mode_button.Value);
+elseif button_state == get(hObject,'Min')
+	set(handles.Solenoid_calibration,'string','','enable','on','BackgroundColor','red');
+    handles.hardware.outputs.settings.calibration = 0;
+end
+guidata(hObject, handles);
+function Solenoid_calibration_CreateFcn(hObject, eventdata, handles)
+handles.hardware.outputs.settings.calibration = 0;
+guidata(hObject, handles);
+
+
+
+
+
+
+
+%checkboxes controlling which task checks to use
+%don't need any code
+function Centered_check_Callback(hObject, eventdata, handles)
+function Fixation_check_Callback(hObject, eventdata, handles)
+function Bidding_check_Callback(hObject, eventdata, handles)
+function Finalised_check_Callback(hObject, eventdata, handles)
+function Targeted_check_Callback(hObject, eventdata, handles)
+
+
+% --- Executes during object creation, after setting all properties.
+function background_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to background (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: place code in OpeningFcn to populate background

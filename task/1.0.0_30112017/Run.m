@@ -6,6 +6,8 @@ if parameters.total_trials < 1
     [parameters, results] = set_initial_trial_values(parameters, stimuli, hardware, results);
 end
 
+%pass_all_tests = 1; %for calibration
+
 %% EPOCHS %%
 %% the different epochs in the task if all checks are met %%
 for frame = 1:(parameters.timings.Frames('epoch8') + parameters.timings.Delay('epoch8'))
@@ -15,12 +17,17 @@ for frame = 1:(parameters.timings.Frames('epoch8') + parameters.timings.Delay('e
     %start position
     %also the random delays at the end of epochs 3 and 7
     [parameters, results] = set_initial_trial_values(parameters, stimuli, hardware, results);
-
+    
+    if parameters.total_trials > 0 && ~parameters.targeting.static
+        stimuli.target_box = generate_target_box(parameters, stimuli, hardware, results.experiment_summary.correct);
+    end
+    
     %select the correct fractal for the trial and generate a texture
     stimuli = select_fractal(parameters, stimuli, hardware, task_window);
 
     %generate the reversed bidspace budget for if the monkey wins
     stimuli = generate_reverse_bidspace(parameters, stimuli, task_window);
+ 
     Screen('Flip', task_window);
 end
 
@@ -34,7 +41,10 @@ for frame = 1:(parameters.timings.Frames('epoch1') + parameters.timings.Delay('e
 end
 
 %continue with task if monkey fixates
-if true(results.trial_values.task_checks.Status('fixation') & results.trial_values.task_checks.Status('hold_joystick'))
+if (results.trial_values.task_checks.Status('fixation') | ~results.trial_values.task_checks.Requirement('fixation')) &&...
+        (results.trial_values.task_checks.Status('hold_joystick') | ~results.trial_values.task_checks.Requirement('hold_joystick'));
+%if pass_all_tests
+
 for frame = 1:(parameters.timings.Frames('epoch2') + parameters.timings.Delay('epoch2'))
     draw_epoch_2(stimuli, task_window);
     Screen('Flip', task_window);
@@ -55,25 +65,27 @@ for frame = 1:(parameters.timings.Frames('epoch5') + parameters.timings.Delay('e
     draw_epoch_5(parameters, stimuli, hardware, results, task_window);
     [results, stimuli] = update_bid_position(hardware, results, parameters, stimuli);
     %if there hasn't been any bid activity break out of the loop
-    if results.trial_values.task_checks.Status('no_bid_activity')
+    if results.trial_values.task_checks.Status('no_bid_activity') && results.trial_values.task_checks.Requirement('no_bid_activity')
         break
     end
-    if isfield(parameters, 'targeting')
+    if results.trial_values.task_checks.Requirement('targeted_offer') == 1
         results = check_targeted_offer(parameters, results, stimuli);
     end
     Screen('Flip', task_window);
 end
 
+%pass all test = 1 %for testing
 %only progress if there was bidding activity in the first x seconds
-if ~results.trial_values.task_checks.Status('no_bid_activity')
-
+if ~results.trial_values.task_checks.Status('no_bid_activity') | ~results.trial_values.task_checks.Requirement('no_bid_activity') 
+    
 %only progress if a bid has been finished (i.e. a sufficient pause at the
 %end)
-if results.trial_values.task_checks.Status('stabilised_offer')
-    
+if results.trial_values.task_checks.Status('stabilised_offer') | ~results.trial_values.task_checks.Requirement('stabilised_offer')
+
 %only progress if the bid was targeted properly (if no targeting this will
 %default to true)
-if results.trial_values.task_checks.Status('targeted_offer')
+if results.trial_values.task_checks.Status('targeted_offer') | ~results.trial_values.task_checks.Requirement('targeted_offer')
+%if pass_all_tests
     
 for frame = 1:(parameters.timings.Frames('epoch6') + parameters.timings.Delay('epoch6'))
     %draw the result of the auction depending if monkey wins or not
@@ -162,6 +174,12 @@ for frame = 1:(sum(parameters.timings.Frames(2:8)) + sum(parameters.timings.Dela
     Screen('Flip', task_window);
 end
 end
+
+%close textures
+%make this into a function
+Screen('Close', stimuli.trial.trial_fractal_texture)
+Screen('Close', stimuli.trial.reverse_bidspace_texture)
+
 
 %%Set the data
 results = assign_experiment_metadata(parameters, stimuli, hardware, results);

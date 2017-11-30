@@ -1,0 +1,12 @@
+to do
+aesthetitics:
+
+- bar colour
+- bar height
+- bidspace bounding box width
+
+task:
+
+- regression of tap opening time
+- joystick scalar
+- joystick sensitivty
