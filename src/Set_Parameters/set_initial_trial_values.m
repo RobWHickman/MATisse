@@ -20,7 +20,9 @@ parameters.timings.Delay = round(parameters.timings.Delay * hardware.outputs.scr
 
 %generate the random value for the target box
 %shifts the box down from the top of the bidspace by x amount
-single_trial_values.target_value_shift = rand() * ((stimuli.bidspace.bidspace_info.position(4) - stimuli.target_box.length) - stimuli.bidspace.bidspace_info.position(2));
+if parameters.targeting.requirement == 1
+    single_trial_values.target_value_shift = rand() * ((stimuli.bidspace.bidspace_info.position(4) - stimuli.target_box.length) - stimuli.bidspace.bidspace_info.position(2));
+end
 
 %output the trial values with the updated timings table using parent
 parameters.single_trial_values = single_trial_values;
@@ -34,7 +36,7 @@ trial_values.fixation_vector = [];
 
 %also initialise the trial results
 trial_values.stationary_frame_count = 0;
-trial_results.y_adjust = 0;
+trial_results.adjust = 0;
 %assume bid is NA until bidding phase
 trial_results.monkey_bid = NaN;
 

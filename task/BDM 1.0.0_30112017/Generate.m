@@ -3,9 +3,10 @@
 %gets information on the screen being used and task parameters (how many
 %trials/ which monitor/ etc.)
 function [parameters, stimuli, hardware, results, task_window] =  Generate(parameters, hardware)
-Screen('Preference', 'SkipSyncTests', 1);
-Screen('Preference', 'SkipSyncTests', 2);
-
+if hardware.testmode
+    Screen('Preference', 'SkipSyncTests', 1);
+    Screen('Preference', 'SkipSyncTests', 2);
+end
 
 %open a psychtoolbox screen for the task
 %set it to black for now
@@ -20,7 +21,7 @@ Screen('BlendFunction', task_window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
 hardware = get_task_devices(hardware, task_window);
 
 %load/ generate the stimuli for the task
-stimuli = load_stimuli(parameters, hardware, task_window);
+stimuli = load_bc_stimuli(parameters, hardware, task_window);
 
 %get the parameters for the task
 parameters = get_all_parameters(parameters, hardware);

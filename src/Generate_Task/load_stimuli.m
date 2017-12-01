@@ -22,4 +22,6 @@ stimuli.fixation_cross = generate_fixation_cross(12, 4, 3, hardware);
 %if need to generate a target box, do it here
 %for a static target_box
 %moved to run.m for generating a box that shrinks as monkey improves
-stimuli.target_box = generate_target_box(parameters, stimuli, hardware, 0);
+if parameters.targeting.requirement == 1
+    stimuli.target_box = generate_target_box(parameters, stimuli, hardware, 0);
+end

@@ -588,12 +588,3 @@ function Fixation_check_Callback(hObject, eventdata, handles)
 function Bidding_check_Callback(hObject, eventdata, handles)
 function Finalised_check_Callback(hObject, eventdata, handles)
 function Targeted_check_Callback(hObject, eventdata, handles)
-
-
-% --- Executes during object creation, after setting all properties.
-function background_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to background (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: place code in OpeningFcn to populate background

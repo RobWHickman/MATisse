@@ -6,7 +6,7 @@ output: html_document
 ```{r}
 #libraries
 library(tidyverse)
-library(R.matlab)
+#library(R.matlab)
 ```
 
 ```{r}
@@ -16,7 +16,7 @@ setwd("C:/Users/WS-Guest/Desktop/MATisse/savefiles")
 
 ```{r}
 #load in specific data
-date <- "28-Nov-2017"
+date <- "30-Nov-2017"
 monkey <- "Ulysses"
 
 search_string <- paste0(date, ".*", monkey, "COMPACT")
@@ -24,7 +24,7 @@ search_string <- paste0(date, ".*", monkey, "COMPACT")
 savefiles <- dir()
 
 files <- savefiles[grep(search_string, savefiles)]
-data <- bind_rows(lapply(files, read.csv))
+data <- lapply(files, read.csv)
 
 ```
 
