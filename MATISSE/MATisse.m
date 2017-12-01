@@ -588,3 +588,24 @@ function Fixation_check_Callback(hObject, eventdata, handles)
 function Bidding_check_Callback(hObject, eventdata, handles)
 function Finalised_check_Callback(hObject, eventdata, handles)
 function Targeted_check_Callback(hObject, eventdata, handles)
+
+
+%%BUNDLE STUFF%%
+function Bundles_width_Callback(hObject, eventdata, handles)
+function Bundles_width_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function Budget_divisions_Callback(hObject, eventdata, handles)
+function Budget_divisions_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+function Show_bundles_Callback(hObject, eventdata, handles)
+
+function Remove_fractals_Callback(hObject, eventdata, handles)
