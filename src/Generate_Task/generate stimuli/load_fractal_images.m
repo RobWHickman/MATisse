@@ -1,7 +1,7 @@
 %function to look in a directory and load all matching images
 %these will be used to signify the reward value in the task
 %e.g. fractals_in_array = load_fractal_images(path_to_fractals, fractal_names)
-function fractals = load_fractal_images(settings, screen_info)
+function fractals = load_fractal_images(settings, screen_info, task)
 %find all the matching images
 all_images = dir([settings.images_path settings.fractal_images]);
 fractal_info.number = length(all_images);
@@ -14,12 +14,21 @@ end
 %create the empty array
 fractal_images{fractal_info.number,1} = [];
 
+%set the size of the fractals relevant to the task
+%as a fraction of the screen height (will form a square of that many
+%pixels)
+if task == 'BDM'
+    stimuli_size = 0.5;
+elseif task == 'BC'
+    stimuli_size = 0.25;
+end
+
 %for each image, load it and add to the array
 %each fractal is scaled to 75% of the screen height
 for image = 1:fractal_info.number
     full_size_fractal = imread([settings.images_path all_images(image).name]);
     image_size = size(full_size_fractal);
-    image_scalar = (screen_info.height * 0.5) / image_size(2);
+    image_scalar = (screen_info.height * stimuli_size) / image_size(2);
     fractal_images{image} = imresize(full_size_fractal, image_scalar);
 end
 

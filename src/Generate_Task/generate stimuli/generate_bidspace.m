@@ -24,7 +24,15 @@ end
 %crop the image to a good size for the experiment
 %image should be repeating so cropping doesnt affect presentation
 %+5 to avoid the black edges
-screen_width_fraction = 5; %1/5th of the screen
+
+%set percentage of screen based on task as the denominator of a fraction
+%percentage of the screen
+if task == 'BDM'
+    screen_width_fraction = 5; %1/5th of the screen
+elseif task == 'BC'
+    screen_width_fraction = 6.6666; %1/5th of the screen
+end
+
 bidspace_image = imcrop(bidspace_image, [5 5 screen_info.width/screen_width_fraction+5 screen_info.height/1.25+5]);
 %generate a flipped image to show spent budget
 reverse_bidspace = flipdim(bidspace_image ,2);
