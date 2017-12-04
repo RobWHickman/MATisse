@@ -58,12 +58,14 @@ for frame = 1:(parameters.timings.Frames('epoch4') + parameters.timings.Delay('e
 end
 
 % EPOCH 5 - monkey bidding
+parameters.single_trial_values.starting_bid_value = 0;
+results.trial_results.monkey_bid = 0;
 for frame = 1:(parameters.timings.Frames('epoch5') + parameters.timings.Delay('epoch5'))
     draw_bc_epoch_5(stimuli, hardware, results, task_window);
-    [results, stimuli] = update_bid_position(hardware, results, parameters, stimuli);
+    [results, stimuli] = update_bid_position(hardware, results, parameters, stimuli, 'BC');
     
     %update the value of the bid
-    results.trial_results.monkey_bid = (hardware.outputs.screen_info.width /2 + results.trial_results.adjust) / (hardware.outputs.screen_info.width /2);
+    results.trial_results.monkey_bid = results.trial_results.adjust / (hardware.outputs.screen_info.width /2);
     display(results.trial_results.monkey_bid);
 
     %if there hasn't been any bid activity break out of the loop

@@ -64,7 +64,7 @@ end
 % EPOCH 5 - monkey bidding
 for frame = 1:(parameters.timings.Frames('epoch5') + parameters.timings.Delay('epoch5'))
     draw_epoch_5(parameters, stimuli, hardware, results, task_window);
-    [results, stimuli] = update_bid_position(hardware, results, parameters, stimuli);
+    [results, stimuli] = update_bid_position(hardware, results, parameters, stimuli, 'BDM');
     
     %update the value of the bid
     results.trial_results.monkey_bid = (stimuli.bidspace.bidspace_info.position(4) - (stimuli.bidspace.bidspace_info.position(4) - ...
