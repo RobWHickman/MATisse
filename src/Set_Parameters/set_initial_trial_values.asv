@@ -3,19 +3,15 @@ function [parameters, results] = set_initial_trial_values(parameters, stimuli, h
 single_trial_values.offer_value = randi(stimuli.fractals.fractal_info.number);
 
 if strcmp(parameters.task, 'BDM')
-    %generate a random bid to start at
-    single_trial_values.starting_bid_value = rand(1);
-    %generate a computer bid 
-    %change these for Marius- specifies the beta distribution controlling the
-    %computers random bids
-    A = 1;
-    B = 1;
-    single_trial_values.computer_bid_value = betarnd(A,B);
-%for binary choice, instead generate the value of the fractal water budget
-elseif strcmp(parameters.task, 'BDM')
-    single_trial_values.bundle_water = randi(0,10);
-end
-    
+%generate a random bid to start at
+single_trial_values.starting_bid_value = rand(1);
+%generate a computer bid 
+%change these for Marius- specifies the beta distribution controlling the
+%computers random bids
+A = 1;
+B = 1;
+single_trial_values.computer_bid_value = betarnd(A,B);
+
 %generate the random delays on epochs
 %matlab is stupid and won't allow random number generation between non
 %integers, this is equivalent
