@@ -53,19 +53,18 @@ end
 
 % EPOCH 4 - show initial bid
 for frame = 1:(parameters.timings.Frames('epoch4') + parameters.timings.Delay('epoch4'))
-    draw_bc_epoch_4(parameters, stimuli, hardware, results, task_window);
+    draw_bc_epoch_4(stimuli, hardware, task_window);
     Screen('Flip', task_window);
 end
 
 % EPOCH 5 - monkey bidding
 for frame = 1:(parameters.timings.Frames('epoch5') + parameters.timings.Delay('epoch5'))
-    draw_bc_epoch_5(parameters, stimuli, hardware, results, task_window);
+    draw_bc_epoch_5(stimuli, hardware, results, task_window);
     [results, stimuli] = update_bid_position(hardware, results, parameters, stimuli);
     
-    %update the value of the bi
-    results.trial_results.monkey_bid = (stimuli.bidspace.bidspace_info.position(4) - (stimuli.bidspace.bidspace_info.position(4) - ...
-        (stimuli.bidspace.bidspace_info.height * parameters.single_trial_values.starting_bid_value) + results.trial_results.adjust))...
-        / stimuli.bidspace.bidspace_info.height;
+    %update the value of the bid
+    results.trial_results.monkey_bid = (hardware.outputs.screen_info.width /2 + results.trial_results.adjust) / (hardware.outputs.screen_info.width /2);
+    display(results.trial_results.monkey_bid);
 
     %if there hasn't been any bid activity break out of the loop
     if results.trial_values.task_checks.Status('no_bid_activity') && results.trial_values.task_checks.Requirement('no_bid_activity')

@@ -66,7 +66,7 @@ for frame = 1:(parameters.timings.Frames('epoch5') + parameters.timings.Delay('e
     draw_epoch_5(parameters, stimuli, hardware, results, task_window);
     [results, stimuli] = update_bid_position(hardware, results, parameters, stimuli);
     
-    %update the value of the bi
+    %update the value of the bid
     results.trial_results.monkey_bid = (stimuli.bidspace.bidspace_info.position(4) - (stimuli.bidspace.bidspace_info.position(4) - ...
         (stimuli.bidspace.bidspace_info.height * parameters.single_trial_values.starting_bid_value) + results.trial_results.adjust))...
         / stimuli.bidspace.bidspace_info.height;
