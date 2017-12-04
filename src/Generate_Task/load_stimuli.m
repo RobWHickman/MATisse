@@ -1,5 +1,4 @@
 function stimuli = load_stimuli(parameters, hardware, task_window, task)
-
 %get the stimuli
 stimuli.settings.images_path = '../../images/';
 stimuli.settings.fractal_images = 'RL*.jpg';

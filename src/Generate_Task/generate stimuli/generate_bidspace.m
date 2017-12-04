@@ -2,7 +2,7 @@
 %these are generated from a grating that is stretched to be rectangular
 %one forms the template for the bidspace and the reverse indicates to the
 %monkey the remaining budget in the win condition
-function bidspace = generate_bidspace(settings, screen_info, task_window)
+function bidspace = generate_bidspace(settings, screen_info, task_window, task)
 %read the bidspace image in
 bidspace_image = imread(fullfile(settings.images_path, settings.bidspace_images));
 
@@ -27,13 +27,15 @@ end
 
 %set percentage of screen based on task as the denominator of a fraction
 %percentage of the screen
-if task == 'BDM'
+if strcmp(task, 'BDM')
     screen_width_fraction = 5; %1/5th of the screen
-elseif task == 'BC'
-    screen_width_fraction = 6.6666; %1/5th of the screen
+    screen_height_fraction = 1.25; %80% of the screen
+elseif strcmp(task, 'BC')
+    screen_width_fraction = 6; %1/6th of the screen
+    screen_height_fraction = 1.5; %60% of the screen
 end
 
-bidspace_image = imcrop(bidspace_image, [5 5 screen_info.width/screen_width_fraction+5 screen_info.height/1.25+5]);
+bidspace_image = imcrop(bidspace_image, [5 5 screen_info.width/screen_width_fraction+5 screen_info.height/screen_height_fraction+5]);
 %generate a flipped image to show spent budget
 reverse_bidspace = flipdim(bidspace_image ,2);
 
@@ -51,10 +53,17 @@ bidspace_info.bidding_thickness = 15;
 bidspace_info.bidding_growth = 10;
 
 %set the coordinates for the bidspace image
+if strcmp(task, 'BDM')
 bidspace_info.position = [((screen_info.width /2) + (screen_info.percent_x * 10)),...
     (screen_info.height - bidspace_info.height)/2,...
     ((screen_info.width /2) + (screen_info.percent_x * 10)) + screen_info.width/screen_width_fraction,...
     screen_info.height - ((screen_info.height - bidspace_info.height)/2)];
+elseif strcmp(task, 'BC')
+bidspace_info.position = [((screen_info.width /2) - (screen_info.percent_x * 23.5)),...
+    (screen_info.height - screen_info.percent_y * (100 - 100 /screen_height_fraction)/2) - bidspace_info.height,...
+    ((screen_info.width /2) - (screen_info.percent_x * 23.5)) + screen_info.width/screen_width_fraction,...
+    (screen_info.height - screen_info.percent_y * (100 - 100 /screen_height_fraction)/2)];
+end    
 
 %make it into a texture
 bidspace_texture = Screen('MakeTexture', task_window, bidspace_image);

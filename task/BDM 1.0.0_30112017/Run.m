@@ -21,7 +21,7 @@ for frame = 1:(parameters.timings.Frames('epoch8') + parameters.timings.Delay('e
     end
     
     %select the correct fractal for the trial and generate a texture
-    stimuli = select_fractal(parameters, stimuli, hardware, task_window);
+    stimuli = select_fractal(parameters, stimuli, task_window);
 
     %generate the reversed bidspace budget for if the monkey wins
     stimuli = generate_reverse_bidspace(parameters, stimuli, task_window);
