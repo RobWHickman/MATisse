@@ -137,7 +137,7 @@ display('TARGETING FAIL');
 sound_error_tone(hardware);
 for frame = 1:(sum(parameters.timings.Frames(6:8)) + sum(parameters.timings.Delay(6:8)) + (3 * hardware.outputs.screen_info.hz))
     draw_error_epoch(hardware, task_window)
-    results = assign_error_results(parameters, results);
+    results = assign_error_results(parameters, results, 'targeting');
     Screen('Flip', task_window);
 end
 end
@@ -148,7 +148,7 @@ display('FINIALISATION FAIL');
 sound_error_tone(hardware);
 for frame = 1:(sum(parameters.timings.Frames(6:8)) + sum(parameters.timings.Delay(6:8)) + (3 * hardware.outputs.screen_info.hz))
     draw_error_epoch(hardware, task_window)
-    results = assign_error_results(parameters, results);
+    results = assign_error_results(parameters, results, 'finalisation');
     Screen('Flip', task_window);
 end
 end
@@ -159,7 +159,7 @@ display('BIDDING FAIL');
 sound_error_tone(hardware);
 for frame = 1:(sum(parameters.timings.Frames(5:8)) + sum(parameters.timings.Delay(5:8)) + ((3 - parameters.settings.bid_timeout) * hardware.outputs.screen_info.hz))
     draw_error_epoch(hardware, task_window)
-    results = assign_error_results(parameters, results);
+    results = assign_error_results(parameters, results, 'bidding');
     Screen('Flip', task_window);
 end
 end
@@ -170,7 +170,7 @@ display('FIXATION FAIL');
 sound_error_tone(hardware);
 for frame = 1:(sum(parameters.timings.Frames(2:8)) + sum(parameters.timings.Delay(2:8)) + (3 * hardware.outputs.screen_info.hz))
     draw_error_epoch(hardware, task_window)
-    results = assign_error_results(parameters, results);
+    results = assign_error_results(parameters, results, 'fixation');
     Screen('Flip', task_window);
 end
 end
