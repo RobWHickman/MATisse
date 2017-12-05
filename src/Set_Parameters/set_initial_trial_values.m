@@ -12,8 +12,11 @@ if strcmp(parameters.task, 'BDM')
     B = 1;
     single_trial_values.computer_bid_value = betarnd(A,B);
 %for binary choice, instead generate the value of the fractal water budget
-elseif strcmp(parameters.task, 'BDM')
-    single_trial_values.bundle_water = randi(0,10);
+elseif strcmp(parameters.task, 'BC')
+    single_trial_values.bundle_water = randi(10)/10;
+    %define which half contains the bundle
+    screen_halves = ["left", "right"];
+    single_trial_values.bundle_half = screen_halves(2); 
 end
     
 %generate the random delays on epochs

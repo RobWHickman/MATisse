@@ -105,7 +105,7 @@ for frame = 1:(parameters.timings.Frames('epoch6') + parameters.timings.Delay('e
     end
     
     %in the spare time assign the payouts for the next epoch
-    %results = assign_payouts(parameters, results);
+    results = assign_payouts(parameters, results);
 
     Screen('Flip', task_window);
 end

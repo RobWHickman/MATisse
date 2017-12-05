@@ -1,4 +1,4 @@
-function [] = draw_bc_epoch_5(stimuli, hardware, results, task_window)
+function [] = draw_bc_epoch_6_r(stimuli, hardware, task_window)
 
 %draw the textures and the frame
 Screen('DrawTexture', task_window, stimuli.trial.trial_fractal_texture, [], stimuli.fractals.fractal_info.fractal_position, 0);
@@ -13,15 +13,7 @@ Screen('DrawTexture', task_window, stimuli.bidspace.bidspace_texture, [], stimul
 %draw the reversed bidspace for the bundle last
 Screen('DrawTexture', task_window, stimuli.trial.reverse_bidspace_texture, [], stimuli.trial.reversed_bidspace_position , 0);
 
-%create the bidding circle as an oval in a rect
-%center it on the current bid (0 for this epoch)
-bidding_circle = [0 0 50 50];
-maxDiameter = max(bidding_circle) * 1.01;
-centered_bidding_circle = CenterRectOnPointd(bidding_circle, hardware.outputs.screen_info.width/2 + (hardware.outputs.screen_info.width/2 * results.trial_results.monkey_bid), hardware.outputs.screen_info.height/2);
-%purple for the active epoch
-bidding_circle_colour = [hardware.outputs.screen_info.white, 0 hardware.outputs.screen_info.white];
-
-%draw the bidding circle
-Screen('FillOval', task_window, bidding_circle_colour, centered_bidding_circle, maxDiameter);
+%draw a rectangle over the left half of the screen
+Screen('FillRect', task_window, [hardware.outputs.screen_info.white/2], [0, 0, hardware.outputs.screen_info.width/2, hardware.outputs.screen_info.height]);
 
 Screen('DrawingFinished', task_window);

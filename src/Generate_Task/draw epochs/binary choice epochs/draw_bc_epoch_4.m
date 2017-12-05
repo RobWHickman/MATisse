@@ -10,6 +10,9 @@ position_reflector = hardware.outputs.screen_info.width - stimuli.bidspace.bidsp
 Screen('FrameRect', task_window, [hardware.outputs.screen_info.white], stimuli.bidspace.bidspace_bounding_box + [position_reflector, 0, position_reflector, 0], stimuli.bidspace.bidspace_info.bounding_width);
 Screen('DrawTexture', task_window, stimuli.bidspace.bidspace_texture, [], stimuli.bidspace.bidspace_info.position + [position_reflector, 0, position_reflector, 0], 0);
 
+%draw the reversed bidspace for the bundle last
+Screen('DrawTexture', task_window, stimuli.trial.reverse_bidspace_texture, [], stimuli.trial.reversed_bidspace_position , 0);
+
 %create the bidding circle as an oval in a rect
 %center it on the current bid (0 for this epoch)
 bidding_circle = [0 0 50 50];
@@ -20,7 +23,5 @@ bidding_circle_colour = [hardware.outputs.screen_info.white/2, 0 hardware.output
 
 %draw the bidding circle
 Screen('FillOval', task_window, bidding_circle_colour, centered_bidding_circle, maxDiameter);
-
-%draw the bidding dot
 
 Screen('DrawingFinished', task_window);
