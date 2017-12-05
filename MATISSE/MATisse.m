@@ -592,20 +592,51 @@ function Targeted_check_Callback(hObject, eventdata, handles)
 
 %%BUNDLE STUFF%%
 function Bundles_width_Callback(hObject, eventdata, handles)
+clear handles.parameters.binary_choice.bundle_width
+handles.parameters.binary_choice.bundle_width = str2num(get(handles.Bundles_width,'String'));
+display(handles.parameters.binary_choice.bundle_width);
+guidata(hObject, handles);
 function Bundles_width_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+handles.parameters.binary_choice.bundle_width = 40;
+guidata(hObject, handles);
 
 
-
+%the number of divisions of water budget in the bundle
 function Budget_divisions_Callback(hObject, eventdata, handles)
+clear handles.parameters.binary_choice.experimenter;
+handles.parameters.binary_choice.divisions = str2double(get(handles.Budget_divisions,'String'));
+guidata(hObject, handles);
 function Budget_divisions_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+handles.parameters.binary_choice.divisions = str2double('10');
+guidata(hObject, handles);
 
 
 function Show_bundles_Callback(hObject, eventdata, handles)
 
 function Remove_fractals_Callback(hObject, eventdata, handles)
+
+
+function Binary_choice_Callback(hObject, eventdata, handles)
+clear handles.parameters.task
+button_state = get(hObject,'Value');
+if button_state == get(hObject,'Max')
+	set(handles.Binary_choice,'string','','enable','on','BackgroundColor','green');
+    handles.parameters.task = 'BC';
+    handles.parameters.binary_choice.divisions = get(handles.Budget_divisions,'String');
+    handles.parameters.binary_choice.bundle_width = get(handles.Bundles_width,'String');
+elseif button_state == get(hObject,'Min')
+	set(handles.Binary_choice,'string','','enable','on','BackgroundColor','red');
+    handles.parameters.task = 'BDM';
+    handles.parameters = rmfield(handles.parameters, 'binary_choice');
+end
+guidata(hObject, handles);
+function Binary_choice_CreateFcn(hObject, eventdata, handles)
+handles.parameters.task = 'BDM';
+guidata(hObject, handles);
+

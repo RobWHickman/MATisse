@@ -23,13 +23,17 @@ else
 end
 
 %set the limits for the bidding
+%also set the bid multiplier (this is 1 for y axis (BDM) and -1 for the x
+%axis (BC) because of how PTB sets up the screen coords
 if strcmp(task, 'BDM')
     limits = [stimuli.bidspace.bidspace_info.position(2), stimuli.bidspace.bidspace_info.position(4)];
     initial_bid_position = stimuli.bidspace.bidspace_info.position(4) - ...
     (stimuli.bidspace.bidspace_info.height * parameters.single_trial_values.starting_bid_value);
+    axis_multiplier = 1;
 elseif strcmp(task, 'BC')
     limits = [0, hardware.outputs.screen_info.width];
     initial_bid_position = hardware.outputs.screen_info.width/2;
+    axis_multiplier = -1;
 end
 
 %set the default movement for the frame to zero
@@ -95,7 +99,7 @@ if (~results.trial_values.task_checks.Status('no_bid_activity') | ~results.trial
             end
             output_frame_adjust = frame_adjust;
         else
-            if joystick_movement + joystick_bias < hardware.inputs.settings.joystick_sensitivity
+            if (joystick_movement + joystick_bias) * axis_multiplier < 0
                 %reset the count
                 results.trial_values.stationary_frame_count = 0;
                 %adjust bar adjustment

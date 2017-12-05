@@ -1,7 +1,5 @@
 %BDM task function
 function [results, parameters] = Run(parameters, stimuli, hardware, results, task_window)
-parameters.task = 'BC';
-
 %set initial trial values (see below)
 %needed here for first trial
 if parameters.total_trials < 1
@@ -73,7 +71,6 @@ for frame = 1:(parameters.timings.Frames('epoch5') + parameters.timings.Delay('e
     
     %update the value of the bid
     results.trial_results.monkey_bid = results.trial_results.adjust / (hardware.outputs.screen_info.width /2);
-    display(results.trial_results.monkey_bid);
 
     %if there hasn't been any bid activity break out of the loop
     if results.trial_values.task_checks.Status('no_bid_activity') && results.trial_values.task_checks.Requirement('no_bid_activity')
@@ -86,7 +83,8 @@ for frame = 1:(parameters.timings.Frames('epoch5') + parameters.timings.Delay('e
 end
 
 %only progress if there was bidding activity in the first x seconds
-if ~results.trial_values.task_checks.Status('no_bid_activity') | ~results.trial_values.task_checks.Requirement('no_bid_activity') 
+display(results.trial_results.monkey_bid);
+if (~results.trial_values.task_checks.Status('no_bid_activity') | ~results.trial_values.task_checks.Requirement('no_bid_activity')) && (abs(results.trial_results.monkey_bid) > 0.5 - parameters.binary_choice.bundle_width/100)
     
 %only progress if a bid has been finished (i.e. a sufficient pause at the
 %end)
@@ -96,16 +94,16 @@ if results.trial_values.task_checks.Status('stabilised_offer') | ~results.trial_
 % EPOCH 6 - show result
 for frame = 1:(parameters.timings.Frames('epoch6') + parameters.timings.Delay('epoch6'))
     %draw the result of the auction depending if monkey wins or not
-    if(results.trial_results.monkey_bid > 0.5 - 0.425) %use the gui values here
+    if(results.trial_results.monkey_bid > 0.5 - parameters.binary_choice.bundle_width/100) %use the gui values here
         draw_bc_epoch_6_r(stimuli, hardware, task_window);
         results.trial_results.win = 1;
-    elseif(results.trial_results.monkey_bid < 0.425 - 0.5)
+    elseif(results.trial_results.monkey_bid < parameters.binary_choice.bundle_width/100 - 0.5)
         draw_bc_epoch_6_l(stimuli, hardware, task_window);
-        results.trial_results.win = 0;
+        results.trial_results.win = 1;
     end
     
     %in the spare time assign the payouts for the next epoch
-    %results = assign_payouts(parameters, results);
+    results = assign_payouts(parameters, results);
 
     Screen('Flip', task_window);
 end

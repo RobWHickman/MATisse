@@ -13,8 +13,8 @@ task_checks = table([false;false;false;false;true],...
 
 %various small extra settings
 %how long the monkey has to make a bid before the timeout in s
-parameters.settings.bid_timeout = 2;
-parameters.settings.max_pause = 1.0;
+parameters.settings.bid_timeout = 1;
+parameters.settings.max_pause = 1.1;
 
 %if in testmode, don't check for hold_joystick no matter what
 if hardware.testmode

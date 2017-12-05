@@ -1,11 +1,14 @@
 function results = assign_error_results(parameters, results)
 
 %set the final bid as NaN (as not completed)
+results.trial_results.win = NaN;
 results.trial_results.remaining_budget = NaN;
 results.trial_results.reward = NaN;
+%only use computer bids in auctions
+if strcmp(parameters.task, 'BDM')
 results.trial_results.computer_bid = NaN;
+end
 results.trial_results.offer_value = parameters.single_trial_values.offer_value;
-results.trial_results.win = NaN;
 results.trial_results.budget_liquid = NaN;
 results.trial_results.reward_liquid = NaN;
 
