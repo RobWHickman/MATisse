@@ -11,7 +11,7 @@ simple_divider = 4.5; %want to calibrate this more carefully, but it should give
 
 %payout the budget tap (tap 1)
 if strcmp(payout, 'budget')
-    results.trial_results.budget_liquid = results.trial_results.remaining_budget; %max budget is 1.2ml
+    results.trial_results.budget_liquid = results.trial_results.remaining_budget * 1.2; %max budget is 1.2ml
     tap_open_time = (results.trial_results.budget_liquid) / simple_divider; %1.2ml = 0.25s
     tap = 1;
 

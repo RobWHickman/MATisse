@@ -99,6 +99,7 @@ if (~results.trial_values.task_checks.Status('no_bid_activity') | ~results.trial
             end
             output_frame_adjust = frame_adjust;
         else
+            display((joystick_movement + joystick_bias) * axis_multiplier);
             if (joystick_movement + joystick_bias) * axis_multiplier < 0
                 %reset the count
                 results.trial_values.stationary_frame_count = 0;

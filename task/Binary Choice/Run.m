@@ -39,7 +39,7 @@ if (results.trial_values.task_checks.Status('fixation') | ~results.trial_values.
         (results.trial_values.task_checks.Status('hold_joystick') | ~results.trial_values.task_checks.Requirement('hold_joystick'));
 
 %if the bundle is on the right hand side of the screen, reflect it
-if strcmp(parameters.single_trial_values.bundle_half, "right")
+if strcmp(parameters.single_trial_values.bundle_half, 0)
     stimuli = reflect_bundle(stimuli, hardware);
 end
 
