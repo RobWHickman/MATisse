@@ -84,7 +84,7 @@ end
 
 %only progress if there was bidding activity in the first x seconds
 display(results.trial_results.monkey_bid);
-if (~results.trial_values.task_checks.Status('no_bid_activity') | ~results.trial_values.task_checks.Requirement('no_bid_activity')) && (abs(results.trial_results.monkey_bid) > 0.5 - parameters.binary_choice.bundle_width/100)
+if (~results.trial_values.task_checks.Status('no_bid_activity') | ~results.trial_values.task_checks.Requirement('no_bid_activity')) && (abs(results.trial_results.monkey_bid) > (0.5 - parameters.binary_choice.bundle_width/100)*2)
     
 %only progress if a bid has been finished (i.e. a sufficient pause at the
 %end)
@@ -94,10 +94,10 @@ if results.trial_values.task_checks.Status('stabilised_offer') | ~results.trial_
 % EPOCH 6 - show result
 for frame = 1:(parameters.timings.Frames('epoch6') + parameters.timings.Delay('epoch6'))
     %draw the result of the auction depending if monkey wins or not
-    if(results.trial_results.monkey_bid > 0.5 - parameters.binary_choice.bundle_width/100) %use the gui values here
+    if(results.trial_results.monkey_bid > (0.5 - parameters.binary_choice.bundle_width/100) *2) %use the gui values here
         draw_bc_epoch_6_r(stimuli, hardware, task_window);
         results.trial_results.win = 1;
-    elseif(results.trial_results.monkey_bid < parameters.binary_choice.bundle_width/100 - 0.5)
+    elseif(results.trial_results.monkey_bid < (parameters.binary_choice.bundle_width/100 - 0.5)*2)
         draw_bc_epoch_6_l(stimuli, hardware, task_window);
         results.trial_results.win = 1;
     end

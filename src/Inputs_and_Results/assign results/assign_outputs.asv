@@ -35,21 +35,23 @@ results.experiment_summary.rewarded = sum(results.full_output_table.trial_result
 results.experiment_summary.not_rewarded = sum(results.full_output_table.trial_results.win == 0);
 
 %for the binary choice task, how many times has the monkey gone left/right
-if strcmp(results.experiment_metadata.parameters.task, 'BC') && ~isfield(results.experiment_summary, 'right')
+if ~isfield(results.experiment_summary, 'right')
    results.experiment_summary.right = 0;
    results.experiment_summary.left = 0;
-elseif strcmp(results.experiment_metadata.parameters.task, 'BDM') && ~isfield(results.experiment_summary, 'right')
-   results.experiment_summary.right = NaN;
-   results.experiment_summary.left = NaN;
 end
 
-if results.last_trial.trial_results.monkey_final_bid > (0.5 - results.experiment_metadata.parameters.binary_choice.bundle_width/100) *2 &&...
+
+display(results.trial_values.monkey_final_bid);
+display(results.experiment_metadata.parameters.binary_choice.bundle_width/100);
+display(strcmp(results.experiment_metadata.parameters.task, 'BC'));
+if results.trial_values.monkey_final_bid > results.experiment_metadata.parameters.binary_choice.bundle_width/(100*2) &&...
         strcmp(results.experiment_metadata.parameters.task, 'BC')
     results.experiment_summary.right = results.experiment_summary.right + 1;
-elseif results.last_trial.trial_results.monkey_final_bid < (results.experiment_metadata.parameters.binary_choice.bundle_width/100 - 0.5) * 2 &&...
+elseif results.trial_values.trial_results.monkey_final_bid < -results.experiment_metadata.parameters.binary_choice.bundle_width/100 &&...
         strcmp(results.experiment_metadata.parameters.task, 'BC')
     results.experiment_summary.left = results.experiment_summary.left + 1;
 end
+display(results.experiment_summary.right);
 
 %update the amounts of liquid given out if a winning trial
 if ~isnan(results.last_trial.trial_results.win)

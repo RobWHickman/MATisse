@@ -182,7 +182,9 @@ if get(hObject,'Value')
         set(handles.text34, 'String', handles.results.experiment_summary.not_rewarded);
         set(handles.text37, 'String', handles.results.experiment_summary.total_budget);
         set(handles.text38, 'String', handles.results.experiment_summary.total_reward);
-        
+        set(handles.text57, 'String', handles.results.experiment_summary.left);
+        set(handles.text58, 'String', handles.results.experiment_summary.right);
+       
         %update the GUI with these fields
         drawnow;
     end
