@@ -4,9 +4,12 @@ function results = assign_error_results(parameters, results)
 results.trial_results.win = NaN;
 results.trial_results.remaining_budget = NaN;
 results.trial_results.reward = NaN;
-%only use computer bids in auctions
+%only use computer bids in auctions/ bundle info for BC
 if strcmp(parameters.task, 'BDM')
-results.trial_results.computer_bid = NaN;
+    results.trial_results.computer_bid = NaN;
+elseif strcmp(parameters.task, 'BC')
+    results.trial_results.bundle_position = parameters.single_trial_values.bundle_half;
+    results.trial_results.bundle_water = parameters.single_trial_values.bundle_water;
 end
 results.trial_results.offer_value = parameters.single_trial_values.offer_value;
 results.trial_results.budget_liquid = NaN;

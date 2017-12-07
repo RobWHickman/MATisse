@@ -11,6 +11,17 @@ results.trial_values.bidding_vector = {[results.trial_values.bidding_vector]};
 
 results.trial_values.task_checks = {[results.trial_values.task_checks]};
 
+%order the struct
+results.trial_results = orderfields(results.trial_results);
+
+%edit the struct
+%go back and clean this up in assignment at some point
+results.trial_results = rmfield(results.trial_results, 'monkey_bid');
+if strcmp(results.experiment_metadata.parameters.task, 'BC')
+    results.trial_results = rmfield(results.trial_results, 'remaining_budget');
+    results.trial_results = rmfield(results.trial_results, 'reward');
+end
+
 %add the trial results (assign results) to the full experimental data
 if ~isempty(results.full_output_table)
     results.full_output_table.trial_values = vertcat(results.full_output_table.trial_values, struct2table(results.trial_values));

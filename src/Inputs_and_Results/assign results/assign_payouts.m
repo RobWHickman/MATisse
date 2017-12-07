@@ -27,6 +27,9 @@ else
     results.trial_results.reward = 0;
 end
 
+%also chuck in the bundle info as a field to be analysed later
+results.trial_results.bundle_position = parameters.single_trial_values.bundle_half;
+results.trial_results.bundle_water = parameters.single_trial_values.bundle_water;
 results.trial_results.offer_value = parameters.single_trial_values.offer_value;
 end
 
