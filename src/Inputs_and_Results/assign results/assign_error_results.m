@@ -34,5 +34,3 @@ elseif ~results.trial_values.task_checks.Status('targeted_offer') && results.tri
     results.trial_results.task_failure = {'non_targeted_bidding'};
     
 end
-
-display(results.trial_results.task_failure);
