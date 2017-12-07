@@ -421,7 +421,7 @@ guidata(hObject, handles);
 
 %display_button
 function pushbutton10_Callback(hObject, eventdata, handles)
-display(handles.results.full_output_table.trial_results);
+display(handles.hardware.inputs.settings.joystick_velocity);
 
 %set the direction of bidding
 function X_axis_bidding_Callback(hObject, eventdata, handles)
@@ -641,4 +641,17 @@ guidata(hObject, handles);
 function Binary_choice_CreateFcn(hObject, eventdata, handles)
 handles.parameters.task = 'BDM';
 guidata(hObject, handles);
+
+
+
+% % --- Executes on slider movement.
+% function Added_bias_Callback(hObject, eventdata, handles)
+% clear handles.hardware.inputs.settings.added_bias;
+% slider_state = get(hObject,'Value');
+% handles.hardware.inputs.settings.added_bias = slider_state;
+% guidata(hObject, handles);
+% %set default to 0.5
+% function Added_bias_CreateFcn(hObject, eventdata, handles)
+% handles.hardware.inputs.settings.added_bias = 0.5;
+% guidata(hObject, handles);
 

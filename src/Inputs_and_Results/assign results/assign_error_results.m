@@ -18,19 +18,21 @@ results.trial_results.reward_liquid = NaN;
 results.trial_results.monkey_final_bid = NaN;
 
 %set the failure point as the point at which the monkey failed the task
-if ~results.trial_values.task_checks.Status('fixation')
+if ~results.trial_values.task_checks.Status('fixation') && results.trial_values.task_checks.Requirement('fixation')
     results.trial_results.task_failure = {'no_fixation'};
 
-elseif ~results.trial_values.task_checks.Status('hold_joystick')
+elseif ~results.trial_values.task_checks.Status('hold_joystick') && results.trial_values.task_checks.Requirement('hold_joystick')
     results.trial_results.task_failure = {'joystick_not_stationary'};
 
-elseif results.trial_values.task_checks.Status('no_bid_activity')
+elseif results.trial_values.task_checks.Status('no_bid_activity') && results.trial_values.task_checks.Requirement('no_bid_activity')
     results.trial_results.task_failure = {'no_bid'};
 
-elseif ~results.trial_values.task_checks.Status('stabilised_offer')
+elseif ~results.trial_values.task_checks.Status('stabilised_offer') && results.trial_values.task_checks.Requirement('stabilised_offer')
     results.trial_results.task_failure = {'unfinished_bidding'};
 
-elseif ~results.trial_values.task_checks.Status('targeted_offer')
+elseif ~results.trial_values.task_checks.Status('targeted_offer') && results.trial_values.task_checks.Requirement('targeted_offer')
     results.trial_results.task_failure = {'non_targeted_bidding'};
     
 end
+
+display(results.trial_results.task_failure);

@@ -22,6 +22,13 @@ else
     end
 end
 
+%take how far the joystick is moved forward into account (or dont)
+if hardware.inputs.settings.joystick_velocity
+    joystick_impetus = (joystick_movement + joystick_bias) / 0.6; %0.6 is pretty much the max you can move it in any direction
+else
+    joystick_impetus = 1;
+end
+
 %set the limits for the bidding
 %also set the bid multiplier (this is 1 for y axis (BDM) and -1 for the x
 %axis (BC) because of how PTB sets up the screen coords
@@ -63,7 +70,7 @@ if (~results.trial_values.task_checks.Status('no_bid_activity') | ~results.trial
                 %reset the count
                 results.trial_values.stationary_frame_count = 0;
                 %adjust bar adjustment
-                frame_adjust = -hardware.inputs.settings.joystick_scalar;
+                frame_adjust = -hardware.inputs.settings.joystick_scalar * joystick_impetus;
                 %if we overshoot bring the y adjust back to max it can be
                 if initial_bid_position + results.trial_results.adjust + frame_adjust < limits(1)
                     frame_adjust = limits(1) - (initial_bid_position + results.trial_results.adjust);
@@ -71,7 +78,7 @@ if (~results.trial_values.task_checks.Status('no_bid_activity') | ~results.trial
             elseif keyCode(hardware.inputs.keyboard.less_key) &&...
                     initial_bid_position + results.trial_results.adjust < limits(2)
                 results.trial_values.stationary_frame_count = 0;
-                frame_adjust = hardware.inputs.settings.joystick_scalar;
+                frame_adjust = hardware.inputs.settings.joystick_scalar * joystick_impetus;
                 if initial_bid_position + results.trial_results.adjust + frame_adjust > limits(2)
                     frame_adjust = limits(2) - (initial_bid_position + results.trial_results.adjust);
                 end
@@ -99,7 +106,6 @@ if (~results.trial_values.task_checks.Status('no_bid_activity') | ~results.trial
             end
             output_frame_adjust = frame_adjust;
         else
-            display((joystick_movement + joystick_bias) * axis_multiplier);
             if (joystick_movement + joystick_bias) * axis_multiplier < 0
                 %reset the count
                 results.trial_values.stationary_frame_count = 0;
