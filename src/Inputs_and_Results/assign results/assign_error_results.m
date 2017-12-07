@@ -9,7 +9,7 @@ if strcmp(parameters.task, 'BDM')
     results.trial_results.computer_bid = NaN;
 elseif strcmp(parameters.task, 'BC')
     results.trial_results.bundle_position = parameters.single_trial_values.bundle_half;
-    results.trial_results.bundle_water = parameters.single_trial_values.bundle_water;
+    results.trial_results.bundle_water_perc = parameters.single_trial_values.bundle_water;
 end
 results.trial_results.offer_value = parameters.single_trial_values.offer_value;
 results.trial_results.budget_liquid = NaN;

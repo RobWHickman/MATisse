@@ -643,15 +643,15 @@ handles.parameters.task = 'BDM';
 guidata(hObject, handles);
 
 
-
-% % --- Executes on slider movement.
-% function Added_bias_Callback(hObject, eventdata, handles)
-% clear handles.hardware.inputs.settings.added_bias;
-% slider_state = get(hObject,'Value');
-% handles.hardware.inputs.settings.added_bias = slider_state;
-% guidata(hObject, handles);
-% %set default to 0.5
-% function Added_bias_CreateFcn(hObject, eventdata, handles)
-% handles.hardware.inputs.settings.added_bias = 0.5;
-% guidata(hObject, handles);
+%adds a bias to the joystick
+%makes either side move between 0-10x faster for the same effort
+function Added_bias_Callback(hObject, eventdata, handles)
+clear handles.hardware.inputs.settings.added_bias;
+slider_state = get(hObject,'Value');
+handles.hardware.inputs.settings.added_bias = sqrt(exp(1)^(slider_state-0.5)^4.605);
+guidata(hObject, handles);
+%set default to 1x (i.e. both sides are equal)
+function Added_bias_CreateFcn(hObject, eventdata, handles)
+handles.hardware.inputs.settings.added_bias = 1;
+guidata(hObject, handles);
 

@@ -13,12 +13,10 @@ if hardware.testmode
     [keyIsDown, secs, keyCode] = KbCheck;
 else
     joystick_movement = peekdata(hardware.inputs.joystick, 4);
-    %the multiplier to make moving the joystick harder/easier in a specific
-    %direction
-    joystick_added_bias = hardware.inputs.settings.added_bias;
     if hardware.inputs.settings.direction == 'y'
         joystick_movement = mean(joystick_movement(:,2));
         joystick_bias = str2num(hardware.inputs.settings.joystick_y_bias);
+        joystick_added_bias = 
     elseif hardware.inputs.settings.direction == 'x'
         joystick_movement = mean(joystick_movement(:,1));
         joystick_bias = str2num(hardware.inputs.settings.joystick_x_bias);
@@ -114,7 +112,7 @@ if (~results.trial_values.task_checks.Status('no_bid_activity') | ~results.trial
                 %reset the count
                 results.trial_values.stationary_frame_count = 0;
                 %adjust bar adjustment
-                frame_adjust = (-hardware.inputs.settings.joystick_scalar * joystick_impetus) / joystick_added_bias; %THIS LINE
+                frame_adjust = -hardware.inputs.settings.joystick_scalar * joystick_impetus; %THIS LINE
                 %if we overshoot bring the y adjust back to max it can be
                 if initial_bid_position + results.trial_results.adjust + frame_adjust < limits(1)
                     frame_adjust = limits(1) - (initial_bid_position + results.trial_results.adjust);
@@ -122,7 +120,7 @@ if (~results.trial_values.task_checks.Status('no_bid_activity') | ~results.trial
                 output_frame_adjust = frame_adjust;
             else %TOWARDS THE RIGHT
                 results.trial_values.stationary_frame_count = 0;
-                frame_adjust = (hardware.inputs.settings.joystick_scalar * joystick_impetus) * joystick_added_bias; %scalar = speed %THIS LINE
+                frame_adjust = hardware.inputs.settings.joystick_scalar * joystick_impetus; %scalar = speed %THIS LINE
                 if initial_bid_position + results.trial_results.adjust + frame_adjust > limits(2)
                     frame_adjust = limits(2) - (initial_bid_position + results.trial_results.adjust);
                 end
