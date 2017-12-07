@@ -1,0 +1,20 @@
+Error using assign_outputs (line 28)
+All tables in the bracketed expression must have the same number of variables.
+
+Error in Run (line 179)
+results = assign_outputs(results);
+
+Error in MATisse>Run_button_Callback (line 163)
+        [handles.results, handles.parameters] = Run(handles.parameters, handles.stimuli, handles.hardware, handles.results,
+        handles.task_window);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in MATisse (line 26)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in @(hObject,eventdata)MATisse('Run_button_Callback',hObject,eventdata,guidata(hObject))
+
+ 
+Error while evaluating UIControl Callback
