@@ -421,7 +421,7 @@ guidata(hObject, handles);
 
 %display_button
 function pushbutton10_Callback(hObject, eventdata, handles)
-display(handles.hardware.inputs.settings.joystick_velocity);
+display(handles.results.full_output_table.trial_results);
 
 %set the direction of bidding
 function X_axis_bidding_Callback(hObject, eventdata, handles)

@@ -24,7 +24,7 @@ if ~results.trial_values.task_checks.Status('fixation') && results.trial_values.
 elseif ~results.trial_values.task_checks.Status('hold_joystick') && results.trial_values.task_checks.Requirement('hold_joystick')
     results.trial_results.task_failure = {'joystick_not_stationary'};
 
-elseif results.trial_values.task_checks.Status('no_bid_activity') && results.trial_values.task_checks.Requirement('no_bid_activity')
+elseif results.trial_values.task_checks.Status('no_bid_activity')
     results.trial_results.task_failure = {'no_bid'};
 
 elseif ~results.trial_values.task_checks.Status('stabilised_offer') && results.trial_values.task_checks.Requirement('stabilised_offer')
@@ -33,4 +33,7 @@ elseif ~results.trial_values.task_checks.Status('stabilised_offer') && results.t
 elseif ~results.trial_values.task_checks.Status('targeted_offer') && results.trial_values.task_checks.Requirement('targeted_offer')
     results.trial_results.task_failure = {'non_targeted_bidding'};
     
-end
+else
+    results.trial_results.task_failure = {'undefined error - probably missed both choices'};
+    %bidding error - fix this
+end    

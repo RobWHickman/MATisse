@@ -107,18 +107,19 @@ if (~results.trial_values.task_checks.Status('no_bid_activity') | ~results.trial
             output_frame_adjust = frame_adjust;
         else
             if (joystick_movement + joystick_bias) * axis_multiplier < 0
+                %TOWARDS THE LEFT
                 %reset the count
                 results.trial_values.stationary_frame_count = 0;
                 %adjust bar adjustment
-                frame_adjust = -hardware.inputs.settings.joystick_scalar;
+                frame_adjust = -hardware.inputs.settings.joystick_scalar-3; %THIS LINE
                 %if we overshoot bring the y adjust back to max it can be
                 if initial_bid_position + results.trial_results.adjust + frame_adjust < limits(1)
                     frame_adjust = limits(1) - (initial_bid_position + results.trial_results.adjust);
                 end
                 output_frame_adjust = frame_adjust;
-            else 
+            else %TOWARDS THE RIGHT
                 results.trial_values.stationary_frame_count = 0;
-                frame_adjust = hardware.inputs.settings.joystick_scalar;
+                frame_adjust = hardware.inputs.settings.joystick_scalar-3; %scalar = speed %THIS LINE
                 if initial_bid_position + results.trial_results.adjust + frame_adjust > limits(2)
                     frame_adjust = limits(2) - (initial_bid_position + results.trial_results.adjust);
                 end
