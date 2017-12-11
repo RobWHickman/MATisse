@@ -1,0 +1,65 @@
+adjust,budget_liquid,bundle_position,bundle_water_perc,monkey_final_bid,offer_value,reward_liquid,task_failure,win
+0,NaN,0,0.1,NaN,3,NaN,no_bid,NaN
+14.869328399804,NaN,1,1,NaN,1,NaN,undefined error - probably missed both choices,NaN
+0,NaN,0,0.8,NaN,2,NaN,no_bid,NaN
+116.50794895573,NaN,1,1,NaN,2,NaN,unfinished_bidding,NaN
+5.81788254467413,NaN,0,0.2,NaN,1,NaN,undefined error - probably missed both choices,NaN
+17.7246261626791,NaN,0,0.9,NaN,3,NaN,undefined error - probably missed both choices,NaN
+103.547029768662,NaN,0,0.9,NaN,1,NaN,unfinished_bidding,NaN
+88.2667761791879,NaN,1,0.9,NaN,2,NaN,unfinished_bidding,NaN
+0,NaN,1,0.5,NaN,3,NaN,no_bid,NaN
+0,NaN,0,0.1,NaN,2,NaN,no_bid,NaN
+0,NaN,1,0.8,NaN,2,NaN,joystick_not_stationary,NaN
+0,NaN,1,0.8,NaN,2,NaN,no_bid,NaN
+0,NaN,0,0.1,NaN,2,NaN,joystick_not_stationary,NaN
+0,NaN,1,0.4,NaN,2,NaN,joystick_not_stationary,NaN
+0,NaN,1,0.5,NaN,1,NaN,no_bid,NaN
+175.537990236107,1.2,1,0.4,0.182852073162611,3,0,NaN,1
+0,NaN,0,0.8,NaN,1,NaN,no_bid,NaN
+0,NaN,0,0.5,NaN,2,NaN,no_bid,NaN
+0,NaN,0,0.8,NaN,1,NaN,no_bid,NaN
+11.9888854760607,NaN,1,0.8,NaN,2,NaN,unfinished_bidding,NaN
+0,NaN,0,0.1,NaN,3,NaN,joystick_not_stationary,NaN
+0,NaN,1,0.3,NaN,2,NaN,no_bid,NaN
+0,NaN,0,0.1,NaN,1,NaN,joystick_not_stationary,NaN
+0,NaN,0,0.8,NaN,1,NaN,no_bid,NaN
+0,NaN,1,0.7,NaN,2,NaN,joystick_not_stationary,NaN
+0,NaN,1,0.5,NaN,3,NaN,no_bid,NaN
+0,NaN,1,0.8,NaN,2,NaN,joystick_not_stationary,NaN
+1.22564374888894,NaN,0,1,NaN,2,NaN,undefined error - probably missed both choices,NaN
+22.963374482973,NaN,1,0.2,NaN,2,NaN,unfinished_bidding,NaN
+-112.963077408111,NaN,0,0.6,NaN,2,NaN,unfinished_bidding,NaN
+77.6076506407388,NaN,0,0.2,NaN,3,NaN,undefined error - probably missed both choices,NaN
+0,NaN,1,0.8,NaN,3,NaN,no_bid,NaN
+0,NaN,1,0.7,NaN,2,NaN,joystick_not_stationary,NaN
+247.833004213758,1.2,1,0.6,0.258159379389331,3,0,NaN,1
+11.4060966391839,NaN,0,0.6,NaN,2,NaN,undefined error - probably missed both choices,NaN
+3.1997945745905,NaN,0,0.3,NaN,1,NaN,undefined error - probably missed both choices,NaN
+190.54094970892,1.2,1,0.5,0.198480155946792,1,0,NaN,1
+-15.9115154429146,NaN,1,0.7,NaN,3,NaN,undefined error - probably missed both choices,NaN
+265.332595554196,0.84,0,0.3,0.276388120368954,1,0.15,NaN,1
+0,NaN,0,0.5,NaN,3,NaN,no_bid,NaN
+221.52581699625,NaN,0,0.6,NaN,1,NaN,unfinished_bidding,NaN
+221.146238022077,1.2,1,0.5,0.23036066460633,3,0,NaN,1
+365.019696059112,0.24,0,0.8,0.380228850061575,3,0.75,NaN,1
+337.824318170161,1.2,1,0.7,0.351900331427251,1,0,NaN,1
+21.0824520908293,NaN,1,0.3,NaN,1,NaN,undefined error - probably missed both choices,NaN
+960,NaN,1,0.9,NaN,1,NaN,unfinished_bidding,NaN
+555.371010959343,0.36,0,0.7,0.578511469749316,1,0.15,NaN,1
+960,NaN,0,0.5,NaN,1,NaN,unfinished_bidding,NaN
+473.20134724888,NaN,1,0.5,NaN,3,NaN,unfinished_bidding,NaN
+0,NaN,1,1,NaN,1,NaN,no_bid,NaN
+714.771200571719,NaN,1,0.7,NaN,1,NaN,unfinished_bidding,NaN
+0,NaN,0,0.5,NaN,3,NaN,joystick_not_stationary,NaN
+0,NaN,0,0.2,NaN,3,NaN,joystick_not_stationary,NaN
+115.454291750705,NaN,0,0.1,NaN,2,NaN,unfinished_bidding,NaN
+0,NaN,0,0.9,NaN,1,NaN,no_bid,NaN
+960,NaN,0,0.5,NaN,1,NaN,unfinished_bidding,NaN
+172.439816952531,NaN,1,0.1,NaN,1,NaN,unfinished_bidding,NaN
+207.065270222952,NaN,0,1,NaN,1,NaN,unfinished_bidding,NaN
+0,NaN,1,0.5,NaN,2,NaN,joystick_not_stationary,NaN
+0,NaN,1,1,NaN,2,NaN,joystick_not_stationary,NaN
+0,NaN,1,0.8,NaN,1,NaN,joystick_not_stationary,NaN
+0,NaN,1,0.8,NaN,2,NaN,joystick_not_stationary,NaN
+2.24327584307181,NaN,0,1,NaN,1,NaN,undefined error - probably missed both choices,NaN
+0,NaN,1,0.7,NaN,1,NaN,joystick_not_stationary,NaN
