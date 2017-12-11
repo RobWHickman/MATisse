@@ -648,8 +648,8 @@ guidata(hObject, handles);
 function Added_bias_Callback(hObject, eventdata, handles)
 clear handles.hardware.inputs.settings.added_bias;
 slider_state = get(hObject,'Value');
-handles.hardware.inputs.settings.added_bias = sqrt(exp(1)^(slider_state-0.5)^7);
-display(strcat('right side now ', num2str(exp(1)^(slider_state-0.5)^7), ' times as strong'));
+handles.hardware.inputs.settings.added_bias = sqrt(exp(1)^(slider_state-0.5)^4.605);
+display(strcat('right side now ', num2str(exp(1)^(slider_state-0.5)^4.605), ' times as strong'));
 guidata(hObject, handles);
 %set default to 1x (i.e. both sides are equal)
 function Added_bias_CreateFcn(hObject, eventdata, handles)
