@@ -46,7 +46,9 @@ data[bundle_position == 1, bundle_distance := monkey_final_bid + 1][bundle_posit
   .[bundle_distance < 1, fractal_bid := "Y"] %>%
   .[bundle_distance > 1, fractal_bid := "N"] %>%
   .[, offer_ml := paste0(((offer_value*2)-1) * 0.15, "ml")]
+```
 
+```{r, message = FALSE, warning = FALSE, include = FALSE}
 #plot the left vs right choices of the monkey
 p1 <- ggplot(data = data, aes(x = monkey_final_bid, y = bundle_position)) +
   geom_point(alpha = 0.4, aes(colour = trial, size = offer_value, shape = fractal_bid)) +
