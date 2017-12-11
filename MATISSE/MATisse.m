@@ -159,7 +159,7 @@ if get(hObject,'Value')
     end
     display(handles.parameters.total_trials);
     while get(hObject,'Value') && handles.parameters.total_trials < 1000
-        %set(handles.Run_button,'string','running...','enable','on','BackgroundColor','[1, 0, 1]');
+        set(handles.Run_button,'string','running...','enable','on','BackgroundColor','[1, 0, 1]');
         [handles.results, handles.parameters] = Run(handles.parameters, handles.stimuli, handles.hardware, handles.results, handles.task_window);
         if handles.parameters.total_trials < 1
             handles.results = assign_experiment_metadata(handles.parameters, handles.stimuli, handles.hardware, handles.results);
