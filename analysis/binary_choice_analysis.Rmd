@@ -88,7 +88,12 @@ p3 <- task_data %>%
   theme(axis.title.y = element_text(size = 14)) +
   facet_wrap(~ var, scales = "free")
 
+```
 
+```{r}
+#generate a model of likelihood to bid for th efractal dependent on it's position, value and associated water
+simple_model <- glm(data = task_data, fractal_bid~bundle_position, family = "binomial")
+model <- glm(data = task_data, fractal_bid~bundle_position + bundle_water_perc + offer_value + trial, family = "binomial")
 ```
 
 
