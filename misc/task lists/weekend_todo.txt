@@ -1,4 +1,0 @@
-- move tap_open_time and etc. to assign_payouts
-- offer targeting
-- grow bar after offer (and maybe bigger bar overall)
-- move testmode to hardware.testmode

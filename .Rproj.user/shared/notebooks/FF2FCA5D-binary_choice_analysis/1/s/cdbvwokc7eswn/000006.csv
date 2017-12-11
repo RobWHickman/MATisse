@@ -1,0 +1,3 @@
+"0","#generate a model of likelihood to bid for th efractal dependent on it's position, value and associated water"
+"0","simple_model <- glm(data = task_data, fractal_bid~bundle_position, family = ""binomial"")"
+"0","model <- glm(data = task_data, fractal_bid~bundle_position + bundle_water_perc + offer_value + trial, family = ""binomial"")"
