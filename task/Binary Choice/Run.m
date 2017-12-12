@@ -86,11 +86,11 @@ end
 
 %only progress if there was bidding activity in the first x seconds
 display(results.trial_results.monkey_bid);
-if (~results.trial_values.task_checks.Status('no_bid_activity') | ~results.trial_values.task_checks.Requirement('no_bid_activity')) && (abs(results.trial_results.monkey_bid) > (0.5 - parameters.binary_choice.bundle_width/100)*2)
+if (~results.trial_values.task_checks.Status('no_bid_activity') || ~results.trial_values.task_checks.Requirement('no_bid_activity')) && (abs(results.trial_results.monkey_bid) > (0.5 - parameters.binary_choice.bundle_width/100)*2)
     
 %only progress if a bid has been finished (i.e. a sufficient pause at the
 %end)
-if results.trial_values.task_checks.Status('stabilised_offer') | ~results.trial_values.task_checks.Requirement('stabilised_offer')
+if results.trial_values.task_checks.Status('stabilised_offer') || ~results.trial_values.task_checks.Requirement('stabilised_offer')
 
 %if pass_all_tests
 % EPOCH 6 - show result
