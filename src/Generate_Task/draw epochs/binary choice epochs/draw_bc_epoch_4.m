@@ -23,5 +23,3 @@ bidding_circle_colour = [hardware.outputs.screen_info.white/2, 0 hardware.output
 
 %draw the bidding circle
 Screen('FillOval', task_window, bidding_circle_colour, centered_bidding_circle, maxDiameter);
-
-Screen('DrawingFinished', task_window);

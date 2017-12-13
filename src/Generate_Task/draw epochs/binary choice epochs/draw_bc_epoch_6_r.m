@@ -15,5 +15,3 @@ Screen('DrawTexture', task_window, stimuli.trial.reverse_bidspace_texture, [], s
 
 %draw a rectangle over the left half of the screen
 Screen('FillRect', task_window, [hardware.outputs.screen_info.white/2], [0, 0, hardware.outputs.screen_info.width/2, hardware.outputs.screen_info.height]);
-
-Screen('DrawingFinished', task_window);
