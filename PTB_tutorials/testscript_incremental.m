@@ -15,7 +15,7 @@ rand('seed', sum(100 * clock));
 
 % Get the screen numbers. This gives us a number for each of the screens
 % attached to our computer. For help see: Screen Screens?
-screens = Screen('Screens');
+screens = Screen('Screens'); 
 
 % Draw we select the maximum of these numbers. So in a situation where we
 % have two screens attached to our monitor we will draw to the external

@@ -25,5 +25,3 @@ end
 Screen('FillRect', task_window, [0, 0, 0],... %black before bidding starts
     [stimuli.bidspace.bidspace_info.position(1) - hardware.outputs.screen_info.percent_y * 5, vertical_position - stimuli.bidspace.bidspace_info.bidding_thickness,...
     stimuli.bidspace.bidspace_info.position(3) +  hardware.outputs.screen_info.percent_y * 5, vertical_position + stimuli.bidspace.bidspace_info.bidding_thickness]);
-
-Screen('DrawingFinished', task_window);

@@ -5,4 +5,3 @@ if isfield(parameters, 'binary_choice')
         Screen('DrawTexture', task_window, stimuli.trial.trial_fractal_texture, [], stimuli.fractals.fractal_info.fractal_position, 0);
     end
 end
-Screen('DrawingFinished', task_window);
