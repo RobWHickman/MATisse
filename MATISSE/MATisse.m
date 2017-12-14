@@ -242,6 +242,7 @@ if button_state == get(hObject,'Max')
 	set(handles.Mode_button,'string','Test ON','enable','on','BackgroundColor','green');
     handles.hardware.testmode = 1;
     %display(handles.Mode_button.Value);
+    set(handles.Centered_check,'value',0);
 elseif button_state == get(hObject,'Min')
 	set(handles.Mode_button,'string','Test OFF','enable','on','BackgroundColor','red');
     handles.hardware.testmode = 0;
@@ -608,7 +609,7 @@ guidata(hObject, handles);
 
 %the number of divisions of water budget in the bundle
 function Budget_divisions_Callback(hObject, eventdata, handles)
-clear handles.parameters.binary_choice.experimenter;
+clear handles.parameters.binary_choice.divisions;
 handles.parameters.binary_choice.divisions = str2double(get(handles.Budget_divisions,'String'));
 guidata(hObject, handles);
 function Budget_divisions_CreateFcn(hObject, eventdata, handles)
@@ -622,7 +623,13 @@ guidata(hObject, handles);
 function Show_bundles_Callback(hObject, eventdata, handles)
 
 function Remove_fractals_Callback(hObject, eventdata, handles)
-
+clear handles.parameters.binary_choice.no_fractals;
+showing_fractals = get(handles.Static_targetbox, 'Value');
+handles.parameters.binary_choice.no_fractals = showing_fractals;
+guidata(hObject, handles);
+function Remove_fractals_CreateFcn(hObject, eventdata, handles)
+handles.parameters.binary_choice.no_fractals = 0;
+guidata(hObject, handles);
 
 function Binary_choice_Callback(hObject, eventdata, handles)
 clear handles.parameters.task
@@ -660,5 +667,7 @@ clear handles.hardware.inputs.settings.added_bias;
 handles.hardware.inputs.settings.added_bias = 1;
 display('both directions set to equal strength');
 set(handles.Added_bias,'Value', 0.5);
+
+
 
 
