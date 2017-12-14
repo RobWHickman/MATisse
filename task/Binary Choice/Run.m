@@ -10,7 +10,7 @@ end
 %% the different epochs in the task if all checks are met %%
 for frame = 1:(parameters.timings.Frames('epoch8') + parameters.timings.Delay('epoch8'))
     %draw the seventh epoch
-    if frame == 1
+    if frame == 1 | frame == (parameters.timings.Frames('epoch8') + parameters.timings.Delay('epoch8'))
         draw_epoch_8(hardware, task_window);
     end
     %get trial values for the offer, computer bid and random monkey bid
@@ -24,22 +24,26 @@ for frame = 1:(parameters.timings.Frames('epoch8') + parameters.timings.Delay('e
     %generate the reversed bidspace budget for if the monkey wins
     stimuli = generate_reverse_bidspace(parameters, stimuli, task_window);
  
-    Screen('Flip', task_window, [], 1);
+    if frame == (parameters.timings.Frames('epoch8') + parameters.timings.Delay('epoch8'))
+        Screen('Flip', task_window, [], 0);
+    else
+        Screen('Flip', task_window, [], 1);
+    end
 end
 
 % EPOCH 1 - fixation cross
 for frame = 1:(parameters.timings.Frames('epoch1') + parameters.timings.Delay('epoch1'))
     %draw the first epoch
-    if frame == 1
+    if frame == 1 | frame == (parameters.timings.Frames('epoch1') + parameters.timings.Delay('epoch1'))
         draw_epoch_1(stimuli, hardware, task_window);
     end
     %check if the monkey is fixating on the cross
     [parameters, results] = check_fixation(parameters, stimuli, results, hardware, task_window);
-    %if frame == (parameters.timings.Frames('epoch1') + parameters.timings.Delay('epoch1'))
-    %    Screen('Flip', task_window, [], 0);
-    %else
+    if frame == (parameters.timings.Frames('epoch1') + parameters.timings.Delay('epoch1'))
+        Screen('Flip', task_window, [], 0);
+    else
         Screen('Flip', task_window, [], 1);
-    %end
+    end
 end
 
 %continue with task if monkey fixates
@@ -55,30 +59,38 @@ end
 %if pass_all_tests
 % EPOCH 2 - display fractal
 for frame = 1:(parameters.timings.Frames('epoch2') + parameters.timings.Delay('epoch2'))
-    if frame == 1
+    if frame == 1 | frame == (parameters.timings.Frames('epoch2') + parameters.timings.Delay('epoch2'))
         draw_epoch_2(stimuli, task_window);
     end
-    %if frame == (parameters.timings.Frames('epoch2') + parameters.timings.Delay('epoch2'))
-    %    Screen('Flip', task_window, [], 0);
-    %else
+    if frame == (parameters.timings.Frames('epoch2') + parameters.timings.Delay('epoch2'))
+        Screen('Flip', task_window, [], 0);
+    else
         Screen('Flip', task_window, [], 1);
-    %end
+    end
 end
 
 % EPOCH 3 - display bidspaces
 for frame = 1:(parameters.timings.Frames('epoch3') + parameters.timings.Delay('epoch3'))
-    if frame == 1
+    if frame == 1 | frame == (parameters.timings.Frames('epoch3') + parameters.timings.Delay('epoch3'))
         draw_bc_epoch_3(stimuli, hardware, task_window);
     end
-    Screen('Flip', task_window, [], 1);
+    if frame == (parameters.timings.Frames('epoch3') + parameters.timings.Delay('epoch3'))
+        Screen('Flip', task_window, [], 0);
+    else
+        Screen('Flip', task_window, [], 1);
+    end
 end
 
 % EPOCH 4 - show initial bid
 for frame = 1:(parameters.timings.Frames('epoch4') + parameters.timings.Delay('epoch4'))
-    if frame == 1
+    if frame == 1 | frame == (parameters.timings.Frames('epoch4') + parameters.timings.Delay('epoch4'))
         draw_bc_epoch_4(stimuli, hardware, task_window);
     end
-    Screen('Flip', task_window, [], 1);
+    if frame == (parameters.timings.Frames('epoch4') + parameters.timings.Delay('epoch4'))
+        Screen('Flip', task_window, [], 0);
+    else
+        Screen('Flip', task_window, [], 1);
+    end
 end
 
 % EPOCH 5 - monkey bidding
@@ -98,12 +110,12 @@ for frame = 1:(parameters.timings.Frames('epoch5') + parameters.timings.Delay('e
     if results.trial_values.task_checks.Requirement('targeted_offer') == 1
         results = check_targeted_offer(parameters, results, stimuli);
     end
-    Screen('Flip', task_window, [], 1);
+    Screen('Flip', task_window);
 end
 
 %only progress if there was bidding activity in the first x seconds
-display(results.trial_results.monkey_bid);
-if (~results.trial_values.task_checks.Status('no_bid_activity') | ~results.trial_values.task_checks.Requirement('no_bid_activity')) && (abs(results.trial_results.monkey_bid) > (0.5 - parameters.binary_choice.bundle_width/100)*2)
+if (~results.trial_values.task_checks.Status('no_bid_activity') | ~results.trial_values.task_checks.Requirement('no_bid_activity')) &&...
+        (abs(results.trial_results.monkey_bid) > (0.5 - parameters.binary_choice.bundle_width/100)*2)
     
 %only progress if a bid has been finished (i.e. a sufficient pause at the
 %end)
@@ -114,12 +126,12 @@ if results.trial_values.task_checks.Status('stabilised_offer') | ~results.trial_
 for frame = 1:(parameters.timings.Frames('epoch6') + parameters.timings.Delay('epoch6'))
     %draw the result of the auction depending if monkey wins or not
     if(results.trial_results.monkey_bid > (0.5 - parameters.binary_choice.bundle_width/100) *2) %use the gui values here
-        if frame == 1
+        if frame == 1 | frame == (parameters.timings.Frames('epoch6') + parameters.timings.Delay('epoch6'))
             draw_bc_epoch_6_r(stimuli, hardware, task_window);
         end
         results.trial_results.win = 1;
     elseif(results.trial_results.monkey_bid < (parameters.binary_choice.bundle_width/100 - 0.5)*2)
-        if frame == 1
+        if frame == 1 | frame == (parameters.timings.Frames('epoch6') + parameters.timings.Delay('epoch6'))
             draw_bc_epoch_6_l(stimuli, hardware, task_window);
         end
         results.trial_results.win = 1;
@@ -128,7 +140,11 @@ for frame = 1:(parameters.timings.Frames('epoch6') + parameters.timings.Delay('e
     %in the spare time assign the payouts for the next epoch
     results = assign_payouts(parameters, results);
 
-    Screen('Flip', task_window, [], 1);
+    if frame == (parameters.timings.Frames('epoch6') + parameters.timings.Delay('epoch6'))
+        Screen('Flip', task_window, [], 0);
+    else
+        Screen('Flip', task_window, [], 1);
+    end
 end
 
 % EPOCH 7 - payout
@@ -143,6 +159,7 @@ for frame = 1:(parameters.timings.Frames('epoch7') + parameters.timings.Delay('e
         end
     %on last frame payout the reward
     elseif frame == (parameters.timings.Frames('epoch7') + parameters.timings.Delay('epoch7'))
+        draw_epoch_7(hardware, task_window);
         if hardware.testmode
             results = sound_payout(hardware, results, 'reward');
         else
@@ -154,7 +171,11 @@ for frame = 1:(parameters.timings.Frames('epoch7') + parameters.timings.Delay('e
     results.trial_results.monkey_final_bid = results.trial_results.monkey_bid;
     results.trial_results.task_failure = {NaN};
     
-    Screen('Flip', task_window, [], 1);
+    if frame == (parameters.timings.Frames('epoch7') + parameters.timings.Delay('epoch7'))
+        Screen('Flip', task_window, [], 0);
+    else
+        Screen('Flip', task_window, [], 1);
+    end
 end
 
 %% FAIL EPOCHS %%
@@ -164,11 +185,15 @@ else
 display('FINIALISATION FAIL');
 sound_error_tone(hardware);
 for frame = 1:(sum(parameters.timings.Frames(6:8)) + sum(parameters.timings.Delay(6:8)) + (3 * hardware.outputs.screen_info.hz))
-    if frame == 1
+    if frame == 1 | frame == (sum(parameters.timings.Frames(6:8)) + sum(parameters.timings.Delay(6:8)) + (3 * hardware.outputs.screen_info.hz))
         draw_error_epoch(hardware, task_window)
     end
     results = assign_error_results(parameters, results);
-    Screen('Flip', task_window, [], 1);
+    if frame == (sum(parameters.timings.Frames(6:8)) + sum(parameters.timings.Delay(6:8)) + (3 * hardware.outputs.screen_info.hz))
+        Screen('Flip', task_window, [], 0);
+    else
+        Screen('Flip', task_window, [], 1);
+    end
 end
 end
 
@@ -177,11 +202,15 @@ else
 display('BIDDING FAIL');
 sound_error_tone(hardware);
 for frame = 1:(sum(parameters.timings.Frames(5:8)) + sum(parameters.timings.Delay(5:8)) + ((3 - parameters.settings.bid_timeout) * hardware.outputs.screen_info.hz))
-    if frame == 1
+    if frame == 1 | frame == (sum(parameters.timings.Frames(5:8)) + sum(parameters.timings.Delay(5:8)) + ((3 - parameters.settings.bid_timeout) * hardware.outputs.screen_info.hz))
         draw_error_epoch(hardware, task_window)
     end
     results = assign_error_results(parameters, results);
-    Screen('Flip', task_window, [], 1);
+    if frame == 1 | frame == (sum(parameters.timings.Frames(5:8)) + sum(parameters.timings.Delay(5:8)) + ((3 - parameters.settings.bid_timeout) * hardware.outputs.screen_info.hz))
+        Screen('Flip', task_window, [], 0);
+    else
+        Screen('Flip', task_window, [], 1);
+    end
 end
 end
 
@@ -190,11 +219,15 @@ else
 display('FIXATION FAIL');
 sound_error_tone(hardware);
 for frame = 1:(sum(parameters.timings.Frames(2:8)) + sum(parameters.timings.Delay(2:8)) + (3 * hardware.outputs.screen_info.hz))
-    if frame == 1
+    if frame == 1 | frame == (parameters.timings.Frames('epoch8') + parameters.timings.Delay('epoch8'))
         draw_error_epoch(hardware, task_window)
     end
     results = assign_error_results(parameters, results);
-    Screen('Flip', task_window, [], 1);
+    if frame == (sum(parameters.timings.Frames(2:8)) + sum(parameters.timings.Delay(2:8))  + (3 * hardware.outputs.screen_info.hz))
+        Screen('Flip', task_window, [], 0);
+    else
+        Screen('Flip', task_window, [], 1);
+    end
 end
 end
 
