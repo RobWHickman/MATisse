@@ -159,7 +159,7 @@ if get(hObject,'Value')
     end
     display(handles.parameters.total_trials);
     while get(hObject,'Value') && handles.parameters.total_trials < 1000
-        %set(handles.Run_button,'string','running...','enable','on','BackgroundColor','[1, 0, 1]');
+        set(handles.Run_button,'string','running...','enable','on','BackgroundColor','[1, 0, 1]');
         [handles.results, handles.parameters] = Run(handles.parameters, handles.stimuli, handles.hardware, handles.results, handles.task_window);
         if handles.parameters.total_trials < 1
             handles.results = assign_experiment_metadata(handles.parameters, handles.stimuli, handles.hardware, handles.results);
@@ -242,6 +242,7 @@ if button_state == get(hObject,'Max')
 	set(handles.Mode_button,'string','Test ON','enable','on','BackgroundColor','green');
     handles.hardware.testmode = 1;
     %display(handles.Mode_button.Value);
+    set(handles.Centered_check,'value',0);
 elseif button_state == get(hObject,'Min')
 	set(handles.Mode_button,'string','Test OFF','enable','on','BackgroundColor','red');
     handles.hardware.testmode = 0;
@@ -608,7 +609,7 @@ guidata(hObject, handles);
 
 %the number of divisions of water budget in the bundle
 function Budget_divisions_Callback(hObject, eventdata, handles)
-clear handles.parameters.binary_choice.experimenter;
+clear handles.parameters.binary_choice.divisions;
 handles.parameters.binary_choice.divisions = str2double(get(handles.Budget_divisions,'String'));
 guidata(hObject, handles);
 function Budget_divisions_CreateFcn(hObject, eventdata, handles)
@@ -622,7 +623,13 @@ guidata(hObject, handles);
 function Show_bundles_Callback(hObject, eventdata, handles)
 
 function Remove_fractals_Callback(hObject, eventdata, handles)
-
+clear handles.parameters.binary_choice.no_fractals;
+showing_fractals = get(handles.Static_targetbox, 'Value');
+handles.parameters.binary_choice.no_fractals = showing_fractals;
+guidata(hObject, handles);
+function Remove_fractals_CreateFcn(hObject, eventdata, handles)
+handles.parameters.binary_choice.no_fractals = 0;
+guidata(hObject, handles);
 
 function Binary_choice_Callback(hObject, eventdata, handles)
 clear handles.parameters.task
@@ -648,8 +655,8 @@ guidata(hObject, handles);
 function Added_bias_Callback(hObject, eventdata, handles)
 clear handles.hardware.inputs.settings.added_bias;
 slider_state = get(hObject,'Value');
-handles.hardware.inputs.settings.added_bias = sqrt(exp(1)^(slider_state-0.5)^7);
-display(strcat('right side now ', num2str(exp(1)^(slider_state-0.5)^7), ' times as strong'));
+handles.hardware.inputs.settings.added_bias = sqrt(exp(1)^(slider_state-0.5)^4.605);
+display(strcat('right side now ', num2str(exp(1)^(slider_state-0.5)^4.605), ' times as strong'));
 guidata(hObject, handles);
 %set default to 1x (i.e. both sides are equal)
 function Added_bias_CreateFcn(hObject, eventdata, handles)
@@ -660,5 +667,7 @@ clear handles.hardware.inputs.settings.added_bias;
 handles.hardware.inputs.settings.added_bias = 1;
 display('both directions set to equal strength');
 set(handles.Added_bias,'Value', 0.5);
+
+
 
 

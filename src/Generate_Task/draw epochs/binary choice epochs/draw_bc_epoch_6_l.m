@@ -1,7 +1,11 @@
-function [] = draw_bc_epoch_6_l(stimuli, hardware, task_window)
+function [] = draw_bc_epoch_6_l(stimuli, parameters, hardware, task_window)
 
 %draw the textures and the frame
-Screen('DrawTexture', task_window, stimuli.trial.trial_fractal_texture, [], stimuli.fractals.fractal_info.fractal_position, 0);
+if isfield(parameters, 'binary_choice')
+    if ~parameters.binary_choice.no_fractals
+        Screen('DrawTexture', task_window, stimuli.trial.trial_fractal_texture, [], stimuli.fractals.fractal_info.fractal_position, 0);
+    end
+end
 Screen('FrameRect', task_window, [hardware.outputs.screen_info.white], stimuli.bidspace.bidspace_bounding_box, stimuli.bidspace.bidspace_info.bounding_width);
 Screen('DrawTexture', task_window, stimuli.bidspace.bidspace_texture, [], stimuli.bidspace.bidspace_info.position, 0);
 
