@@ -1,6 +1,12 @@
 function [parameters, results] = set_initial_trial_values(parameters, stimuli, hardware, results)
 %get the offer value for the trial
-single_trial_values.offer_value = randi(stimuli.fractals.fractal_info.number);
+if isfield(parameters, 'binary_choice')
+    if ~parameters.binary_choice.no_fractals
+        single_trial_values.offer_value = randi(stimuli.fractals.fractal_info.number);
+    else
+        single_trial_values.offer_value = 0;
+    end
+end
 
 if strcmp(parameters.task, 'BDM')
     %generate a random bid to start at

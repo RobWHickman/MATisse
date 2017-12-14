@@ -17,7 +17,9 @@ for frame = 1:(parameters.timings.Frames('epoch8') + parameters.timings.Delay('e
     [parameters, results] = set_initial_trial_values(parameters, stimuli, hardware, results);
     
     %select the correct fractal for the trial and generate a texture
-    stimuli = select_fractal(parameters, stimuli, task_window);
+    if ~parameters.binary_choice.no_fractals
+        stimuli = select_fractal(parameters, stimuli, task_window);
+    end
 
     %generate the reversed bidspace budget for if the monkey wins
     stimuli = generate_reverse_bidspace(parameters, stimuli, task_window);
@@ -48,19 +50,19 @@ end
 %if pass_all_tests
 % EPOCH 2 - display fractal
 for frame = 1:(parameters.timings.Frames('epoch2') + parameters.timings.Delay('epoch2'))
-    draw_epoch_2(stimuli, task_window);
+    draw_epoch_2(stimuli, parameters, task_window);
     Screen('Flip', task_window);
 end
 
 % EPOCH 3 - display bidspaces
 for frame = 1:(parameters.timings.Frames('epoch3') + parameters.timings.Delay('epoch3'))
-    draw_bc_epoch_3(stimuli, hardware, task_window);
+    draw_bc_epoch_3(stimuli, parameters, hardware, task_window);
     Screen('Flip', task_window);
 end
 
 % EPOCH 4 - show initial bid
 for frame = 1:(parameters.timings.Frames('epoch4') + parameters.timings.Delay('epoch4'))
-    draw_bc_epoch_4(stimuli, hardware, task_window);
+    draw_bc_epoch_4(stimuli, parameters, hardware, task_window);
     Screen('Flip', task_window);
 end
 
@@ -68,7 +70,7 @@ end
 parameters.single_trial_values.starting_bid_value = 0;
 results.trial_results.monkey_bid = 0;
 for frame = 1:(parameters.timings.Frames('epoch5') + parameters.timings.Delay('epoch5'))
-    draw_bc_epoch_5(stimuli, hardware, results, task_window);
+    draw_bc_epoch_5(stimuli, parameters, hardware, results, task_window);
     [results, stimuli] = update_bid_position(hardware, results, parameters, stimuli, 'BC');
     
     %update the value of the bid
@@ -97,10 +99,10 @@ if results.trial_values.task_checks.Status('stabilised_offer') || ~results.trial
 for frame = 1:(parameters.timings.Frames('epoch6') + parameters.timings.Delay('epoch6'))
     %draw the result of the auction depending if monkey wins or not
     if(results.trial_results.monkey_bid > (0.5 - parameters.binary_choice.bundle_width/100) *2) %use the gui values here
-        draw_bc_epoch_6_r(stimuli, hardware, task_window);
+        draw_bc_epoch_6_r(stimuli, parameters, hardware, task_window);
         results.trial_results.win = 1;
     elseif(results.trial_results.monkey_bid < (parameters.binary_choice.bundle_width/100 - 0.5)*2)
-        draw_bc_epoch_6_l(stimuli, hardware, task_window);
+        draw_bc_epoch_6_l(stimuli, parameters, hardware, task_window);
         results.trial_results.win = 1;
     end
     
@@ -173,8 +175,8 @@ end
 
 %close textures
 %make this into a function
-Screen('Close', stimuli.trial.trial_fractal_texture)
-Screen('Close', stimuli.trial.reverse_bidspace_texture)
+%Screen('Close', stimuli.trial.trial_fractal_texture)
+%Screen('Close', stimuli.trial.reverse_bidspace_texture)
 
 %%Set the data
 results = assign_experiment_metadata(parameters, stimuli, hardware, results);
