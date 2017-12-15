@@ -116,8 +116,7 @@ for frame = 1:(parameters.timings.Frames('epoch5') + parameters.timings.Delay('e
 end
 
 %only progress if there was bidding activity in the first x seconds
-if (~results.trial_values.task_checks.Status('no_bid_activity') | ~results.trial_values.task_checks.Requirement('no_bid_activity')) &&...
-        (abs(results.trial_results.monkey_bid) > (0.5 - parameters.binary_choice.bundle_width/100)*2)
+if (~results.trial_values.task_checks.Status('no_bid_activity') || ~results.trial_values.task_checks.Requirement('no_bid_activity')) && (abs(results.trial_results.monkey_bid) > (0.5 - parameters.binary_choice.bundle_width/100)*2)
     
 %only progress if a bid has been finished (i.e. a sufficient pause at the
 %end)
