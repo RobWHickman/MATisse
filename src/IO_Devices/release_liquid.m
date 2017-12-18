@@ -7,7 +7,7 @@ function results = release_liquid(parameters, hardware, results, payout)
 %y = amount of water, x is the length of the tap opening
 %m = 1; %m is the gradient of the calibration curve
 %c = 0; %c is the addec onstant of the calibration curve
-simple_divider = 4.5; %want to calibrate this more carefully, but it should give accurate amounts of water
+simple_divider = 5.586; %want to calibrate this more carefully, but it should give accurate amounts of water
 
 %payout the budget tap (tap 1)
 if strcmp(payout, 'budget')
@@ -67,7 +67,7 @@ putvalue(hardware.outputs.reward_output, reset)
 
 %if calibrating, do this 99 more times
 if strcmp(payout, 'calibrate')
-for calibration_loop = 1:99
+for calibration_loop = 1:49
    %open the tap
     putvalue(hardware.outputs.reward_output, tap_open)
 
@@ -79,7 +79,7 @@ for calibration_loop = 1:99
     putvalue(hardware.outputs.reward_output, reset)
     
     %wait a little each loop
-    %WaitSecs(0.1); %not really necessary but good to check its looping
+    WaitSecs(0.05); %not really necessary but good to check its looping
     %properly
 end
 end
