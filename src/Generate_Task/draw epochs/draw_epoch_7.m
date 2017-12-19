@@ -4,3 +4,4 @@
 function [] = draw_epoch_7(hardware, task_window)
 
 Screen('FillRect', task_window, [hardware.outputs.screen_info.white/5, hardware.outputs.screen_info.white/5, hardware.outputs.screen_info.white/2]);
+Screen('DrawingFinished', task_window);

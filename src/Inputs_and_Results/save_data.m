@@ -16,12 +16,5 @@ compact_results = results.full_output_table.trial_results;
 %compact results is just the 'results'- if the monkey won, and by how much
 %etc.
 %full results contains all the information about the task and every trial
-
-%save as .mat
-%save(fullfile(save_info.output_folder, regexprep(char(strcat(string(datetime('now')), save_info.experimenter, '_', save_info.primate, 'COMPACT_RESULTS.mat')), ':', '')), 'compact_results');
+save(fullfile(save_info.output_folder, regexprep(char(strcat(string(datetime('now')), save_info.experimenter, '_', save_info.primate, 'COMPACT_RESULTS.mat')), ':', '')), 'compact_results');
 save(fullfile(save_info.output_folder, regexprep(char(strcat(string(datetime('now')), save_info.experimenter, '_', save_info.primate, 'FULL_RESULTS.mat')), ':', '')), 'results');
-
-%save as .xlsx
-writetable(compact_results, fullfile(save_info.output_folder, regexprep(char(strcat(string(datetime('now')), save_info.experimenter, '_', save_info.primate, 'COMPACT_RESULTS.csv')), ':', '')));
-%writetable(results, fullfile(save_info.output_folder, regexprep(char(strcat(string(datetime('now')), save_info.experimenter, '_', save_info.primate, 'FULL_RESULTS.csv')), ':', '')));
-

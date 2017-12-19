@@ -32,13 +32,6 @@ function MATisse_OpeningFcn(hObject, eventdata, handles, varargin)
 warning('off','daq:digitalio:adaptormismatch')
 warning('off','daq:analoginput:adaptormismatch')
 
-%set the background picture
-%commented for now as is super messy
-% axes(handles.background)
-% matisse_image = imread('../../MATISSE/matisse.jpg');
-% image(matisse_image)
-% axis off
-% axis image
 % Choose default command line output for MATisse
 handles.output = hObject;
 
@@ -133,16 +126,10 @@ function Gen_button_Callback(hObject, eventdata, handles)
 if isfield(handles.parameters,'save_info')
     disp('Generating Experiment...')
     [handles.parameters, handles.stimuli, handles.hardware, handles.results, handles.task_window] =  Generate(handles.parameters, handles.hardware);
-    %update the task checks with the values of the checkboxes
-    requirement_vector = [get(handles.Fixation_check, 'Value'),...
-        get(handles.Centered_check, 'Value'),...
-        get(handles.Bidding_check, 'Value'),...
-        get(handles.Finalised_check, 'Value'),...
-        get(handles.Targeted_check, 'Value')];
-    handles.parameters.task_checks.Requirement = requirement_vector';
 else
     disp('save_info not found! Did you remember to run Set?')
 end
+display(handles.parameters.correct_trials);
 guidata(hObject, handles);
 
 %function to actually run the task
@@ -182,15 +169,13 @@ if get(hObject,'Value')
         set(handles.text34, 'String', handles.results.experiment_summary.not_rewarded);
         set(handles.text37, 'String', handles.results.experiment_summary.total_budget);
         set(handles.text38, 'String', handles.results.experiment_summary.total_reward);
-        set(handles.text57, 'String', handles.results.experiment_summary.left);
-        set(handles.text58, 'String', handles.results.experiment_summary.right);
-       
+        
         %update the GUI with these fields
         drawnow;
     end
     %if the task is paused by hitting the button again
     %n.b. only pauses at the end of a trial
-    %set(handles.Run_button,'string','stopped...','enable','on','BackgroundColor','[1, 1, 1]');
+    set(handles.Run_button,'string','stopped...','enable','on','BackgroundColor','[1, 1, 1]');
     drawnow;
     guidata(hObject, handles);
 end
@@ -242,7 +227,6 @@ if button_state == get(hObject,'Max')
 	set(handles.Mode_button,'string','Test ON','enable','on','BackgroundColor','green');
     handles.hardware.testmode = 1;
     %display(handles.Mode_button.Value);
-    set(handles.Centered_check,'value',0);
 elseif button_state == get(hObject,'Min')
 	set(handles.Mode_button,'string','Test OFF','enable','on','BackgroundColor','red');
     handles.hardware.testmode = 0;
@@ -264,20 +248,13 @@ joystick = find_joystick(200, 'analog');
 %start(joystick); %throw an error- not sure why
 pause(0.2);
 %get the current joystick voltages (when stationary)
-test_data = peekdata(joystick,120);
+test_data = peekdata(joystick,30);
 test_data_x = test_data(:,1);
 display('remaining x bias:');
-joy_x   = mean(test_data_x)
+joy_x   = mean(test_data_x) + str2double(handles.hardware.inputs.settings.joystick_x_bias)
 test_data_y = test_data(:,2);
 display('remaining y bias:');
-joy_y   = (mean(test_data_y))
-%automatically update the x and y bias and the gui with these values
-%can be overridden manually after
-set(handles.Set_X_Bias,'String', num2str(-joy_x));
-handles.hardware.inputs.settings.joystick_x_bias = get(handles.Set_X_Bias,'String');
-set(handles.Set_Y_Bias,'String', num2str(-joy_y));
-handles.hardware.inputs.settings.joystick_y_bias = get(handles.Set_Y_Bias,'String');
-guidata(hObject, handles);
+joy_y   = (mean(test_data_y)) + str2double(handles.hardware.inputs.settings.joystick_y_bias)
 
 %edit the bias in the GUI
 function Set_Y_Bias_Callback(hObject, eventdata, handles)
@@ -316,21 +293,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 guidata(hObject, handles);
-
-%set the joystick scalar (how fast it makes the bar travel)
-function Joystick_scalar_Callback(hObject, eventdata, handles)
-clear handles.hardware.inputs.settings.joystick_scalar;
-handles.hardware.inputs.settings.joystick_scalar = str2num(get(handles.Joystick_scalar,'String'));
-display('set new joystick scalar');
-guidata(hObject, handles);
-%default is 8
-function Joystick_scalar_CreateFcn(hObject, eventdata, handles)
-handles.hardware.inputs.settings.joystick_scalar = str2num('8');
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-guidata(hObject, handles);
-
 
 %test that the solenoids are functional
 %will run the solenoid functions from the task
@@ -422,7 +384,10 @@ guidata(hObject, handles);
 
 %display_button
 function pushbutton10_Callback(hObject, eventdata, handles)
-display(handles.results.full_output_table.trial_results);
+display(handles.parameters);
+
+
+
 
 %set the direction of bidding
 function X_axis_bidding_Callback(hObject, eventdata, handles)
@@ -462,12 +427,12 @@ eye_fixation = get(handles.Eye_fixation, 'Value');
 if eye_fixation == 1
     handles.hardware.inputs.settings.fixation_test = 'eye_tracker';
 else
-    handles.hardware.inputs.settings.fixation_test = 'joystick';
+    handles.hardware.inputs.settings.fixation_test = 'fixation';
 end
 guidata(hObject, handles);
 function Joystick_fixation_CreateFcn(hObject, eventdata, handles)
 %set default to be eyetracker
-handles.hardware.inputs.settings.fixation_test = 'joystick';
+handles.hardware.inputs.settings.fixation_test = 'eye_tracker';
 guidata(hObject, handles);
 
 %whether or not the monekys bid must be targeted to a semi-transparent
@@ -476,66 +441,20 @@ guidata(hObject, handles);
 %the drawing functions in these epochs are found in targeting_epochs within
 %the generate_task folder
 function Offer_targeting_Callback(hObject, eventdata, handles)
-clear handles.parameters.targeting.requirement;
+clear handles.parameters.targeting;
 button_state = get(hObject,'Value');
 if button_state == get(hObject,'Max')
 	set(handles.Offer_targeting,'string','Targeting ON','enable','on','BackgroundColor','green');
-    handles.parameters.targeting.requirement = 1;
-    %turn the targeting check on
-    set(handles.Targeted_check,'value',1);
+    handles.parameters.targeting = 1;
     %display(handles.Mode_button.Value);
 elseif button_state == get(hObject,'Min')
 	set(handles.Offer_targeting,'string','Targeting OFF','enable','on','BackgroundColor','red');
-    handles.parameters.targeting.requirement = 0;
-    %turn the targeting check off
-    set(handles.Targeted_check,'value',0);
+    handles.parameters.targeting = 0;
+    %display(handles.hardware.testmode.Value);
 end
 guidata(hObject, handles);
 function Offer_targeting_CreateFcn(hObject, eventdata, handles)
-handles.parameters.targeting.requirement = 0;
-guidata(hObject, handles);
-
-%parameters for the targeting
-%should the targetbox be filled or just an outline
-function Filled_targetbox_Callback(hObject, eventdata, handles)
-clear handles.parameters.targeting.filled;
-filled_targetbox = get(handles.Filled_targetbox, 'Value');
-handles.parameters.targeting.filled = filled_targetbox;
-guidata(hObject, handles);
-function Filled_targetbox_CreateFcn(hObject, eventdata, handles)
-handles.parameters.targeting.filled = 1;
-guidata(hObject, handles);
-
-%should the targetbox shrink as the monkey gets more results correct
-%shrinks to max 10% of the bidspace
-%starts at the initial size
-function Static_targetbox_Callback(hObject, eventdata, handles)
-clear handles.parameters.targeting.static;
-static_targetbox = get(handles.Static_targetbox, 'Value');
-handles.parameters.targeting.static = static_targetbox;
-guidata(hObject, handles);
-function Static_targetbox_CreateFcn(hObject, eventdata, handles)
-handles.parameters.targeting.static = 1;
-guidata(hObject, handles);
-
-%the size of the static box or the initial (max) size of the shrinking
-%target box
-function Targetbox_startsize_Callback(hObject, eventdata, handles)
-clear handles.parameters.targeting.startsize;
-%must be between zero and one
-if  str2num(get(handles.Targetbox_startsize,'String')) > 1 |...
-        str2num(get(handles.Targetbox_startsize,'String')) < 0
-    display('Must be a percentage! (between 0 and 1)');
-else
-    handles.parameters.targeting.startsize = str2num(get(handles.Targetbox_startsize,'String'));
-    display(strcat('Targetbox Startsize changed to: ', num2str(handles.parameters.targeting.startsize)));
-end
-guidata(hObject, handles);
-function Targetbox_startsize_CreateFcn(hObject, eventdata, handles)
-handles.parameters.targeting.startsize = str2num('0.5');
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
+handles.hardware.testmode = 0;
 guidata(hObject, handles);
 
 
@@ -578,96 +497,173 @@ function Solenoid_calibration_CreateFcn(hObject, eventdata, handles)
 handles.hardware.outputs.settings.calibration = 0;
 guidata(hObject, handles);
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Input of the task_type via either of 3 radiobuttons
 
-
-
-
-
-
-%checkboxes controlling which task checks to use
-%don't need any code
-function Centered_check_Callback(hObject, eventdata, handles)
-function Fixation_check_Callback(hObject, eventdata, handles)
-function Bidding_check_Callback(hObject, eventdata, handles)
-function Finalised_check_Callback(hObject, eventdata, handles)
-function Targeted_check_Callback(hObject, eventdata, handles)
-
-
-%%BUNDLE STUFF%%
-function Bundles_width_Callback(hObject, eventdata, handles)
-clear handles.parameters.binary_choice.bundle_width
-handles.parameters.binary_choice.bundle_width = str2num(get(handles.Bundles_width,'String'));
-display(handles.parameters.binary_choice.bundle_width);
+%sets task_type as "base" by default on opening the GUI
+% --- Executes during object creation, after setting all properties.
+function base_task_CreateFcn(hObject, eventdata, handles)
+handles.parameters.task_type = 'base';
 guidata(hObject, handles);
-function Bundles_width_CreateFcn(hObject, eventdata, handles)
+% --- Executes on button press in base_task.
+function base_task_Callback(hObject, eventdata, handles)
+base_task = get(hObject,'Value');
+if base_task == 1
+    handles.parameters.task_type = 'base';
+end
+guidata(hObject, handles);
+%select this for a task that only uses first price auctions on all trials,
+%with a different fixation
+% --- Executes on button press in first_task.
+function first_task_Callback(hObject, eventdata, handles)
+first_task = get(hObject,'Value');
+if first_task == 1
+    handles.parameters.task_type = 'first';
+end
+guidata(hObject, handles);
+%select this for a task with presents either a first price or a BDM
+%second price auction. The choice is random. 
+% --- Executes on button press in radiobutton12.
+function radiobutton12_Callback(hObject, eventdata, handles)
+price12_task = get(hObject,'Value');
+if price12_task == 1
+    handles.parameters.task_type = '12price';
+end
+guidata(hObject, handles);
+
+%set the number of fractals to be used during the session. They are drawn
+%from a larger list
+function fractal_number_Callback(hObject, eventdata, handles)
+fractal_no = str2double(get(handles.fractal_number,'String'));
+handles.parameters.fractal_no = fractal_no
+% Hints: get(hObject,'String') returns contents of fractal_number as text
+%        str2double(get(hObject,'String')) returns contents of fractal_number as a double
+guidata(hObject, handles);
+% --- Executes during object creation, after setting all properties.
+function fractal_number_CreateFcn(hObject, eventdata, handles)
+handles.parameters.fractal_no = 3;
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-handles.parameters.binary_choice.bundle_width = 40;
 guidata(hObject, handles);
 
-
-%the number of divisions of water budget in the bundle
-function Budget_divisions_Callback(hObject, eventdata, handles)
-clear handles.parameters.binary_choice.divisions;
-handles.parameters.binary_choice.divisions = str2double(get(handles.Budget_divisions,'String'));
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%choose the parameters of the beta distribution from which the computer
+%selects its bid
+function alpha_Callback(hObject, eventdata, handles)
+alpha = str2double(get(handles.alpha,'String'));
+handles.parameters.alpha = alpha;
+% Hints: get(hObject,'String') returns contents of fractal_number as text
+%        str2double(get(hObject,'String')) returns contents of fractal_number as a double
 guidata(hObject, handles);
-function Budget_divisions_CreateFcn(hObject, eventdata, handles)
+% --- Executes during object creation, after setting all properties.
+function alpha_CreateFcn(hObject, eventdata, handles)
+handles.parameters.alpha = 1;
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-handles.parameters.binary_choice.divisions = str2double('10');
 guidata(hObject, handles);
 
-
-function Show_bundles_Callback(hObject, eventdata, handles)
-
-function Remove_fractals_Callback(hObject, eventdata, handles)
-clear handles.parameters.binary_choice.no_fractals;
-showing_fractals = get(handles.Static_targetbox, 'Value');
-handles.parameters.binary_choice.no_fractals = showing_fractals;
+function beta_Callback(hObject, eventdata, handles)
+beta = str2double(get(handles.beta,'String'));
+handles.parameters.beta = beta;
+% Hints: get(hObject,'String') returns contents of fractal_number as text
+%        str2double(get(hObject,'String')) returns contents of fractal_number as a double
 guidata(hObject, handles);
-function Remove_fractals_CreateFcn(hObject, eventdata, handles)
-handles.parameters.binary_choice.no_fractals = 0;
-guidata(hObject, handles);
-
-function Binary_choice_Callback(hObject, eventdata, handles)
-clear handles.parameters.task
-button_state = get(hObject,'Value');
-if button_state == get(hObject,'Max')
-	set(handles.Binary_choice,'string','','enable','on','BackgroundColor','green');
-    handles.parameters.task = 'BC';
-    handles.parameters.binary_choice.divisions = get(handles.Budget_divisions,'String');
-    handles.parameters.binary_choice.bundle_width = get(handles.Bundles_width,'String');
-elseif button_state == get(hObject,'Min')
-	set(handles.Binary_choice,'string','','enable','on','BackgroundColor','red');
-    handles.parameters.task = 'BDM';
-    handles.parameters = rmfield(handles.parameters, 'binary_choice');
+% --- Executes during object creation, after setting all properties.
+function beta_CreateFcn(hObject, eventdata, handles)
+handles.parameters.beta = 1;
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
 end
 guidata(hObject, handles);
-function Binary_choice_CreateFcn(hObject, eventdata, handles)
-handles.parameters.task = 'BDM';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+%select which liquid will constitute the reward - either juice (default) or water
+
+% --- Executes during object creation, after setting all properties.
+function juice_CreateFcn(hObject, eventdata, handles)
+    handles.parameters.reward_liquid = 'juice';
+guidata(hObject, handles);
+% --- Executes on button press in juice.
+function juice_Callback(hObject, eventdata, handles)
+juice = get(handles.juice,'Value');
+if juice == 1
+    handles.parameters.reward_liquid = 'juice';
+end
+guidata(hObject, handles);
+% --- Executes on button press in water.
+function water_Callback(hObject, eventdata, handles)
+water = get(handles.water,'Value');
+if water == 1
+    handles.parameters.reward_liquid = 'water';
+end
+guidata(hObject, handles);
+% --- Executes during object creation, after setting all properties.
+function water_CreateFcn(hObject, eventdata, handles)
 guidata(hObject, handles);
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%select the reward magnitudes that are to be associated with each fractal.
+%Thus, during the task the number of reward magnitudes used equals the
+%number of fractals presented. Thus the fractal_number should be <= 3, to
+%make more flexible, simply add a text box for a 4th reward magnitude
 
-%adds a bias to the joystick
-%makes either side move between 0-10x faster for the same effort
-function Added_bias_Callback(hObject, eventdata, handles)
-clear handles.hardware.inputs.settings.added_bias;
-slider_state = get(hObject,'Value');
-handles.hardware.inputs.settings.added_bias = sqrt(exp(1)^(slider_state-0.5)^4.605);
-display(strcat('right side now ', num2str(exp(1)^(slider_state-0.5)^4.605), ' times as strong'));
+function rMag_1_Callback(hObject, eventdata, handles)
+rMag_1 = str2double(get(handles.rMag_1,'String'));
+handles.parameters.reward_magnitudes(1,1) = rMag_1;
+% Hints: get(hObject,'String') returns contents of fractal_number as text
+%        str2double(get(hObject,'String')) returns contents of fractal_number as a double
 guidata(hObject, handles);
-%set default to 1x (i.e. both sides are equal)
-function Added_bias_CreateFcn(hObject, eventdata, handles)
-handles.hardware.inputs.settings.added_bias = 1;
+% --- Executes during object creation, after setting all properties.
+function rMag_1_CreateFcn(hObject, eventdata, handles)
+handles.parameters.reward_magnitudes(1,1) = 0.2;
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
 guidata(hObject, handles);
-function Reset_bias_Callback(hObject, eventdata, handles)
-clear handles.hardware.inputs.settings.added_bias;
-handles.hardware.inputs.settings.added_bias = 1;
-display('both directions set to equal strength');
-set(handles.Added_bias,'Value', 0.5);
 
+function rMag_2_Callback(hObject, eventdata, handles)
+rMag_2 = str2double(get(handles.rMag_2,'String'));
+handles.parameters.reward_magnitudes(1,2) = rMag_2;
+% Hints: get(hObject,'String') returns contents of fractal_number as text
+%        str2double(get(hObject,'String')) returns contents of fractal_number as a double
+guidata(hObject, handles);
+% --- Executes during object creation, after setting all properties.
+function rMag_2_CreateFcn(hObject, eventdata, handles)
+handles.parameters.reward_magnitudes(1,2) = 0.5;
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+guidata(hObject, handles);
 
+function rMag_3_Callback(hObject, eventdata, handles)
+rMag_3 = str2double(get(handles.rMag_3,'String'));
+handles.parameters.reward_magnitudes(1,3) = rMag_3;
+% Hints: get(hObject,'String') returns contents of fractal_number as text
+%        str2double(get(hObject,'String')) returns contents of fractal_number as a double
+guidata(hObject, handles);
+% --- Executes during object creation, after setting all properties.
+function rMag_3_CreateFcn(hObject, eventdata, handles)
+handles.parameters.reward_magnitudes(1,3) = 0.8;
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+guidata(hObject, handles);
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%select the budget of water that the monkey uses to bid. This is the amount
+%used to scale the budget_liquid payout at the end of each trial from % to
+%mL
 
+function budget_Callback(hObject, eventdata, handles)
+budget = str2double(get(handles.budget,'String'));
+handles.parameters.budget_magnitude = budget;
+guidata(hObject, handles);
+% --- Executes during object creation, after setting all properties.
+function budget_CreateFcn(hObject, eventdata, handles)
+handles.parameters.budget_magnitude = 1.2;
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+guidata(hObject, handles);

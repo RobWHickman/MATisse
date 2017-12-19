@@ -1,7 +1,7 @@
 %small function to generate sounds to indicate the payouts for a trial- the
 %remaining budget or the reward
 %used in testmode where there is no solenoid corrected 
-function results = sound_payout(hardware, results, payout)
+function results = sound_payout(hardware, results, payout, parameters)
 
 %calibration results
 %follows equation y = mx + c
@@ -11,16 +11,20 @@ c = 0; %c is the addec onstant of the calibration curve
 
 %define if to payout for budget or reward
 if payout == 'budget'
-    results.trial_results.budget_liquid = results.trial_results.remaining_budget * 1.2; %change this when converting from %budget into amounts
+    results.trial_results.budget_liquid = results.trial_results.remaining_budget * parameters.budget_magnitude; %change this when converting from %budget into amounts
     tap_open_time = (results.trial_results.budget_liquid - c) / m;
     tone_frequency = 440;
 
 elseif payout == 'reward'
-    if results.trial_results.reward > 0
-        results.trial_results.reward_liquid = ((results.trial_results.reward * 2) - 1) * 0.15; %change this when converting from %budget into amounts
-    else
-        results.trial_results.reward_liquid = 0;
+    if strcmp(parameters.reward_liquid,'water')
+        results.trial_results.reward_liquid = parameters.reward_magnitudes(results.trial_results.offer_value);
+    %give half the reward if juice
+    elseif strcmp(parameters.reward_liquid,'juice')
+        results.trial_results.reward_liquid = parameters.reward_magnitudes(results.trial_results.offer_value)/2;
     end
+    
+    %former version
+    %results.trial_results.reward_liquid = results.trial_results.reward / 6; %change this when converting from %budget into amounts
     tap_open_time = (results.trial_results.reward_liquid - c) / m;
     tone_frequency = 880;
 end

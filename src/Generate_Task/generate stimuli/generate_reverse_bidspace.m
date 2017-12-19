@@ -7,25 +7,12 @@ trial_values = parameters.single_trial_values;
 
 %crop the reverse bidspace to the size under the computer bid and make a
 %texture
-if strcmp(parameters.task, 'BDM')
-%task parameter for the new bidspace position
-value = trial_values.computer_bid_value;
-%crop the bidspace
 reverse_bidspace_crop = imcrop(bidspace.reverse_bidspace,...
-    [0 bidspace.bidspace_info.height - (bidspace.bidspace_info.height * value)...
+    [0 bidspace.bidspace_info.height - (bidspace.bidspace_info.height * trial_values.computer_bid_value)...
     bidspace.bidspace_info.width bidspace.bidspace_info.height]);
 stimuli.trial.reverse_bidspace_texture = Screen('MakeTexture', task_window, reverse_bidspace_crop);
-
-elseif strcmp(parameters.task, 'BC')
-value = trial_values.bundle_water;
-reverse_bidspace_crop = imcrop(bidspace.reverse_bidspace,...
-    [0 bidspace.bidspace_info.height - (bidspace.bidspace_info.height * value)...
-    bidspace.bidspace_info.width bidspace.bidspace_info.height]);
-stimuli.trial.reverse_bidspace_texture = Screen('MakeTexture', task_window, reverse_bidspace_crop);
-
-end
 
 %work out the position of the cover image
 stimuli.trial.reversed_bidspace_position = bidspace.bidspace_info.position;
-stimuli.trial.reversed_bidspace_position(2) = stimuli.trial.reversed_bidspace_position(4) - (bidspace.bidspace_info.height * value);
+stimuli.trial.reversed_bidspace_position(2) = stimuli.trial.reversed_bidspace_position(4) - (bidspace.bidspace_info.height * trial_values.computer_bid_value);
 
