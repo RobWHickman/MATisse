@@ -19,13 +19,15 @@ for frame = 1:(parameters.timings.Frames('epoch8') + parameters.timings.Delay('e
     [parameters, results] = set_initial_trial_values(parameters, stimuli, hardware, results);
     
     %select the correct fractal for the trial and generate a texture
+    if frame == 1
     if ~parameters.binary_choice.no_fractals
         stimuli = select_fractal(parameters, stimuli, task_window);
     end
 
     %generate the reversed bidspace budget for if the monkey wins
     stimuli = generate_reverse_bidspace(parameters, stimuli, task_window);
- 
+    end
+    
     if frame == (parameters.timings.Frames('epoch8') + parameters.timings.Delay('epoch8'))
         Screen('Flip', task_window, [], 0);
     else
