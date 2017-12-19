@@ -1,4 +1,4 @@
-function stimuli = load_stimuli(parameters, hardware, task_window, task)
+function stimuli = load_stimuli(parameters, hardware, task_window)
 %get the stimuli
 stimuli.settings.images_path = '../../images/';
 stimuli.settings.fractal_images = 'RL*.jpg';
@@ -21,6 +21,6 @@ stimuli.fixation_cross = generate_fixation_cross(12, 4, 3, hardware);
 %if need to generate a target box, do it here
 %for a static target_box
 %moved to run.m for generating a box that shrinks as monkey improves
-if parameters.targeting.requirement == 1 && task == 'BDM'
+if parameters.targeting.requirement == 1 && strcmp(parameters.task, 'BDM')
     stimuli.target_box = generate_target_box(parameters, stimuli, hardware, 0);
 end
