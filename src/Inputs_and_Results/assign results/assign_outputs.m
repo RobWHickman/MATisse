@@ -11,17 +11,6 @@ results.trial_values.bidding_vector = {[results.trial_values.bidding_vector]};
 
 results.trial_values.task_checks = {[results.trial_values.task_checks]};
 
-%order the struct
-results.trial_results = orderfields(results.trial_results);
-
-%edit the struct
-%go back and clean this up in assignment at some point
-results.trial_results = rmfield(results.trial_results, 'monkey_bid');
-if strcmp(results.experiment_metadata.parameters.task, 'BC')
-    results.trial_results = rmfield(results.trial_results, 'remaining_budget');
-    results.trial_results = rmfield(results.trial_results, 'reward');
-end
-
 %add the trial results (assign results) to the full experimental data
 if ~isempty(results.full_output_table)
     results.full_output_table.trial_values = vertcat(results.full_output_table.trial_values, struct2table(results.trial_values));
@@ -44,23 +33,6 @@ results.experiment_summary.error = sum(isnan(results.full_output_table.trial_res
 results.experiment_summary.percent_correct  = (results.experiment_summary.correct/ (results.experiment_summary.correct + results.experiment_summary.error)) * 100;
 results.experiment_summary.rewarded = sum(results.full_output_table.trial_results.win == 1);
 results.experiment_summary.not_rewarded = sum(results.full_output_table.trial_results.win == 0);
-
-%for the binary choice task, how many times has the monkey gone left/right
-if strcmp(results.experiment_metadata.parameters.task, 'BC') && ~isfield(results.experiment_summary, 'right')
-   results.experiment_summary.right = 0;
-   results.experiment_summary.left = 0;
-elseif strcmp(results.experiment_metadata.parameters.task, 'BDM') && ~isfield(results.experiment_summary, 'right')
-   results.experiment_summary.right = NaN;
-   results.experiment_summary.left = NaN;
-end
-
-if results.last_trial.trial_results.monkey_final_bid > (0.5 - results.experiment_metadata.parameters.binary_choice.bundle_width/100) *2 &&...
-        strcmp(results.experiment_metadata.parameters.task, 'BC')
-    results.experiment_summary.right = results.experiment_summary.right + 1;
-elseif results.last_trial.trial_results.monkey_final_bid < (results.experiment_metadata.parameters.binary_choice.bundle_width/100 - 0.5) * 2 &&...
-        strcmp(results.experiment_metadata.parameters.task, 'BC')
-    results.experiment_summary.left = results.experiment_summary.left + 1;
-end
 
 %update the amounts of liquid given out if a winning trial
 if ~isnan(results.last_trial.trial_results.win)

@@ -5,6 +5,8 @@ function [parameters, results] = check_fixation(parameters, stimuli, results, ha
 if hardware.testmode == 0
     if strcmp(hardware.inputs.settings.fixation_test, 'joystick')
         results = check_joystick_stationary(parameters, hardware, results);
+        results.trial_values.task_checks.Status('fixation') = 1;
+        
     elseif strcmp(hardware.inputs.settings.fixation_test, 'eye_tracker')
         display('eye tracker not yet set up');
     end
