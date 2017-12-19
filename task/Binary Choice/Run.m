@@ -100,7 +100,7 @@ parameters.single_trial_values.starting_bid_value = 0;
 results.trial_results.monkey_bid = 0;
 for frame = 1:(parameters.timings.Frames('epoch5') + parameters.timings.Delay('epoch5'))
     draw_bc_epoch_5(stimuli, parameters, hardware, results, task_window);
-    [results, stimuli] = update_bid_position(hardware, results, parameters, stimuli, 'BC');
+    [results, stimuli] = update_bid_position(hardware, results, parameters, stimuli);
     
     %update the value of the bid
     results.trial_results.monkey_bid = results.trial_results.adjust / (hardware.outputs.screen_info.width /2);

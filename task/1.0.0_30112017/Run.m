@@ -22,12 +22,14 @@ for frame = 1:(parameters.timings.Frames('epoch8') + parameters.timings.Delay('e
         stimuli.target_box = generate_target_box(parameters, stimuli, hardware, results.experiment_summary.correct);
     end
     
+    if frame == 1
     %select the correct fractal for the trial and generate a texture
-    stimuli = select_fractal(parameters, stimuli, hardware, task_window);
+    stimuli = select_fractal(parameters, stimuli, task_window);
 
     %generate the reversed bidspace budget for if the monkey wins
     stimuli = generate_reverse_bidspace(parameters, stimuli, task_window);
- 
+    end
+    
     Screen('Flip', task_window);
 end
 
@@ -64,6 +66,11 @@ end
 for frame = 1:(parameters.timings.Frames('epoch5') + parameters.timings.Delay('epoch5'))
     draw_epoch_5(parameters, stimuli, hardware, results, task_window);
     [results, stimuli] = update_bid_position(hardware, results, parameters, stimuli);
+    
+    %update the value of the bid
+    results.trial_results.monkey_bid = (parameters.single_trial_values.starting_bid_value * (stimuli.bidspace.bidspace_info.position(2) - stimuli.bidspace.bidspace_info.position(4)) + results.trial_results.adjust) /...
+        (stimuli.bidspace.bidspace_info.position(2) - stimuli.bidspace.bidspace_info.position(4));
+
     %if there hasn't been any bid activity break out of the loop
     if results.trial_values.task_checks.Status('no_bid_activity') && results.trial_values.task_checks.Requirement('no_bid_activity')
         break
@@ -137,7 +144,7 @@ display('TARGETING FAIL');
 sound_error_tone(hardware);
 for frame = 1:(sum(parameters.timings.Frames(6:8)) + sum(parameters.timings.Delay(6:8)) + (3 * hardware.outputs.screen_info.hz))
     draw_error_epoch(hardware, task_window)
-    results = assign_error_results(parameters, results, 'targeting');
+    results = assign_error_results(parameters, results);
     Screen('Flip', task_window);
 end
 end
@@ -148,7 +155,7 @@ display('FINIALISATION FAIL');
 sound_error_tone(hardware);
 for frame = 1:(sum(parameters.timings.Frames(6:8)) + sum(parameters.timings.Delay(6:8)) + (3 * hardware.outputs.screen_info.hz))
     draw_error_epoch(hardware, task_window)
-    results = assign_error_results(parameters, results, 'finalisation');
+    results = assign_error_results(parameters, results);
     Screen('Flip', task_window);
 end
 end
@@ -159,7 +166,7 @@ display('BIDDING FAIL');
 sound_error_tone(hardware);
 for frame = 1:(sum(parameters.timings.Frames(5:8)) + sum(parameters.timings.Delay(5:8)) + ((3 - parameters.settings.bid_timeout) * hardware.outputs.screen_info.hz))
     draw_error_epoch(hardware, task_window)
-    results = assign_error_results(parameters, results, 'bidding');
+    results = assign_error_results(parameters, results);
     Screen('Flip', task_window);
 end
 end
@@ -170,7 +177,7 @@ display('FIXATION FAIL');
 sound_error_tone(hardware);
 for frame = 1:(sum(parameters.timings.Frames(2:8)) + sum(parameters.timings.Delay(2:8)) + (3 * hardware.outputs.screen_info.hz))
     draw_error_epoch(hardware, task_window)
-    results = assign_error_results(parameters, results, 'fixation');
+    results = assign_error_results(parameters, results);
     Screen('Flip', task_window);
 end
 end
