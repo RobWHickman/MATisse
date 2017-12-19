@@ -7,7 +7,7 @@
 %finalise the bid)
 %the final part uses this to update the bidding vector and the current
 %value of the monkey bid
-function [results, stimuli] = update_bid_position(hardware, results, parameters, stimuli, task)
+function [results, stimuli] = update_bid_position(hardware, results, parameters, stimuli)
 %if using testmode look for keystrokes
 if hardware.testmode
     [keyIsDown, secs, keyCode] = KbCheck;
@@ -37,12 +37,12 @@ end
 %set the limits for the bidding
 %also set the bid multiplier (this is 1 for y axis (BDM) and -1 for the x
 %axis (BC) because of how PTB sets up the screen coords
-if strcmp(task, 'BDM')
+if strcmp(parameters.task, 'BDM')
     limits = [stimuli.bidspace.bidspace_info.position(2), stimuli.bidspace.bidspace_info.position(4)];
     initial_bid_position = stimuli.bidspace.bidspace_info.position(4) - ...
     (stimuli.bidspace.bidspace_info.height * parameters.single_trial_values.starting_bid_value);
     axis_multiplier = 1;
-elseif strcmp(task, 'BC')
+elseif strcmp(parameters.task, 'BC')
     limits = [0, hardware.outputs.screen_info.width];
     initial_bid_position = hardware.outputs.screen_info.width/2;
     axis_multiplier = -1;

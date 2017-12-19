@@ -7,6 +7,8 @@ Screen('DrawTexture', task_window, stimuli.bidspace.bidspace_texture, [], stimul
 %draw the bidding bar
 vertical_position = (results.trial_results.monkey_bid * (stimuli.bidspace.bidspace_info.position(2) - stimuli.bidspace.bidspace_info.position(4))) + stimuli.bidspace.bidspace_info.position(4);
 round(vertical_position);
+display(results.trial_results.monkey_bid);
+display(vertical_position);
 
 %draw the targeting box if the value for the test if false
 if parameters.targeting.requirement == 1
