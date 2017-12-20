@@ -7,12 +7,13 @@ function results = release_liquid(parameters, hardware, results, payout)
 %y = amount of water, x is the length of the tap opening
 %m = 1; %m is the gradient of the calibration curve
 %c = 0; %c is the addec onstant of the calibration curve
-simple_divider = 5.586; %want to calibrate this more carefully, but it should give accurate amounts of water
+simple_divider1 = 5.586; %want to calibrate this more carefully, but it should give accurate amounts of water
+simple_divider2 = 5.843; %want to calibrate this more carefully, but it should give accurate amounts of water
 
 %payout the budget tap (tap 1)
 if strcmp(payout, 'budget')
     results.trial_results.budget_liquid = results.trial_results.remaining_budget * 1.2; %max budget is 1.2ml
-    tap_open_time = (results.trial_results.budget_liquid) / simple_divider; %1.2ml = 0.25s
+    tap_open_time = (results.trial_results.budget_liquid) / simple_divider1; %1.2ml = 0.25s
     tap = 1;
 
 %payout the reward tap (depends on the monkey)
@@ -22,7 +23,7 @@ elseif strcmp(payout, 'reward')
     else
         results.trial_results.reward_liquid = 0;
     end
-    tap_open_time = (results.trial_results.reward_liquid) / simple_divider ;
+    tap_open_time = (results.trial_results.reward_liquid) / simple_divider2;
     if strcmp(parameters.save_info.primate, 'Ulysses')
         tap = 2;
     elseif strcmp(parameters.save_info.primate, 'Vicer')
