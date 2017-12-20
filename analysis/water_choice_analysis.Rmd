@@ -1,0 +1,71 @@
+---
+title: "Water Budget Choice Analysis"
+author: "Robert Hickman"
+output:
+  pdf_document:
+    fig_width: 10
+    fig_height: 8
+  html_document: default
+---
+```{r, warning = FALSE, message = FALSE, include = FALSE}
+require(ggplot2)
+require(ggthemes)
+require(dplyr)
+require(magrittr)
+require(data.table)
+require(tidyr)
+```
+
+```{r, warning = FALSE, message = FALSE, include = FALSE}
+#load in specific data
+date <- "20-Dec-2017"
+monkey <- "Vicer"
+
+search_string <- paste0(date, ".*", monkey, "COMPACT")
+
+#find all data files
+directory <- "C:/Users/WS-Guest/Desktop/task data/"
+data_files <- dir(directory)
+
+#load in the relevant data
+specific_files <- data_files[grep(search_string, data_files)]
+specific_files <- specific_files[2]
+
+task_data <- rbindlist(lapply(paste0(directory, specific_files), read.csv, na.strings = "NaN"), idcol = "block") %>%
+  #munge the data
+  .[, block := paste("block", block)] %>%
+  .[, trial:= 1:.N, block] %>%
+  .[bundle_position == 1, bundle_distance := (monkey_final_bid + 1)/2] %>%
+  .[bundle_position == 0, bundle_distance := (1-monkey_final_bid)/2] %>%
+  .[bundle_distance < 0.5, fractal_bid := 1] %>%
+  .[bundle_distance > 0.5, fractal_bid := 0] %>%
+  .[, offer_ml := paste0(((offer_value*2)-1) * 0.15, "ml")] %>%
+  .[, bundle_liquid := 1.2 - (bundle_water_perc * 1.2)]
+
+```
+
+Data shown for:
+```{r, warning = FALSE, message = FALSE}
+date
+monkey
+
+```
+
+```{r}
+bundle_bidding <- task_data[!is.na(fractal_bid)] %>%
+  .[, mean(fractal_bid), by = .(offer_value, bundle_liquid)]
+
+ggplot(data = bundle_bidding, aes(x = bundle_liquid, y = V1)) + 
+  geom_point() +
+  stat_smooth() +
+  xlab("bundle water offered (ml)") +
+  ylab("proportion of bundle choices") +
+  ggtitle("Monkey Proportion of Bundle Bids on Binary Choice Task",
+          subtitle = paste(date, ";", monkey, ";", length(unique(task_data$block)), "blocks")) +
+  #theme_fivethirtyeight() +
+  theme_minimal() +
+  theme(strip.text.x = element_text(size = 14)) +
+  theme(axis.title.x = element_text(size = 14)) +
+  theme(axis.title.y = element_text(size = 14)) 
+```
+
