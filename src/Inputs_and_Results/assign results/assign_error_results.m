@@ -10,6 +10,9 @@ if strcmp(parameters.task, 'BDM')
 elseif strcmp(parameters.task, 'BC')
     results.trial_results.bundle_position = parameters.single_trial_values.bundle_half;
     results.trial_results.bundle_water_perc = parameters.single_trial_values.bundle_water;
+    if parameters.binary_choice.random_budget
+        results.trial_results.budget_water_perc = parameters.single_trial_values.budget_water;
+    end
 end
 results.trial_results.offer_value = parameters.single_trial_values.offer_value;
 results.trial_results.budget_liquid = NaN;

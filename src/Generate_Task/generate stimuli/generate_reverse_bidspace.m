@@ -23,6 +23,18 @@ reverse_bidspace_crop = imcrop(bidspace.reverse_bidspace,...
     bidspace.bidspace_info.width bidspace.bidspace_info.height]);
 stimuli.trial.reverse_bidspace_texture = Screen('MakeTexture', task_window, reverse_bidspace_crop);
 
+%if the budget should contain a random amount of water make the reverse texture for that too
+if parameters.binary_choice.random_budget
+  reverse_budget_crop = imcrop(bidspace.reverse_bidspace,...
+    [0 bidspace.bidspace_info.height - (bidspace.bidspace_info.height * trial_values.budget_water)...
+    bidspace.bidspace_info.width bidspace.bidspace_info.height]);
+  
+    stimuli.trial.reverse_budget_texture = Screen('MakeTexture', task_window, reverse_budget_crop);
+    
+    stimuli.trial.reversed_budget_position = bidspace.bidspace_info.position;
+    stimuli.trial.reversed_budget_position(2) = stimuli.trial.reversed_budget_position(4) - (bidspace.bidspace_info.height * trial_values.budget_water);
+end
+
 end
 
 %work out the position of the cover image

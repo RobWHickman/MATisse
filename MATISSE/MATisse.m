@@ -422,7 +422,7 @@ guidata(hObject, handles);
 
 %display_button
 function pushbutton10_Callback(hObject, eventdata, handles)
-display(handles.results.full_output_table.trial_results);
+display(handles.results.last_trial.trial_results);
 
 %set the direction of bidding
 function X_axis_bidding_Callback(hObject, eventdata, handles)
@@ -620,7 +620,14 @@ handles.parameters.binary_choice.divisions = str2double('10');
 guidata(hObject, handles);
 
 
-function Show_bundles_Callback(hObject, eventdata, handles)
+function Random_budget_Callback(hObject, eventdata, handles)
+clear handles.parameters.binary_choice.random_budget;
+randomise_budgets = get(handles.Static_targetbox, 'Value');
+handles.parameters.binary_choice.random_budget = randomise_budgets;
+guidata(hObject, handles);
+function Random_budget_CreateFcn(hObject, eventdata, handles)
+handles.parameters.binary_choice.random_budget = 0;
+guidata(hObject, handles);
 
 function Remove_fractals_Callback(hObject, eventdata, handles)
 clear handles.parameters.binary_choice.no_fractals;
@@ -667,6 +674,8 @@ clear handles.hardware.inputs.settings.added_bias;
 handles.hardware.inputs.settings.added_bias = 1;
 display('both directions set to equal strength');
 set(handles.Added_bias,'Value', 0.5);
+
+
 
 
 

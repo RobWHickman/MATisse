@@ -6,6 +6,12 @@ if isfield(parameters, 'binary_choice')
     else
         single_trial_values.offer_value = 0;
     end
+    
+    if parameters.binary_choice.random_budget
+        single_trial_values.budget_water = Sample(0:(1/parameters.binary_choice.divisions):1-(1/parameters.binary_choice.divisions));
+    else
+        single_trial_values.budget_water = 0;
+    end
 end
 
 if strcmp(parameters.task, 'BDM')
@@ -19,7 +25,8 @@ if strcmp(parameters.task, 'BDM')
     single_trial_values.computer_bid_value = betarnd(A,B);
 %for binary choice, instead generate the value of the fractal water budget
 elseif strcmp(parameters.task, 'BC')
-    single_trial_values.bundle_water = randi(str2num(parameters.binary_choice.divisions))/10;
+    single_trial_values.bundle_water = Sample(0:(1/parameters.binary_choice.divisions):1-(1/parameters.binary_choice.divisions));
+    display(single_trial_values.bundle_water);
     %define which half contains the bundle
     screen_halves = [1, 0];
     single_trial_values.bundle_half = screen_halves(randi(2)); 

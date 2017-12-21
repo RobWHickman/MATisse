@@ -16,10 +16,10 @@ for frame = 1:(parameters.timings.Frames('epoch8') + parameters.timings.Delay('e
     %get trial values for the offer, computer bid and random monkey bid
     %start position
     %also the random delays at the end of epochs 3 and 7
+    if frame == 1
     [parameters, results] = set_initial_trial_values(parameters, stimuli, hardware, results);
     
     %select the correct fractal for the trial and generate a texture
-    if frame == 1
     if ~parameters.binary_choice.no_fractals
         stimuli = select_fractal(parameters, stimuli, task_window);
     end

@@ -23,13 +23,16 @@ if((parameters.single_trial_values.bundle_half == 0 && (results.trial_results.mo
     results.trial_results.remaining_budget = 1 - parameters.single_trial_values.bundle_water;
     results.trial_results.reward = parameters.single_trial_values.offer_value;
 else
-    results.trial_results.remaining_budget = 1;
+    results.trial_results.remaining_budget = 1 - parameters.single_trial_values.budget_water;
     results.trial_results.reward = 0;
 end
 
 %also chuck in the bundle info as a field to be analysed later
 results.trial_results.bundle_position = parameters.single_trial_values.bundle_half;
 results.trial_results.bundle_water_perc = parameters.single_trial_values.bundle_water;
+if parameters.binary_choice.random_budget
+    results.trial_results.budget_water_perc = parameters.single_trial_values.budget_water;
+end
 results.trial_results.offer_value = parameters.single_trial_values.offer_value;
 end
 
