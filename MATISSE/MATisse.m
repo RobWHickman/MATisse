@@ -311,10 +311,7 @@ handles.hardware.inputs.settings.joystick_sensitivity = str2num(get(handles.Joys
 display('set new joystick sensitivity');
 guidata(hObject, handles);
 function Joystick_sensitivty_CreateFcn(hObject, eventdata, handles)
-handles.hardware.inputs.settings.joystick_sensitivity = str2num('0.01');
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
+handles.hardware.inputs.settings.joystick_sensitivity = str2num('0.05');
 guidata(hObject, handles);
 
 %set the joystick scalar (how fast it makes the bar travel)
@@ -323,12 +320,9 @@ clear handles.hardware.inputs.settings.joystick_scalar;
 handles.hardware.inputs.settings.joystick_scalar = str2num(get(handles.Joystick_scalar,'String'));
 display('set new joystick scalar');
 guidata(hObject, handles);
-%default is 8
+%default is 50
 function Joystick_scalar_CreateFcn(hObject, eventdata, handles)
-handles.hardware.inputs.settings.joystick_scalar = str2num('8');
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
+handles.hardware.inputs.settings.joystick_scalar = str2num('50');
 guidata(hObject, handles);
 
 
@@ -600,23 +594,17 @@ handles.parameters.binary_choice.bundle_width = str2num(get(handles.Bundles_widt
 display(handles.parameters.binary_choice.bundle_width);
 guidata(hObject, handles);
 function Bundles_width_CreateFcn(hObject, eventdata, handles)
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-handles.parameters.binary_choice.bundle_width = 40;
+handles.parameters.binary_choice.bundle_width = 42;
 guidata(hObject, handles);
 
 
 %the number of divisions of water budget in the bundle
 function Budget_divisions_Callback(hObject, eventdata, handles)
 clear handles.parameters.binary_choice.divisions;
-handles.parameters.binary_choice.divisions = str2double(get(handles.Budget_divisions,'String'));
+handles.parameters.binary_choice.divisions = str2num(get(handles.Budget_divisions,'String'));
 guidata(hObject, handles);
 function Budget_divisions_CreateFcn(hObject, eventdata, handles)
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-handles.parameters.binary_choice.divisions = str2double('10');
+handles.parameters.binary_choice.divisions = 10;
 guidata(hObject, handles);
 
 
@@ -644,10 +632,8 @@ button_state = get(hObject,'Value');
 if button_state == get(hObject,'Max')
 	set(handles.Binary_choice,'string','','enable','on','BackgroundColor','green');
     handles.parameters.task = 'BC';
-    handles.parameters.binary_choice.divisions = get(handles.Budget_divisions,'String');
-    handles.parameters.binary_choice.bundle_width = get(handles.Bundles_width,'String');
 elseif button_state == get(hObject,'Min')
-	set(handles.Binary_choice,'string','','enable','on','BackgroundColor','red');
+	set(handles.Binary_choice,'string','Binary Choise','enable','on','BackgroundColor','red');
     handles.parameters.task = 'BDM';
     handles.parameters = rmfield(handles.parameters, 'binary_choice');
 end
