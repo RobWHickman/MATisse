@@ -54,7 +54,6 @@ end
 if (results.trial_values.task_checks.Status('fixation') | ~results.trial_values.task_checks.Requirement('fixation')) &&...
         (results.trial_values.task_checks.Status('hold_joystick') | ~results.trial_values.task_checks.Requirement('hold_joystick'));
 
-display(parameters.single_trial_values.bundle_half)
 %if the bundle is on the right hand side of the screen, reflect it
 if parameters.single_trial_values.bundle_half == 0
     stimuli = reflect_bundle(stimuli, hardware);

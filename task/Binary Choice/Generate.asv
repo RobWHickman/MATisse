@@ -47,22 +47,21 @@ end
 
 %if trial values are going to be pseudo random generate all of the
 %combinations here
-if parameters.random_stim == 0
-    fractal_values = [1:stimuli.fractals.fractal_info.number];
-    if strcmp(parameters.task, 'BDM')
-        combinations = fractal_values;
-    elseif strcmp(parameters.task, 'BC')
-        bundle_water_values = [0:(1/parameters.binary_choice.divisions):1-(1/parameters.binary_choice.divisions)];
-        %should the bundle be on the left or the right
-        sides = [0, 1];
-        combinations = CombVec(fractal_values, bundle_water_values, sides);
-    end
-
-    %export the combinations
-    stimuli.combinations = combinations;
-    %generate the list of the order these will be selected
-    possible_combinations = [1:length(combinations)];
-    possible_combinations = repmat(possible_combinations, 1, parameters.max_trials / length(combinations));
-    possible_combinations = possible_combinations(randperm(parameters.max_trials));
-    stimuli.combination_order = possible_combinations;
+if parameters.random_stim 
+fractal_values = [1:stimuli.fractals.fractal_info.number];
+if strcmp(parameters.task, 'BDM')
+    combinations = fractal_values;
+elseif strcmp(parameters.task, 'BC')
+    bundle_water_values = [0:(1/parameters.binary_choice.divisions):1-(1/parameters.binary_choice.divisions)];
+    %should the bundle be on the left or the right
+    sides = [0, 1];
+    combinations = CombVec(fractal_values, bundle_water_values, sides);
 end
+
+%export the combinations
+stimuli.combinations = combinations;
+%generate the list of the order these will be selected
+possible_combinations = [1:length(combinations)];
+possible_combinations = repmat(possible_combinations, 1, parameters.max_trials / length(combinations));
+possible_combinations = possible_combinations(randperm(parameters.max_trials));
+stimuli.combination_order = possible_combinations;

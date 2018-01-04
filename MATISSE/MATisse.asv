@@ -429,7 +429,7 @@ guidata(hObject, handles);
 
 %display_button
 function pushbutton10_Callback(hObject, eventdata, handles)
-display(handles.stimuli.combination_order);
+display(handles.results.last_trial.trial_results);
 
 %set the direction of bidding
 function X_axis_bidding_Callback(hObject, eventdata, handles)
@@ -675,19 +675,34 @@ display('both directions set to equal strength');
 set(handles.Added_bias,'Value', 0.5);
 
 
-%whether the stimuli should be generated randomly each trial or a set at
-%the start of the experiment in generate
+function Mode_button_Callback(hObject, eventdata, handles)
+clear handles.hardware.testmode;
+button_state = get(hObject,'Value');
+if button_state == get(hObject,'Max')
+	set(handles.Mode_button,'string','Test ON','enable','on','BackgroundColor','green');
+    handles.hardware.testmode = 1;
+    %display(handles.Mode_button.Value);
+    set(handles.Centered_check,'value',0);
+elseif button_state == get(hObject,'Min')
+	set(handles.Mode_button,'string','Test OFF','enable','on','BackgroundColor','red');
+    handles.hardware.testmode = 0;
+    %display(handles.hardware.testmode.Value);
+end
+guidata(hObject, handles);
+function Mode_button_CreateFcn(hObject, eventdata, handles)
+handles.hardware.testmode = 0;
+guidata(hObject, handles);
+
+
 function Random_stimuli_Callback(hObject, eventdata, handles)
-clear handles.parameters.random_stim
+clear handles.stimuli.random
 Stimuli_button_state = get(hObject,'Value');
 if Stimuli_button_state == get(hObject,'Max')
 	set(handles.Random_stimuli,'string','Random Stimuli','enable','on','BackgroundColor','green');
-    handles.parameters.random_stim = 1;
+    handles.stimuli.random = 1;
 elseif button_state == get(hObject,'Min')
-	set(handles.Random_stimuli,'string','Pseudo-Random','enable','on','BackgroundColor','red');
-    handles.parameters.random_stim = 0;
+	set(handles.Mode_button,'string','Test OFF','enable','on','BackgroundColor','red');
+    handles.hardware.testmode = 0;
+    %display(handles.hardware.testmode.Value);
 end
-guidata(hObject, handles);
-function Random_stimuli_CreateFcn(hObject, eventdata, handles)
-handles.parameters.random_stim = 0;
 guidata(hObject, handles);
