@@ -18,8 +18,8 @@ require(tidyr)
 
 ```{r, warning = FALSE, message = FALSE, include = FALSE}
 #load in specific data
-date <- "20-Dec-2017"
-monkey <- "Vicer"
+date <- "27-Dec-2017"
+monkey <- "Ulysses"
 
 search_string <- paste0(date, ".*", monkey, "COMPACT")
 
@@ -207,3 +207,31 @@ p5
 ```
 
 Graph showing the proportion of bids for the bundle that a monkey makes, separated by the values of the juice offered in the bundles. Fits using a binomial glm model.
+
+```{r, warning = FALSE, message = FALSE, include = FALSE}
+#create a plot like the above but that also plots a 95% confidence interval
+#uses the default bionmial smooth CIs- check how these work
+p6 <- ggplot(task_data, aes(y = fractal_bid, x = bundle_liquid * 1.2,
+                            colour = as.factor((offer_value*2 -1) * 0.15), group = offer_value)) +
+  geom_point(size = 3, alpha = 0.2) +
+  binomial_smooth(se = TRUE) +
+  scale_colour_brewer(palette = "Set1", name = "juice offered (ml)") +
+  xlab("water offered (ml)") +
+  ylab("proportion of bundle choices") +
+  ggtitle("Monkey Proportion of Bundle Bids on Binary Choice Task (CI = 0.95?)",
+          subtitle = paste(date, ";", monkey, ";", length(unique(task_data$block)), "blocks")) +
+  #theme_fivethirtyeight() +
+  theme_minimal() +
+  theme(strip.text.x = element_text(size = 14)) +
+  theme(axis.title.x = element_text(size = 14)) +
+  theme(axis.title.y = element_text(size = 14)) 
+
+```
+
+```{r, warning = FALSE, message = FALSE}
+p6
+```
+
+Same graph as above but with 95% confidence intervals. Uses the default method of calculating this for the tidyverse libraries in R which I'm not convinced are the best way. Looking into calculating and plotting it myself.
+
+

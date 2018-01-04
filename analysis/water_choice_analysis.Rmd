@@ -18,8 +18,8 @@ require(tidyr)
 
 ```{r, warning = FALSE, message = FALSE, include = FALSE}
 #load in specific data
-date <- "20-Dec-2017"
-monkey <- "Vicer"
+date <- "29-Dec-2017"
+monkey <- "Ulysses"
 
 search_string <- paste0(date, ".*", monkey, "COMPACT")
 
@@ -29,7 +29,6 @@ data_files <- dir(directory)
 
 #load in the relevant data
 specific_files <- data_files[grep(search_string, data_files)]
-specific_files <- specific_files[2]
 
 task_data <- rbindlist(lapply(paste0(directory, specific_files), read.csv, na.strings = "NaN"), idcol = "block") %>%
   #munge the data
@@ -53,7 +52,12 @@ monkey
 
 ```{r}
 bundle_bidding <- task_data[!is.na(fractal_bid)] %>%
-  .[, mean(fractal_bid), by = .(offer_value, bundle_liquid)]
+  .[, .(budget_water_perc, bundle_water_perc, fractal_bid)] %>%
+  .[, fractal_bids := mean(fractal_bid), by = .(budget_water_perc, bundle_water_perc)] %>%
+  .[, trials := .N, by = .(budget_water_perc, bundle_water_perc)] %>%
+  .[, bundle_liquid := 1.2 - (bundle_water_perc * 1.2)] %>%
+  .[, budget_liquid := 1.2 - (budget_water_perc * 1.2)] %>%
+  .[, .(budget_liquid, bundle_liquid, fractal_bids, trials)]
 
 ggplot(data = bundle_bidding, aes(x = bundle_liquid, y = V1)) + 
   geom_point() +
@@ -67,5 +71,7 @@ ggplot(data = bundle_bidding, aes(x = bundle_liquid, y = V1)) +
   theme(strip.text.x = element_text(size = 14)) +
   theme(axis.title.x = element_text(size = 14)) +
   theme(axis.title.y = element_text(size = 14)) 
+
+
 ```
 
