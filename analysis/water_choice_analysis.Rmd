@@ -18,17 +18,29 @@ require(tidyr)
 
 ```{r, warning = FALSE, message = FALSE, include = FALSE}
 #load in specific data
-date <- "29-Dec-2017"
-monkey <- "Ulysses"
+#date <- "03-Jan-2018"
+dates <- seq(as.Date("27-Dec-2017", "%d-%B-%Y"), as.Date("3-Jan-2018", "%d-%B-%Y"), 1)
+dates <- format(strptime(as.character(dates), "%Y-%m-%d"), "%d-%b-%Y")
+#get rid of saturdays and nye
+dates <- dates[-c(4,5,6)]
+blocks <- c(1,1,2,1,1)
+monkey <- "Vicer"
 
-search_string <- paste0(date, ".*", monkey, "COMPACT")
+search_string <- paste0(dates, ".*", monkey, "COMPACT")
 
 #find all data files
 directory <- "C:/Users/WS-Guest/Desktop/task data/"
 data_files <- dir(directory)
 
 #load in the relevant data
-specific_files <- data_files[grep(search_string, data_files)]
+specific_files <- c()
+for (day in seq(search_string)){
+  specific_file <- data_files[grep(search_string[day], data_files)][blocks[day]]
+  specific_files <- append(specific_files, specific_file)
+}
+
+#specific_files <- data_files[grep(search_string, data_files)]
+#specific_files <- specific_files[1]
 
 task_data <- rbindlist(lapply(paste0(directory, specific_files), read.csv, na.strings = "NaN"), idcol = "block") %>%
   #munge the data
@@ -38,40 +50,41 @@ task_data <- rbindlist(lapply(paste0(directory, specific_files), read.csv, na.st
   .[bundle_position == 0, bundle_distance := (1-monkey_final_bid)/2] %>%
   .[bundle_distance < 0.5, fractal_bid := 1] %>%
   .[bundle_distance > 0.5, fractal_bid := 0] %>%
-  .[, offer_ml := paste0(((offer_value*2)-1) * 0.15, "ml")] %>%
-  .[, bundle_liquid := 1.2 - (bundle_water_perc * 1.2)]
+  .[, bundle_liquid := 1.2 - (bundle_water_perc * 1.2)] %>%
+  .[, budget_liquid := 1.2 - (budget_water_perc * 1.2)] %>%
+  .[, c("block", "budget_liquid", "bundle_liquid", "bundle_position", "bundle_distance", "fractal_bid"),] %>%
+  .[!is.na(fractal_bid)] %>%
+  .[bundle_liquid > budget_liquid, bundle_dominates := 1] %>%
+  .[bundle_liquid < budget_liquid, bundle_dominates := 0] %>%
+  .[, bundle_dominance := bundle_liquid - budget_liquid]
+
+table(paste(task_data$bundle_dominance, task_data$fractal_bid))
 
 ```
 
 Data shown for:
 ```{r, warning = FALSE, message = FALSE}
-date
+dates
 monkey
 
 ```
 
 ```{r}
-bundle_bidding <- task_data[!is.na(fractal_bid)] %>%
-  .[, .(budget_water_perc, bundle_water_perc, fractal_bid)] %>%
-  .[, fractal_bids := mean(fractal_bid), by = .(budget_water_perc, bundle_water_perc)] %>%
-  .[, trials := .N, by = .(budget_water_perc, bundle_water_perc)] %>%
-  .[, bundle_liquid := 1.2 - (bundle_water_perc * 1.2)] %>%
-  .[, budget_liquid := 1.2 - (budget_water_perc * 1.2)] %>%
-  .[, .(budget_liquid, bundle_liquid, fractal_bids, trials)]
+p1 <- ggplot(data = task_data, aes(x = bundle_distance, y = bundle_dominance)) +
+  geom_jitter(aes(colour = block), height = 0.025, alpha = 0.3, size = 3)
+```
 
-ggplot(data = bundle_bidding, aes(x = bundle_liquid, y = V1)) + 
-  geom_point() +
-  stat_smooth() +
-  xlab("bundle water offered (ml)") +
-  ylab("proportion of bundle choices") +
-  ggtitle("Monkey Proportion of Bundle Bids on Binary Choice Task",
-          subtitle = paste(date, ";", monkey, ";", length(unique(task_data$block)), "blocks")) +
-  #theme_fivethirtyeight() +
-  theme_minimal() +
-  theme(strip.text.x = element_text(size = 14)) +
-  theme(axis.title.x = element_text(size = 14)) +
-  theme(axis.title.y = element_text(size = 14)) 
+```{r}
+p2 <- task_data[, .(.N), by = .(budget_liquid, bundle_liquid)] %>%
+  ggplot(aes(x = budget_liquid, y = bundle_liquid)) +
+  geom_tile(aes(fill = N))
 
+```
+
+```{r}
+p3 <- task_data[, mean := mean(fractal_bid), by = .(budget_liquid, bundle_liquid)] %>%
+  ggplot(aes(x = budget_liquid, y = bundle_liquid)) +
+  geom_tile(aes(fill = mean))
 
 ```
 
