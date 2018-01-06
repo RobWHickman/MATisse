@@ -18,28 +18,29 @@ require(tidyr)
 
 ```{r, warning = FALSE, message = FALSE, include = FALSE}
 #load in specific data
-#date <- "03-Jan-2018"
-dates <- seq(as.Date("27-Dec-2017", "%d-%B-%Y"), as.Date("3-Jan-2018", "%d-%B-%Y"), 1)
-dates <- format(strptime(as.character(dates), "%Y-%m-%d"), "%d-%b-%Y")
+date <- "05-Jan-2018"
+#dates <- seq(as.Date("27-Dec-2017", "%d-%B-%Y"), as.Date("3-Jan-2018", "%d-%B-%Y"), 1)
+#dates <- format(strptime(as.character(dates), "%Y-%m-%d"), "%d-%b-%Y")
 #get rid of saturdays and nye
-dates <- dates[-c(4,5,6)]
-blocks <- c(1,1,2,1,1)
+#dates <- dates[-c(4,5,6)]
+#blocks <- c(1,1,2,1,1)
 monkey <- "Vicer"
 
-search_string <- paste0(dates, ".*", monkey, "COMPACT")
+#search_string <- paste0(dates, ".*", monkey, "COMPACT")
+search_string <- paste0(date, ".*", monkey, "COMPACT")
 
 #find all data files
 directory <- "C:/Users/WS-Guest/Desktop/task data/"
 data_files <- dir(directory)
 
 #load in the relevant data
-specific_files <- c()
-for (day in seq(search_string)){
-  specific_file <- data_files[grep(search_string[day], data_files)][blocks[day]]
-  specific_files <- append(specific_files, specific_file)
-}
+#specific_files <- c()
+#for (day in seq(search_string)){
+#  specific_file <- data_files[grep(search_string[day], data_files)][blocks[day]]
+#  specific_files <- append(specific_files, specific_file)
+#}
 
-#specific_files <- data_files[grep(search_string, data_files)]
+specific_files <- data_files[grep(search_string, data_files)]
 #specific_files <- specific_files[1]
 
 task_data <- rbindlist(lapply(paste0(directory, specific_files), read.csv, na.strings = "NaN"), idcol = "block") %>%
