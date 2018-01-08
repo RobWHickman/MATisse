@@ -20,7 +20,7 @@ Screen('FillRect', task_window, [0 0 0 stimuli.trial.cover_rect_darkness], stimu
 %and for the budget if required
 if parameters.binary_choice.random_budget
     Screen('DrawTexture', task_window, stimuli.trial.reverse_budget_texture, [], stimuli.trial.reversed_budget_position + [position_reflector, 0, position_reflector, 0], 0);
-    Screen('FillRect', task_window, [0 0 0 stimuli.trial.cover_rect_darkness], stimuli.trial.reversed_bidspace_position);
+    Screen('FillRect', task_window, [0 0 0 stimuli.trial.cover_rect_darkness], stimuli.trial.reversed_budget_position + [position_reflector, 0, position_reflector, 0]);
 end
 
 %create the bidding circle as an oval in a rect

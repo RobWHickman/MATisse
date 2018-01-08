@@ -34,5 +34,11 @@ if parameters.binary_choice.random_budget
     results.trial_results.budget_water_perc = parameters.single_trial_values.budget_water;
 end
 results.trial_results.offer_value = parameters.single_trial_values.offer_value;
+
+%FIX THIS TO MAKE IT WORK NICER
+if parameters.binary_choice.no_fractals == 1
+    results.trial_results.reward = 0;
+end
+
 end
 
