@@ -35,7 +35,7 @@ if parameters.random_stim == 1
 else
     single_trial_values.offer_value = stimuli.combinations(1,stimuli.combination_order(results.experiment_summary.correct+1));
     if strcmp(parameters.task, 'BC')
-      single_trial_values.bundle_water = stimuli.combinations(2,stimuli.combination_order(results.experiment_summary.correct+1));
+      single_trial_values.bundle_water = stimuli.combinations(2,stimuli.combination_order(results.experiment_summary.correct+1)) / parameters.binary_choice.divisions;
       single_trial_values.bundle_half = stimuli.combinations(3,stimuli.combination_order(results.experiment_summary.correct+1));
       if parameters.binary_choice.random_budget
             single_trial_values.budget_water = Sample(0:(1/parameters.binary_choice.divisions):1-(1/parameters.binary_choice.divisions));
