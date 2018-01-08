@@ -41,3 +41,5 @@ end
 stimuli.trial.reversed_bidspace_position = bidspace.bidspace_info.position;
 stimuli.trial.reversed_bidspace_position(2) = stimuli.trial.reversed_bidspace_position(4) - (bidspace.bidspace_info.height * value);
 
+%PEG THIS TO THE GUI
+stimuli.trial.cover_rect_darkness = 256/2;

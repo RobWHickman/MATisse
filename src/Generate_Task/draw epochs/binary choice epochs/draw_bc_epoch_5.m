@@ -1,5 +1,4 @@
 function [] = draw_bc_epoch_5(stimuli, parameters, hardware, results, task_window)
-
 %draw the textures and the frame
 if isfield(parameters, 'binary_choice')
     if ~parameters.binary_choice.no_fractals
@@ -16,9 +15,12 @@ Screen('DrawTexture', task_window, stimuli.bidspace.bidspace_texture, [], stimul
 
 %draw the reversed bidspace for the bundle last
 Screen('DrawTexture', task_window, stimuli.trial.reverse_bidspace_texture, [], stimuli.trial.reversed_bidspace_position , 0);
+Screen('FillRect', task_window, [0 0 0 stimuli.trial.cover_rect_darkness], stimuli.trial.reversed_bidspace_position);
+
 %and for the budget if required
 if parameters.binary_choice.random_budget
     Screen('DrawTexture', task_window, stimuli.trial.reverse_budget_texture, [], stimuli.trial.reversed_budget_position + [position_reflector, 0, position_reflector, 0], 0);
+    Screen('FillRect', task_window, [0 0 0 stimuli.trial.cover_rect_darkness], stimuli.trial.reversed_budget_position + [position_reflector, 0, position_reflector, 0]);
 end
 
 %create the bidding circle as an oval in a rect

@@ -125,6 +125,15 @@ handles.parameters = matisse_set(handles.parameters);
 %save this data
 guidata(hObject, handles);
 
+%small extra func to set the max number of trials the monkey should acheive
+function Total_trials_Callback(hObject, eventdata, handles)
+clear handles.parameters.max_trials;
+handles.parameters.max_trials = str2num(get(handles.Total_trials,'String'));
+guidata(hObject, handles);
+function Total_trials_CreateFcn(hObject, eventdata, handles)
+handles.parameters.max_trials = 200;
+guidata(hObject, handles);
+
 %function to set up as much as possible before hitting run
 %anything really intensive in the Run function is done before any stimulus
 %presentation anyway, but best to separate out as much as possible before
@@ -140,6 +149,10 @@ if isfield(handles.parameters,'save_info')
         get(handles.Finalised_check, 'Value'),...
         get(handles.Targeted_check, 'Value')];
     handles.parameters.task_checks.Requirement = requirement_vector';
+    
+    %update the GUI with the calculated max trials
+    %this can be edited after
+    set(handles.Total_trials,'String', num2str(handles.parameters.max_trials));
 else
     disp('save_info not found! Did you remember to run Set?')
 end
@@ -158,7 +171,7 @@ if get(hObject,'Value')
         handles.parameters.total_trials = 0;
     end
     display(handles.parameters.total_trials);
-    while get(hObject,'Value') && handles.parameters.total_trials < 1000
+    while get(hObject,'Value') && handles.results.experiment_summary.correct < handles.parameters.max_trials
         set(handles.Run_button,'string','running...','enable','on','BackgroundColor','[1, 0, 1]');
         [handles.results, handles.parameters] = Run(handles.parameters, handles.stimuli, handles.hardware, handles.results, handles.task_window);
         if handles.parameters.total_trials < 1
@@ -190,7 +203,7 @@ if get(hObject,'Value')
     end
     %if the task is paused by hitting the button again
     %n.b. only pauses at the end of a trial
-    %set(handles.Run_button,'string','stopped...','enable','on','BackgroundColor','[1, 1, 1]');
+    set(handles.Run_button,'string','stopped...','enable','on','BackgroundColor','[1, 1, 1]');
     drawnow;
     guidata(hObject, handles);
 end
@@ -416,7 +429,7 @@ guidata(hObject, handles);
 
 %display_button
 function pushbutton10_Callback(hObject, eventdata, handles)
-display(handles.results.last_trial.trial_results);
+display(handles.parameters.binary_choice.no_fractals);
 
 %set the direction of bidding
 function X_axis_bidding_Callback(hObject, eventdata, handles)
@@ -662,7 +675,19 @@ display('both directions set to equal strength');
 set(handles.Added_bias,'Value', 0.5);
 
 
-
-
-
-
+%whether the stimuli should be generated randomly each trial or a set at
+%the start of the experiment in generate
+function Random_stimuli_Callback(hObject, eventdata, handles)
+clear handles.parameters.random_stim
+Stimuli_button_state = get(hObject,'Value');
+if Stimuli_button_state == get(hObject,'Max')
+	set(handles.Random_stimuli,'string','Random Stimuli','enable','on','BackgroundColor','green');
+    handles.parameters.random_stim = 1;
+elseif button_state == get(hObject,'Min')
+	set(handles.Random_stimuli,'string','Pseudo-Random','enable','on','BackgroundColor','red');
+    handles.parameters.random_stim = 0;
+end
+guidata(hObject, handles);
+function Random_stimuli_CreateFcn(hObject, eventdata, handles)
+handles.parameters.random_stim = 0;
+guidata(hObject, handles);

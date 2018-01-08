@@ -1,35 +1,48 @@
 function [parameters, results] = set_initial_trial_values(parameters, stimuli, hardware, results)
 %get the offer value for the trial
-if isfield(parameters, 'binary_choice')
-    if ~parameters.binary_choice.no_fractals
-        single_trial_values.offer_value = randi(stimuli.fractals.fractal_info.number);
-    else
-        single_trial_values.offer_value = 0;
-    end
-    
-    if parameters.binary_choice.random_budget
-        single_trial_values.budget_water = Sample(0:(1/parameters.binary_choice.divisions):1-(1/parameters.binary_choice.divisions));
-    else
-        single_trial_values.budget_water = 0;
-    end
-end
+if parameters.random_stim == 1
+    if isfield(parameters, 'binary_choice')
+        if ~parameters.binary_choice.no_fractals
+            single_trial_values.offer_value = randi(stimuli.fractals.fractal_info.number);
+        else
+            single_trial_values.offer_value = 0;
+        end
 
-if strcmp(parameters.task, 'BDM')
-    %generate a random bid to start at
-    single_trial_values.starting_bid_value = rand(1);
-    %generate a computer bid 
-    %change these for Marius- specifies the beta distribution controlling the
-    %computers random bids
-    A = 1;
-    B = 1;
-    single_trial_values.computer_bid_value = betarnd(A,B);
-%for binary choice, instead generate the value of the fractal water budget
-elseif strcmp(parameters.task, 'BC')
-    single_trial_values.bundle_water = Sample(0:(1/parameters.binary_choice.divisions):1-(1/parameters.binary_choice.divisions));
-    display(single_trial_values.bundle_water);
-    %define which half contains the bundle
-    screen_halves = [1, 0];
-    single_trial_values.bundle_half = screen_halves(randi(2)); 
+        if parameters.binary_choice.random_budget
+            single_trial_values.budget_water = Sample(0:(1/parameters.binary_choice.divisions):1-(1/parameters.binary_choice.divisions));
+        else
+            single_trial_values.budget_water = 0;
+        end
+    end
+
+    if strcmp(parameters.task, 'BDM')
+        %generate a random bid to start at
+        single_trial_values.starting_bid_value = rand(1);
+        %generate a computer bid 
+        %change these for Marius- specifies the beta distribution controlling the
+        %computers random bids
+        A = 1;
+        B = 1;
+        single_trial_values.computer_bid_value = betarnd(A,B);
+    %for binary choice, instead generate the value of the fractal water budget
+    elseif strcmp(parameters.task, 'BC')
+        single_trial_values.bundle_water = Sample(0:(1/parameters.binary_choice.divisions):1-(1/parameters.binary_choice.divisions));
+        display(single_trial_values.bundle_water);
+        %define which half contains the bundle
+        screen_halves = [1, 0];
+        single_trial_values.bundle_half = screen_halves(randi(2)); 
+    end
+else
+    single_trial_values.offer_value = stimuli.combinations(1,stimuli.combination_order(results.experiment_summary.correct+1));
+    if strcmp(parameters.task, 'BC')
+      single_trial_values.bundle_water = stimuli.combinations(2,stimuli.combination_order(results.experiment_summary.correct+1)) / parameters.binary_choice.divisions;
+      single_trial_values.bundle_half = stimuli.combinations(3,stimuli.combination_order(results.experiment_summary.correct+1));
+      if parameters.binary_choice.random_budget
+            single_trial_values.budget_water = Sample(0:(1/parameters.binary_choice.divisions):1-(1/parameters.binary_choice.divisions));
+      else
+            single_trial_values.budget_water = 0;
+      end
+    end
 end
     
 %generate the random delays on epochs
