@@ -277,7 +277,7 @@ joystick = find_joystick(200, 'analog');
 %start(joystick); %throw an error- not sure why
 pause(0.2);
 %get the current joystick voltages (when stationary)
-test_data = peekdata(joystick,120);
+test_data = peekdata(joystick,50);
 test_data_x = test_data(:,1);
 display('remaining x bias:');
 joy_x   = mean(test_data_x)
