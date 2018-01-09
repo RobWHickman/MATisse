@@ -18,7 +18,7 @@ require(tidyr)
 
 ```{r, warning = FALSE, message = FALSE, include = FALSE}
 #load in specific data
-date <- "05-Jan-2018"
+date <- "08-Jan-2018"
 monkey <- "Ulysses"
 
 search_string <- paste0(date, ".*", monkey, "COMPACT")
