@@ -691,3 +691,13 @@ guidata(hObject, handles);
 function Random_stimuli_CreateFcn(hObject, eventdata, handles)
 handles.parameters.random_stim = 0;
 guidata(hObject, handles);
+
+
+function Occlusion_darkness_Callback(hObject, eventdata, handles)
+clear handles.stimuli.occlusion_darkness;
+handles.stimuli.occlusion_darkness = str2num(get(handles.Occlusion_darkness,'String'));
+guidata(hObject, handles);
+function Occlusion_darkness_CreateFcn(hObject, eventdata, handles)
+handles.stimuli.occlusion_darkness = 0.5;
+guidata(hObject, handles);
+
