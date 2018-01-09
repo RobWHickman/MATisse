@@ -22,6 +22,11 @@ Screen('FillRect', task_window, [0 0 0 stimuli.occlusion_darkness], stimuli.tria
 
 %and for the budget if required
 if parameters.binary_choice.random_budget
-    Screen('DrawTexture', task_window, stimuli.trial.reverse_budget_texture, [], stimuli.trial.reversed_budget_position + [position_reflector, 0, position_reflector, 0], 0);
-    Screen('FillRect', task_window, [0 0 0 stimuli.occlusion_darkness], stimuli.trial.reversed_budget_position + [position_reflector, 0, position_reflector, 0]);
+    if(parameters.single_trial_values.bundle_half == 1)
+        Screen('DrawTexture', task_window, stimuli.trial.reverse_budget_texture, [], stimuli.trial.reversed_budget_position + [position_reflector, 0, position_reflector, 0], 0);
+        Screen('FillRect', task_window, [0 0 0 stimuli.occlusion_darkness], stimuli.trial.reversed_budget_position + [position_reflector, 0, position_reflector, 0]);
+    else
+        Screen('DrawTexture', task_window, stimuli.trial.reverse_budget_texture, [], stimuli.trial.reversed_budget_position, 0);
+        Screen('FillRect', task_window, [0 0 0 stimuli.occlusion_darkness], stimuli.trial.reversed_budget_position);
+    end
 end

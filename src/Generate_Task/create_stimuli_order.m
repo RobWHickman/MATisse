@@ -34,7 +34,7 @@ combinations = [fractals_vector; divisions_vector; repmat(0, 1, total_trials)];
 for division = 1:divisions
     for fractal = 1:fractals
         index = find(combinations(2,:) == division & combinations(1,:) == fractal);
-        side_vec = repmat([1 2], 1, length(index)/sides);
+        side_vec = repmat([0 1], 1, length(index)/sides);
         side_vec = side_vec(randperm(length(index)));
         combinations(3,index) = side_vec;
     end
