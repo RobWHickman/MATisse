@@ -5,7 +5,7 @@ if sides > 2
 end
 
 
-%fractals
+%randomise order of fractals
 fractals_vec = 1:fractals;
 for subblock = 1:(total_trials/(divisions * fractals))
     if subblock == 1
@@ -17,7 +17,7 @@ end
 
 fractals_vector = reshape(repmat(fractals_vector,divisions,1),1,[]);
 
-%divisions
+%randomise divisions for each fractal
 divs_vec = 1:divisions;
 for subblock = 1:(total_trials/divisions)
     if subblock == 1
@@ -27,11 +27,16 @@ for subblock = 1:(total_trials/divisions)
     end
 end
 
-%sides
-sides_vec = reshape(repmat(1:sides, total_trials/sides,1),1,[]);
-sides_vec = sides_vec(randperm(total_trials));
-%FIX THIS
-sides_vec = sides_vec - 1;
-
 %combine
-combinations = [fractals_vector; divisions_vector; sides_vec];
+combinations = [fractals_vector; divisions_vector; repmat(0, 1, total_trials)];
+
+%randomly choose sides for each combinations
+for division = 1:divisions
+    for fractal = 1:fractals
+        index = find(combinations(2,:) == division & combinations(1,:) == fractal);
+        side_vec = repmat([1 2], 1, length(index)/sides);
+        side_vec = side_vec(randperm(length(index)));
+        combinations(3,index) = side_vec;
+    end
+end
+        

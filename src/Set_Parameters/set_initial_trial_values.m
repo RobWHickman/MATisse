@@ -9,7 +9,7 @@ if parameters.random_stim == 1
         end
 
         if parameters.binary_choice.random_budget
-            single_trial_values.budget_water = Sample(0:(1/parameters.binary_choice.divisions):1-(1/parameters.binary_choice.divisions));
+            single_trial_values.budget_water = Sample(parameters.binary_choice.divisions:(1/parameters.binary_choice.divisions):1);
         else
             single_trial_values.budget_water = 0;
         end
