@@ -16,9 +16,12 @@ Screen('DrawTexture', task_window, stimuli.bidspace.bidspace_texture, [], stimul
 
 %draw the reversed bidspace for the bundle last
 Screen('DrawTexture', task_window, stimuli.trial.reverse_bidspace_texture, [], stimuli.trial.reversed_bidspace_position , 0);
+Screen('FillRect', task_window, [0 0 0 stimuli.occlusion_darkness], stimuli.trial.reversed_bidspace_position);
+
 %and for the budget if required
 if parameters.binary_choice.random_budget
     Screen('DrawTexture', task_window, stimuli.trial.reverse_budget_texture, [], stimuli.trial.reversed_budget_position + [position_reflector, 0, position_reflector, 0], 0);
+    Screen('FillRect', task_window, [0 0 0 stimuli.occlusion_darkness], stimuli.trial.reversed_budget_position + [position_reflector, 0, position_reflector, 0]);
 end
 
 %draw a rectangle over the left half of the screen

@@ -32,25 +32,26 @@ Screen('BlendFunction', window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
 baseRect = [0 0 400 400];
 
 % Screen X positions of our three rectangles
-squareXpos = [xCenter - 200 xCenter + 200 xCenter];
-squareYpos = [yCenter yCenter yCenter + 200];
+squareXpos = [xCenter];
+squareYpos = [yCenter];
 numSqaures = length(squareXpos);
 
 % Set the colors to Red, Green and Blue, with the fourth value being the
 % "alpha" value. This also takes a value between 0 and 1 just like a
 % normal colour, however now 0 = totally transparent and 1 = totally
 % opaque. Our RGB triplets are now RGBA values.
-allColors = [1 0 0 1; 0 1 0 1; 0 0 1 0.5]';
+allColors = [0 0 0 0.1];
 
 % Make our rectangle coordinates
-allRects = nan(4, 3);
-for i = 1:numSqaures
-    allRects(:, i) = CenterRectOnPointd(baseRect,...
-        squareXpos(i), squareYpos(i));
-end
+% allRects = nan(4, 3);
+% for i = 1:numSqaures
+%     allRects(:, i) = CenterRectOnPointd(baseRect,...
+%         squareXpos(i), squareYpos(i));
+% end
+allRects = CenterRectOnPointd(baseRect, squareXpos, squareYpos);
 
 % Draw the rect to the screen
-Screen('FillRect', window, allColors, allRects);
+Screen('FillRect', window, [0 0 0 0.1], allRects);
 
 % Flip to the screen
 Screen('Flip', window);
