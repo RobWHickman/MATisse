@@ -18,7 +18,7 @@ require(tidyr)
 
 ```{r, warning = FALSE, message = FALSE, include = FALSE}
 #load in specific data
-date <- "09-Jan-2018"
+date <- "10-Jan-2018"
 #dates <- seq(as.Date("27-Dec-2017", "%d-%B-%Y"), as.Date("3-Jan-2018", "%d-%B-%Y"), 1)
 #dates <- format(strptime(as.character(dates), "%Y-%m-%d"), "%d-%b-%Y")
 #get rid of saturdays and nye
@@ -41,7 +41,7 @@ data_files <- dir(directory)
 #}
 
 specific_files <- data_files[grep(search_string, data_files)]
-#specific_files <- specific_files[2]
+specific_files <- specific_files[1]
 
 task_data <- rbindlist(lapply(paste0(directory, specific_files), read.csv, na.strings = "NaN"), idcol = "block") %>%
   #munge the data
