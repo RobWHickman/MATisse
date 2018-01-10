@@ -308,6 +308,16 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 guidata(hObject, handles);
 
+%set the joystick sensitivity
+function Joystick_sensitivty_Callback(hObject, eventdata, handles)
+clear handles.hardware.inputs.settings.joystick_sensitivity;
+handles.hardware.inputs.settings.joystick_sensitivity = str2num(get(handles.Joystick_sensitivty,'String'));
+display('set new joystick sensitivity');
+guidata(hObject, handles);
+function Joystick_sensitivty_CreateFcn(hObject, eventdata, handles)
+handles.hardware.inputs.settings.joystick_sensitivity = str2num('0.05');
+guidata(hObject, handles);
+
 %set the joystick scalar (how fast it makes the bar travel)
 function Joystick_scalar_Callback(hObject, eventdata, handles)
 clear handles.hardware.inputs.settings.joystick_scalar;
