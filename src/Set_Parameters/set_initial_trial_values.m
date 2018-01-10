@@ -13,17 +13,24 @@ if parameters.random_stim == 1
         else
             single_trial_values.budget_water = 0;
         end
+    %NEED TO STANDARDISE
+    elseif strcmp(parameters.task_type,'base')
+        single_trial_values.offer_value = randi(stimuli.fractals.fractal_info.number);
+    elseif strcmp(parameters.task_type,'first') || strcmp(parameters.task_type,'12price')
+         single_trial_values.offer_value = randi(parameters.fractal_no);
     end
 
     if strcmp(parameters.task, 'BDM')
+        if strcmp(parameters.task_type,'12price')
+            single_trial_values.auction_type = randi(2);
+        end
+
         %generate a random bid to start at
         single_trial_values.starting_bid_value = rand(1);
         %generate a computer bid 
         %change these for Marius- specifies the beta distribution controlling the
         %computers random bids
-        A = 1;
-        B = 1;
-        single_trial_values.computer_bid_value = betarnd(A,B);
+        single_trial_values.computer_bid_value = betarnd(parameters.alpha,parameters.beta);
     %for binary choice, instead generate the value of the fractal water budget
     elseif strcmp(parameters.task, 'BC')
         single_trial_values.bundle_water = Sample(0:(1/parameters.binary_choice.divisions):1-(1/parameters.binary_choice.divisions));
