@@ -37,9 +37,16 @@ else
       single_trial_values.bundle_water = 1 - stimuli.combinations(2,stimuli.combination_order(results.experiment_summary.correct+1)) / parameters.binary_choice.divisions;
       single_trial_values.bundle_half = stimuli.combinations(3,stimuli.combination_order(results.experiment_summary.correct+1));
       if parameters.binary_choice.random_budget
-            single_trial_values.budget_water = Sample(0:(1/parameters.binary_choice.divisions):1-(1/parameters.binary_choice.divisions));
+          single_trial_values.budget_water = Sample(0:(1/parameters.binary_choice.divisions):1-(1/parameters.binary_choice.divisions));
+      elseif parameters.binary_choice.pegged_budget
+          single_trial_values.budget_water = single_trial_values.bundle_water + parameters.binary_choice.pegged_difference;
+          if single_trial_values.budget_water > 1
+              single_trial_values.budget_water = 1-(1/parameters.binary_choice.divisions);
+          elseif single_trial_values.budget_water < 0
+              single_trial_values.budget_water = 0;
+          end
       else
-            single_trial_values.budget_water = 0;
+          single_trial_values.budget_water = 0;
       end
     end
 end

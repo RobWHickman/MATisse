@@ -625,9 +625,32 @@ function Random_budget_Callback(hObject, eventdata, handles)
 clear handles.parameters.binary_choice.random_budget;
 randomise_budgets = get(handles.Static_targetbox, 'Value');
 handles.parameters.binary_choice.random_budget = randomise_budgets;
+set(handles.Pegged_budget,'Value', 0);
 guidata(hObject, handles);
 function Random_budget_CreateFcn(hObject, eventdata, handles)
 handles.parameters.binary_choice.random_budget = 0;
+guidata(hObject, handles);
+
+function Pegged_budget_Callback(hObject, eventdata, handles)
+clear handles.parameters.binary_choice.pegged_budget;
+peg_budgets = get(handles.Static_targetbox, 'Value');
+handles.parameters.binary_choice.pegged_budget = peg_budgets;
+set(handles.Random_budget,'Value', 0);
+guidata(hObject, handles);
+function Pegged_budget_CreateFcn(hObject, eventdata, handles)
+handles.parameters.binary_choice.pegged_budget = 0;
+guidata(hObject, handles);
+
+function Peg_difference_Callback(hObject, eventdata, handles)
+if handles.parameters.binary_choice.pegged_budget
+    clear handles.parameters.binary_choice.pegged_difference;
+    handles.parameters.binary_choice.pegged_difference = str2num(get(handles.Peg_difference,'String'));
+    guidata(hObject, handles);
+else
+    display('Please select "Pegged_budget" first!');
+end
+function Peg_difference_CreateFcn(hObject, eventdata, handles)
+handles.parameters.binary_choice.pegged_difference = NaN;
 guidata(hObject, handles);
 
 function Remove_fractals_Callback(hObject, eventdata, handles)
@@ -700,4 +723,9 @@ guidata(hObject, handles);
 function Occlusion_darkness_CreateFcn(hObject, eventdata, handles)
 handles.stimuli.occlusion_darkness = 256 * 0.5;
 guidata(hObject, handles);
+
+
+
+
+
 
