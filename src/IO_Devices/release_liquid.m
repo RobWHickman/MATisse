@@ -25,7 +25,7 @@ elseif strcmp(payout, 'reward')
     end
     tap_open_time = (results.trial_results.reward_liquid) / simple_divider2;
     if strcmp(parameters.save_info.primate, 'Ulysses')
-        tap = 2;
+        tap = 3;
     elseif strcmp(parameters.save_info.primate, 'Vicer')
         tap = 2;
     end
