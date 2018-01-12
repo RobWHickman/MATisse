@@ -1,0 +1,116 @@
+---
+title: "Water Budget Choice Analysis"
+author: "Robert Hickman"
+output:
+  pdf_document:
+    fig_width: 10
+    fig_height: 8
+  html_document: default
+---
+```{r, warning = FALSE, message = FALSE, include = FALSE}
+require(ggplot2)
+require(ggthemes)
+require(dplyr)
+require(magrittr)
+require(data.table)
+require(tidyr)
+```
+
+```{r, warning = FALSE, message = FALSE, include = FALSE}
+#load in specific data
+date <- "11-Jan-2018"
+#dates <- seq(as.Date("27-Dec-2017", "%d-%B-%Y"), as.Date("3-Jan-2018", "%d-%B-%Y"), 1)
+#dates <- format(strptime(as.character(dates), "%Y-%m-%d"), "%d-%b-%Y")
+#get rid of saturdays and nye
+#dates <- dates[-c(4,5,6)]
+#blocks <- c(1,1,2,1,1)
+monkey <- "Vicer"
+
+#search_string <- paste0(dates, ".*", monkey, "COMPACT")
+search_string <- paste0(date, ".*", monkey, "COMPACT")
+
+#find all data files
+directory <- "C:/Users/WS-Guest/Desktop/task data/"
+data_files <- dir(directory)
+
+#load in the relevant data
+#specific_files <- c()
+#for (day in seq(search_string)){
+#  specific_file <- data_files[grep(search_string[day], data_files)][blocks[day]]
+#  specific_files <- append(specific_files, specific_file)
+#}
+
+specific_files <- data_files[grep(search_string, data_files)]
+specific_files <- specific_files[1]
+
+task_data <- rbindlist(lapply(paste0(directory, specific_files), read.csv, na.strings = "NaN"), idcol = "block") %>%
+  #munge the data
+  .[, block := paste("block", block)] %>%
+  .[, trial:= 1:.N, block] %>%
+  .[bundle_position == 1, bundle_distance := (monkey_final_bid + 1)/2] %>%
+  .[bundle_position == 0, bundle_distance := (1-monkey_final_bid)/2] %>%
+  .[bundle_distance < 0.5, fractal_bid := 1] %>%
+  .[bundle_distance > 0.5, fractal_bid := 0] %>%
+  .[, bundle_liquid := 1.2 - (bundle_water_perc * 1.2)] %>%
+  .[, budget_liquid := 1.2 - (budget_water_perc * 1.2)] %>%
+  .[, c("block", "budget_liquid", "bundle_liquid", "bundle_position", "bundle_distance", "fractal_bid", "adjust"),] %>%
+  .[!is.na(fractal_bid)] %>%
+  .[bundle_liquid > budget_liquid, bundle_dominates := 1] %>%
+  .[bundle_liquid < budget_liquid, bundle_dominates := 0] %>%
+  .[, bundle_dominance := bundle_liquid - budget_liquid]
+
+table(paste(task_data$bundle_dominance, task_data$fractal_bid))
+
+```
+
+Data shown for:
+```{r, warning = FALSE, message = FALSE}
+date
+monkey
+
+```
+
+```{r,warning = FALSE, message = FALSE, include = FALSE}
+p1 <- ggplot(data = task_data, aes(x = bundle_distance, y = bundle_dominance)) +
+  #geom_jitter(aes(colour = block), height = 0.025, alpha = 0.3, size = 3) +
+  geom_point(aes(colour = block), alpha = 0.3, size = 3) +
+  xlab("distance bid from bundle side of the screen") +
+  ylab("bundle dominance (mL)") +
+  ggtitle("Bids on the binary water choice task")
+```
+
+```{r}
+p1
+```
+
+Bids made by Vicer on the binary water choice task. Monkey is presented with two partially occluded bars and should always choose the less occluded one (the one that will pay out more water). The y-axis shows the xtent to which the 'bundle' (essentially meaningless here as no fractal is shown/ juice paid out) half of the screen is chosen (and the bundle liquid is paid out). A distance <0.5 means choosing the bundle and >0.5 means choosing the 'budget'. There are no bids in the middle, ~0.5, as this is where the dot starts on the screen and needs to be moved from.
+
+The y axis shows the extent to which the bundle dominates the budget. The values are the different between the two in terms of ml (where 0 means both the bundle and budget are offering the same amount of water). Positive indicates the bundle offer is greater than the budget offer and vice versa.
+
+A optimally performing unbiased monkey should always pick the side offering more water and pick equally when the bundle dominance = 0.
+
+```{r,warning = FALSE, message = FALSE, include = FALSE}
+p2 <- task_data[, .(.N), by = .(budget_liquid, bundle_liquid)] %>%
+  ggplot(aes(x = budget_liquid, y = bundle_liquid)) +
+  geom_tile(aes(fill = N)) +
+  ggtitle("number of trials for each combination of bundle/budget liquid offers")
+
+```
+
+```{r}
+p2
+```
+
+
+```{r,warning = FALSE, message = FALSE, include = FALSE}
+p3 <- task_data[, mean := mean(fractal_bid), by = .(budget_liquid, bundle_liquid)] %>%
+  ggplot(aes(x = budget_liquid, y = bundle_liquid)) +
+  geom_tile(aes(fill = mean)) +
+  ggtitle("proportion of bundle choices for each combination of bundle/budget liquid offers")
+
+```
+
+```{r}
+p3
+```
+
