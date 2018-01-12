@@ -2,4 +2,4 @@
 .Rhistory
 .RData
 .Ruserdata
-analysis/*
+analysis/knitted_pdfs/*
