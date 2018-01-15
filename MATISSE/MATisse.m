@@ -195,8 +195,10 @@ if get(hObject,'Value')
         set(handles.text34, 'String', handles.results.experiment_summary.not_rewarded);
         set(handles.text37, 'String', handles.results.experiment_summary.total_budget);
         set(handles.text38, 'String', handles.results.experiment_summary.total_reward);
-        set(handles.text57, 'String', handles.results.experiment_summary.left);
-        set(handles.text58, 'String', handles.results.experiment_summary.right);
+        if strcmp(handles.parameters.task, 'BC')
+            set(handles.text57, 'String', handles.results.experiment_summary.left);
+            set(handles.text58, 'String', handles.results.experiment_summary.right);
+        end
        
         %update the GUI with these fields
         drawnow;
@@ -427,7 +429,7 @@ guidata(hObject, handles);
 
 %display_button
 function pushbutton10_Callback(hObject, eventdata, handles)
-display(handles.parameters.binary_choice.no_fractals);
+display(size(handles.results.full_output_table.trial_results,1));
 
 %set the direction of bidding
 function X_axis_bidding_Callback(hObject, eventdata, handles)
