@@ -1,6 +1,6 @@
 function [parameters, results] = set_initial_trial_values(parameters, stimuli, hardware, results)
 %get the offer value for the trial
-if parameters.random_stim == 1
+if parameters.random_stim == 1 | strcmp(parameters.task, 'PAV')
     if isfield(parameters, 'binary_choice')
         if ~parameters.binary_choice.no_fractals
             single_trial_values.offer_value = randi(stimuli.fractals.fractal_info.number);
@@ -31,6 +31,12 @@ if parameters.random_stim == 1
         screen_halves = [1, 0];
         single_trial_values.bundle_half = screen_halves(randi(2)); 
     end
+    
+    %for the pavlovian task generate the fractal on the fly
+    if strcmp(parameters.task, 'PAV')
+       single_trial_values.offer_value = randi(stimuli.fractals.fractal_info.number);
+    end
+    
 else
     single_trial_values.offer_value = stimuli.combinations(1,stimuli.combination_order(results.experiment_summary.correct+1));
     if strcmp(parameters.task, 'BC')

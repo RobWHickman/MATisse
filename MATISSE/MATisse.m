@@ -254,12 +254,10 @@ button_state = get(hObject,'Value');
 if button_state == get(hObject,'Max')
 	set(handles.Mode_button,'string','Test ON','enable','on','BackgroundColor','green');
     handles.hardware.testmode = 1;
-    %display(handles.Mode_button.Value);
     set(handles.Centered_check,'value',0);
 elseif button_state == get(hObject,'Min')
 	set(handles.Mode_button,'string','Test OFF','enable','on','BackgroundColor','red');
     handles.hardware.testmode = 0;
-    %display(handles.hardware.testmode.Value);
 end
 guidata(hObject, handles);
 function Mode_button_CreateFcn(hObject, eventdata, handles)
@@ -915,10 +913,18 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on button press in Pavlovian_learning.
 function Pavlovian_learning_Callback(hObject, eventdata, handles)
-% hObject    handle to Pavlovian_learning (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+clear handles.parameters.task
+pav_button_state = get(hObject,'Value');
+if pav_button_state == get(hObject,'Max')
+	set(handles.Pavlovian_learning,'string','Pavlovian','enable','on','BackgroundColor','green');
+    handles.parameters.task = 'PAV';
+elseif pav_button_state == get(hObject,'Min')
+	set(handles.Pavlovian_learning,'string','Pavlovian','enable','on','BackgroundColor','red');
+    handles.parameters.task = 'BDM';
+end
+guidata(hObject, handles);
+function Pavlovian_learning_CreateFcn(hObject, eventdata, handles)
+handles.parameters.task = 'BDM';
+guidata(hObject, handles);
 
-% Hint: get(hObject,'Value') returns toggle state of Pavlovian_learning

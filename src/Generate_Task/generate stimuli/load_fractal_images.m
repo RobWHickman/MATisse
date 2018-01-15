@@ -22,6 +22,8 @@ if strcmp(task, 'BDM')
     stimuli_size = 0.5;
 elseif strcmp(task, 'BC')
     stimuli_size = 0.4;
+elseif strcmp(task, 'PAV')
+    stimuli_size = 0.7;
 end
 
 %for each image, load it and add to the array

@@ -40,5 +40,7 @@ if parameters.binary_choice.no_fractals == 1
     results.trial_results.reward = 0;
 end
 
+elseif strcmp(parameters.task, 'PAV')
+results.trial_results.reward = parameters.single_trial_values.offer_value;
 end
 
