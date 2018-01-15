@@ -3,7 +3,7 @@
 .Rhistory
 .RData
 .Ruserdata
-analysis/*
+analysis/knitted_pdfs/*
 
 #ignore temp matlab files
 **/*.ps
