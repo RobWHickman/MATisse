@@ -913,3 +913,12 @@ function Fractal_names_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on button press in Pavlovian_learning.
+function Pavlovian_learning_Callback(hObject, eventdata, handles)
+% hObject    handle to Pavlovian_learning (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of Pavlovian_learning
