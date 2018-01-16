@@ -23,7 +23,7 @@ if strcmp(task, 'BDM')
 elseif strcmp(task, 'BC')
     stimuli_size = 0.4;
 elseif strcmp(task, 'PAV')
-    stimuli_size = 0.7;
+    stimuli_size = 0.4;
 end
 
 %for each image, load it and add to the array
@@ -45,6 +45,11 @@ elseif strcmp(task, 'BC')
 fractal_info.fractal_position = [((screen_info.width /2) - (screen_info.percent_x * 27) - (screen_info.height * stimuli_size)),...
     screen_info.height/2 - (screen_info.height * stimuli_size)/2,...
     ((screen_info.width /2) - (screen_info.percent_x * 27)),...
+    (screen_info.height/2 + (screen_info.height * stimuli_size)/2)];
+elseif strcmp(task, 'PAV')
+fractal_info.fractal_position = [((screen_info.width /2) - (screen_info.percent_x * 10) - (screen_info.height * stimuli_size)),...
+    screen_info.height/2 - (screen_info.height * stimuli_size)/2,...
+    ((screen_info.width /2) - (screen_info.percent_x * 10)),...
     (screen_info.height/2 + (screen_info.height * stimuli_size)/2)];
 end
 
