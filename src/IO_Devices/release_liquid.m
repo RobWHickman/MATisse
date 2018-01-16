@@ -27,7 +27,7 @@ elseif strcmp(payout, 'reward')
     if strcmp(parameters.save_info.primate, 'Ulysses')
         tap = 3;
     elseif strcmp(parameters.save_info.primate, 'Vicer')
-        tap = 2;
+        tap = 3;
     end
 
 %pays out a manually assigned tap via the GUI    
