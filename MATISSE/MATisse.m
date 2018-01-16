@@ -290,6 +290,9 @@ set(handles.Set_X_Bias,'String', num2str(-joy_x));
 handles.hardware.inputs.settings.joystick_x_bias = get(handles.Set_X_Bias,'String');
 set(handles.Set_Y_Bias,'String', num2str(-joy_y));
 handles.hardware.inputs.settings.joystick_y_bias = get(handles.Set_Y_Bias,'String');
+%assign this to the workspace to use later on
+assignin('base', 'joystick_bias_x', [handles.hardware.inputs.settings.joystick_x_bias]);
+assignin('base', 'joystick_bias_y', [handles.hardware.inputs.settings.joystick_y_bias]);
 guidata(hObject, handles);
 
 %edit the bias in the GUI
@@ -941,11 +944,17 @@ function Listen_mode_Callback(hObject, eventdata, handles)
 % Hint: get(hObject,'Value') returns toggle state of Listen_mode
 
 
-% --- Executes on button press in Reinsert_bias.
+%function to reinsert already tested values for the joystick bias
 function Reinsert_bias_Callback(hObject, eventdata, handles)
-% hObject    handle to Reinsert_bias (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+bias_x = evalin('base', 'joystick_bias_x');
+bias_y = evalin('base', 'joystick_bias_y');
+handles.hardware.inputs.settings.joystick_y_bias = str2num(bias_y);
+handles.hardware.inputs.settings.joystick_x_bias = str2num(bias_x);
+set(handles.Set_Y_Bias,'String', num2str(handles.hardware.inputs.settings.joystick_y_bias));
+set(handles.Set_X_Bias,'String', num2str(handles.hardware.inputs.settings.joystick_x_bias));
+display('reinserted joystick bias from workspace');
+guidata(hObject, handles);
+
 
 
 % --- Executes on button press in Free_juice.
