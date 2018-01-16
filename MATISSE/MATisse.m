@@ -755,18 +755,18 @@ end
 
 
 
-function edit30_Callback(hObject, eventdata, handles)
-% hObject    handle to edit30 (see GCBO)
+function Budget_tap_Callback(hObject, eventdata, handles)
+% hObject    handle to Budget_tap (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of edit30 as text
-%        str2double(get(hObject,'String')) returns contents of edit30 as a double
+% Hints: get(hObject,'String') returns contents of Budget_tap as text
+%        str2double(get(hObject,'String')) returns contents of Budget_tap as a double
 
 
 % --- Executes during object creation, after setting all properties.
-function edit30_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edit30 (see GCBO)
+function Budget_tap_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to Budget_tap (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -778,18 +778,18 @@ end
 
 
 
-function edit31_Callback(hObject, eventdata, handles)
-% hObject    handle to edit31 (see GCBO)
+function Reward_tap_Callback(hObject, eventdata, handles)
+% hObject    handle to Reward_tap (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of edit31 as text
-%        str2double(get(hObject,'String')) returns contents of edit31 as a double
+% Hints: get(hObject,'String') returns contents of Reward_tap as text
+%        str2double(get(hObject,'String')) returns contents of Reward_tap as a double
 
 
 % --- Executes during object creation, after setting all properties.
-function edit31_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edit31 (see GCBO)
+function Reward_tap_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to Reward_tap (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -930,3 +930,28 @@ function Pavlovian_learning_CreateFcn(hObject, eventdata, handles)
 handles.parameters.task = 'BDM';
 guidata(hObject, handles);
 
+
+
+% --- Executes on button press in Listen_mode.
+function Listen_mode_Callback(hObject, eventdata, handles)
+% hObject    handle to Listen_mode (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of Listen_mode
+
+
+% --- Executes on button press in Reinsert_bias.
+function Reinsert_bias_Callback(hObject, eventdata, handles)
+% hObject    handle to Reinsert_bias (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in Free_juice.
+function Free_juice_Callback(hObject, eventdata, handles)
+% hObject    handle to Free_juice (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of Free_juice
