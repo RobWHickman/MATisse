@@ -45,7 +45,7 @@ if strcmp(parameters.task, 'BDM')
 elseif strcmp(parameters.task, 'BC')
     limits = [0, hardware.outputs.screen_info.width];
     initial_bid_position = hardware.outputs.screen_info.width/2;
-    axis_multiplier = 1;
+    axis_multiplier = -1;
 end
 
 %set the default movement for the frame to zero
@@ -116,7 +116,7 @@ if (~results.trial_values.task_checks.Status('no_bid_activity') | ~results.trial
                 %reset the count
                 results.trial_values.stationary_frame_count = 0;
                 %adjust bar adjustment
-                frame_adjust = (-hardware.inputs.settings.joystick_scalar * joystick_impetus_l * axis_multiplier) / joystick_added_bias; %THIS LINE
+                frame_adjust = (hardware.inputs.settings.joystick_scalar * joystick_impetus_l * axis_multiplier) / joystick_added_bias; %THIS LINE
                 %if we overshoot bring the y adjust back to max it can be
                 if initial_bid_position + results.trial_results.adjust + frame_adjust < limits(1)
                     frame_adjust = limits(1) - (initial_bid_position + results.trial_results.adjust);
@@ -124,7 +124,7 @@ if (~results.trial_values.task_checks.Status('no_bid_activity') | ~results.trial
                 output_frame_adjust = frame_adjust;
             else %TOWARDS THE RIGHT
                 results.trial_values.stationary_frame_count = 0;
-                frame_adjust = (hardware.inputs.settings.joystick_scalar * -joystick_impetus_r * axis_multiplier) * joystick_added_bias; %scalar = speed %THIS LINE
+                frame_adjust = (-hardware.inputs.settings.joystick_scalar * -joystick_impetus_r * axis_multiplier) * joystick_added_bias; %scalar = speed %THIS LINE
                 if initial_bid_position + results.trial_results.adjust + frame_adjust > limits(2)
                     frame_adjust = limits(2) - (initial_bid_position + results.trial_results.adjust);
                 end
