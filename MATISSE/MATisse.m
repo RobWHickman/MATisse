@@ -1,110 +1,300 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   DO NOT EDIT ANY OF THIS SECTION- IT SETS UP GUIDE FOR MATLAB    %
-%function to run the MATisse GUI
-%these functions control the behaviour of the various buttons/etc in the
-%GUI and what they run
-%generally best to avoid messing here if possible 
-
-%guidata(hObject, handles) is used at the end of functions to return the
-%handles from that function for GUIDE (the MATLAB GUI program) to work with
 function varargout = MATisse(varargin)
-% Begin initialization code - DO NOT EDIT
-gui_Singleton = 1;
-gui_State = struct('gui_Name',       mfilename, ...
-                   'gui_Singleton',  gui_Singleton, ...
-                   'gui_OpeningFcn', @MATisse_OpeningFcn, ...
-                   'gui_OutputFcn',  @MATisse_OutputFcn, ...
-                   'gui_LayoutFcn',  [] , ...
-                   'gui_Callback',   []);
-if nargin && ischar(varargin{1})
-    gui_State.gui_Callback = str2func(varargin{1});
-end
-
-if nargout
-    [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
-else
-    gui_mainfcn(gui_State, varargin{:});
-end
-
-% --- Executes just before MATisse is made visible.
+    %Begin initialization code - DO NOT EDIT
+    gui_Singleton = 1;
+    gui_State = struct('gui_Name',       mfilename, ...
+                       'gui_Singleton',  gui_Singleton, ...
+                       'gui_OpeningFcn', @MATisse_OpeningFcn, ...
+                       'gui_OutputFcn',  @MATisse_OutputFcn, ...
+                       'gui_LayoutFcn',  [] , ...
+                       'gui_Callback',   []);
+    if nargin && ischar(varargin{1})
+        gui_State.gui_Callback = str2func(varargin{1});
+    end
+    if nargout
+        [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+    else
+        gui_mainfcn(gui_State, varargin{:});
+    end
+%Executes just before MATisse is made visible.
 function MATisse_OpeningFcn(hObject, eventdata, handles, varargin)
-%suppress common warnings we dont care about
-warning('off','daq:digitalio:adaptormismatch')
-warning('off','daq:analoginput:adaptormismatch')
-
-%set the background picture
-%commented for now as is super messy
-% axes(handles.background)
-% matisse_image = imread('../../MATISSE/matisse.jpg');
-% image(matisse_image)
-% axis off
-% axis image
-% Choose default command line output for MATisse
-handles.output = hObject;
-
-% Update handles structure
+    %suppress common warnings we dont care about
+    warning('off','daq:digitalio:adaptormismatch')
+    warning('off','daq:analoginput:adaptormismatch')
+    %set the default directory to Desktop/MATisse
+    root = ['C:/Users/', getenv('username'), '/Desktop/MATisse/task/BDM/'];
+    cd(root);
+    handles.output = hObject;
+    % Update handles structure
 guidata(hObject, handles);
-
-% --- Outputs from this function are returned to the command line.
+%Outputs from this function are returned to the command line.
 function varargout = MATisse_OutputFcn(hObject, eventdata, handles) 
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
 % Get default command line output from handles structure
 varargout{1} = handles.output;
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%you can edit from here on
 
-
-
-
-
-
-
-
-
-%%  STRING OUTPUT
-%first set the strings for the experiment you are about to run
-%who is running the trial and which monkey is being tested
-%set the experimenter
-function Set_Experimenter_Callback(hObject, eventdata, handles)
-clear handles.parameters.save_info.experimenter;
-handles.parameters.save_info.experimenter = get(handles.Set_Experimenter,'String');
-%display the new experimenter upon enter
-display(strcat('Experimenter Changed to: ', handles.parameters.save_info.experimenter))
+%Functions to set the involvement of monkey/human in the task
+%will be used to set what the output is saved and also can be used
+%to set defaults-e.g. with which taps to use
+function Set_experimenter_Callback(hObject, eventdata, handles)
+    clear handles.parameters.participants.experimenter;
+    handles.parameters.participants.experimenter = get(handles.Set_experimenter,'String');
+    %display the new experimenter upon enter
+    display(strcat('Experimenter Changed to: ', handles.parameters.participants.experimenter))
 guidata(hObject, handles);
 %set the default
-function Set_Experimenter_CreateFcn(hObject, eventdata, handles)
-handles.parameters.save_info.experimenter = 'Robert';
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
+function Set_experimenter_CreateFcn(hObject, eventdata, handles)
+    handles.parameters.participants.experimenter = 'Robert';
 guidata(hObject, handles);
-
 %set the primate being tested
-function Set_Primate_Callback(hObject, eventdata, handles)
-clear handles.parameters.save_info.primate;
-handles.parameters.save_info.primate = get(handles.Set_Primate,'String');
-%display the new primate upon enter
-display(strcat('Primate Changed to: ', handles.parameters.save_info.primate))
+function Set_primate_Callback(hObject, eventdata, handles)
+    clear handles.parameters.participants.primate;
+    handles.parameters.participants.primate = get(handles.Set_primate,'String');
+    %display the new primate upon enter
+    display(strcat('Primate Changed to: ', handles.parameters.participants.primate))
+    if ~any(strmatch(handles.parameters.participants.primate, handles.parameters.participants.primate_table.Name))
+        display('Could not find monkeys name in table- are you sure it has been typed correctly?');
+    end
 guidata(hObject, handles);
 %set the default
-function Set_Primate_CreateFcn(hObject, eventdata, handles)
-handles.parameters.save_info.primate = 'some_monkey';
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
+function Set_primate_CreateFcn(hObject, eventdata, handles)
+    handles.parameters.participants.primate = 'some_monkey';
+    load ../../misc/monkey_table.mat
+    handles.parameters.participants.primate_table = monkeys;
+guidata(hObject, handles);
+
+%Functions to set the type of task that will be running
+%will be used to direct towards the correct task folder and
+%to modify src functions (e.g. no need to create budgets in Pavlovian task)
+%the default taks is the BDM and this string and folder is set in the
+%create function for the Binary Choice task
+function Binary_choice_CreateFcn(hObject, eventdata, handles)
+    %default task (set at startup) is the BDM
+    handles.parameters.task.type = 'BDM';
+guidata(hObject, handles);
+function Pavlovian_learning_CreateFcn(hObject, eventdata, handles)
+guidata(hObject, handles);
+function Binary_choice_Callback(hObject, eventdata, handles)
+    clear handles.parameters.task.type
+    binary_button_state = get(hObject,'Value');
+    if binary_button_state == get(hObject,'Max')
+        %light up the currently active buttons
+        set(handles.Binary_choice,'string','Binary Choice','enable','on','BackgroundColor','green');
+        set(handles.Pavlovian_learning,'string','Pavlovian','enable','on','BackgroundColor','red');
+        set(handles.Pavlovian_learning,'value',0);
+        handles.parameters.task.type = 'BC';
+        %set the directory to the pavlovian task
+        cd('../Binary_Choice');
+    elseif binary_button_state == get(hObject,'Min')
+        set(handles.Binary_choice,'string','Binary Choice','enable','on','BackgroundColor','red');
+        handles.parameters.task.type = 'BDM';
+        handles.parameters = rmfield(handles.parameters, 'binary_choice');
+        %set the directory back to the root
+        cd('../BDM/');
+    end
+guidata(hObject, handles);
+function Pavlovian_learning_Callback(hObject, eventdata, handles)
+    clear handles.parameters.task.type
+    pav_button_state = get(hObject,'Value');
+    if pav_button_state == get(hObject,'Max')
+        %light up the currently active buttons
+        set(handles.Pavlovian_learning,'string','Pavlovian','enable','on','BackgroundColor','green');
+        set(handles.Binary_choice,'string','Binary Choice','enable','on','BackgroundColor','red');
+        set(handles.Binary_choice,'value',0);
+        handles.parameters.task.type = 'PAV';
+        %set the directory to the pavlovian task
+        cd('../Pavlovian_Learning');
+    elseif pav_button_state == get(hObject,'Min')
+        set(handles.Pavlovian_learning,'string','Pavlovian','enable','on','BackgroundColor','red');
+        handles.parameters.task.type = 'BDM';
+        %set the directory back to the root
+        cd('../BDM/');
+    end
+guidata(hObject, handles);
+
+%Functions to order the experiment
+%set a total number of trials and then use this to (if wanted) create a
+%pseudo-random order of stimuli to reduce the cost of task switching to the
+%monkey. These combinations are set when Generate() is run
+function Total_trials_Callback(hObject, eventdata, handles)
+    clear handles.parameters.trials.max_trials;
+    %can manually set the max_trials here
+    handles.parameters.trials.max_trials = str2num(get(handles.Total_trials,'String'));
+guidata(hObject, handles);
+function Total_trials_CreateFcn(hObject, eventdata, handles)
+    %use 200 as a good initial estimate
+    handles.parameters.trials.max_trials = 200;
+    %will always start at 0 trials
+    handles.parameters.trials.total_trials = 0;
+guidata(hObject, handles);
+%whether the stimuli should be generated in a pseudo-random order when
+%generating or completely random on a trial by trial basis
+function Random_stimuli_Callback(hObject, eventdata, handles)
+    clear handles.parameters.trials.random_stimuli
+    stimuli_button_state = get(hObject,'Value');
+    if stimuli_button_state == get(hObject,'Max')
+        set(handles.parameters.trials.random_stimuli,'string','Random Stimuli','enable','on','BackgroundColor','green');
+        handles.parameters.trials.random_stimuli = 1;
+    elseif button_state == get(hObject,'Min')
+        set(handles.Random_stimuli,'string','Pseudo-Random','enable','on','BackgroundColor','red');
+        handles.parameters.trials.random_stimuli = 0;
+    end
+guidata(hObject, handles);
+%defaults to zero (non random stimuli order)
+function Random_stimuli_CreateFcn(hObject, eventdata, handles)
+    handles.parameters.trials.random_stimuli = 0;
+guidata(hObject, handles);
+
+%Checkboxes to set which task checks are active for the block to be run
+%these don't need functions as they will simply be read from and used to
+%create a vector of requirements in Generate()
+function Centered_check_Callback(hObject, eventdata, handles)
+function Fixation_check_Callback(hObject, eventdata, handles)
+function Bidding_check_Callback(hObject, eventdata, handles)
+function Finalised_check_Callback(hObject, eventdata, handles)
+function Targeted_check_Callback(hObject, eventdata, handles)
+
+%Functions to modify the task in ways that we don't want to when recording
+%but are useful elsewhere
+%testmode allows the task to be run without hardware so is good for
+%debugging away from 313
+%listenmode allows the task to listen to interactions with the GUI whilst
+%running the task. This can fuck up the timing a bit but is useful when
+%doing behavioural training (e.g. when headposting and want to give free
+%juice)
+%allows for the task to be run without adequate hardware
+function Test_paradigm_Callback(hObject, eventdata, handles)
+    clear handles.parameters.modification.testmode
+    test_button_state = get(hObject,'Value');
+    if test_button_state == get(hObject,'Max')
+        set(handles.Test_paradigm,'string','Test ON','enable','on','BackgroundColor','green');
+        handles.parameters.modification.testmode = 1;
+        set(handles.Centered_check,'value',0);
+        %give a warning message
+        display('Testing mode on- hardware not taken into account');
+    elseif test_button_state == get(hObject,'Min')
+        set(handles.Test_paradigm,'string','Test OFF','enable','on','BackgroundColor','red');
+        handles.parameters.modification.testmode = 0;
+        display('Testing mode off');
+    end
+guidata(hObject, handles);
+function Test_paradigm_CreateFcn(hObject, eventdata, handles)
+    handles.parameters.modification.testmode = 0;
+guidata(hObject, handles);
+%allows the GUI to interrupt the normal running of the task
+function Listen_mode_Callback(hObject, eventdata, handles)
+    clear handles.parameters.modification.listenmode
+    listen_button_state = get(hObject,'Value');
+    if listen_button_state == get(hObject,'Max')
+        set(handles.Listen_mode,'string','Test ON','enable','on','BackgroundColor','green');
+        handles.parameters.modification.listenmode = 1;
+        set(handles.Centered_check,'value',0);
+        %give a warning message
+        display('Listening mode on- this will affect task timings');
+    elseif listen_button_state == get(hObject,'Min')
+        set(handles.Listen_mode,'string','Test OFF','enable','on','BackgroundColor','red');
+        handles.parameters.modification.listenmode = 0;
+        display('Listening mode off');
+    end
+guidata(hObject, handles);
+function Listen_mode_CreateFcn(hObject, eventdata, handles)
+    handles.parameters.modification.listenmode = 0;
 guidata(hObject, handles);
 
 
+function Remove_fractals_Callback(hObject, eventdata, handles)
+    clear handles.modifiers.fractals.no_fractals;
+    showing_fractals = get(handles.Remove_fractals, 'Value');
+    handles.modifiers.fractals.no_fractals = showing_fractals;
+    %display a message
+    if showing_fractals == get(hObject,'Min')
+        display('no longer showing fractals- trials will not be rewarded with juice');
+    elseif showing_fractals == get(hObject,'Max')
+        display('fractals will be shown and rewarded again');
+    end
+guidata(hObject, handles);
+function Remove_fractals_CreateFcn(hObject, eventdata, handles)
+    handles.modifiers.fractals.no_fractals = 0;
+guidata(hObject, handles);
+function Fractal_numbers_Callback(hObject, eventdata, handles)
+    %set the number of fractals to load via string
+    clear handles.modifiers.fractals.number_of_fractals;
+    fractal_numbers = str2num(get(handles.Fractal_numbers, 'String'));
+    handles.modifiers.fractals.number_of_fractals = fractal_numbers;
+    display(['looking for first', num2str(handles.modifiers.fractals.number_of_fractals), ' fractals in image folder']);
+guidata(hObject, handles);
+function Fractal_numbers_CreateFcn(hObject, eventdata, handles)
+    %set the default to 3
+    handles.modifiers.fractals.number_of_fractals = 3;
+guidata(hObject, handles);
+function Fractal_names_Callback(hObject, eventdata, handles)
+    %set the string at the start of the fractal files via string
+    clear handles.modifiers.fractals.fractal_string;
+    fractal_string = get(handles.Fractal_names, 'String');
+    handles.modifiers.fractals.fractal_string = num2str(fractal_string);
+    display(['looking for fractal files beginning with', handles.modifiers.fractals.fractal_string, ' in image folder']);
+guidata(hObject, handles);
+function Fractal_names_CreateFcn(hObject, eventdata, handles)
+    %set the default to 3
+    handles.modifiers.fractals.fractal_string = 'RL';
+guidata(hObject, handles);
+
+function frac_mag_1_Callback(hObject, eventdata, handles)
+    fractals_vector = [str2num(get(handles.frac_mag_1, 'String')),str2num(get(handles.frac_mag_2, 'String')),str2num(get(handles.frac_mag_3, 'String')),...
+        str2num(get(handles.frac_mag_4, 'String')),str2num(get(handles.frac_mag_5, 'String')),str2num(get(handles.frac_mag_6, 'String'))];
+    display(['currently using ', num2str(fractals_vector(1:handles.modifiers.fractals.number_of_fractals)), 'ml of juice']);
+guidata(hObject, handles);
+function frac_mag_1_CreateFcn(hObject, eventdata, handles)
+    frac_mag_1 = 0.15;
+guidata(hObject, handles);
+function frac_mag_2_Callback(hObject, eventdata, handles)
+    fractals_vector = [num2str(get(handles.frac_mag_1, 'Value')),num2str(get(handles.frac_mag_2, 'Value')),num2str(get(handles.frac_mag_3, 'Value')),...
+        num2str(get(handles.frac_mag_4, 'Value')),num2str(get(handles.frac_mag_5, 'Value')),num2str(get(handles.frac_mag_6, 'Value'))];
+    display(['currently using ', num2str(fractals_vector(1:handles.modifiers.fractals.number_of_fractals)), 'ml of juice']);
+guidata(hObject, handles);
+function frac_mag_2_CreateFcn(hObject, eventdata, handles)
+    frac_mag_2 = 0.45;
+guidata(hObject, handles);
+function frac_mag_3_Callback(hObject, eventdata, handles)
+    fractals_vector = [num2str(get(handles.frac_mag_1, 'Value')),num2str(get(handles.frac_mag_2, 'Value')),num2str(get(handles.frac_mag_3, 'Value')),...
+        num2str(get(handles.frac_mag_4, 'Value')),num2str(get(handles.frac_mag_5, 'Value')),num2str(get(handles.frac_mag_6, 'Value'))];
+    display(['currently using ', num2str(fractals_vector(1:handles.modifiers.fractals.number_of_fractals)), 'ml of juice']);
+guidata(hObject, handles);
+function frac_mag_3_CreateFcn(hObject, eventdata, handles)
+    frac_mag_3 = 0.75;
+guidata(hObject, handles);
+function frac_mag_4_Callback(hObject, eventdata, handles)
+    fractals_vector = [num2str(get(handles.frac_mag_1, 'Value')),num2str(get(handles.frac_mag_2, 'Value')),num2str(get(handles.frac_mag_3, 'Value')),...
+        num2str(get(handles.frac_mag_4, 'Value')),num2str(get(handles.frac_mag_5, 'Value')),num2str(get(handles.frac_mag_6, 'Value'))];
+    display(['currently using ', num2str(fractals_vector(1:handles.modifiers.fractals.number_of_fractals)), 'ml of juice']);
+guidata(hObject, handles);
+function frac_mag_4_CreateFcn(hObject, eventdata, handles)
+    frac_mag_4 = 0.99;
+guidata(hObject, handles);
+function frac_mag_5_Callback(hObject, eventdata, handles)
+    fractals_vector = [num2str(get(handles.frac_mag_1, 'Value')),num2str(get(handles.frac_mag_2, 'Value')),num2str(get(handles.frac_mag_3, 'Value')),...
+        num2str(get(handles.frac_mag_4, 'Value')),num2str(get(handles.frac_mag_5, 'Value')),num2str(get(handles.frac_mag_6, 'Value'))];
+    display(['currently using ', num2str(fractals_vector(1:handles.modifiers.fractals.number_of_fractals)), 'ml of juice']);
+guidata(hObject, handles);
+function frac_mag_5_CreateFcn(hObject, eventdata, handles)
+    frac_mag_5 = 0.99;
+guidata(hObject, handles);
+function frac_mag_6_Callback(hObject, eventdata, handles)
+    fractals_vector = [num2str(get(handles.frac_mag_1, 'Value')),num2str(get(handles.frac_mag_2, 'Value')),num2str(get(handles.frac_mag_3, 'Value')),...
+        num2str(get(handles.frac_mag_4, 'Value')),num2str(get(handles.frac_mag_5, 'Value')),num2str(get(handles.frac_mag_6, 'Value'))];
+    display(['currently using ', num2str(fractals_vector(1:handles.modifiers.fractals.number_of_fractals)), 'ml of juice']);
+guidata(hObject, handles);
+function frac_mag_6_CreateFcn(hObject, eventdata, handles)
+    frac_mag_1 = 0.99;
+guidata(hObject, handles);
 
 
-
-
-
-
+%%%%DELETE EVERYTHING BELOW THIS LINE%%%%
 
 
 %%  EXPERIMENT BUTTONS
@@ -123,15 +313,6 @@ function Set_button_Callback(hObject, eventdata, handles)
 disp('Setting System...')
 handles.parameters = matisse_set(handles.parameters);
 %save this data
-guidata(hObject, handles);
-
-%small extra func to set the max number of trials the monkey should acheive
-function Total_trials_Callback(hObject, eventdata, handles)
-clear handles.parameters.max_trials;
-handles.parameters.max_trials = str2num(get(handles.Total_trials,'String'));
-guidata(hObject, handles);
-function Total_trials_CreateFcn(hObject, eventdata, handles)
-handles.parameters.max_trials = 200;
 guidata(hObject, handles);
 
 %function to set up as much as possible before hitting run
@@ -245,26 +426,6 @@ sca;
 
 
 
-
-%% TESTING FUNCTIONS
-%functionto set to 'test' mode when instead of a joystick/eye tracker, the
-%mouse and keyboard can be used to run experiments
-%is piped into Generate() as either a 0 (testmode off) or a 1 (testmode)
-function Mode_button_Callback(hObject, eventdata, handles)
-clear handles.hardware.testmode;
-button_state = get(hObject,'Value');
-if button_state == get(hObject,'Max')
-	set(handles.Mode_button,'string','Test ON','enable','on','BackgroundColor','green');
-    handles.hardware.testmode = 1;
-    set(handles.Centered_check,'value',0);
-elseif button_state == get(hObject,'Min')
-	set(handles.Mode_button,'string','Test OFF','enable','on','BackgroundColor','red');
-    handles.hardware.testmode = 0;
-end
-guidata(hObject, handles);
-function Mode_button_CreateFcn(hObject, eventdata, handles)
-handles.hardware.testmode = 0;
-guidata(hObject, handles);
 
 %tests the bias on the joystick
 %use this to correct to zero so that 'at rest' - when the monkey is not
@@ -432,7 +593,7 @@ guidata(hObject, handles);
 
 %display_button
 function pushbutton10_Callback(hObject, eventdata, handles)
-display(size(handles.results.full_output_table.trial_results,1));
+display(strmatch(handles.parameters.participants.primate, handles.parameters.participants.primate_table.Name) > 0);
 
 %set the direction of bidding
 function X_axis_bidding_Callback(hObject, eventdata, handles)
@@ -493,7 +654,7 @@ if button_state == get(hObject,'Max')
     handles.parameters.targeting.requirement = 1;
     %turn the targeting check on
     set(handles.Targeted_check,'value',1);
-    %display(handles.Mode_button.Value);
+    %display(handles.Test_paradigm.Value);
 elseif button_state == get(hObject,'Min')
 	set(handles.Offer_targeting,'string','Targeting OFF','enable','on','BackgroundColor','red');
     handles.parameters.targeting.requirement = 0;
@@ -560,7 +721,7 @@ button_state = get(hObject,'Value');
 if button_state == get(hObject,'Max')
 	set(handles.Joystick_movement,'string','Velocity Joystick','enable','on','BackgroundColor','green');
     handles.hardware.inputs.settings.joystick_velocity = 1;
-    %display(handles.Mode_button.Value);
+    %display(handles.Test_paradigm.Value);
 elseif button_state == get(hObject,'Min')
 	set(handles.Joystick_movement,'string','Binary Joystick','enable','on','BackgroundColor','red');
     handles.hardware.inputs.settings.joystick_velocity = 0;
@@ -578,7 +739,7 @@ button_state = get(hObject,'Value');
 if button_state == get(hObject,'Max')
 	set(handles.Solenoid_calibration,'string','','enable','on','BackgroundColor','green');
     handles.hardware.outputs.settings.calibration = 1;
-    %display(handles.Mode_button.Value);
+    %display(handles.Test_paradigm.Value);
 elseif button_state == get(hObject,'Min')
 	set(handles.Solenoid_calibration,'string','','enable','on','BackgroundColor','red');
     handles.hardware.outputs.settings.calibration = 0;
@@ -594,13 +755,6 @@ guidata(hObject, handles);
 
 
 
-%checkboxes controlling which task checks to use
-%don't need any code
-function Centered_check_Callback(hObject, eventdata, handles)
-function Fixation_check_Callback(hObject, eventdata, handles)
-function Bidding_check_Callback(hObject, eventdata, handles)
-function Finalised_check_Callback(hObject, eventdata, handles)
-function Targeted_check_Callback(hObject, eventdata, handles)
 
 
 %%BUNDLE STUFF%%
@@ -614,72 +768,9 @@ handles.parameters.binary_choice.bundle_width = 42;
 guidata(hObject, handles);
 
 
-%the number of divisions of water budget in the bundle
-function Budget_divisions_Callback(hObject, eventdata, handles)
-clear handles.parameters.binary_choice.divisions;
-handles.parameters.binary_choice.divisions = str2num(get(handles.Budget_divisions,'String'));
-guidata(hObject, handles);
-function Budget_divisions_CreateFcn(hObject, eventdata, handles)
-handles.parameters.binary_choice.divisions = 10;
-guidata(hObject, handles);
 
 
-function Random_budget_Callback(hObject, eventdata, handles)
-clear handles.parameters.binary_choice.random_budget;
-randomise_budgets = get(handles.Static_targetbox, 'Value');
-handles.parameters.binary_choice.random_budget = randomise_budgets;
-set(handles.Pegged_budget,'Value', 0);
-guidata(hObject, handles);
-function Random_budget_CreateFcn(hObject, eventdata, handles)
-handles.parameters.binary_choice.random_budget = 0;
-guidata(hObject, handles);
 
-function Pegged_budget_Callback(hObject, eventdata, handles)
-clear handles.parameters.binary_choice.pegged_budget;
-peg_budgets = get(handles.Static_targetbox, 'Value');
-handles.parameters.binary_choice.pegged_budget = peg_budgets;
-set(handles.Random_budget,'Value', 0);
-guidata(hObject, handles);
-function Pegged_budget_CreateFcn(hObject, eventdata, handles)
-handles.parameters.binary_choice.pegged_budget = 0;
-guidata(hObject, handles);
-
-function Peg_difference_Callback(hObject, eventdata, handles)
-if handles.parameters.binary_choice.pegged_budget
-    clear handles.parameters.binary_choice.pegged_difference;
-    handles.parameters.binary_choice.pegged_difference = str2num(get(handles.Peg_difference,'String'));
-    guidata(hObject, handles);
-else
-    display('Please select "Pegged_budget" first!');
-end
-function Peg_difference_CreateFcn(hObject, eventdata, handles)
-handles.parameters.binary_choice.pegged_difference = NaN;
-guidata(hObject, handles);
-
-function Remove_fractals_Callback(hObject, eventdata, handles)
-clear handles.parameters.binary_choice.no_fractals;
-showing_fractals = get(handles.Static_targetbox, 'Value');
-handles.parameters.binary_choice.no_fractals = showing_fractals;
-guidata(hObject, handles);
-function Remove_fractals_CreateFcn(hObject, eventdata, handles)
-handles.parameters.binary_choice.no_fractals = 0;
-guidata(hObject, handles);
-
-function Binary_choice_Callback(hObject, eventdata, handles)
-clear handles.parameters.task
-button_state = get(hObject,'Value');
-if button_state == get(hObject,'Max')
-	set(handles.Binary_choice,'string','','enable','on','BackgroundColor','green');
-    handles.parameters.task = 'BC';
-elseif button_state == get(hObject,'Min')
-	set(handles.Binary_choice,'string','Binary Choise','enable','on','BackgroundColor','red');
-    handles.parameters.task = 'BDM';
-    handles.parameters = rmfield(handles.parameters, 'binary_choice');
-end
-guidata(hObject, handles);
-function Binary_choice_CreateFcn(hObject, eventdata, handles)
-handles.parameters.task = 'BDM';
-guidata(hObject, handles);
 
 
 %adds a bias to the joystick
@@ -701,31 +792,6 @@ display('both directions set to equal strength');
 set(handles.Added_bias,'Value', 0.5);
 
 
-%whether the stimuli should be generated randomly each trial or a set at
-%the start of the experiment in generate
-function Random_stimuli_Callback(hObject, eventdata, handles)
-clear handles.parameters.random_stim
-Stimuli_button_state = get(hObject,'Value');
-if Stimuli_button_state == get(hObject,'Max')
-	set(handles.Random_stimuli,'string','Random Stimuli','enable','on','BackgroundColor','green');
-    handles.parameters.random_stim = 1;
-elseif button_state == get(hObject,'Min')
-	set(handles.Random_stimuli,'string','Pseudo-Random','enable','on','BackgroundColor','red');
-    handles.parameters.random_stim = 0;
-end
-guidata(hObject, handles);
-function Random_stimuli_CreateFcn(hObject, eventdata, handles)
-handles.parameters.random_stim = 0;
-guidata(hObject, handles);
-
-
-function Occlusion_darkness_Callback(hObject, eventdata, handles)
-clear handles.stimuli.occlusion_darkness;
-handles.stimuli.occlusion_darkness = 256 * str2num(get(handles.Occlusion_darkness,'String'));
-guidata(hObject, handles);
-function Occlusion_darkness_CreateFcn(hObject, eventdata, handles)
-handles.stimuli.occlusion_darkness = 256 * 0.5;
-guidata(hObject, handles);
 
 
 
@@ -735,26 +801,7 @@ guidata(hObject, handles);
 
 
 
-function edit29_Callback(hObject, eventdata, handles)
-% hObject    handle to edit29 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of edit29 as text
-%        str2double(get(hObject,'String')) returns contents of edit29 as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function edit29_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edit29 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
 
 
 
@@ -804,26 +851,6 @@ end
 
 
 
-function edit26_Callback(hObject, eventdata, handles)
-% hObject    handle to edit26 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of edit26 as text
-%        str2double(get(hObject,'String')) returns contents of edit26 as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function edit26_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edit26 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
 
 
 
@@ -896,52 +923,6 @@ end
 
 
 
-function Fractal_names_Callback(hObject, eventdata, handles)
-% hObject    handle to Fractal_names (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of Fractal_names as text
-%        str2double(get(hObject,'String')) returns contents of Fractal_names as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function Fractal_names_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to Fractal_names (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
-function Pavlovian_learning_Callback(hObject, eventdata, handles)
-clear handles.parameters.task
-pav_button_state = get(hObject,'Value');
-if pav_button_state == get(hObject,'Max')
-	set(handles.Pavlovian_learning,'string','Pavlovian','enable','on','BackgroundColor','green');
-    handles.parameters.task = 'PAV';
-elseif pav_button_state == get(hObject,'Min')
-	set(handles.Pavlovian_learning,'string','Pavlovian','enable','on','BackgroundColor','red');
-    handles.parameters.task = 'BDM';
-end
-guidata(hObject, handles);
-function Pavlovian_learning_CreateFcn(hObject, eventdata, handles)
-handles.parameters.task = 'BDM';
-guidata(hObject, handles);
-
-
-
-% --- Executes on button press in Listen_mode.
-function Listen_mode_Callback(hObject, eventdata, handles)
-% hObject    handle to Listen_mode (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of Listen_mode
 
 
 %function to reinsert already tested values for the joystick bias
@@ -964,3 +945,10 @@ function Free_juice_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of Free_juice
+
+
+
+
+
+
+
