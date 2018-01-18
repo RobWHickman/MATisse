@@ -25,6 +25,9 @@ function MATisse_OpeningFcn(hObject, eventdata, handles, varargin)
     root = ['C:/Users/', getenv('username'), '/Desktop/MATisse/task/BDM/'];
     cd(root);
     handles.output = hObject;
+    %load the table containing the monkeys we run
+    load ../../misc/monkey_table.mat
+    handles.parameters.participants.primate_table = monkeys;
     % Update handles structure
 guidata(hObject, handles);
 %Outputs from this function are returned to the command line.
@@ -155,8 +158,6 @@ guidata(hObject, handles);
 %set the default
 function Set_primate_CreateFcn(hObject, eventdata, handles)
     handles.parameters.participants.primate = 'some_monkey';
-    load ../../misc/monkey_table.mat
-    handles.parameters.participants.primate_table = monkeys;
 guidata(hObject, handles);
 %set the task up using these parameters
 %this will set the inputs and ask you to find two folders:
@@ -594,7 +595,7 @@ function Joystick_button_Callback(hObject, eventdata, handles)
     joy_x   = mean(test_data_x)
     test_data_y = test_data(:,2);
     display('remaining y bias:');
-    joy_y   = (mean(test_data_y))
+    joy_y   = mean(test_data_y)
     %automatically update the x and y bias and the gui with these values
     %can be overridden manually after
     set(handles.Set_X_Bias,'String', num2str(-joy_x));

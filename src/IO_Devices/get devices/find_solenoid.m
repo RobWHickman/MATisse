@@ -2,6 +2,7 @@
 %doesnt maintain the handshake stuff- see Modig
 function hardware = find_solenoid(hardware)
 %find the device
+%legacy code for MATLAB 2014- uses session-based interfaces now
 solenoid = digitalio('nidaq','Dev1');
 %add the output lines
 addline(solenoid, 0:31, 0,'Out'); 
@@ -15,4 +16,4 @@ for pos = x
 end
 
 %prepare for output
-hardware.outputs.reward_output = solenoid;
+hardware.solenoid.device = solenoid;

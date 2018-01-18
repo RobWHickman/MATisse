@@ -7,10 +7,10 @@ function [parameters] = matisse_set(parameters)
 sca;
 
 %open a directory within which to save the trials
-parameters.save_info.output_folder = uigetdir(pwd, 'save directory');
+parameters.directories.save = uigetdir(pwd, 'save directory');
 
 %open a directory from which to run the experiment scripts
-parameters.save_info.working_directory = uigetdir(pwd, 'task scripts directory');
+parameters.directories.run = uigetdir(pwd, 'task scripts directory');
 
 %change into this directory
-cd(parameters.save_info.working_directory)
+cd(parameters.directories.run)

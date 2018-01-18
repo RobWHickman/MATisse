@@ -38,4 +38,4 @@ results.experiment_summary.correct = 0;
 %set the max number of trials for the task
 %for pavlovian this is just as long as we want to run it (without
 %oversaturating monkey)
-parameters.max_trials = 250;
+parameters.trials.max_trials = 500;
