@@ -11,9 +11,12 @@ elseif tap == 3
     gradient = 4.0104;
 end
 
-tap_open_time = (results  - intercept) / gradient;
+if results > 0
+    tap_open_time = (results  - intercept) / gradient;
+else
+    tap_open_time = 0;
+end
 if tap_open_time < 0;
     tap_open_time = 0;
 end
-
 end
