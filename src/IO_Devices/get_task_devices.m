@@ -3,6 +3,8 @@
 %variables for those hardware
 function hardware = get_task_devices(parameters, hardware, task_window)
 
+fprintf('Finding task devices');
+
 %get the screen and its info
 %takes the screen number set in the GUI
 hardware = get_screen_information(hardware);

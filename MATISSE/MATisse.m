@@ -73,7 +73,7 @@ guidata(hObject, handles);
 %trial so don't change halfway through)
 %also spits out the current means for each fractal to update the GUI
 function Run_button_Callback(hObject, eventdata, handles)
-    display('running!');
+    disp('running!');
     if get(hObject,'Value')
         set(handles.Run_button,'string','running...','enable','on','BackgroundColor','[1, 0, 1]');
         while get(hObject,'Value') && handles.results.trials.correct < handles.parameters.trials.max_trials
@@ -84,9 +84,9 @@ function Run_button_Callback(hObject, eventdata, handles)
                 handles.results = assign_experiment_metadata(handles.parameters, handles.stimuli, handles.hardware, handles.results);
             end
             handles.parameters.total_trials = handles.parameters.total_trials + 1;
-            display('trial number:');
+            disp('trial number:');
             %the trials are zero indexed so add one
-            display(handles.parameters.trials.total_trials + 1);
+            disp(handles.parameters.trials.total_trials + 1);
             %save the results and parameters that came out of the last
             %trial
             guidata(hObject, handles);
@@ -121,7 +121,7 @@ function Run_button_Callback(hObject, eventdata, handles)
 %quick function that saves the output from the experiment
 function Save_button_Callback(hObject, eventdata, handles)
     save_data(handles.parameters, handles.results);
-    display('data saved!');
+    disp('data saved!');
 %small function to clear everything and restart MATisse
 function Clear_button_Callback(hObject, eventdata, handles)
     clear_all();
@@ -139,7 +139,7 @@ function Set_experimenter_Callback(hObject, eventdata, handles)
     clear handles.parameters.participants.experimenter;
     handles.parameters.participants.experimenter = get(handles.Set_experimenter,'String');
     %display the new experimenter upon enter
-    display(strcat('Experimenter Changed to: ', handles.parameters.participants.experimenter))
+    disp(strcat('Experimenter Changed to: ', handles.parameters.participants.experimenter))
 guidata(hObject, handles);
 %set the default
 function Set_experimenter_CreateFcn(hObject, eventdata, handles)
@@ -150,9 +150,9 @@ function Set_primate_Callback(hObject, eventdata, handles)
     clear handles.parameters.participants.primate;
     handles.parameters.participants.primate = get(handles.Set_primate,'String');
     %display the new primate upon enter
-    display(strcat('Primate Changed to: ', handles.parameters.participants.primate))
+    disp(strcat('Primate Changed to: ', handles.parameters.participants.primate))
     if ~any(strmatch(handles.parameters.participants.primate, handles.parameters.participants.primate_table.Name))
-        display('Could not find monkeys name in table- are you sure it has been typed correctly?');
+        disp('Could not find monkeys name in table- are you sure it has been typed correctly?');
     end
 guidata(hObject, handles);
 %set the default
@@ -280,11 +280,11 @@ function Test_paradigm_Callback(hObject, eventdata, handles)
         handles.parameters.modification.testmode = 1;
         set(handles.Centered_check,'value',0);
         %give a warning message
-        display('Testing mode on- hardware not taken into account');
+        disp('Testing mode on- hardware not taken into account');
     elseif test_button_state == get(hObject,'Min')
         set(handles.Test_paradigm,'string','Test OFF','enable','on','BackgroundColor','red');
         handles.parameters.modification.testmode = 0;
-        display('Testing mode off');
+        disp('Testing mode off');
     end
 guidata(hObject, handles);
 function Test_paradigm_CreateFcn(hObject, eventdata, handles)
@@ -299,11 +299,11 @@ function Listen_mode_Callback(hObject, eventdata, handles)
         handles.parameters.modification.listenmode = 1;
         set(handles.Centered_check,'value',0);
         %give a warning message
-        display('Listening mode on- this will affect task timings');
+        disp('Listening mode on- this will affect task timings');
     elseif listen_button_state == get(hObject,'Min')
         set(handles.Listen_mode,'string','Test OFF','enable','on','BackgroundColor','red');
         handles.parameters.modification.listenmode = 0;
-        display('Listening mode off');
+        disp('Listening mode off');
     end
 guidata(hObject, handles);
 function Listen_mode_CreateFcn(hObject, eventdata, handles)
@@ -320,9 +320,9 @@ function Remove_fractals_Callback(hObject, eventdata, handles)
     handles.modifiers.fractals.no_fractals = showing_fractals;
     %display a message
     if showing_fractals == get(hObject,'Min')
-        display('no longer showing fractals- trials will not be rewarded with juice');
+        disp('no longer showing fractals- trials will not be rewarded with juice');
     elseif showing_fractals == get(hObject,'Max')
-        display('fractals will be shown and rewarded again');
+        disp('fractals will be shown and rewarded again');
     end
 guidata(hObject, handles);
 function Remove_fractals_CreateFcn(hObject, eventdata, handles)
@@ -335,7 +335,7 @@ function Fractal_numbers_Callback(hObject, eventdata, handles)
     clear handles.modifiers.fractals.number;
     fractal_numbers = str2num(get(handles.Fractal_numbers, 'String'));
     handles.modifiers.fractals.number = fractal_numbers;
-    display(['looking for first', num2str(handles.modifiers.fractals.number), ' fractals in image folder']);
+    disp(['looking for first', num2str(handles.modifiers.fractals.number), ' fractals in image folder']);
     %update the magnitude vector
     handles.modifiers.fractals.magnitude_vector = fractals_vector(1:handles.modifiers.fractals.number);
 guidata(hObject, handles);
@@ -350,7 +350,7 @@ function Fractal_names_Callback(hObject, eventdata, handles)
     clear handles.modifiers.fractals.string;
     fractal_string = get(handles.Fractal_names, 'String');
     handles.modifiers.fractals.string = [num2str(fractal_string), '*.jpg'];
-    display(['looking for fractal files beginning with ', handles.modifiers.fractals.string, ' in image folder']);
+    disp(['looking for fractal files beginning with ', handles.modifiers.fractals.string, ' in image folder']);
 guidata(hObject, handles);
 function Fractal_names_CreateFcn(hObject, eventdata, handles)
     %set the default to 3
@@ -363,7 +363,7 @@ function frac_mag_1_Callback(hObject, eventdata, handles)
     fractals_vector = [str2num(get(handles.frac_mag_1, 'String')),str2num(get(handles.frac_mag_2, 'String')),str2num(get(handles.frac_mag_3, 'String')),...
         str2num(get(handles.frac_mag_4, 'String')),str2num(get(handles.frac_mag_5, 'String')),str2num(get(handles.frac_mag_6, 'String'))];
     %display the subset of the vector that is being used
-    display(['currently using ', num2str(fractals_vector(1:handles.modifiers.fractals.number_of_fractals)), 'ml of juice']);
+    disp(['currently using ', num2str(fractals_vector(1:handles.modifiers.fractals.number_of_fractals)), 'ml of juice']);
     handles.modifiers.fractals.magnitude_vector = fractals_vector(1:handles.modifiers.fractals.number);
 guidata(hObject, handles);
 function frac_mag_1_CreateFcn(hObject, eventdata, handles)
@@ -376,7 +376,7 @@ function frac_mag_2_Callback(hObject, eventdata, handles)
     fractals_vector = [str2num(get(handles.frac_mag_1, 'String')),str2num(get(handles.frac_mag_2, 'String')),str2num(get(handles.frac_mag_3, 'String')),...
         str2num(get(handles.frac_mag_4, 'String')),str2num(get(handles.frac_mag_5, 'String')),str2num(get(handles.frac_mag_6, 'String'))];
     %display the subset of the vector that is being used
-    display(['currently using ', num2str(fractals_vector(1:handles.modifiers.fractals.number_of_fractals)), 'ml of juice']);
+    disp(['currently using ', num2str(fractals_vector(1:handles.modifiers.fractals.number_of_fractals)), 'ml of juice']);
     handles.modifiers.fractals.magnitude_vector = fractals_vector(1:handles.modifiers.fractals.number);
 guidata(hObject, handles);
 function frac_mag_2_CreateFcn(hObject, eventdata, handles)
@@ -388,7 +388,7 @@ function frac_mag_3_Callback(hObject, eventdata, handles)
     fractals_vector = [str2num(get(handles.frac_mag_1, 'String')),str2num(get(handles.frac_mag_2, 'String')),str2num(get(handles.frac_mag_3, 'String')),...
         str2num(get(handles.frac_mag_4, 'String')),str2num(get(handles.frac_mag_5, 'String')),str2num(get(handles.frac_mag_6, 'String'))];
     %display the subset of the vector that is being used
-    display(['currently using ', num2str(fractals_vector(1:handles.modifiers.fractals.number_of_fractals)), 'ml of juice']);
+    disp(['currently using ', num2str(fractals_vector(1:handles.modifiers.fractals.number_of_fractals)), 'ml of juice']);
     handles.modifiers.fractals.magnitude_vector = fractals_vector(1:handles.modifiers.fractals.number);
 guidata(hObject, handles);
 function frac_mag_3_CreateFcn(hObject, eventdata, handles)
@@ -400,7 +400,7 @@ function frac_mag_4_Callback(hObject, eventdata, handles)
     fractals_vector = [str2num(get(handles.frac_mag_1, 'String')),str2num(get(handles.frac_mag_2, 'String')),str2num(get(handles.frac_mag_3, 'String')),...
         str2num(get(handles.frac_mag_4, 'String')),str2num(get(handles.frac_mag_5, 'String')),str2num(get(handles.frac_mag_6, 'String'))];
     %display the subset of the vector that is being used
-    display(['currently using ', num2str(fractals_vector(1:handles.modifiers.fractals.number_of_fractals)), 'ml of juice']);
+    disp(['currently using ', num2str(fractals_vector(1:handles.modifiers.fractals.number_of_fractals)), 'ml of juice']);
     handles.modifiers.fractals.magnitude_vector = fractals_vector(1:handles.modifiers.fractals.number);
 guidata(hObject, handles);
 function frac_mag_4_CreateFcn(hObject, eventdata, handles)
@@ -412,7 +412,7 @@ function frac_mag_5_Callback(hObject, eventdata, handles)
     fractals_vector = [str2num(get(handles.frac_mag_1, 'String')),str2num(get(handles.frac_mag_2, 'String')),str2num(get(handles.frac_mag_3, 'String')),...
         str2num(get(handles.frac_mag_4, 'String')),str2num(get(handles.frac_mag_5, 'String')),str2num(get(handles.frac_mag_6, 'String'))];
     %display the subset of the vector that is being used
-    display(['currently using ', num2str(fractals_vector(1:handles.modifiers.fractals.number_of_fractals)), 'ml of juice']);
+    disp(['currently using ', num2str(fractals_vector(1:handles.modifiers.fractals.number_of_fractals)), 'ml of juice']);
     handles.modifiers.fractals.magnitude_vector = fractals_vector(1:handles.modifiers.fractals.number);
 guidata(hObject, handles);
 function frac_mag_5_CreateFcn(hObject, eventdata, handles)
@@ -424,7 +424,7 @@ function frac_mag_6_Callback(hObject, eventdata, handles)
     fractals_vector = [str2num(get(handles.frac_mag_1, 'String')),str2num(get(handles.frac_mag_2, 'String')),str2num(get(handles.frac_mag_3, 'String')),...
         str2num(get(handles.frac_mag_4, 'String')),str2num(get(handles.frac_mag_5, 'String')),str2num(get(handles.frac_mag_6, 'String'))];
     %display the subset of the vector that is being used
-    display(['currently using ', num2str(fractals_vector(1:handles.modifiers.fractals.number_of_fractals)), 'ml of juice']);
+    disp(['currently using ', num2str(fractals_vector(1:handles.modifiers.fractals.number_of_fractals)), 'ml of juice']);
     handles.modifiers.fractals.magnitude_vector = fractals_vector(1:handles.modifiers.fractals.number);
 guidata(hObject, handles);
 function frac_mag_6_CreateFcn(hObject, eventdata, handles)
@@ -442,7 +442,7 @@ function Budget_magnitude_Callback(hObject, eventdata, handles)
     budget_magnitude = get(handles.Budget_magnitude, 'String');
     handles.modifiers.budget.magnitude = str2num(budget_magnitude);
     %display the new magnitude
-    display(['full budget valued at ', budget_magnitude, ' ml of water']);
+    disp(['full budget valued at ', budget_magnitude, ' ml of water']);
 guidata(hObject, handles);
 function Budget_magnitude_CreateFcn(hObject, eventdata, handles)
     handles.modifiers.budget.magnitude = 1.2;
@@ -454,7 +454,7 @@ function Budget_divisions_Callback(hObject, eventdata, handles)
     budget_divisions = get(handles.Budget_divisions,'String');
     handles.parameters.binary_choice.divisions = str2num(budget_divisions);
     %display the number and scale of the divisions
-    display([budget_divisions, ' divisions of the budget bar from ',...
+    disp([budget_divisions, ' divisions of the budget bar from ',...
         num2str(handles.modifiers.budget.magnitude/handles.modifiers.budget.divisions),...
         'to ', num2str(handles.modifiers.budget.magnitude), 'ml of water']);
 guidata(hObject, handles);
@@ -496,7 +496,7 @@ function Peg_difference_Callback(hObject, eventdata, handles)
         guidata(hObject, handles);
     %otherwise display a warning message
     else
-        display('Please select "Pegged_budget" first!');
+        disp('Please select "Pegged_budget" first!');
     end
 guidata(hObject, handles);
 function Peg_difference_CreateFcn(hObject, eventdata, handles)
@@ -534,7 +534,7 @@ function Alpha_parameter_Callback(hObject, eventdata, handles)
     alpha_value = get(handles.Alpha_parameter, 'String');
     handles.modifiers.distribution.alpha_parameter = str2num(alpha_value);
     %display the new value
-    display(['Alpha parameter set to ', alpha_value]);
+    disp(['Alpha parameter set to ', alpha_value]);
 guidata(hObject, handles);
 function Alpha_parameter_CreateFcn(hObject, eventdata, handles)
     handles.modifiers.distribution.alpha_parameter = 1;
@@ -544,7 +544,7 @@ function Beta_parameter_Callback(hObject, eventdata, handles)
     beta_value = get(handles.Beta_parameter, 'String');
     handles.modifiers.distribution.beta_parameter = str2num(beta_value);
     %display the new value
-    display(['Beta parameter set to ', beta_value]);
+    disp(['Beta parameter set to ', beta_value]);
 guidata(hObject, handles);
 function Beta_parameter_CreateFcn(hObject, eventdata, handles)
     handles.modifiers.distribution.beta_parameter = 1;
@@ -557,8 +557,12 @@ guidata(hObject, handles);
 function Bundles_width_Callback(hObject, eventdata, handles)
     clear handles.modifiers.specific_tasks.binary_choice.bundle_width
     bundle_width = get(handles.Bundles_width,'String');
+    %throw a warning if this is greater than 50 (half the screen)
+    if bundle_width > 50
+        warning('!width is greater than half of the screen!');
+    end
     handles.modifiers.specific_tasks.binary_choice.bundle_width = str2num(bundle_width);
-    display(handles.modifiers.specific_tasks.binary_choice.bundle_width);
+    disp(handles.modifiers.specific_tasks.binary_choice.bundle_width);
 guidata(hObject, handles);
 function Bundles_width_CreateFcn(hObject, eventdata, handles)
     handles.modifiers.specific_tasks.binary_choice.bundle_width = 42;
@@ -602,10 +606,10 @@ function Joystick_button_Callback(hObject, eventdata, handles)
     %get the current joystick voltages (when stationary)
     test_data = peekdata(joystick,30);
     test_data_x = test_data(:,1);
-    display('remaining x bias:');
+    disp('remaining x bias:');
     joy_x   = mean(test_data_x)
     test_data_y = test_data(:,2);
-    display('remaining y bias:');
+    disp('remaining y bias:');
     joy_y   = mean(test_data_y)
     %automatically update the x and y bias and the gui with these values
     %can be overridden manually after
@@ -627,7 +631,7 @@ function Reinsert_bias_Callback(hObject, eventdata, handles)
     handles.hardware.joystick.bias.x_bias = str2num(bias_x);
     set(handles.Set_Y_Bias,'String', num2str(handles.hardware.joystick.bias.y_bias));
     set(handles.Set_X_Bias,'String', num2str(handles.hardware.joystick.bias.x_bias));
-    display('reinserted joystick bias from workspace');
+    disp('reinserted joystick bias from workspace');
 guidata(hObject, handles);
 %adds a bias to the joystick
 %makes either side move between 0-10x faster for the same effort
@@ -638,7 +642,7 @@ function Added_bias_Callback(hObject, eventdata, handles)
     %display the difference in strength
     %sqrt as in update_bid_position() one is divided by the added_bias and
     %the other is multiplied
-    display(strcat('left side now ', num2str(handles.hardware.joystick.bias.added_bias ^ 2), ' times as strong'));
+    disp(strcat('left side now ', num2str(handles.hardware.joystick.bias.added_bias ^ 2), ' times as strong'));
 guidata(hObject, handles);
 %set default to 1x (i.e. both sides are equal)
 function Added_bias_CreateFcn(hObject, eventdata, handles)
@@ -647,18 +651,18 @@ guidata(hObject, handles);
 function Reset_bias_Callback(hObject, eventdata, handles)
     clear handles.hardware.inputs.settings.added_bias;
     handles.hardware.joystick.bias.added_bias = 1;
-    display('both directions set to equal strength');
+    disp('both directions set to equal strength');
 set(handles.Added_bias,'Value', 0.5);
 %edit the bias manually in the GUI
 function Set_Y_Bias_Callback(hObject, eventdata, handles)
     clear handles.hardware.joystick.bias.y_bias;
     handles.hardware.joystick.bias.y_bias = get(handles.Set_Y_Bias,'String');
-    display('set new joystick Y bias');
+    disp('set new joystick Y bias');
 guidata(hObject, handles);
 function Set_X_Bias_Callback(hObject, eventdata, handles)
     clear handles.hardware.joystick.bias.x_bias;
     handles.hardware.joystick.bias.x_bias = get(handles.Set_X_Bias,'String');
-    display('set new joystick X bias');
+    disp('set new joystick X bias');
 guidata(hObject, handles);
 function Set_Y_Bias_CreateFcn(hObject, eventdata, handles)
 %set defalt bias to 0
@@ -673,7 +677,7 @@ function Joystick_sensitivty_Callback(hObject, eventdata, handles)
     clear handles.hardware.joystick.sensitivity.joystick;
     joystick_sensitivity = get(handles.Joystick_sensitivty,'String');
     handles.hardware.joystick.sensitivity.joystick = str2num(joystick_sensitivity);
-    display(['set joystick sensitivity to ', joystick_sensitivity]);
+    disp(['set joystick sensitivity to ', joystick_sensitivity]);
 guidata(hObject, handles);
 function Joystick_sensitivty_CreateFcn(hObject, eventdata, handles)
     handles.hardware.joystick.sensitivity.joystick = str2num('0.05');
@@ -684,7 +688,7 @@ function Centre_sensitivity_Callback(hObject, eventdata, handles)
     clear handles.hardware.joystick.sensitivity.centered;
     joystick_sensitivity = get(handles.Joystick_sensitivty,'String');
     handles.hardware.joystick.sensitivity.centered = str2num(joystick_sensitivity);
-    display(['set joystick sensitivity to ', joystick_sensitivity]);
+    disp(['set joystick sensitivity to ', joystick_sensitivity]);
 guidata(hObject, handles);
 function Centre_sensitivity_CreateFcn(hObject, eventdata, handles)
     handles.hardware.joystick.sensitivity.centered = str2num('0.05');
@@ -695,7 +699,7 @@ guidata(hObject, handles);
 function Joystick_speed_Callback(hObject, eventdata, handles)
     clear handles.hardware.joystick.movement.speed;
     handles.hardware.joystick.movement.speed = str2num(get(handles.Joystick_scalar,'String'));
-    display('set new joystick scalar');
+    disp('set new joystick scalar');
 guidata(hObject, handles);
 %default is 8- reasonable for scalar based movement
 %will be mulitplied by 6 if switch to voltage based movement
@@ -732,7 +736,7 @@ guidata(hObject, handles);
 function Set_Monitor_Callback(hObject, eventdata, handles)
     clear handles.hardware.outputs.screen_info.screen_number;
     handles.hardware.screen.number = str2num(get(handles.Set_Monitor,'String'));
-    display(strcat('task monitor changed to', num2str(handles.hardware.screen.number)));
+    disp(strcat('task monitor changed to', num2str(handles.hardware.screen.number)));
 guidata(hObject, handles);
 function Set_Monitor_CreateFcn(hObject, eventdata, handles)
     handles.hardware.screen.number = 2;
@@ -745,7 +749,7 @@ function Select_solenoid_Callback(hObject, eventdata, handles)
     clear handles.hardware.solenoid.calibration.test_tap;
     test_tap = get(handles.Set_Solenoid,'String');
     handles.hardware.solenoid.calibration.test_tap = str2num(test_tap);
-    display(['test solenoid tap changed to', test_tap]);
+    disp(['test solenoid tap changed to', test_tap]);
 guidata(hObject, handles);
 function Select_solenoid_CreateFcn(hObject, eventdata, handles)
     %set default tap to test to 1
@@ -756,7 +760,7 @@ function Solenoid_open_time_Callback(hObject, eventdata, handles)
     clear handles.hardware.solenoid.calibration.open_time;
     open_time = get(handles.Solenoid_open_time,'String');
     handles.hardware.solenoid.calibration.open_time = str2num(open_time);
-    display(['test solenoid opening time changed to', open_time]);
+    disp(['test solenoid opening time changed to', open_time]);
 guidata(hObject, handles);
 function Solenoid_open_time_CreateFcn(hObject, eventdata, handles)
     %set default tap opening time to 1s
@@ -787,10 +791,10 @@ function Open_solenoid_Callback(hObject, eventdata, handles)
         elseif handles.hardware.outputs.settings.calibration == 1
             fake_results = release_liquid('no_parameters', handles.hardware, 'no_results', 'calibrate');
         else
-            display('illegal solenoid test state');
+            disp('illegal solenoid test state');
         end
     else
-        display('results field exists! run test solenoid before running task to prevent overwriting')
+        disp('results field exists! run test solenoid before running task to prevent overwriting')
     end
     %set the buttons state back to 0 (off)
     set(handles.Solenoid_button,'value',0);
@@ -799,7 +803,7 @@ function Open_solenoid_Callback(hObject, eventdata, handles)
 function Budget_tap_Callback(hObject, eventdata, handles)
     budget_tap = get(handles.Budget_tap, 'String');
     handles.hardware.solenoid.release.budget_tap = str2num(budget_tap);
-    display(['budget tap set to ', budget_tap]);
+    disp(['budget tap set to ', budget_tap]);
 guidata(hObject, handles);
 function Budget_tap_CreateFcn(hObject, eventdata, handles)
     handles.hardware.solenoid.release.budget_tap = 1;
@@ -807,7 +811,7 @@ guidata(hObject, handles);
 function Reward_tap_Callback(hObject, eventdata, handles)
     reward_tap = get(handles.Reward_tap, 'String');
     handles.hardware.solenoid.release.reward_tap = str2num(reward_tap);
-    display(['reward tap set to ', reward_tap]);
+    disp(['reward tap set to ', reward_tap]);
 guidata(hObject, handles);
 function Reward_tap_CreateFcn(hObject, eventdata, handles)
     handles.hardware.solenoid.release.reward_tap = 1;
@@ -856,11 +860,11 @@ function Targetbox_startsize_Callback(hObject, eventdata, handles)
     %must be between zero and one
     if  str2num(get(handles.Targetbox_startsize,'String')) > 1 |...
             str2num(get(handles.Targetbox_startsize,'String')) < 0
-        display('Must be a percentage! (between 0 and 1)');
+        disp('Must be a percentage! (between 0 and 1)');
     else
         start_size = get(handles.Targetbox_startsize,'String');
         handles.stimuli.target_box.startsize = str2num(start_size);
-        display(['Targetbox Startsize changed to: ', start_size]);
+        disp(['Targetbox Startsize changed to: ', start_size]);
     end
 guidata(hObject, handles);
 function Targetbox_startsize_CreateFcn(hObject, eventdata, handles)
@@ -895,3 +899,7 @@ guidata(hObject, handles);
 
 
 
+
+%targeting lines
+% --- Executes on button press in radiobutton23.
+function radiobutton23_Callback(hObject, eventdata, handles)

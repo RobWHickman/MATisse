@@ -13,7 +13,7 @@ height = hardware.screen.dimensions.height;
 %load the fractals
 %stimuli settings used for the file path and screen_info used to resize the
 %fractals
-stimuli.fractals = load_fractal_images(hardware, modifiers);
+stimuli.fractals = load_fractal_images(parameters, modifiers, screen_width, screen_height);
 
 %in pavlovian learning tasks just the fractal (or fractal vs. fractal) is
 %shown
@@ -29,9 +29,11 @@ end
 %length, thickness, colour and surrounding box scalar
 stimuli.fixation_cross = generate_fixation_cross(12, 4, 3, hardware);
 
-%if need to generate a target box, do it here
-%for a static target_box
-%moved to run.m for generating a box that shrinks as monkey improves
-if parameters.targeting.requirement == 1 && strcmp(parameters.task, 'BDM')
-    stimuli.target_box = generate_target_box(parameters, stimuli, hardware, 0);
-end
+% %if need to generate a target box, do it here
+% %for a static target_box
+% %moved to run.m for generating a box that shrinks as monkey improves
+% if parameters.targeting.requirement == 1 && strcmp(parameters.task, 'BDM')
+%     stimuli.target_box = generate_target_box(parameters, stimuli, hardware, 0);
+% end
+
+%generate the first reverse bidspace here?

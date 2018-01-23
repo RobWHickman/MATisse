@@ -7,11 +7,11 @@ all_images = dir([modifiers.fractals.folder modifiers.fractals.string]);
 
 %error if no matching images are found
 if(length(all_images) < 1)
-    disp('!no fractal images found!');
+    warning('!no fractal images found!');
 end
 %error if less fractals are found than specified in the total number
 if(length(all_images) < modifiers.fractals.number)
-    disp('!less fractals than specified found!');
+    warning('!less fractals than specified found!');
 end
 
 %create the empty array
