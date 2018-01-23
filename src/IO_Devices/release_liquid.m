@@ -13,8 +13,9 @@ simple_divider2 = 5.843; %want to calibrate this more carefully, but it should g
 %payout the budget tap (tap 1)
 if strcmp(payout, 'budget')
     results.trial_results.budget_liquid = results.trial_results.remaining_budget * 1.2; %max budget is 1.2ml
-    tap_open_time = (results.trial_results.budget_liquid) / simple_divider1; %1.2ml = 0.25s
     tap = 1;
+    tap_open_time = calculate_open_time(results.trial_results.budget_liquid, tap);
+    %tap_open_time = (results.trial_results.budget_liquid) / simple_divider1; %1.2ml = 0.25s
 
 %payout the reward tap (depends on the monkey)
 elseif strcmp(payout, 'reward')
@@ -29,6 +30,10 @@ elseif strcmp(payout, 'reward')
     elseif strcmp(parameters.save_info.primate, 'Vicer')
         tap = 3;
     end
+    if ~isfield(results.trial_results, 'reward_liquid')
+        results.trial_results.reward_liquid = 0;
+    end
+    tap_open_time = calculate_open_time(results.trial_results.reward_liquid, tap);
 
 %pays out a manually assigned tap via the GUI    
 elseif strcmp(payout, 'test_tap')
