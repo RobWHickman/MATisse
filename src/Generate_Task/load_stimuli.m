@@ -1,20 +1,29 @@
-function stimuli = load_stimuli(parameters, hardware, task_window)
-%get the stimuli
-stimuli.settings.images_path = '../../images/';
-stimuli.settings.fractal_images = 'RL*.jpg';
-stimuli.settings.bidspace_images = 'hatched2.jpg';
-stimuli.settings.bidspace_overhang = 20;
+function stimuli = load_stimuli(parameters, hardware, stimuli, modifiers, task_window)
+%get the stimuli location
+%fractal name set via the GUI
+modifiers.fractals.folder = '../../images/';
+modifiers.budget.string = 'hatched2.jpg';
+
+%set the width/height of the screen from which the dimensions of the
+%stimuli will be built
+%neaten up variables
+width = hardware.screen.dimensions.width;
+height = hardware.screen.dimensions.height;
 
 %load the fractals
 %stimuli settings used for the file path and screen_info used to resize the
 %fractals
-stimuli.fractals = load_fractal_images(stimuli.settings, hardware.outputs.screen_info, parameters.task);
-if ~strcmp(parameters.task, 'PAV')
-%generate the bidspace
-%the bar is also considered part of the bidspace for ease of storing
-%variables
-stimuli.bidspace = generate_bidspace(stimuli.settings, hardware.outputs.screen_info, task_window, parameters.task);
+stimuli.fractals = load_fractal_images(hardware, modifiers);
+
+%in pavlovian learning tasks just the fractal (or fractal vs. fractal) is
+%shown
+if ~strcmp(parameters.task.type, 'PAV')
+    %generate the bidspace
+    %the bar is also considered part of the bidspace for ease of storing
+    %variables
+    stimuli.bidspace = generate_bidspace(parameters, modifiers, task_window, width, height);
 end
+
 %generate a fixation cross
 %get rid of magic numbers which correspond to:
 %length, thickness, colour and surrounding box scalar

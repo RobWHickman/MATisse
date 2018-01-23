@@ -18,18 +18,17 @@ require(tidyr)
 
 ```{r, warning = FALSE, message = FALSE, include = FALSE}
 #load in specific data
-date <- "16-Jan-2018"
+date <- "22-Jan-2018"
 monkey <- "Vicer"
 
 search_string <- paste0(date, ".*", monkey, "COMPACT")
-test <- "lol"
 #find all data files
 directory <- "C:/Users/WS-Guest/Desktop/task data/"
 data_files <- dir(directory)
 
 #load in the relevant data
 specific_files <- data_files[grep(search_string, data_files)]
-#specific_files <- specific_files[3]
+specific_files <- specific_files[2]
 
 task_data <- rbindlist(lapply(paste0(directory, specific_files), read.csv, na.strings = "NaN"), idcol = "block") %>%
   #munge the data

@@ -20,7 +20,6 @@ fixation_cross_info.position = [screen_info.width / 2, screen_info.height / 2];
 fixation_box = [(-cross_length * eyetrack_scalar) (-cross_length * eyetrack_scalar) (cross_length * eyetrack_scalar) (cross_length * eyetrack_scalar)];
 fixation_box = CenterRectOnPointd(fixation_box, screen_info.width / 2, screen_info.height / 2);
 
-
 %prep for output
 fixation.fixation_cross = fixation_cross;
 fixation.fixation_cross_info = fixation_cross_info;

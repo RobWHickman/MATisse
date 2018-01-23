@@ -3,6 +3,7 @@
 function hardware = find_solenoid(hardware)
 %find the device
 %legacy code for MATLAB 2014- uses session-based interfaces now
+    %look at find_joystick for inspiration
 solenoid = digitalio('nidaq','Dev1');
 %add the output lines
 addline(solenoid, 0:31, 0,'Out'); 

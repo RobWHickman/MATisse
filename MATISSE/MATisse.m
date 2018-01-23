@@ -349,12 +349,12 @@ function Fractal_names_Callback(hObject, eventdata, handles)
     %set the string at the start of the fractal files via string
     clear handles.modifiers.fractals.string;
     fractal_string = get(handles.Fractal_names, 'String');
-    handles.modifiers.fractals.string = num2str(fractal_string);
-    display(['looking for fractal files beginning with', handles.modifiers.fractals.string, ' in image folder']);
+    handles.modifiers.fractals.string = [num2str(fractal_string), '*.jpg'];
+    display(['looking for fractal files beginning with ', handles.modifiers.fractals.string, ' in image folder']);
 guidata(hObject, handles);
 function Fractal_names_CreateFcn(hObject, eventdata, handles)
     %set the default to 3
-    handles.modifiers.fractals.string = 'RL';
+    handles.modifiers.fractals.string = 'RL*.jpg';
 guidata(hObject, handles);
 %functions to set the value in ml of each fractal
 function frac_mag_1_Callback(hObject, eventdata, handles)
@@ -511,6 +511,17 @@ guidata(hObject, handles);
 %defaults to zero- transparent
 function Occlusion_darkness_CreateFcn(hObject, eventdata, handles)
     handles.modifiers.budget.occlusion_darkness = 256 * 0;
+guidata(hObject, handles);
+%function that sets the overhang on the budget bar
+%determines various aesthetics such as the surrounding highlight box and
+%the overhang of target boxes and bidding bars
+function Budget_overhang_Callback(hObject, eventdata, handles)
+    clear handles.modifiers.budget.overhang;
+    overhang = get(handles.Budget_overhang,'String');
+    handles.modifiers.budget.occlusion_darkness = str2num(overhang);
+guidata(hObject, handles);
+function Budget_overhang_CreateFcn(hObject, eventdata, handles)
+    handles.modifiers.budget.overhang = 20;
 guidata(hObject, handles);
 
 %Functions to define the parameters supplied to a beta distribution to
@@ -716,34 +727,6 @@ function Joystick_movement_CreateFcn(hObject, eventdata, handles)
     handles.hardware.joystick.movement.scaling = 0;
 guidata(hObject, handles);
 
-%Function to determine how the monkey should fixate on the task
-%makes sure the monkey is at least attending to the task and realises it's
-%starting a new task
-%only the joystick method works at the moment
-%set the method of fixation
-function Joystick_fixation_Callback(hObject, eventdata, handles)
-    clear handles.hardware.fixation.method;
-    joystick_fixation = get(handles.Joystick_fixation, 'Value');
-    if joystick_fixation == 1
-        handles.hardware.fixation.method = 'joystick';
-    else
-        handles.hardware.fixation.method = 'eye_tracker';
-    end
-guidata(hObject, handles);
-function Eye_fixation_Callback(hObject, eventdata, handles)
-    clear handles.hardware.inputs.settings.fixation_test;
-    eye_fixation = get(handles.Eye_fixation, 'Value');
-    if eye_fixation == 1
-        handles.hardware.fixation.method = 'eye_tracker';
-    else
-        handles.hardware.fixation.method = 'joystick';
-    end
-guidata(hObject, handles);
-function Joystick_fixation_CreateFcn(hObject, eventdata, handles)
-    %set default to be joystick based
-    handles.hardware.fixation.method = 'joystick';
-guidata(hObject, handles);
-
 %Functions to allow the user to specify the monitor to use for the
 %experimental task defaults to monitor number 2
 function Set_Monitor_Callback(hObject, eventdata, handles)
@@ -909,3 +892,6 @@ guidata(hObject, handles);
     function juice_text_CreateFcn(hObject, eventdata, handles)
         handles.results.outputs.juice = 0;
         guidata(hObject, handles);
+
+
+

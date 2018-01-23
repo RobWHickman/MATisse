@@ -1,34 +1,16 @@
-%small function to find the devices used to test that the monkey is
-%fixating on the task before displaying it a rewarding fractal
-%can be by testing the joystick is stationary, or that it saccades to a
-%fixation cross
-%the testing equivalent uses a 'mous esaccade' to the fixation cross
-function hardware = find_fixation_devices(hardware, task_window)
+%function to find device used to fixate to a cross at the start of each
+%trial
+%can be either based on an eye tracker or a mouse when debugging downstairs
+function hardware = find_fixation_devices(parameters, hardware, task_window)
 
 %if not testing use joystick/eye tracker
-if hardware.testmode == 0
-    if strcmp(hardware.inputs.settings.fixation_test, 'joystick')
-        %find the joystick
-        hardware.inputs.joystick = find_joystick(200, 'analog');
-        hardware.devices.fixation = 'JOYSTICK';
-        display('found joystick');
-    elseif strcmp(hardware.inputs.settings.fixation_test, 'eye_tracker')
-        %find the eye tracker
-        hardware.devices.fixation = 'EYE_TRACKER';
-        display('have not coded up eye tracker yet!');
-    end
+if parameters.modification.testmode == 0
+    %find the eye tracker
+    hardware.fixation.device = 'eye_tracker';
+    display('have not coded up eye tracker yet!');
 %otherwise use the mouse to hit a fixation spot
 else
     %find the mouse
-    [hardware.inputs.mouse.mouse_x, hardware.inputs.mouse.mouse_y, hardware.inputs.mouse.mouse_buttons] = GetMouse(task_window);
-    hardware.devices.fixation = 'MOUSE';
+    [hardware.fixation.mouse_x, hardware.fixation.mouse_y, hardware.fixation.mouse_buttons] = GetMouse(task_window);
+    hardware.fixation.device = 'mouse';
 end
-
-%only if using the joystick for fixation testing
-% if hardware.testmode == 0 && hardware.inputs.settings.fixation_test == 'joystick'
-%     %set the joystick parameters
-%     hardware.inputs.settings.joystick_scalar = 25; %also defines keyboard sensitivity
-%     hardware.inputs.settings.joystick_sensitivity = 0.1;
-%     hardware.inputs.settings.joystick_x_bias = -0.1;
-%     hardware.inputs.settings.joystick_y_bias = -0.1;
-% end

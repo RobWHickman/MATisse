@@ -1,49 +1,35 @@
-%small function to find the devices that will be used to maniplate the task
+%function to find the devices that will be used to maniplate the task
 %this will be either the joystick or the keyboard in either the x or y
 %dimension
-function hardware = find_bidding_devices(hardware)
+function hardware = find_bidding_devices(parameters, hardware)
 
 %which dimension ofthe screen is used for bidding?
-%n.b. up/right is 'more' (this might need to change for PTB)
-if hardware.inputs.settings.direction == 'y'
-    if hardware.testmode == 0
+%n.b. up/right is 'more' (this might need to c
+    %find the joystick
+    if parameters.modification.testmode == 0
         %find the joystick
-        hardware.inputs.joystick = find_joystick(200, 'analog');
-        hardware.devices.bidding = 'JOYSTICK_Y';
+        handles.hardware.joystick.device = find_joystick(200, 'analog');
         display('found joystick');
     else
+        handles.hardware.joystick.device = 'keyboard';
         %set the keys for inputs into the task
         KbName('UnifyKeyNames');
-        hardware.inputs.keyboard.more_key = KbName('UpArrow');
-        hardware.inputs.keyboard.less_key = KbName('DownArrow');
-        hardware.devices.bidding = 'KEYBOARD_UD';
+        handles.hardware.keyboard.more_key = KbName('UpArrow');
+        handles.hardware.keyboard.less_key = KbName('DownArrow');
         display('set keyboard');
     end
-elseif hardware.inputs.settings.direction == 'x'
+elseif handles.hardware.joystick.direction == 'x'
     if hardware.testmode == 0
         %find the joystick
-        hardware.inputs.joystick = find_joystick(200, 'analog');
-        hardware.devices.bidding = 'JOYSTICK_X';
+        handles.hardware.joystick.device = find_joystick(200, 'analog');
         display('found joystick');
     else
+        handles.hardware.joystick.device = 'keyboard';
         %set the keys for inputs into the task
         KbName('UnifyKeyNames');
-        hardware.inputs.keyboard.more_key = KbName('RightArrow');
-        hardware.inputs.keyboard.less_key = KbName('LeftArrow');
-        hardware.devices.bidding = 'KEYBOARD_LR';
+        handles.hardware.keyboard.more_key = KbName('RightArrow');
+        handles.hardware.keyboard.less_key = KbName('LeftArrow');
         display('set keyboard');
     end
 end
 
-%set the joystick parameters
-hardware.inputs.settings.joystick_scalar = 8; %also defines keyboard sensitivity
-%hardware.inputs.settings.joystick_sensitivity = 0.1;
-
-% %set the bias on the joystick manually
-% if hardware.testmode == 0
-%     hardware.inputs.hardware.inputs.settings.joystick_x_bias = -0.1;
-%     hardware.inputs.hardware.inputs.settings.joystick_y_bias = -0.1;
-% else %if using keyboard there is no bias
-%     hardware.inputs.hardware.inputs.settings.joystick_x_bias = 0;
-%     hardware.inputs.hardware.inputs.settings.joystick_y_bias = 0;
-% end

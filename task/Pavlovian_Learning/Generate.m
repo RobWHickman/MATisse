@@ -18,7 +18,7 @@ Screen('BlendFunction', task_window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
 
 %find all necessary devices
 %task_window is needed to find the mouse
-hardware = get_task_devices(hardware, task_window);
+hardware = get_task_devices(parameters, hardware, task_window);
 
 %load/ generate the stimuli for the task
 stimuli = load_stimuli(parameters, hardware, task_window);
