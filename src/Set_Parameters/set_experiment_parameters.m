@@ -1,11 +1,8 @@
 %set the basic task parameters
 function parameters = set_experiment_parameters(parameters, hardware)
 
-%an upper limit on the number of correct trials to run
-parameters.correct_trials = 5;
 
-%set up the failure points for the task
-%all default to false
+%create a table from the parameters 
 task_checks = table([false;false;false;false;true],...
     {'monkey_fixated_on_cross';'monkey_holding_joystick_still';'monkey_bidding_activity';'monkey_bid_stabilised';'monkey_bid_targeted'},...
     'VariableNames',{'Status','Description'},...

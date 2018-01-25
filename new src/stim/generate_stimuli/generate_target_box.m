@@ -15,14 +15,16 @@ end
 %generates the upper (in space not value) limit on the targeting box
 target_box_y1 = stimuli.bidspace.position(2);
 target_box_y2 = target_box_y1 + target_box_box_length;
+%shift it by a random percentrage of the max possible shift
+shift = rand() * (stimuli.bidspace.position(4) - target_box_y2);
 
 %make sure the width of the target box is slightly wider than the bounding
 %box
 target_box_width = modifiers.budget.overhang * 2;
 
 %get the full position
-target_box.position = [stimuli.bidspace.position(1) - target_box_width, target_box_y1,...
-    stimuli.bidspace.position(3) + target_box_width, target_box_y2];
+target_box.position = [stimuli.bidspace.position(1) - target_box_width, target_box_y1 + shift,...
+    stimuli.bidspace.position(3) + target_box_width, target_box_y2 + shift];
 
 %semi transparent light blue colouring
 target_box.colour = [0 0 hardware.outputs.screen_info.white];

@@ -1,6 +1,6 @@
 %function to draw lines every 12.5% of the way up the bidding space
 %can be any colour and can also draw minor lines in between these
-function stimuli = generate_bidspace_lines(stimuli, hardware, line_types)
+function lines = generate_bidspace_lines(stimuli, hardware, line_types)
 
 %at which percentages of the bidspace should the major lines be drawn
 line_percentages = 12.5;
@@ -23,12 +23,14 @@ minor_line_y_positions = [major_line_y_positions - ((stimuli.budget.dimensions.h
 %CHECK THIS- SEE TRANSPARENCY TUTORIAL FOR HAVING MULTIPLE POLYGONS IN ONE
 %STRUCT
 if strcmp(line_types, 'major')
-    stimuli.budget.lines.position = major_line_y_positions;
-    stimuli.budget.lines.thickness = repmat(major_line_thickness, 1, lines-1);
-    stimuli.budget.lines.colour = repmat(major_line_colour, lines-1, 1)';
+    lines.position = major_line_y_positions;
+    lines.thickness = repmat(major_line_thickness, 1, lines-1);
+    lines.colour = repmat(major_line_colour, lines-1, 1)';
 elseif strcmp(line_types, 'minor')
-    stimuli.budget.lines.position = [major_line_y_positions minor_line_y_positions];
-    stimuli.budget.lines.thickness = horzcat(repmat(major_line_thickness, 1, lines-1),repmat(minor_line_thickness, 1, lines));
-    stimuli.budget.lines.colour = horzcat(repmat(major_line_colour, lines-1, 1)', repmat(minor_line_colour, lines-1, 1)');
+    lines.position = [major_line_y_positions minor_line_y_positions];
+    lines.thickness = horzcat(repmat(major_line_thickness, 1, lines-1),repmat(minor_line_thickness, 1, lines));
+    lines.colour = horzcat(repmat(major_line_colour, lines-1, 1)', repmat(minor_line_colour, lines-1, 1)');
+elseif strcmp(line_types, 'none')
+    lines.position = NaN;
 end
     

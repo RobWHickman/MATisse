@@ -263,6 +263,18 @@ function Bidding_check_Callback(hObject, eventdata, handles)
 function Finalised_check_Callback(hObject, eventdata, handles)
 function Targeted_check_Callback(hObject, eventdata, handles)
 
+%function which determines which file (if not the default
+%interval_times.mat) should set the timings of the epochs
+function Timing_filestring_Callback(hObject, eventdata, handles)
+    timing_filestring = get(handles.Timing_filestring,'String');
+    handles.parameters.timing.load_filestring = timing_filestring;
+    %throw an error if the timing file isn't found in the current directory
+    assert(exist(fullfile(cd, string), 'file') == 2, '!timing file not found in current directory!');
+guidata(hObject, handles);    
+function Timing_filestring_CreateFcn(hObject, eventdata, handles)
+    handles.parameters.timing.load_filestring = missing;
+guidata(hObject, handles);    
+
 %Functions to modify the task in ways that we don't want to when recording
 %but are useful elsewhere
 %testmode allows the task to be run without hardware so is good for
@@ -446,6 +458,28 @@ function Budget_magnitude_Callback(hObject, eventdata, handles)
 guidata(hObject, handles);
 function Budget_magnitude_CreateFcn(hObject, eventdata, handles)
     handles.modifiers.budget.magnitude = 1.2;
+guidata(hObject, handles);
+%functions that determine what sort of lines should be placed over the
+%budget bar to help the monkeys target their bid to some known amount
+function No_lines_CreateFcn(hObject, eventdata, handles)
+    handles.modifiers.budget.targeting_lines.type = "none";
+guidata(hObject, handles);
+function Minor_lines_CreateFcn(hObject, eventdata, handles)
+function Major_lines_CreateFcn(hObject, eventdata, handles)
+function No_lines_Callback(hObject, eventdata, handles)
+    if get(handles.No_lines, 'Value');
+        handles.modifiers.budget.targeting_lines.type = "none";
+    end
+guidata(hObject, handles);
+function Minor_lines_Callback(hObject, eventdata, handles)
+    if get(handles.Minor_lines, 'Value');
+        handles.modifiers.budget.targeting_lines.type = "minor";
+    end
+guidata(hObject, handles);
+function Major_lines_Callback(hObject, eventdata, handles)
+    if get(handles.Major_lines, 'Value');
+        handles.modifiers.budget.targeting_lines.type = "major";
+    end
 guidata(hObject, handles);
 %the number of divisions of water budget in the bundle (i.e. what the
 %bundle water offers values will be). Can also be piped into the budget
@@ -897,9 +931,8 @@ guidata(hObject, handles);
         handles.results.outputs.juice = 0;
         guidata(hObject, handles);
 
+ 
 
 
 
-%targeting lines
-% --- Executes on button press in radiobutton23.
-function radiobutton23_Callback(hObject, eventdata, handles)
+
