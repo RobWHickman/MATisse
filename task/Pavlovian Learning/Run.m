@@ -8,9 +8,9 @@ end
 
 %% EPOCHS %%
 %% the different epochs in the task if all checks are met %%
-for frame = 1:(parameters.timings.Frames('epoch8') + parameters.timings.Delay('epoch8'))
+for frame = 1:(parameters.timings.Frames('epoch4') + parameters.timings.Delay('epoch4'))
     %draw the seventh epoch
-    if frame == 1 | frame == (parameters.timings.Frames('epoch8') + parameters.timings.Delay('epoch8'))
+    if frame == 1 | frame == (parameters.timings.Frames('epoch4') + parameters.timings.Delay('epoch4'))
         draw_epoch_8(hardware, task_window);
     end
     %get trial values for the offer, computer bid and random monkey bid
@@ -21,7 +21,7 @@ for frame = 1:(parameters.timings.Frames('epoch8') + parameters.timings.Delay('e
     stimuli = select_fractal(parameters, stimuli, task_window);
     end
     
-    if frame == (parameters.timings.Frames('epoch8') + parameters.timings.Delay('epoch8'))
+    if frame == (parameters.timings.Frames('epoch4') + parameters.timings.Delay('epoch4'))
         Screen('Flip', task_window, [], 0);
     else
         Screen('Flip', task_window, [], 1);
@@ -87,7 +87,7 @@ else
 display('FIXATION FAIL');
 sound_error_tone(hardware);
 for frame = 1:(sum(parameters.timings.Frames(2:8)) + sum(parameters.timings.Delay(2:8)) + (3 * hardware.outputs.screen_info.hz))
-    if frame == 1 | frame == (parameters.timings.Frames('epoch8') + parameters.timings.Delay('epoch8'))
+    if frame == 1 | frame == (parameters.timings.Frames('epoch4') + parameters.timings.Delay('epoch4'))
         draw_error_epoch(hardware, task_window)
     end
     results = assign_error_results(parameters, results);

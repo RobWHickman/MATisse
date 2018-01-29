@@ -21,6 +21,7 @@ if strcmp(payout, 'budget')
 
 %payout the reward tap (depends on the monkey)
 elseif strcmp(payout, 'reward')
+    %MARIUS
     if results.trial_results.reward > 0
         results.trial_results.reward_liquid = ((results.trial_results.reward * 2) - 1) * 0.15;
         if results.trial_results.reward == 1
@@ -34,6 +35,11 @@ elseif strcmp(payout, 'reward')
             results.trial_results.reward_liquid = 0.75;
         end
         %DELETE HERE
+    %ROB
+    if results.trial_results.reward > 0
+        results.trial_results.reward_liquid = ((results.trial_results.reward * 2) - 1) * 0.15;
+    end
+
     else
         results.trial_results.reward_liquid = 0;
     end
