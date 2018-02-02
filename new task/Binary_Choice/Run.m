@@ -25,7 +25,7 @@ for frame = 1:parameters.timings.TrialTime('epoch8')
 
         %generate the reversed bidspace budget for if the monkey wins
         if ~modifiers.fractals.only_fractals
-        stimuli = generate_reverse_bidspace(parameters, stimuli, task_window);
+            stimuli = generate_reverse_bidspace(parameters, stimuli, task_window);
         end
     end
     
@@ -43,7 +43,13 @@ for frame = 1:parameters.timings.TrialTime('epoch1')
     if frame == 1 || frame == parameters.timings.TrialTime('epoch1')
         draw_epoch_1(stimuli, hardware, task_window);
     end
-
+    
+    %update the positions of the stimuli depending on which half of the
+    %screen the bundle is on
+    if frame == 2
+        stimuli = reflect_bundle(stimuli, hardware);
+    end
+    
     %check if the monkey is fixating on the cross
     [parameters, results] = check_fixation(parameters, stimuli, results, hardware, task_window);
 
@@ -55,21 +61,17 @@ for frame = 1:parameters.timings.TrialTime('epoch1')
 end
 
 %continue with task if monkey fixates
-if (results.trial_values.task_checks.Status('fixation') | ~results.trial_values.task_checks.Requirement('fixation')) &&...
-        (results.trial_values.task_checks.Status('hold_joystick') | ~results.trial_values.task_checks.Requirement('hold_joystick'));
-
-%if the bundle is on the right hand side of the screen, reflect it
-if parameters.single_trial_values.bundle_half == 0
-    stimuli = reflect_bundle(stimuli, hardware);
-end
+if (parameters.task_checks.Status('fixation') || ~parameters.task_checks.Requirement('fixation')) &&...
+        (parameters.task_checks.Status('hold_joystick') || ~parameters.task_checks.Requirement('hold_joystick'))
 
 %if pass_all_tests
 % EPOCH 2 - display fractal
-for frame = 1:(parameters.timings.Frames('epoch2') + parameters.timings.Delay('epoch2'))
-    if frame == 1 | frame == (parameters.timings.Frames('epoch2') + parameters.timings.Delay('epoch2'))
+for frame = 1:parameters.timings.TrialTime('epoch2')
+    if frame == 1 || frame == parameters.timings.TrialTime('epoch2')
         draw_epoch_2(stimuli, parameters, task_window);
     end
-    if frame == (parameters.timings.Frames('epoch2') + parameters.timings.Delay('epoch2'))
+
+    if frame == parameters.timings.TrialTime('epoch2')
         Screen('Flip', task_window, [], 0);
     else
         Screen('Flip', task_window, [], 1);
@@ -77,11 +79,12 @@ for frame = 1:(parameters.timings.Frames('epoch2') + parameters.timings.Delay('e
 end
 
 % EPOCH 3 - display bidspaces
-for frame = 1:(parameters.timings.Frames('epoch3') + parameters.timings.Delay('epoch3'))
-    if frame == 1 | frame == (parameters.timings.Frames('epoch3') + parameters.timings.Delay('epoch3'))
+for frame = 1:parameters.timings.TrialTime('epoch3')
+    if frame == 1 || frame == parameters.timings.TrialTime('epoch3')
         draw_bc_epoch_3(stimuli, parameters, hardware, task_window);
     end
-    if frame == (parameters.timings.Frames('epoch3') + parameters.timings.Delay('epoch3'))
+    
+    if frame == parameters.timings.TrialTime('epoch3')
         Screen('Flip', task_window, [], 0);
     else
         Screen('Flip', task_window, [], 1);
@@ -89,21 +92,23 @@ for frame = 1:(parameters.timings.Frames('epoch3') + parameters.timings.Delay('e
 end
 
 % EPOCH 4 - show initial bid
-for frame = 1:(parameters.timings.Frames('epoch4') + parameters.timings.Delay('epoch4'))
-    if frame == 1 | frame == (parameters.timings.Frames('epoch4') + parameters.timings.Delay('epoch4'))
+for frame = 1:parameters.timings.TrialTime('epoch4')
+    if frame == 1 || frame == parameters.timings.TrialTime('epoch4')
         draw_bc_epoch_4(stimuli, parameters, hardware, task_window);
     end
-    if frame == (parameters.timings.Frames('epoch4') + parameters.timings.Delay('epoch4'))
+    if frame == parameters.timings.TrialTime('epoch4')
         Screen('Flip', task_window, [], 0);
     else
         Screen('Flip', task_window, [], 1);
     end
 end
 
+%if the monkey gets this far then the bid becomes 0 until updated
+results.single_trial.monkey_bid = 0;
+results.movement.stationary_frame_count = 0;
+
 % EPOCH 5 - monkey bidding
-parameters.single_trial_values.starting_bid_value = 0;
-results.trial_results.monkey_bid = 0;
-for frame = 1:(parameters.timings.Frames('epoch5') + parameters.timings.Delay('epoch5'))
+for frame = 1:parameters.timings.TrialTime('epoch5')
     draw_bc_epoch_5(stimuli, parameters, hardware, results, task_window);
     [results, stimuli] = update_bid_position(hardware, results, parameters, stimuli);
     

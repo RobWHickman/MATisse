@@ -51,6 +51,7 @@ for image = 1:length(all_images)
 end
 
 %prepare for output as one object
+fractals.images = fractal_images;
 fractals.position = fractal_position;
 fractals.dimensions.height = size(fractal_images{image}, 1);
 fractals.dimensions.width = size(fractal_images{image}, 2);

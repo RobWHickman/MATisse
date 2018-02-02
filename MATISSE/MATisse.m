@@ -647,13 +647,13 @@ function Joystick_button_Callback(hObject, eventdata, handles)
     joy_y   = mean(test_data_y)
     %automatically update the x and y bias and the gui with these values
     %can be overridden manually after
-    set(handles.Set_X_Bias,'String', num2str(-joy_x));
-    handles.hardware.joystick.bias.x_bias = get(handles.Set_X_Bias,'String');
-    set(handles.Set_Y_Bias,'String', num2str(-joy_y));
-    handles.hardware.joystick.bias.y_bias = get(handles.Set_Y_Bias,'String');
+    set(handles.Set_x_offset,'String', num2str(-joy_x));
+    handles.hardware.joystick.bias.x_offset = get(handles.Set_x_offset,'String');
+    set(handles.Set_y_offset,'String', num2str(-joy_y));
+    handles.hardware.joystick.bias.y_offset = get(handles.Set_y_offset,'String');
     %assign this to the workspace to use later on
-    assignin('base', 'joystick_bias_x', [handles.hardware.joystick.bias.x_bias]);
-    assignin('base', 'joystick_bias_y', [handles.hardware.joystick.bias.y_bias]);
+    assignin('base', 'joystick_bias_x', [handles.hardware.joystick.bias.x_offset]);
+    assignin('base', 'joystick_bias_y', [handles.hardware.joystick.bias.y_offset]);
 guidata(hObject, handles);
 %function to reinsert already tested values for the joystick bias
 function Reinsert_bias_Callback(hObject, eventdata, handles)
@@ -661,60 +661,60 @@ function Reinsert_bias_Callback(hObject, eventdata, handles)
     bias_x = evalin('base', 'joystick_bias_x');
     bias_y = evalin('base', 'joystick_bias_y');
     %set as the joystick bias
-    handles.hardware.joystick.bias.y_bias = str2num(bias_y);
-    handles.hardware.joystick.bias.x_bias = str2num(bias_x);
-    set(handles.Set_Y_Bias,'String', num2str(handles.hardware.joystick.bias.y_bias));
-    set(handles.Set_X_Bias,'String', num2str(handles.hardware.joystick.bias.x_bias));
+    handles.hardware.joystick.bias.y_offset = str2num(bias_y);
+    handles.hardware.joystick.bias.x_offset = str2num(bias_x);
+    set(handles.Set_y_offset,'String', num2str(handles.hardware.joystick.bias.y_offset));
+    set(handles.Set_x_offset,'String', num2str(handles.hardware.joystick.bias.x_offset));
     disp('reinserted joystick bias from workspace');
 guidata(hObject, handles);
 %adds a bias to the joystick
 %makes either side move between 0-10x faster for the same effort
-function Added_bias_Callback(hObject, eventdata, handles)
-    clear handles.hardware.joystick.bias.added_bias;
+function manual_bias_Callback(hObject, eventdata, handles)
+    clear handles.hardware.joystick.bias.manual_bias;
     slider_state = get(hObject,'Value');
-    handles.hardware.joystick.bias.added_bias = sqrt(1 / (exp(1)^(slider_state-0.5)^4.605));
+    handles.hardware.joystick.bias.manual_bias = sqrt(1 / (exp(1)^(slider_state-0.5)^4.605));
     %display the difference in strength
-    %sqrt as in update_bid_position() one is divided by the added_bias and
+    %sqrt as in update_bid_position() one is divided by the manual_bias and
     %the other is multiplied
-    disp(strcat('left side now ', num2str(handles.hardware.joystick.bias.added_bias ^ 2), ' times as strong'));
+    disp(strcat('left side now ', num2str(handles.hardware.joystick.bias.manual_bias ^ 2), ' times as strong'));
 guidata(hObject, handles);
 %set default to 1x (i.e. both sides are equal)
-function Added_bias_CreateFcn(hObject, eventdata, handles)
-    handles.hardware.joystick.bias.added_bias = 1;
+function manual_bias_CreateFcn(hObject, eventdata, handles)
+    handles.hardware.joystick.bias.manual_bias = 1;
 guidata(hObject, handles);
 function Reset_bias_Callback(hObject, eventdata, handles)
-    clear handles.hardware.inputs.settings.added_bias;
-    handles.hardware.joystick.bias.added_bias = 1;
+    clear handles.hardware.inputs.settings.manual_bias;
+    handles.hardware.joystick.bias.manual_bias = 1;
     disp('both directions set to equal strength');
-set(handles.Added_bias,'Value', 0.5);
+set(handles.manual_bias,'Value', 0.5);
 %edit the bias manually in the GUI
-function Set_Y_Bias_Callback(hObject, eventdata, handles)
-    clear handles.hardware.joystick.bias.y_bias;
-    handles.hardware.joystick.bias.y_bias = get(handles.Set_Y_Bias,'String');
+function Set_y_offset_Callback(hObject, eventdata, handles)
+    clear handles.hardware.joystick.bias.y_offset;
+    handles.hardware.joystick.bias.y_offset = get(handles.Set_y_offset,'String');
     disp('set new joystick Y bias');
 guidata(hObject, handles);
-function Set_X_Bias_Callback(hObject, eventdata, handles)
-    clear handles.hardware.joystick.bias.x_bias;
-    handles.hardware.joystick.bias.x_bias = get(handles.Set_X_Bias,'String');
+function Set_x_offset_Callback(hObject, eventdata, handles)
+    clear handles.hardware.joystick.bias.x_offset;
+    handles.hardware.joystick.bias.x_offset = get(handles.Set_x_offset,'String');
     disp('set new joystick X bias');
 guidata(hObject, handles);
-function Set_Y_Bias_CreateFcn(hObject, eventdata, handles)
+function Set_y_offset_CreateFcn(hObject, eventdata, handles)
 %set defalt bias to 0
-    handles.hardware.joystick.bias.y_bias = '0';
+    handles.hardware.joystick.bias.y_offset = '0';
 guidata(hObject, handles);
-function Set_X_Bias_CreateFcn(hObject, eventdata, handles)
-    handles.hardware.joystick.bias.x_bias = '0';
+function Set_x_offset_CreateFcn(hObject, eventdata, handles)
+    handles.hardware.joystick.bias.x_offset = '0';
 guidata(hObject, handles);
 %set the joystick sensitivity- the sensitivity needed to be breached for
 %the joystick to move the bid
 function Joystick_sensitivty_Callback(hObject, eventdata, handles)
-    clear handles.hardware.joystick.sensitivity.joystick;
+    clear handles.hardware.joystick.sensitivity.movement;
     joystick_sensitivity = get(handles.Joystick_sensitivty,'String');
-    handles.hardware.joystick.sensitivity.joystick = str2num(joystick_sensitivity);
+    handles.hardware.joystick.sensitivity.movement = str2num(joystick_sensitivity);
     disp(['set joystick sensitivity to ', joystick_sensitivity]);
 guidata(hObject, handles);
 function Joystick_sensitivty_CreateFcn(hObject, eventdata, handles)
-    handles.hardware.joystick.sensitivity.joystick = str2num('0.05');
+    handles.hardware.joystick.sensitivity.movement = str2num('0.05');
 guidata(hObject, handles);
 %set the centered sensitivity- the sensitivity the monkey must keep the
 %joystick movement below to pass a centered check

@@ -3,10 +3,11 @@
 %secondly load or create the times for each epoch in the task
 function parameters = get_all_parameters(parameters, hardware)
 
-%create a table from the parameters 
-task_checks = table([requirement_vector(1);requirement_vector(2);requirement_vector(3);requirement_vector(4);requirement_vector(5)],...
+%create a table from the parameters
+task_checks = table([repmat(0, 1, length(requirement_vector))],...
+    [parameters.task_checks.requirements],...
     {'monkey_fixated_on_cross';'monkey_holding_joystick_still';'monkey_bidding_activity';'monkey_bid_stabilised';'monkey_bid_targeted'},...
-    'VariableNames',{'Status','Description'},...
+    'VariableNames',{'Status','Requirement','Description'},...
     'RowNames',{'fixation';'hold_joystick';'no_bid_activity';'stabilised_offer';'targeted_offer'});
 %if in testmode, don't check for hold_joystick no matter what
 if hardware.testmode
@@ -33,5 +34,5 @@ end
 
 %add a frames column to the interval times table to reflect the monitor
 %refresh rate (usually 60hz)
-parameters.timings.Frames = parameters.timings.Time * hardware.screen.refresh_rate;
-parameters.timings.Variance = parameters.timings.PlusMinus * hardware.screen.refresh_rate;
+parameters.timings.Frames = round(parameters.timings.Time * hardware.screen.refresh_rate);
+parameters.timings.Variance = round(parameters.timings.PlusMinus * hardware.screen.refresh_rate);

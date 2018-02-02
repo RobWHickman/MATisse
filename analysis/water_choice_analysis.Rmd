@@ -18,7 +18,7 @@ require(tidyr)
 
 ```{r, warning = FALSE, message = FALSE, include = FALSE}
 #load in specific data
-date <- "11-Jan-2018"
+date <- "29-Jan-2018"
 #dates <- seq(as.Date("27-Dec-2017", "%d-%B-%Y"), as.Date("3-Jan-2018", "%d-%B-%Y"), 1)
 #dates <- format(strptime(as.character(dates), "%Y-%m-%d"), "%d-%b-%Y")
 #get rid of saturdays and nye

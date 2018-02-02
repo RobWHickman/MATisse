@@ -17,18 +17,23 @@ require(tidyr)
 ```
 
 ```{r, warning = FALSE, message = FALSE, include = FALSE}
-#load in specific data
-date <- "25-Jan-2018"
+#which files we want to load
 monkey <- "Ulysses"
+start <- "22-Jan-2018"
+end <- "26-Jan-2018"
+if(!is.na(end)){
+  dates <- strftime(seq(as.Date(start, "%d-%b-%Y"), as.Date(end, "%d-%b-%Y"), "days"), "%d-%b-%Y")
+} else {
+  dates <- start
+}
 
-search_string <- paste0(date, ".*", monkey, "COMPACT")
-#find all data files
+#use these dates to find files
+search_string <- paste0(dates, ".*", monkey, "COMPACT")
 directory <- "C:/Users/WS-Guest/Desktop/task data/"
 data_files <- dir(directory)
-
-#load in the relevant data
-specific_files <- data_files[grep(search_string, data_files)]
-#specific_files <- specific_files[1:2]
+specific_files <- data_files[sapply(search_string, grep, x = data_files)]
+#in case we want to manually select one (or more) of these
+#specific_files <- specific_files[c(2,4)]
 
 task_data <- rbindlist(lapply(paste0(directory, specific_files), read.csv, na.strings = "NaN"), idcol = "block") %>%
   #munge the data
@@ -45,7 +50,7 @@ task_data <- rbindlist(lapply(paste0(directory, specific_files), read.csv, na.st
 
 Data shown for:
 ```{r, warning = FALSE, message = FALSE}
-date
+dates
 monkey
 
 ```
@@ -63,7 +68,7 @@ p1 <- ggplot(data = task_data, aes(x = monkey_final_bid, y = bundle_position)) +
   annotate("text", label = "left bid", x = -0.5, y = 0.45, size = 7, colour = "darkgrey") +
   annotate("text", label = "right bid", x = 0.5, y = 0.45, size = 7, colour = "darkgrey") +
   ggtitle("Monkey Bid Positions on Binary Choice Task",
-          subtitle = paste(date, ";", monkey, ";", length(unique(task_data$block)), "blocks")) +
+          subtitle = paste(monkey, ";", length(unique(task_data$block)), "blocks")) +
   #theme_fivethirtyeight() +
   theme_minimal() +
   theme(strip.text.x = element_text(size = 14)) +
@@ -90,7 +95,7 @@ p2 <- ggplot(data = task_data, aes(x = bundle_distance, colour = as.factor(offer
   annotate("text", label = "bundle bid", x = 0.05, y = 4, size = 7, colour = "darkgrey") +
   annotate("text", label = "budget bid", x = 0.75, y = 4, size = 7, colour = "darkgrey") +
   ggtitle("Monkey Bid Distance From Bundle on Binary Choice Task",
-          subtitle = paste(date, ";", monkey, ";", length(unique(task_data$block)), "blocks")) +
+          subtitle = paste(monkey, ";", length(unique(task_data$block)), "blocks")) +
   #theme_fivethirtyeight() +
   theme_minimal() +
   theme(strip.text.x = element_text(size = 14)) +
@@ -118,7 +123,7 @@ p3 <- task_data %>%
   scale_color_brewer(palette = "Set1", name = "Block") +
   coord_flip() +
   ggtitle("Monkey Bid Distance From Bundle on Binary Choice Task",
-          subtitle = paste(date, ";", monkey, ";", length(unique(task_data$block)), "blocks")) +
+          subtitle = paste(monkey, ";", length(unique(task_data$block)), "blocks")) +
   #theme_fivethirtyeight() +
   theme_minimal() +
   theme(strip.text.x = element_text(size = 14)) +
@@ -161,7 +166,7 @@ p4 <- task_data[!is.na(fractal_bid), .(.N), by = .(offer_value, bundle_liquid)] 
   xlab("bundle juice offered (ml)") +
   ylab("bundle water offered (ml)") +
   ggtitle("Monkey Bundle Trials on Binary Choice Task",
-          subtitle = paste(date, ";", monkey, ";", length(unique(task_data$block)), "blocks")) +
+          subtitle = paste(monkey, ";", length(unique(task_data$block)), "blocks")) +
   #theme_fivethirtyeight() +
   theme_minimal() +
   theme(strip.text.x = element_text(size = 14)) +
@@ -179,7 +184,8 @@ Graph showing the number of trials the monkey carried out for each bundle combin
 
 ```{r, warning = FALSE, message = FALSE, include = FALSE}
 bundle_bidding <- task_data[!is.na(fractal_bid)] %>%
-  .[, mean(fractal_bid), by = .(offer_value, bundle_liquid)]
+  .[, .SD[30:210], block] %>%
+  .[, mean(fractal_bid), by = .(offer_value, bundle_liquid, block)]
 
 binomial_smooth <- function(...) {
   geom_smooth(method = "glm", method.args = list(family = "binomial"), ...)
@@ -192,12 +198,13 @@ p5 <- ggplot(bundle_bidding, aes(y = V1, x = bundle_liquid * 1.2, colour = as.fa
   xlab("water offered (ml)") +
   ylab("proportion of bundle choices") +
   ggtitle("Monkey Proportion of Bundle Bids on Binary Choice Task",
-          subtitle = paste(date, ";", monkey, ";", length(unique(task_data$block)), "blocks")) +
+          subtitle = paste(monkey, ";", length(unique(task_data$block)), "blocks")) +
   #theme_fivethirtyeight() +
   theme_minimal() +
   theme(strip.text.x = element_text(size = 14)) +
   theme(axis.title.x = element_text(size = 14)) +
-  theme(axis.title.y = element_text(size = 14)) 
+  theme(axis.title.y = element_text(size = 14)) +
+  facet_wrap(~block)
 ```
 
 ```{r, warning = FALSE, message = FALSE}
@@ -218,7 +225,7 @@ p6 <- ggplot(task_data, aes(y = fractal_bid, x = bundle_liquid * 1.2,
   xlab("water offered (ml)") +
   ylab("proportion of bundle choices") +
   ggtitle("Monkey Proportion of Bundle Bids on Binary Choice Task (CI = 0.95?)",
-          subtitle = paste(date, ";", monkey, ";", length(unique(task_data$block)), "blocks")) +
+          subtitle = paste(monkey, ";", length(unique(task_data$block)), "blocks")) +
   #theme_fivethirtyeight() +
   theme_minimal() +
   theme(strip.text.x = element_text(size = 14)) +

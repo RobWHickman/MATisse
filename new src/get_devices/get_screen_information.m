@@ -10,7 +10,7 @@ hardware.screen.screens = Screen('Screens');
 
 %throw an error if this isn't the case
 if hardware.screen.screens < 2
-    display('only one screen connected');
+    warning('!only one screen connected!');
 end
 
 %get the screen refresh rate

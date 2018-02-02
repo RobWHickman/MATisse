@@ -9,27 +9,27 @@ if strcmp(parameters.task, 'BDM')
     value = results.single_trial.computer_bid;
 elseif strcmp(parameters.task, 'BC')
     value = results.single_trial.bundle_value;
+end
 
 %crop the bidspace
 reverse_bidspace_crop = imcrop(stimuli.bidspace.reverse_bidspace_image,...
     [0, stimuli.bidspace.dimensions.height - (stimuli.bidspace.dimensions.height * value)...
     stimuli.bidspace.dimensions.width, stimuli.bidspace.dimensions.height]);
-stimuli.trial.reverse_bidspace_texture = Screen('MakeTexture', task_window, reverse_bidspace_crop);
+stimuli.bidspace.reverse_texture = Screen('MakeTexture', task_window, reverse_bidspace_crop);
 
 %if the budget should contain a random amount of water make the reverse texture for that too
-if parameters.binary_choice.random_budget || parameters.binary_choice.pegged_budget
-  reverse_budget_crop = imcrop(bidspace.reverse_bidspace,...
-    [0 bidspace.bidspace_info.height - (bidspace.bidspace_info.height * trial_values.budget_water)...
-    bidspace.bidspace_info.width bidspace.bidspace_info.height]);
+%doesn't need a position as this will be derived from the bidspace position
+%when reflecting the bundle
+if strcmp(parameters.task, 'BC')
+    if modifiers.budget.random || modifiers.budget.pegged
+        reverse_budget_crop = imcrop(stimuli.bidspace.reverse_bidspace_image,...
+            [0, stimuli.bidspace.dimensions.height - (stimuli.bidspace.dimensions.height * trial_values.budget_water)...
+        bidspace.bidspace_info.width bidspace.bidspace_info.height]);
   
-    stimuli.trial.reverse_budget_texture = Screen('MakeTexture', task_window, reverse_budget_crop);
-    
-    stimuli.trial.reversed_budget_position = bidspace.bidspace_info.position;
-    stimuli.trial.reversed_budget_position(2) = stimuli.trial.reversed_budget_position(4) - (bidspace.bidspace_info.height * trial_values.budget_water);
-end
-
+        stimuli.budget.reverse_texture = Screen('MakeTexture', task_window, reverse_budget_crop);
+    end
 end
 
 %work out the position of the cover image
-stimuli.trial.reversed_bidspace_position = bidspace.bidspace_info.position;
-stimuli.trial.reversed_bidspace_position(2) = stimuli.trial.reversed_bidspace_position(4) - (bidspace.bidspace_info.height * value);
+stimuli.bidspace.reverse_texture_position = bidspace.bidspace_info.position;
+stimuli.bidspace.reverse_texture_position(2) = stimuli.bidspace.reverse_texture_position(4) - (stimuli.bidspace.dimensions.height * value);

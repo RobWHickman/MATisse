@@ -1,4 +1,4 @@
-function [parameters, results] = set_initial_trial_values(parameters, stimuli, hardware, results)
+function [parameters, stimuli, results] = set_initial_trial_values(parameters, stimuli, results)
 
 %get the offer values for the trial
 %follow a predetermined order from create_stimuli_order()
@@ -16,6 +16,8 @@ if ~parameters.trials.random_stimuli || ~strcmp(parameters.task, 'PAV')
         results.single_trial.starting_bid_value = parameters.trials.combinations(2,parameters.trials.combinations(results.trials.correct+1)) / modifiers.budget.divisions;
         results.single_trial.computer_bid = 1 / randi(modifiers.budget.divisions);
     elseif strcmp(parameters.task, 'BC')
+        %always start bid at 0 for BC
+        results.single_trial.starting_bid_value = 0;
         results.single_trial.bundle_value = parameters.trials.combinations(2,parameters.trials.combinations(results.trials.correct+1)) / modifiers.budget.divisions;
         results.single_trial.bundle_water = modifiers.budget.magnitude * results.single_trial.bundle_value;
         results.single_trial.bundle_half = parameters.trials.combinations(3,parameters.trials.combinations(results.trials.correct+1));
@@ -30,7 +32,8 @@ else
     elseif strcmp(parameters.task, 'BC')
         results.single_trial.bundle_value = randi(modifiers.budget.divisions) / modifiers.budget.divisions;
         results.single_trial.bundle_water = modifiers.budget.magnitude * results.single_trial.bundle_value;
-        results.single_trial.bundle_half = randi(2);
+        %randomly chose either 1 or -1
+        results.single_trial.bundle_half = Sample([-1, 1]);
     end
 end
 
@@ -89,7 +92,7 @@ results.movement.fixation_vector = [];
 
 %also initialise the trial results
 results.movement.stationary_frame_count = 0;
-results.movement.adjust = 0;
+results.movement.adjust = results.single_trial.starting_bid_value;
 %assume bid is NA until bidding phase
 results.single_trial.monkey_bid = NaN;
 

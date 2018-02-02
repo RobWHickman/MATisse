@@ -23,7 +23,7 @@ for subblock = 1:(parameters.trials.total_trials/modifiers.budget.divisions)
 end
 
 %combine
-combinations = [fractals_vector; divisions_vector; repmat(1, 1, parameters.trials.total_trials)];
+combinations = [fractals_vector; divisions_vector; repmat(0, 1, parameters.trials.total_trials)];
 
 %add in a random side in the 3rd line
 if strcmp(parameters.task.type, 'BC')
@@ -32,7 +32,7 @@ if strcmp(parameters.task.type, 'BC')
         for fractal = 1:modifiers.fractals.number
             index = find(combinations(2,:) == division & combinations(1,:) == fractal);
             if sides == 2
-                side_vec = repmat([-1 1], 1, length(index)/sides);
+                side_vec = repmat([0 1], 1, length(index)/sides);
                 side_vec = side_vec(randperm(length(index)));
                 combinations(3,index) = side_vec;
             elseif sides < 1 || sides > 2

@@ -7,7 +7,7 @@ function hardware = find_fixation_devices(parameters, hardware, task_window)
 if parameters.modification.testmode == 0
     %find the eye tracker
     hardware.fixation.device = 'eye_tracker';
-    fprintf('have not coded up eye tracker yet!');
+    warning('!have not coded up eye tracker yet!');
 %otherwise use the mouse to hit a fixation spot
 else
     %find the mouse

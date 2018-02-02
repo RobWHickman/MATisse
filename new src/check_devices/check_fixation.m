@@ -2,9 +2,11 @@
 %returns a boolean that is true if they fixated and false if they did not
 function [parameters, results] = check_fixation(parameters, stimuli, results, hardware, task_window)
 
-if hardware.testmode == 0
+%if not in testmode either check that the joystick is stationary orthat the
+%monkey is fixated on a cross
+if ~parameters.modification.testmode
     if strcmp(hardware.inputs.settings.fixation_test, 'joystick')
-        results = check_joystick_stationary(parameters, hardware, results);
+        [parameters, results] = check_joystick_stationary(parameters, hardware, results);
     elseif strcmp(hardware.inputs.settings.fixation_test, 'eye_tracker')
         warning('!have not coded up eye tracker yet!');
     end
