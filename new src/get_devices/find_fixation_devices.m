@@ -4,7 +4,7 @@
 function hardware = find_fixation_devices(parameters, hardware, task_window)
 
 %if not testing use joystick/eye tracker
-if parameters.modification.testmode == 0
+if ~parameters.break.testmode
     %find the eye tracker
     hardware.fixation.device = 'eye_tracker';
     warning('!have not coded up eye tracker yet!');

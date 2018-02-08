@@ -1,19 +1,19 @@
 %BDM task function
-function [results, parameters] = Run(parameters, stimuli, hardware, results, task_window)
+function [results, parameters] = Run(parameters, stimuli, hardware, modifiers, results, task_window)
 
 %% EPOCHS %%
 %% the different epochs in the task if all checks are met %%
 for frame = 1:parameters.timings.TrialTime('epoch8')
     %draw the seventh epoch
     if frame == 1 || frame == parameters.timings.TrialTime('epoch8')
-        draw_epoch_8(hardware, task_window);
+        draw_ITI(hardware, task_window);
     end
 
     %get trial values for the offer, computer bid and random monkey bid
     %start position
     %also the random delays at the end of epochs 3 and 7
     if frame == 1
-        [parameters, stimuli, results] = set_initial_trial_values(parameters, stimuli, results);
+        [parameters, results] = set_initial_trial_values(parameters, stimuli, modifiers, results);
 
         %select the correct fractal for the trial and generate a texture
         if ~modifiers.fractals.no_fractals

@@ -4,13 +4,13 @@
 function parameters = get_all_parameters(parameters, hardware)
 
 %create a table from the parameters
-task_checks = table([repmat(0, 1, length(requirement_vector))],...
+task_checks = table([repmat(0, 1, length(parameters.task_checks.requirements))'],...
     [parameters.task_checks.requirements],...
     {'monkey_fixated_on_cross';'monkey_holding_joystick_still';'monkey_bidding_activity';'monkey_bid_stabilised';'monkey_bid_targeted'},...
     'VariableNames',{'Status','Requirement','Description'},...
     'RowNames',{'fixation';'hold_joystick';'no_bid_activity';'stabilised_offer';'targeted_offer'});
 %if in testmode, don't check for hold_joystick no matter what
-if hardware.testmode
+if parameters.break.testmode
     task_checks.Status('fixation') = 0;
 end
 %overwrite the vector set by the GUI with the table for neatness
@@ -30,6 +30,7 @@ else
     else
         load(parameters.timing.load_filestring);
         parameters.timings = interval_times;
+    end
 end
 
 %add a frames column to the interval times table to reflect the monitor

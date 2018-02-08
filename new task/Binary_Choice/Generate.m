@@ -11,7 +11,7 @@ end
 
 %open a psychtoolbox screen for the task
 %set it to black for now
-[task_window, task_windowrect] = PsychImaging('OpenWindow', hardware.outputs.screen_info.screen_number, 0);
+[task_window, task_windowrect] = PsychImaging('OpenWindow', hardware.screen.number, 0);
 Screen('BlendFunction', task_window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
 
 %set psychtoolbox to be the computers priority
@@ -39,3 +39,8 @@ parameters.trials.max_trials = parameters.trials.max_trials + mod(parameters.tri
 if parameters.trials.random_stimuli == 0
     parameters.trials.combinations = create_stimuli_order(modifiers, parameters, 2);
 end
+
+%generate the task timings for the first trial
+%this is usally done in the ITI using set_initial_trial_values
+parameters.timings.TrialTime = parameters.timings.Frames +...
+    times(parameters.timings.Variance', times(rand(height(parameters.timings),1)', randsample([-1 1], 8, 1)))';

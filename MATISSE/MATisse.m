@@ -50,9 +50,8 @@ varargout{1} = handles.output;
 %presentation anyway, but best to separate out as much as possible before
 %even that
 function Gen_button_Callback(hObject, eventdata, handles)
-    if isfield(handles.parameters,'save_info')
+    if isfield(handles.parameters.directories,'save')
         disp('Generating Experiment...')
-        [handles.parameters, handles.stimuli, handles.hardware, handles.results, handles.task_window] =  Generate(handles.parameters, handles.hardware);
         %update the task checks with the values of the checkboxes
         requirement_vector = [get(handles.Fixation_check, 'Value'),...
             get(handles.Centered_check, 'Value'),...
@@ -60,9 +59,13 @@ function Gen_button_Callback(hObject, eventdata, handles)
             get(handles.Finalised_check, 'Value'),...
             get(handles.Targeted_check, 'Value')];
         handles.parameters.task_checks.requirements = requirement_vector';
+        %generate the task
+        [handles.parameters, handles.hardware, handles.stimuli, handles.task_window] =  Generate(handles.parameters, handles.hardware, handles.stimuli, handles.modifiers);
         %update the GUI with the calculated max trials
         %this can be edited after
         set(handles.Total_trials,'String', num2str(handles.parameters.trials.max_trials));
+        %confirm that everything has loaded
+        disp('everything generated as expected')
     else
         disp('save_info not found! Did you remember to run Set?')
     end
@@ -77,7 +80,7 @@ function Run_button_Callback(hObject, eventdata, handles)
     if get(hObject,'Value')
         set(handles.Run_button,'string','running...','enable','on','BackgroundColor','[1, 0, 1]');
         while get(hObject,'Value') && handles.results.trials.correct < handles.parameters.trials.max_trials
-            [handles.results, handles.parameters] = Run(handles.parameters, handles.stimuli, handles.hardware, handles.results, handles.task_window);
+            [handles.results, handles.parameters] = Run(handles.parameters, handles.stimuli, handles.hardware, handles.modifiers, handles.results, handles.task_window);
             %save the data about the experimental set up at the start of
             %the task
             if handles.parameters.trials.total_trials < 1
@@ -285,41 +288,41 @@ guidata(hObject, handles);
 %juice)
 %allows for the task to be run without adequate hardware
 function Test_paradigm_Callback(hObject, eventdata, handles)
-    clear handles.parameters.modification.testmode
+    clear handles.parameters.break.testmode
     test_button_state = get(hObject,'Value');
     if test_button_state == get(hObject,'Max')
         set(handles.Test_paradigm,'string','Test ON','enable','on','BackgroundColor','green');
-        handles.parameters.modification.testmode = 1;
+        handles.parameters.break.testmode = 1;
         set(handles.Centered_check,'value',0);
         %give a warning message
         disp('Testing mode on- hardware not taken into account');
     elseif test_button_state == get(hObject,'Min')
         set(handles.Test_paradigm,'string','Test OFF','enable','on','BackgroundColor','red');
-        handles.parameters.modification.testmode = 0;
+        handles.parameters.break.testmode = 0;
         disp('Testing mode off');
     end
 guidata(hObject, handles);
 function Test_paradigm_CreateFcn(hObject, eventdata, handles)
-    handles.parameters.modification.testmode = 0;
+    handles.parameters.break.testmode = 0;
 guidata(hObject, handles);
 %allows the GUI to interrupt the normal running of the task
 function Listen_mode_Callback(hObject, eventdata, handles)
-    clear handles.parameters.modification.listenmode
+    clear handles.parameters.break.listenmode
     listen_button_state = get(hObject,'Value');
     if listen_button_state == get(hObject,'Max')
         set(handles.Listen_mode,'string','Test ON','enable','on','BackgroundColor','green');
-        handles.parameters.modification.listenmode = 1;
+        handles.parameters.break.listenmode = 1;
         set(handles.Centered_check,'value',0);
         %give a warning message
         disp('Listening mode on- this will affect task timings');
     elseif listen_button_state == get(hObject,'Min')
         set(handles.Listen_mode,'string','Test OFF','enable','on','BackgroundColor','red');
-        handles.parameters.modification.listenmode = 0;
+        handles.parameters.break.listenmode = 0;
         disp('Listening mode off');
     end
 guidata(hObject, handles);
 function Listen_mode_CreateFcn(hObject, eventdata, handles)
-    handles.parameters.modification.listenmode = 0;
+    handles.parameters.break.listenmode = 0;
 guidata(hObject, handles);
 
 %Functions to set whether or not 'rewards' (i.e. contrasted to the 'budget'
@@ -486,14 +489,14 @@ guidata(hObject, handles);
 function Budget_divisions_Callback(hObject, eventdata, handles)
     clear handles.modifiers.budget.divisions;
     budget_divisions = get(handles.Budget_divisions,'String');
-    handles.parameters.binary_choice.divisions = str2num(budget_divisions);
+    handles.modifiers.budget.divisions = str2num(budget_divisions);
     %display the number and scale of the divisions
     disp([budget_divisions, ' divisions of the budget bar from ',...
         num2str(handles.modifiers.budget.magnitude/handles.modifiers.budget.divisions),...
         'to ', num2str(handles.modifiers.budget.magnitude), 'ml of water']);
 guidata(hObject, handles);
 function Budget_divisions_CreateFcn(hObject, eventdata, handles)
-    handles.parameters.binary_choice.divisions = 10;
+    handles.modifiers.budget.divisions = 10;
 guidata(hObject, handles);
 %should the budget water offer be full, or randomly divided
 function Random_budget_Callback(hObject, eventdata, handles)
@@ -669,7 +672,7 @@ function Reinsert_bias_Callback(hObject, eventdata, handles)
 guidata(hObject, handles);
 %adds a bias to the joystick
 %makes either side move between 0-10x faster for the same effort
-function manual_bias_Callback(hObject, eventdata, handles)
+function Manual_bias_Callback(hObject, eventdata, handles)
     clear handles.hardware.joystick.bias.manual_bias;
     slider_state = get(hObject,'Value');
     handles.hardware.joystick.bias.manual_bias = sqrt(1 / (exp(1)^(slider_state-0.5)^4.605));
@@ -679,7 +682,7 @@ function manual_bias_Callback(hObject, eventdata, handles)
     disp(strcat('left side now ', num2str(handles.hardware.joystick.bias.manual_bias ^ 2), ' times as strong'));
 guidata(hObject, handles);
 %set default to 1x (i.e. both sides are equal)
-function manual_bias_CreateFcn(hObject, eventdata, handles)
+function Manual_bias_CreateFcn(hObject, eventdata, handles)
     handles.hardware.joystick.bias.manual_bias = 1;
 guidata(hObject, handles);
 function Reset_bias_Callback(hObject, eventdata, handles)
@@ -768,7 +771,7 @@ guidata(hObject, handles);
 %Functions to allow the user to specify the monitor to use for the
 %experimental task defaults to monitor number 2
 function Set_Monitor_Callback(hObject, eventdata, handles)
-    clear handles.hardware.outputs.screen_info.screen_number;
+    clear handles.hardware.screen.number;
     handles.hardware.screen.number = str2num(get(handles.Set_Monitor,'String'));
     disp(strcat('task monitor changed to', num2str(handles.hardware.screen.number)));
 guidata(hObject, handles);
@@ -931,8 +934,6 @@ guidata(hObject, handles);
         handles.results.outputs.juice = 0;
         guidata(hObject, handles);
 
- 
-
-
-
-
+function Display_button_Callback(hObject, eventdata, handles)
+    display(handles.parameters.timings);
+function Display_button_CreateFcn(hObject, eventdata, handles)

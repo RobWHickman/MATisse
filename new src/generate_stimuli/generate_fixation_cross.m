@@ -11,11 +11,11 @@ fixation_cross = [fixation_cross_along; fixation_cross_up];
 %generate the fixation cross aesthetics
 fixation_cross_info.thickness = cross_thickness;
 fixation_cross_info.colour = [hardware.screen.colours.white hardware.screen.colours.white 0];
-fixation_cross_info.position = [screen_info.width / 2, screen_info.height / 2];
+fixation_cross_info.position = [hardware.screen.dimensions.width / 2, hardware.screen.dimensions.height / 2];
 
 %generate a surrounding box of twice the size
 fixation_box = [(-cross_length * eyetrack_scalar) (-cross_length * eyetrack_scalar) (cross_length * eyetrack_scalar) (cross_length * eyetrack_scalar)];
-fixation_box = CenterRectOnPointd(fixation_box, screen_info.width / 2, screen_info.height / 2);
+fixation_box = CenterRectOnPointd(fixation_box, hardware.screen.dimensions.width / 2, hardware.screen.dimensions.height / 2);
 
 %prep for output
 fixation.fixation_cross = fixation_cross;

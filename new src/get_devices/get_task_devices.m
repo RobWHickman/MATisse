@@ -11,7 +11,7 @@ hardware = get_screen_information(hardware);
 
 %get the input devices
 hardware = find_bidding_devices(parameters, hardware);
-hardware = find_fixation_devices(hardware, task_window);
+hardware = find_fixation_devices(parameters, hardware, task_window);
 
 %get the output devices
 hardware = find_payout_devices(parameters, hardware);

@@ -5,31 +5,31 @@ function hardware = find_bidding_devices(parameters, hardware)
 
 %which dimension ofthe screen is used for bidding?
 %n.b. up/right is 'more'
-if handles.hardware.joystick.direction == 'y'
+if hardware.joystick.direction == 'y'
     %find the joystick
-    if parameters.modification.testmode == 0
+    if ~parameters.break.testmode
         %find the joystick
-        handles.hardware.joystick.device = find_joystick(200, 'analog');
+        hardware.joystick.device = find_joystick(200, 'analog');
         fprintf('found joystick');
     else
-        handles.hardware.joystick.device = 'keyboard';
+        hardware.joystick.device = 'keyboard';
         %set the keys for inputs into the task
         KbName('UnifyKeyNames');
-        handles.hardware.keyboard.more_key = KbName('UpArrow');
-        handles.hardware.keyboard.less_key = KbName('DownArrow');
+        hardware.keyboard.more_key = KbName('UpArrow');
+        hardware.keyboard.less_key = KbName('DownArrow');
         fprintf('set keyboard');
     end
-elseif handles.hardware.joystick.direction == 'x'
+elseif hardware.joystick.direction == 'x'
     if hardware.testmode == 0
         %find the joystick
-        handles.hardware.joystick.device = find_joystick(200, 'analog');
+        hardware.joystick.device = find_joystick(200, 'analog');
         fprintf('found joystick');
     else
-        handles.hardware.joystick.device = 'keyboard';
+        hardware.joystick.device = 'keyboard';
         %set the keys for inputs into the task
         KbName('UnifyKeyNames');
-        handles.hardware.keyboard.more_key = KbName('RightArrow');
-        handles.hardware.keyboard.less_key = KbName('LeftArrow');
+        hardware.keyboard.more_key = KbName('RightArrow');
+        hardware.keyboard.less_key = KbName('LeftArrow');
         fprintf('set keyboard');
     end
 end

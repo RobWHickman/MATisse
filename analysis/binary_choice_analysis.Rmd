@@ -19,8 +19,8 @@ require(tidyr)
 ```{r, warning = FALSE, message = FALSE, include = FALSE}
 #which files we want to load
 monkey <- "Ulysses"
-start <- "22-Jan-2018"
-end <- "26-Jan-2018"
+start <- "07-Feb-2018"
+end <- NA
 if(!is.na(end)){
   dates <- strftime(seq(as.Date(start, "%d-%b-%Y"), as.Date(end, "%d-%b-%Y"), "days"), "%d-%b-%Y")
 } else {
@@ -33,7 +33,7 @@ directory <- "C:/Users/WS-Guest/Desktop/task data/"
 data_files <- dir(directory)
 specific_files <- data_files[sapply(search_string, grep, x = data_files)]
 #in case we want to manually select one (or more) of these
-#specific_files <- specific_files[c(2,4)]
+specific_files <- specific_files[c(2)]
 
 task_data <- rbindlist(lapply(paste0(directory, specific_files), read.csv, na.strings = "NaN"), idcol = "block") %>%
   #munge the data
@@ -44,7 +44,8 @@ task_data <- rbindlist(lapply(paste0(directory, specific_files), read.csv, na.st
   .[bundle_distance < 0.5, fractal_bid := 1] %>%
   .[bundle_distance > 0.5, fractal_bid := 0] %>%
   .[, offer_ml := paste0(((offer_value*2)-1) * 0.15, "ml")] %>%
-  .[, bundle_liquid := 1.2 - (bundle_water_perc * 1.2)]
+  .[, bundle_liquid := 1.2 - (bundle_water_perc * 1.2)] %>%
+  .[1:92]
 
 ```
 
@@ -184,7 +185,7 @@ Graph showing the number of trials the monkey carried out for each bundle combin
 
 ```{r, warning = FALSE, message = FALSE, include = FALSE}
 bundle_bidding <- task_data[!is.na(fractal_bid)] %>%
-  .[, .SD[30:210], block] %>%
+  .[, .SD, block] %>%
   .[, mean(fractal_bid), by = .(offer_value, bundle_liquid, block)]
 
 binomial_smooth <- function(...) {

@@ -1,4 +1,4 @@
-function [parameters, stimuli, results] = set_initial_trial_values(parameters, stimuli, results)
+function [parameters, results] = set_initial_trial_values(parameters, stimuli, modifiers, results)
 
 %get the offer values for the trial
 %follow a predetermined order from create_stimuli_order()

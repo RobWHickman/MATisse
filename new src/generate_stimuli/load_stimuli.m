@@ -13,7 +13,7 @@ height = hardware.screen.dimensions.height;
 %load the fractals
 %stimuli settings used for the file path and screen_info used to resize the
 %fractals
-stimuli.fractals = load_fractal_images(parameters, modifiers, screen_width, screen_height);
+stimuli.fractals = load_fractal_images(parameters, modifiers, width, height);
 
 %in pavlovian learning tasks just the fractal (or fractal vs. fractal) is
 %shown
@@ -24,7 +24,7 @@ if ~strcmp(parameters.task.type, 'PAV')
     stimuli.bidspace = generate_bidspace(parameters, modifiers, task_window, width, height);
     
     %generate lines over the bidspace to help with targeting
-    stimuli.bidspace.lines = generate_bidspace_lines(stimuli, hardware, line_types);
+    stimuli.bidspace.lines = generate_bidspace_lines(stimuli, hardware, 'major');
 end
 
 % if parameters.targeting.requirement == 1 && strcmp(parameters.task, 'BDM')

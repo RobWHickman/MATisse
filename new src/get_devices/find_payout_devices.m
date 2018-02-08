@@ -4,7 +4,7 @@
 %also indexes the solenoid ports so they can be used later in the task
 function hardware = find_payout_devices(parameters, hardware)
 
-if parameters.modification.testmode
+if parameters.break.testmode
     %add stuff here if possible to actually look for and find speakers
     hardware.solenoid.device = 'speakers';
 else

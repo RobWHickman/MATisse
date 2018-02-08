@@ -3,28 +3,7 @@ function [results, stimuli] = update_bid_position(hardware, results, parameters,
 if hardware.testmode
     [keyIsDown, secs, keyCode] = KbCheck;
 else
-    joystick_movement = peekdata(hardware.inputs.joystick, 4);
-    %the multiplier to make moving the joystick harder/easier in a specific
-    %direction
-    joystick_manual_bias = hardware.joystick.bias.manual_bias;
-    if hardware.inputs.settings.direction == 'y'
-        joystick_movement = mean(joystick_movement(:,2));
-        joystick_offset = str2num(hardware.joystick.bias.y_offset);
-        axis_multiplier = -1;
-    elseif hardware.inputs.settings.direction == 'x'
-        joystick_movement = mean(joystick_movement(:,1));
-        joystick_offset = str2num(hardware.joystick.bias.x_offset);
-        axis_multiplier = -1;
-    end
-    
-    %take how far the joystick is moved forward into account (or dont)
-    if hardware.inputs.settings.joystick_velocity
-        joystick_impetus_r = (joystick_movement + joystick_offset) / 0.6; %0.6 is pretty much the max you can move it in any direction
-        joystick_impetus_l = (joystick_movement + joystick_offset) / 0.6; %0.6 is pretty much the max you can move it in any direction
-    else
-        joystick_impetus_l = 1;
-        joystick_impetus_r = -1;
-    end
+    joystick = check_joystick(hardware);
 end
 
 %set the limits for the bidding
@@ -42,23 +21,51 @@ end
 
 %set the default movement for the frame to zero
 frame_adjust = 0;
-output_frame_adjust = 0;
 
 %update the bid position using arrow keys
 if (~parameters.task_checks.Status('no_bid_activity') || ~parameters.task_checks.Requirement('no_bid_activity')) &&...
         (~parameters.task_checks.Status('stabilised_offer') || ~parameters.task_checks.Requirement('stabilised_offer'))
     if parameters.modification.testmode
         if keyIsDown == 0
-            results = stationary_behaviour(parameters, hardware, results); %CODE THIS UP
+            results = stationary_frame(parameters, hardware, results); %CODE THIS UP
         elseif keyCode(hardware.inputs.keyboard.more_key) &&...
                 initial_bid_position + results.movement.adjust > limits(1)
             %reset the count
-            results.trial_values.stationary_frame_count = 0;
+            results.movement.stationary_frame_count = 0;
             %work out how 
             frame_adjust = adjust_position(hardware, results, bidding_limits, 'more'); %CODE THIS UP
         elseif keyCode(hardware.inputs.keyboard.less_key) &&...
                 initial_bid_position + results.trial_results.adjust < limits(2)
-            results.trial_values.stationary_frame_count = 0;
-            frame_adjust = adjust_position(hardware, results, bidding_limits, 'less');            
-        
+            results.movement.stationary_frame_count = 0;
+            frame_adjust = adjust_position(hardware, results, bidding_limits, 'less');
+        end
+    else
+        if abs(joystick.movement + joystick.offset) < hardware.joystick.sensitivity.movement
+            results = stationary_frame(parameters, hardware, results);
+        else
+            if joystick.movement + joystick.offset < 0
+                results.movement.stationary_frame_count = 0;
+                frame_adjust = adjust_position(hardware, results, bidding_limits, 'less', joystick);
+            elseif joystick.movement + joystick.offset > 0
+                results.movement.stationary_frame_count = 0;
+                frame_adjust = adjust_position(hardware, results, bidding_limits, 'more', joystick);
+            end
+        end
+    end
+    output_frame_adjust = frame_adjust;
+else
+    output_frame_adjust = NaN;
+end
 
+%add this to the vector
+results.movement.bidding_vector = [results.movement.bidding_vector, output_frame_adjust];
+
+%test if every value of the bidding vector is zero past a timeout
+if all(results.movement.bidding_vector == 0) &&...
+        results.movement.stationary_frame_count == parameters.settings.bid_timeout * hardware.screen.refresh_rate &&...
+        parameters.task_checks.Requirement('no_bid_activity')
+results.trial_values.task_checks.Status('no_bid_activity') = true;
+end
+
+%update the adjust for the frame
+results.movement.adjust = results.movement.adjust + output_frame_adjust;
