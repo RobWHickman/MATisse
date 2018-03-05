@@ -41,7 +41,7 @@ if strcmp(parameters.task, 'BDM')
     limits = [stimuli.bidspace.bidspace_info.position(2), stimuli.bidspace.bidspace_info.position(4)];
     initial_bid_position = stimuli.bidspace.bidspace_info.position(4) - ...
     (stimuli.bidspace.bidspace_info.height * parameters.single_trial_values.starting_bid_value);
-    axis_multiplier = -1;
+    axis_multiplier = 1;
 elseif strcmp(parameters.task, 'BC')
     limits = [0, hardware.outputs.screen_info.width];
     initial_bid_position = hardware.outputs.screen_info.width/2;
@@ -111,7 +111,7 @@ if (~results.trial_values.task_checks.Status('no_bid_activity') | ~results.trial
             end
             output_frame_adjust = frame_adjust;
         else
-            if (joystick_movement + joystick_bias) < 0
+            if (joystick_movement + joystick_bias) > 0
                 %TOWARDS THE LEFT
                 %reset the count
                 results.trial_values.stationary_frame_count = 0;

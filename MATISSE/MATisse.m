@@ -202,11 +202,15 @@ if get(hObject,'Value')
        
         %update the GUI with these fields
         drawnow;
+        
+        Save_button_Callback(hObject, eventdata, handles);
     end
     %if the task is paused by hitting the button again
     %n.b. only pauses at the end of a trial
     set(handles.Run_button,'string','stopped...','enable','on','BackgroundColor','[1, 1, 1]');
     drawnow;
+    save_data(handles.parameters, handles.results);
+    display('data saved!');
     guidata(hObject, handles);
 end
 
@@ -216,7 +220,7 @@ end
 %monkey per day
 function Save_button_Callback(hObject, eventdata, handles)
 save_data(handles.parameters, handles.results);
-display('data saved!');
+display('data manually saved!');
 
 
 
@@ -432,7 +436,7 @@ guidata(hObject, handles);
 
 %display_button
 function pushbutton10_Callback(hObject, eventdata, handles)
-display(size(handles.results.full_output_table.trial_results,1));
+display(handles.parameters.single_trial_values);
 
 %set the direction of bidding
 function X_axis_bidding_Callback(hObject, eventdata, handles)

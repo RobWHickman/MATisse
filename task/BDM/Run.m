@@ -39,6 +39,15 @@ for frame = 1:(parameters.timings.Frames('epoch1') + parameters.timings.Delay('e
     draw_epoch_1(stimuli, hardware, task_window);
     %check if the monkey is fixating on the cross
     [parameters, results] = check_fixation(parameters, stimuli, results, hardware, task_window);
+    
+    results.trial_results.target_box_position1 = stimuli.target_box.position(1);
+    results.trial_results.target_box_position2 = stimuli.target_box.position(2);
+    results.trial_results.target_box_position3 = stimuli.target_box.position(3);
+    results.trial_results.target_box_position4 = stimuli.target_box.position(4);
+    results.trial_results.target_value_shift = parameters.single_trial_values.target_value_shift;
+    results.trial_results.target_box_length = stimuli.target_box.length;
+    results.trial_results.start_position = parameters.single_trial_values.starting_bid_value;
+
     Screen('Flip', task_window);
 end
 

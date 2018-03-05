@@ -17,6 +17,18 @@ compact_results = results.full_output_table.trial_results;
 %etc.
 %full results contains all the information about the task and every trial
 
+%clear out the save directory to keep only the most recent file
+folder_contents = dir(save_info.output_folder);
+
+
+for file = 1:length(folder_contents);
+    filename = folder_contents(file).name;
+    if length(strfind(filename, 'RESULTS')) == 1
+        fullfilename = fullfile(save_info.output_folder, filename);
+        delete(fullfilename);
+    end
+end
+
 %save as .mat
 %save(fullfile(save_info.output_folder, regexprep(char(strcat(string(datetime('now')), save_info.experimenter, '_', save_info.primate, 'COMPACT_RESULTS.mat')), ':', '')), 'compact_results');
 save(fullfile(save_info.output_folder, regexprep(char(strcat(string(datetime('now')), save_info.experimenter, '_', save_info.primate, 'FULL_RESULTS.mat')), ':', '')), 'results');

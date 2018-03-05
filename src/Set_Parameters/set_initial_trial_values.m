@@ -67,7 +67,8 @@ parameters.timings.Delay = round(parameters.timings.Delay * hardware.outputs.scr
 %generate the random value for the target box
 %shifts the box down from the top of the bidspace by x amount
 if parameters.targeting.requirement == 1
-    single_trial_values.target_value_shift = rand() * ((stimuli.bidspace.bidspace_info.position(4) - stimuli.target_box.length) - stimuli.bidspace.bidspace_info.position(2));
+    %single_trial_values.target_value_shift = rand() * ((stimuli.bidspace.bidspace_info.position(4) - stimuli.target_box.length) - stimuli.bidspace.bidspace_info.position(2));
+    single_trial_values.target_value_shift = (randi([0 20],1,1)/20) * ((stimuli.bidspace.bidspace_info.position(4) - stimuli.target_box.length) - stimuli.bidspace.bidspace_info.position(2));
 end
 
 %output the trial values with the updated timings table using parent

@@ -22,24 +22,33 @@ if strcmp(payout, 'budget')
 %payout the reward tap (depends on the monkey)
 elseif strcmp(payout, 'reward')
     %MARIUS
-    if results.trial_results.reward > 0
-        results.trial_results.reward_liquid = ((results.trial_results.reward * 2) - 1) * 0.15;
-        if results.trial_results.reward == 1
-            results.trial_results.reward_liquid = 0.3;
-        end
-        %increments of 0.15ml of juice
-        %DELETE THESE LINES
-        if results.trial_results.reward == 1
-            results.trial_results.reward_liquid = 0.45;
-        elseif results.trial_results.reward == 2
-            results.trial_results.reward_liquid = 0.75;
-        end
-        %DELETE HERE
+%     if results.trial_results.reward > 0
+%         results.trial_results.reward_liquid = ((results.trial_results.reward * 2) - 1) * 0.15;
+%         if results.trial_results.reward == 1
+%             results.trial_results.reward_liquid = 0.3;
+%         end
+%         %increments of 0.15ml of juice
+%         %DELETE THESE LINES
+% %         if results.trial_results.reward == 1
+% %             results.trial_results.reward_liquid = 0.45;
+% %         elseif results.trial_results.reward == 2
+% %             results.trial_results.reward_liquid = 0.75;
+% %         end
+%         %DELETE HERE
     %ROB
-    if results.trial_results.reward > 0
-        results.trial_results.reward_liquid = ((results.trial_results.reward * 2) - 1) * 0.15;
-    end
+%     if results.trial_results.reward > 0
+%         results.trial_results.reward_liquid = ((results.trial_results.reward) * 0.2) + 0.05;
+%         %if results.trial_results.reward == 1
+%         %    results.trial_results.reward_liquid = 0.3;
+%         %end
 
+        
+    if results.trial_results.reward > 0
+        %results.trial_results.reward_liquid = 0.3 + (results.trial_results.reward - 1)*0.15; %MARIUS- 0.3, 0.45, 0.6
+        %results.trial_results.reward_liquid = 0.2 + (results.trial_results.reward - 1)*0.15; %MARIUS- 0.2, 0.35, 0.5
+        %results.trial_results.reward_liquid = 0.25 + (results.trial_results.reward - 1)*0.2; %ROB- 0.25, 0.45, 0.65
+        results.trial_results.reward_liquid = 0.25 + (results.trial_results.reward - 1)*0.125; %ROB; MARIUS- 0.25, 0.375, 0.5
+        %results.trial_results.reward_liquid = 0.2 + (results.trial_results.reward - 1)*0.12; %ROB- 0.2, 0.32, 0.44
     else
         results.trial_results.reward_liquid = 0;
     end
@@ -53,8 +62,6 @@ elseif strcmp(payout, 'reward')
         results.trial_results.reward_liquid = 0;
     end
     tap_open_time = calculate_open_time(results.trial_results.reward_liquid, tap);
-    display('reward');
-    display(tap_open_time);
 
 %pays out a manually assigned tap via the GUI    
 elseif strcmp(payout, 'test_tap')
@@ -95,7 +102,7 @@ putvalue(hardware.outputs.reward_output, reset)
 end
 %if calibrating, do this 99 more times
 if strcmp(payout, 'calibrate')
-for calibration_loop = 1:49
+for calibration_loop = 1:149
    %open the tap
     putvalue(hardware.outputs.reward_output, tap_open)
 

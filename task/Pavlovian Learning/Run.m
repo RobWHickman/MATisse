@@ -68,16 +68,15 @@ results = assign_payouts(parameters, results);
 for frame = 1:(parameters.timings.Frames('epoch3') + parameters.timings.Delay('epoch3'))
     %on first frame payout the budget
     if frame == 1
-        draw_pav_epoch_3(hardware, task_window);
-    %on last frame payout the reward
-    elseif frame == (parameters.timings.Frames('epoch7') + parameters.timings.Delay('epoch7'))
-        draw_pav_epoch_3(hardware, task_window);
         if hardware.testmode
             results = sound_payout(hardware, results, 'reward');
         else
             results = release_liquid(parameters, hardware, results, 'reward');
         end
     end
+    display('flipping');
+    draw_pav_epoch_2(stimuli, parameters, task_window);
+    Screen('Flip', task_window);
 end
 
 %% FAIL EPOCHS %%
@@ -86,12 +85,12 @@ else
 %if fixation fails
 display('FIXATION FAIL');
 sound_error_tone(hardware);
-for frame = 1:(sum(parameters.timings.Frames(2:8)) + sum(parameters.timings.Delay(2:8)) + (3 * hardware.outputs.screen_info.hz))
-    if frame == 1 | frame == (parameters.timings.Frames('epoch4') + parameters.timings.Delay('epoch4'))
+for frame = 1:(sum(parameters.timings.Frames(2:4)) + sum(parameters.timings.Delay(2:8)) + (3 * hardware.outputs.screen_info.hz))
+    if frame == 1 | frame == (parameters.timings.Frames('epoch1') + parameters.timings.Delay('epoch1'))
         draw_error_epoch(hardware, task_window)
     end
     results = assign_error_results(parameters, results);
-    if frame == (sum(parameters.timings.Frames(2:8)) + sum(parameters.timings.Delay(2:8))  + (3 * hardware.outputs.screen_info.hz))
+    if frame == (sum(parameters.timings.Frames(2:4)) + sum(parameters.timings.Delay(2:8))  + (3 * hardware.outputs.screen_info.hz))
         Screen('Flip', task_window, [], 0);
     else
         Screen('Flip', task_window, [], 1);
