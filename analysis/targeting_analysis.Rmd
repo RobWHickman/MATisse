@@ -1,0 +1,101 @@
+---
+title: "Untitled"
+author: "Robert Hickman"
+date: "1 March 2018"
+output: html_document
+---
+
+```{r libraries, warning = FALSE, message = FALSE, include = FALSE}
+library(data.table)
+library(tidyverse)
+library(magrittr)
+library(ggplot2)
+library(hrbrthemes)
+
+```
+
+```{r parameters, warning = FALSE, message = FALSE}
+monkey <- "Vicer"
+today <- "01-Mar-2018"
+look_back <- "01-Mar-2018"
+
+```
+
+```{r munge_data, warning = FALSE, message = FALSE, include = FALSE}
+if(!is.na(look_back)){
+  #use a selected range of dates
+  dates <- strftime(seq(as.Date(look_back, "%d-%b-%Y"), as.Date(today, "%d-%b-%Y"), "days"), "%d-%b-%Y")
+} else {
+  #else use the last week of data
+  dates <- strftime(seq(as.Date(today, "%d-%b-%Y") -7, as.Date(today, "%d-%b-%Y"), "days"), "%d-%b-%Y")
+}
+#create a string to search for in the filename
+search_string <- paste0(dates, ".*", monkey, "COMPACT")
+
+#find all the relevant data files
+directory <- "C:/Users/WS-Guest/Desktop/task data/"
+data_files <- dir(directory)
+specific_files <- unlist(sapply(search_string, grep, x = data_files))
+
+#load up all the files
+for(file in 1:length(specific_files)){
+  data <- read.csv(paste0(directory, dir(directory)[specific_files[file]]), stringsAsFactors = FALSE, na.strings = "NaN")
+  #remove the pavlovian data files
+  if(ncol(data) == 17){
+    #load in the data and munge it around a bit
+    target_data <- data %>%
+      setDT() %>%
+      .[,trial:= 1:.N] %>%
+      .[,block_no := file] %>%
+      #get the date from the filename
+      .[,date := as.Date(gsub(" .*", "", dir(directory)[specific_files[file]]), "%d-%b-%Y")] %>%
+      .[, target_value_shift := target_value_shift/max(target_value_shift)]
+    #merge into one df
+    if(!exists('task_data')){
+      task_data <- target_data
+    }  else {
+      task_data <- rbindlist(list(task_data, target_data)) %>%
+        .[order(block_no, trial)]
+    }
+  }
+}
+
+#reset the block nos
+task_data$block_no <- as.numeric(as.factor(task_data$block_no))
+task_data$task_failure <- gsub(" .*", "", task_data$task_failure)
+task_data$task_failure <- factor(task_data$task_failure)
+
+#get the dates for each block
+dates <- task_data %>%
+  .[,c("date", "block_no")] %>%
+  unique(.)
+
+#get the trial numbers for each block
+trial_ns <- task_data %>%
+  .[,total_trials := .N, by = block_no] %>%
+  .[is.na(task_failure)] %>%
+  .[,correct_trials := .N, by = block_no] %>%
+  .[,c("block_no", "total_trials", "correct_trials")] %>%
+  unique(.)
+
+#group failures by target box position and plot 
+p1 <- task_data %>%
+  .[is.na(task_failure), count := .N, by = c("target_value_shift", "task_failure")] %>%
+  .[!is.na(task_failure), count := .N, by = c("target_value_shift", "task_failure")] %>%
+  .[,c("date", "block_no", "target_value_shift", "count", "task_failure")] %>%
+  unique(.) %>%
+  ggplot(., aes(factor(target_value_shift), count)) +
+  geom_col(aes(fill = task_failure)) +
+  ggtitle("Monkey Choice Failures",
+          subtitle = paste(monkey, ":", look_back, "-", today)) +
+  theme_minimal() +
+  theme(strip.text.x = element_text(size = 14)) +
+  theme(strip.text.y = element_text(size = 14)) +
+  theme(axis.title.x = element_text(size = 14)) +
+  theme(axis.title.y = element_text(size = 14)) +
+  facet_wrap(~date + block_no) +
+  coord_flip()
+
+
+```
+

@@ -19,7 +19,7 @@ require(tidyr)
 ```{r, warning = FALSE, message = FALSE, include = FALSE}
 #which files we want to load
 monkey <- "Ulysses"
-start <- "07-Feb-2018"
+start <- "22-Feb-2018"
 end <- NA
 if(!is.na(end)){
   dates <- strftime(seq(as.Date(start, "%d-%b-%Y"), as.Date(end, "%d-%b-%Y"), "days"), "%d-%b-%Y")
@@ -30,8 +30,9 @@ if(!is.na(end)){
 #use these dates to find files
 search_string <- paste0(dates, ".*", monkey, "COMPACT")
 directory <- "C:/Users/WS-Guest/Desktop/task data/"
+#directory <- "C:/Users/WS-Guest/Documents/rob_r/presentation_plots/"
 data_files <- dir(directory)
-specific_files <- data_files[sapply(search_string, grep, x = data_files)]
+specific_files <- data_files[unlist(sapply(search_string, grep, x = data_files))]
 #in case we want to manually select one (or more) of these
 specific_files <- specific_files[c(2)]
 
@@ -44,8 +45,18 @@ task_data <- rbindlist(lapply(paste0(directory, specific_files), read.csv, na.st
   .[bundle_distance < 0.5, fractal_bid := 1] %>%
   .[bundle_distance > 0.5, fractal_bid := 0] %>%
   .[, offer_ml := paste0(((offer_value*2)-1) * 0.15, "ml")] %>%
-  .[, bundle_liquid := 1.2 - (bundle_water_perc * 1.2)] %>%
-  .[1:92]
+  .[, bundle_liquid := 1.2 - (bundle_water_perc * 1.2)]
+
+#for multiple files
+precise_dates <- gsub("(.* )(.*)", "\\1", specific_files)
+
+if(length(unique(precise_dates)) > 1){
+  facet_names <- data.frame(block = unique(task_data$block),
+                            name = precise_dates)
+
+  task_data <- merge(task_data, facet_names, by = "block")
+  task_data$block <- task_data$name
+}
 
 ```
 
@@ -54,8 +65,9 @@ Data shown for:
 dates
 monkey
 
-```
+precise_dates
 
+```
 
 ```{r, warning = FALSE, message = FALSE, include = FALSE}
 #plot the left vs right choices of the monkey
@@ -107,7 +119,7 @@ p2 <- ggplot(data = task_data, aes(x = bundle_distance, colour = as.factor(offer
 
 ```{r, warning = FALSE, message = FALSE}
 #plot p2
-p2
+p2 +facet_wrap(~block)
 ```
 
 Graph showing all choices and how far away they are from the edge of the screen on the bundle side. 0 indicates full movement to the bundle side of the screen and 1 represent full movement away. Count is over all blocks for all values of the fractal (in ml of juice). \newpage

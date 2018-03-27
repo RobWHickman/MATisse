@@ -1,0 +1,40 @@
+---
+title: "Untitled"
+author: "Robert Hickman"
+date: "23 March 2018"
+output: html_document
+---
+
+```{r}
+library(data.table)
+library(dplyr)
+
+directory <- "C:/Users/WS-Guest/Desktop/task data/joystick_vectors/"
+files <- "22-Mar-2018 124124Robert_UlyssesFULL_RESULTSjoystick_data.csv"
+joy_data <- read.csv(paste0(directory, files), stringsAsFactors = FALSE, header = FALSE)
+
+```
+
+```{r}
+joy_data$trial <- 1:nrow(joy_data)
+melted_joy = melt.data.table(setDT(joy_data), id.vars = "trial", variable.name = "frame", value.name = "movement")
+```
+
+```{r}
+p1 <- ggplot(data = melted_joy, aes(x = frame, y = trial)) +
+    geom_tile(aes(fill = movement)) +
+    scale_fill_gradient2(low = "red", high = "blue", mid = "black", name = "movement") +
+    xlab("frame") +
+    ylab("trial") +
+    ggtitle("Monkey Joystick Movement per Trial over Block") +
+    theme_minimal()
+```
+
+```{r}
+p2 <- melted_joy %>%
+  .[, cum_move := cumsum(movement), by = "trial"] %>%
+  .[, cum_deviation := 0 + cum_move] %>%
+  ggplot(., aes(x = frame, y = cum_deviation, colour = trial)) +
+  geom_line(alpha = 0.2)
+```
+

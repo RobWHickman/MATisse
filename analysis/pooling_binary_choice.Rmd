@@ -1,0 +1,105 @@
+---
+title: "Untitled"
+author: "Robert Hickman"
+date: "20 February 2018"
+output: html_document
+---
+
+```{r}
+library(data.table)
+setwd("C:/Users/WS-Guest/Downloads/drive-download-20180220T135612Z-001")
+files <- grep("Robert_Ulysses.*COMPACT", dir())
+dates <- as.Date(gsub(" .*", "", dir()[files]), "%d-%b-%Y")
+files_2018 <- files[which(dates > as.Date("2017-12-31"))]
+
+bc_list <- c()
+for(file in 1:length(files_2018)){
+  data <- read.csv(dir()[files_2018[file]], stringsAsFactors = FALSE)
+  if(ncol(data) > 5){
+    bc_list <- append(bc_list, file)
+  }
+}
+
+files_2018 <- files_2018[bc_list]
+files_2018 <- files_2018[order(as.Date(gsub(" .*", "", dir()[files_2018]), "%d-%b-%Y"))]
+
+for(file in 1:length(files_2018)){
+  data <- read.csv(dir()[files_2018[file]], stringsAsFactors = FALSE, na.strings = "NaN") %>%
+    setDT() %>%
+    .[,trial:= 1:.N] %>%
+    .[,block_no := file] %>%
+    .[,date := as.Date(gsub(" .*", "", dir()[files_2018[file]]), "%d-%b-%Y")] %>%
+    .[bundle_position == 1, bundle_distance := (monkey_final_bid + 1)/2] %>%
+    .[bundle_position == 0, bundle_distance := (1-monkey_final_bid)/2] %>%
+    .[bundle_distance < 0.5, fractal_bid := 1] %>%
+    .[bundle_distance > 0.5, fractal_bid := 0] %>%
+    .[,water_offered := 1.2 - (bundle_water_perc * 1.2)]
+  if(ncol(data) == 16){
+    data$reward <- NULL
+  }
+  if(file == 1){
+    task_data <- data
+  }  else {
+    task_data <- rbindlist(list(task_data, data)) %>%
+      .[order(block_no, trial)]
+  }
+}
+
+for(sub_block in 1:length(unique(task_data$block_no))){
+  data_sub <- task_data[block_no == sub_block]
+  for(sub_offer in 1:length(unique(data_sub$offer_value))){
+    data_subbed <- data_sub[offer_value == sub_offer]
+    
+    row <- data.frame(block_no = sub_block,
+                      offer_value = sub_offer,
+                      juice_offered = max(unique(data_subbed$reward_liquid), na.rm = TRUE))
+    if(sub_block == 1 & sub_offer == 1){
+      merge_df <- row
+    } else {
+      merge_df <- rbind(merge_df, row)
+    }
+  }
+}
+
+task_data <- merge(task_data, merge_df, by = c("block_no", "offer_value")) %>%
+  .[,c("date", "block_no", "trial", "bundle_position", "water_offered", "juice_offered", "fractal_bid", "task_failure")] %>%
+  setcolorder(., c("date", "block_no", "trial", "bundle_position", "water_offered", "juice_offered", "fractal_bid", "task_failure"))
+
+dates <- task_data %>%
+  .[,c("date", "block_no")] %>%
+  unique(.)
+
+trial_ns <- task_data %>%
+  .[,total_trials := .N, by = block_no] %>%
+  .[is.na(task_failure)] %>%
+  .[,correct_trials := .N, by = block_no] %>%
+  .[,c("block_no", "total_trials", "correct_trials")] %>%
+  unique(.)
+
+bundle_bidding <- task_data[!is.na(fractal_bid)] %>%
+  .[, .SD, block_no] %>%
+  .[, mean(fractal_bid), by = .(juice_offered, water_offered, block_no)] %>%
+  merge(., dates, by = "block_no") %>%
+  merge(., trial_ns, by = "block_no")
+
+binomial_smooth <- function(...) {
+  geom_smooth(method = "glm", method.args = list(family = "binomial"), ...)
+}
+
+p5 <- ggplot(bundle_bidding, aes(y = V1, x = water_offered, colour = as.factor(juice_offered))) +
+  geom_point(size = 3, alpha = 0.5) +
+  binomial_smooth(se = FALSE) +
+  scale_colour_discrete(name = "juice offered (ml)", h = c(0, 250)) +
+  #scale_colour_brewer(palette = "Set1", name = "juice offered (ml)") +
+  xlab("water offered (ml)") +
+  ylab("proportion of bundle choices") +
+  ggtitle("Ulysses Proportion of Bundle Bids on Binary Choice Task Progression") +
+  theme_minimal() +
+  theme(strip.text.x = element_text(size = 14)) +
+  theme(axis.title.x = element_text(size = 14)) +
+  theme(axis.title.y = element_text(size = 14)) +
+  facet_wrap(~date)
+
+
+```
+

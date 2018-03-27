@@ -1,0 +1,21 @@
+---
+title: "Untitled"
+author: "Robert Hickman"
+date: "7 March 2018"
+output: html_document
+---
+
+```{r}
+#https://stats.idre.ucla.edu/r/dae/probit-regression/
+library(data.table)
+library(ggplot2)
+
+mydata <- read.csv("https://stats.idre.ucla.edu/stat/data/binary.csv")
+## convert rank to a factor (categorical variable)
+mydata$rank <- factor(mydata$rank)
+
+xtabs(~rank + admit, data = mydata)
+
+
+```
+
