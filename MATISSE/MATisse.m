@@ -452,6 +452,21 @@ guidata(hObject, handles);
 %Functions to manipulate the 'budget' (i.e. the water in the bar contrasted
 %to the 'reward' fractal for juice)
 %the magnitude of the budget (what does the full bar represent in ml)
+%remove all budgets (and therefore water)
+function Remove_budgets_Callback(hObject, eventdata, handles)
+    clear handles.modifiers.budgets.no_budgets;
+    showing_budgets = get(handles.Remove_budgets, 'Value');
+    handles.modifiers.budgets.no_budgets = showing_budgets;
+    %display a message
+    if showing_budgets == get(hObject,'Min')
+        disp('no longer showing budgets- trials will not be associated with water');
+    elseif showing_budgets == get(hObject,'Max')
+        disp('budgets will be shown and rewarded again');
+    end
+guidata(hObject, handles);
+function Remove_budgets_CreateFcn(hObject, eventdata, handles)
+    handles.modifiers.budgets.no_budgets = 0;
+guidata(hObject, handles);
 function Budget_magnitude_Callback(hObject, eventdata, handles)
     clear handles.modifiers.budget.magnitude
     budget_magnitude = get(handles.Budget_magnitude, 'String');
@@ -935,5 +950,5 @@ guidata(hObject, handles);
         guidata(hObject, handles);
 
 function Display_button_Callback(hObject, eventdata, handles)
-    display(handles.parameters.timings);
+    display(handles.stimuli.fractals);
 function Display_button_CreateFcn(hObject, eventdata, handles)

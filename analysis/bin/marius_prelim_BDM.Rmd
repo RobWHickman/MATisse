@@ -183,13 +183,13 @@ p2
 
 ```{r bid_rolling_means, warning = FALSE, message = FALSE, include = FALSE}
 p3 <- task_data %>%
-  .[order(block_no, juice_offered, trial)] %>%
-  .[is.na(task_failure)] %>%
-  .[, rolling_mean := na.locf(rolling_mean, na.rm = TRUE), by = c("block_no", "juice_offered")] %>%
-  .[, rolling_se := append(NA, na.locf(rolling_se, na.rm = TRUE)), by = c("block_no", "juice_offered")] %>%
+  #.[is.na(task_failure)] %>%
+  #.[, rolling_mean := na.locf(rolling_mean, na.rm = TRUE), by = c("block_no", "juice_offered")] %>%
+  #.[, rolling_se := append(NA, na.locf(rolling_se, na.rm = TRUE)), by = c("block_no", "juice_offered")] %>%
   ggplot(., aes(x = trial, y = rolling_mean, group = factor(juice_offered))) +
   geom_line(aes(colour = factor(juice_offered)), size = 2) +
   geom_ribbon(aes(ymin = rolling_mean - rolling_se, ymax = rolling_mean + rolling_se, fill = factor(juice_offered)), alpha = 0.4) +
+  geom_line(data = dplyr::filter(task_data, is.na(task_data$task_failure)), aes(x = trial, y = rolling_mean, group = factor(juice_offered), colour = factor(juice_offered))) +
   scale_fill_discrete(guide = FALSE) +
   scale_colour_discrete(name = "Reward Offered (ml)") +
   xlab("Task Trials") +

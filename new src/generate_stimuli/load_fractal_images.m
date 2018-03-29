@@ -47,13 +47,13 @@ for image = 1:length(all_images)
     full_size_fractal = imread([modifiers.fractals.folder all_images(image).name]);
     image_size = size(full_size_fractal);
     image_scalar = (height * stimuli_size) / image_size(2);
-    fractal_images{image} = imresize(full_size_fractal, image_scalar);
+    fractals.images{image} = imresize(full_size_fractal, image_scalar);
 end
 
 %prepare for output as one object
 fractals.position = fractal_position;
-fractals.dimensions.height = size(fractal_images{image}, 1);
-fractals.dimensions.width = size(fractal_images{image}, 2);
+fractals.dimensions.height = size(fractals.images{image}, 1);
+fractals.dimensions.width = size(fractals.images{image}, 2);
 
 %confirm loading
 disp('fractals found and loaded correctly');

@@ -18,7 +18,7 @@ library(hrbrthemes)
 
 ```{r parameters, warning = FALSE, message = FALSE}
 monkey <- "Ulysses"
-today <- "27-Mar-2018"
+today <- "29-Mar-2018"
 look_back <- "26-Mar-2018"
 
 start_trial <- 0
