@@ -329,20 +329,6 @@ guidata(hObject, handles);
 %are present and how fractals indicating these rewards should be loaded and
 %valued
 %remove all fractals (and therefore rewards) from the block
-function Remove_fractals_Callback(hObject, eventdata, handles)
-    clear handles.modifiers.fractals.no_fractals;
-    showing_fractals = get(handles.Remove_fractals, 'Value');
-    handles.modifiers.fractals.no_fractals = showing_fractals;
-    %display a message
-    if showing_fractals == get(hObject,'Min')
-        disp('no longer showing fractals- trials will not be rewarded with juice');
-    elseif showing_fractals == get(hObject,'Max')
-        disp('fractals will be shown and rewarded again');
-    end
-guidata(hObject, handles);
-function Remove_fractals_CreateFcn(hObject, eventdata, handles)
-    handles.modifiers.fractals.no_fractals = 0;
-guidata(hObject, handles);
 %set the number of distinct rewards (the number of different fractal files
 %to load) that can be bid for
 function Fractal_numbers_Callback(hObject, eventdata, handles)
@@ -452,21 +438,6 @@ guidata(hObject, handles);
 %Functions to manipulate the 'budget' (i.e. the water in the bar contrasted
 %to the 'reward' fractal for juice)
 %the magnitude of the budget (what does the full bar represent in ml)
-%remove all budgets (and therefore water)
-function Remove_budgets_Callback(hObject, eventdata, handles)
-    clear handles.modifiers.budgets.no_budgets;
-    showing_budgets = get(handles.Remove_budgets, 'Value');
-    handles.modifiers.budgets.no_budgets = showing_budgets;
-    %display a message
-    if showing_budgets == get(hObject,'Min')
-        disp('no longer showing budgets- trials will not be associated with water');
-    elseif showing_budgets == get(hObject,'Max')
-        disp('budgets will be shown and rewarded again');
-    end
-guidata(hObject, handles);
-function Remove_budgets_CreateFcn(hObject, eventdata, handles)
-    handles.modifiers.budgets.no_budgets = 0;
-guidata(hObject, handles);
 function Budget_magnitude_Callback(hObject, eventdata, handles)
     clear handles.modifiers.budget.magnitude
     budget_magnitude = get(handles.Budget_magnitude, 'String');
@@ -952,3 +923,42 @@ guidata(hObject, handles);
 function Display_button_Callback(hObject, eventdata, handles)
     display(handles.stimuli.fractals);
 function Display_button_CreateFcn(hObject, eventdata, handles)
+
+
+function Choice_stimuli_Callback(hObject, eventdata, handles)
+    clear handles.modifiers.fractals.no_fractals;
+    clear handles.modifiers.budgets.no_budgets;
+    
+function Choice_stimuli_CreateFcn(hObject, eventdata, handles)
+
+    
+    function Remove_fractals_Callback(hObject, eventdata, handles)
+    showing_fractals = get(handles.Remove_fractals, 'Value');
+    handles.modifiers.fractals.no_fractals = showing_fractals;
+    %display a message
+    if showing_fractals == get(hObject,'Min')
+        disp('no longer showing fractals- trials will not be rewarded with juice');
+    elseif showing_fractals == get(hObject,'Max')
+        disp('fractals will be shown and rewarded again');
+    end
+guidata(hObject, handles);
+function Remove_fractals_CreateFcn(hObject, eventdata, handles)
+    handles.modifiers.fractals.no_fractals = 0;
+guidata(hObject, handles);
+
+%remove all budgets (and therefore water)
+function Remove_budgets_Callback(hObject, eventdata, handles)
+    clear handles.modifiers.budgets.no_budgets;
+    showing_budgets = get(handles.Remove_budgets, 'Value');
+    handles.modifiers.budgets.no_budgets = showing_budgets;
+    %display a message
+    if showing_budgets == get(hObject,'Min')
+        disp('no longer showing budgets- trials will not be associated with water');
+    elseif showing_budgets == get(hObject,'Max')
+        disp('budgets will be shown and rewarded again');
+    end
+guidata(hObject, handles);
+function Remove_budgets_CreateFcn(hObject, eventdata, handles)
+    handles.modifiers.budgets.no_budgets = 0;
+guidata(hObject, handles);
+

@@ -20,8 +20,8 @@ library(zoo)
 
 ```{r which data, warning = FALSE, message = FALSE}
 monkey <- "Ulysses"
-today <- "23-Mar-2018"
-look_back <- "16-Mar-2018"
+today <- "25-May-2018"
+look_back <- "21-May-2018"
 
 start_trial <- 0
 stop_trial <- "all"
@@ -98,11 +98,12 @@ for(sub_block in 1:length(unique(task_data$block_no))){
   }
 }
 
-#get the rolling means
+#get the rolling meap4ns
+#replace 10/width with correct_trials here for full rolling mean
 task_data <- task_data %>%
   .[is.na(task_failure), correct_trials := 1:.N, by = c("offer_value", "date")] %>%
-  .[is.na(task_failure), rolling_mean := rollapplyr(monkey_final_bid, correct_trials, mean, align = "right"), by = c("offer_value", "date")] %>%
-  .[is.na(task_failure), rolling_sd := rollapplyr(monkey_final_bid, correct_trials, sd, align = "right"), by = c("offer_value", "date")] %>%
+  .[is.na(task_failure), rolling_mean := rollapply(monkey_final_bid, mean, align = "right", width = correct_trials), by = c("offer_value", "date")] %>%
+  .[is.na(task_failure), rolling_sd := rollapply(monkey_final_bid, sd, align = "right", width = correct_trials), by = c("offer_value", "date")] %>%
   .[, rolling_se := rolling_sd / sqrt(correct_trials)]
 
 #get the actual amount of juice/water offered per trial
@@ -129,14 +130,13 @@ rm(list = ls()[-c(grep("task_data", ls()),
 
 ```{r bid_headline_stats, warning = FALSE, message = FALSE, include = FALSE}
 p1 <- ggplot(data = task_data, aes(y = monkey_final_bid, factor(juice_offered))) +
-  geom_violin(fill = "darkgrey") +
+  #geom_violin(fill = "darkgrey") +
   geom_boxplot(notch = TRUE, alpha = 0.4) +
   geom_jitter(alpha = 0.5, width = 0.15, size = 3, aes(colour = trial)) +
   scale_colour_continuous(low = "darkred", high = "darkblue") +
   xlab("Offer Value (/ml)") +
   ylab("Final Bid Fraction") +
-  ggtitle("Monkey Final Bids on BDM 2nd Price Task",
-          subtitle = paste(monkey, ":", look_back, "-", today)) +
+  ggtitle("Monkey Final Bids on BDM 2nd Price Task") +
   theme_minimal() +
   theme(strip.text.x = element_text(size = 14)) +
   theme(axis.title.x = element_text(size = 14)) +
@@ -183,7 +183,7 @@ p2
 
 ```{r bid_rolling_means, warning = FALSE, message = FALSE, include = FALSE}
 p3 <- task_data %>%
-  #.[is.na(task_failure)] %>%
+  .[is.na(task_failure)] %>%
   #.[, rolling_mean := na.locf(rolling_mean, na.rm = TRUE), by = c("block_no", "juice_offered")] %>%
   #.[, rolling_se := append(NA, na.locf(rolling_se, na.rm = TRUE)), by = c("block_no", "juice_offered")] %>%
   ggplot(., aes(x = trial, y = rolling_mean, group = factor(juice_offered))) +
@@ -194,14 +194,36 @@ p3 <- task_data %>%
   scale_colour_discrete(name = "Reward Offered (ml)") +
   xlab("Task Trials") +
   ylab("Cumulative Mean Bid") +
-  ggtitle("Monkey Mean Bids (+/- SE) on BDM 2nd Price Task",
-          subtitle = paste(monkey, ":", look_back, "-", today)) +
+  ggtitle("Monkey Mean Bids (+/- SE) on BDM 2nd Price Task") +
   theme_minimal() +
   theme(strip.text.x = element_text(size = 14)) +
   theme(strip.text.y = element_text(size = 14)) +
   theme(axis.title.x = element_text(size = 14)) +
   theme(axis.title.y = element_text(size = 14)) +
   facet_wrap(~date)
+
+
+task_data$juice_offered[which(task_data$juice_offered == 0.35)] <- 0.32
+task_data$juice_offered[which(task_data$juice_offered == 0.5)] <- 0.44
+p3symposium <- task_data %>%
+  .[is.na(task_failure)] %>%
+  ggplot(., aes(x = trial, y = rolling_mean, group = factor(juice_offered))) +
+    geom_ribbon(aes(ymin = (rolling_mean - rolling_se), ymax = (rolling_mean + rolling_se)),
+                alpha = 0.4, fill = "grey60") +
+  geom_line(aes(colour = factor(juice_offered)), size = 2) +
+    scale_colour_manual(values = c("red", "blue", "green"), name = "juice offered (ml)") +
+    #scale_fill_manual(values = c("red", "blue", "green"), guide = FALSE) +
+  geom_hline(yintercept = 0.11, colour = "darkred", linetype = "dashed", size = 1.5) +
+  geom_hline(yintercept = 0.30, colour = "darkblue", linetype = "dashed", size = 1.5) +
+  geom_hline(yintercept = 0.86, colour = "darkgreen", linetype = "dashed", size = 1.5) +
+  xlab("trial number") +
+  ylab("monkey bid (ml water)") +
+  scale_y_continuous(limits = c(0, 1.2)) +
+  theme_minimal() +
+  theme(axis.text = element_text(size = 14)) +
+  theme(legend.text = element_text(size = 14)) +
+    theme(legend.title = element_text(size = 16)) +
+  theme(axis.title = element_text(size = 16))  + guides(colour = guide_legend(reverse=T))
 
 ```
 
@@ -269,8 +291,7 @@ p4 <- as.data.frame(t(mapply(rowwise_welchy,
   scale_colour_discrete(name = "Rewards Compared") +
   xlab("Task Trials") +
   ylab("p Value - Corrected p Threshold") +
-  ggtitle("Monkey Bid Separation p Values",
-          subtitle = paste(monkey, ":", look_back, "-", today)) +
+  ggtitle("Monkey Bid Separation p Values") +
   theme_minimal() +
   theme(strip.text.x = element_text(size = 14)) +
   theme(strip.text.y = element_text(size = 14)) +

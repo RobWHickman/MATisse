@@ -12,7 +12,7 @@ for trial = 1:trials
     joystick_vector = bidding_vector_output{trial};
     length_vector = length(joystick_vector);
     
-    missing_pad = NaN(1, 300 - length_vector);
+    missing_pad = NaN(1, max(cellfun('length',bidding_vector_output)) - length_vector);
     
     output_vector = [joystick_vector, missing_pad];
 

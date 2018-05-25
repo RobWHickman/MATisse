@@ -27,10 +27,19 @@ library(R.matlab)
 
 
 ```{r loading data, warning = FALSE, message = FALSE, include = FALSE}
-dsn <- "C:/Users/WS-Guest/Desktop/MATisse"
-setwd(dsn)
-joystick_file <- "../task data/joystick_vectors/Vicer_bidding_table_1_3_2018.csv"
-task_data_file <- "../task data/01-Mar-2018 155452Marius_VicerCOMPACT_RESULTS.csv"
+setwd("C:/Users/WS-Guest/Desktop/MATisse")
+filename <- "25-Apr-2018 155957Robert_Vicer"
+joystick_data_file <- "../task data/joystick_vectors" %>%
+  dir(.) %>%
+  .[grep(paste0(filename, "FULL"), dir("../task data/joystick_vectors"))] %>%
+  file.path("../task data/joystick_vectors", .)
+task_data_file <- "../task data" %>%
+  dir(.) %>%
+  .[grep(paste0(filename, "COMPACT"), dir("../task data"))] %>%
+  file.path("../task data", .)
+
+#bidspace height in pixels to convert fractions to pixels
+bidspace_height <- 870
 
 #load in the task data
 #I guess you load in multiple days, shouldn't matter so long as the trial column (+ date column)
@@ -38,12 +47,15 @@ task_data_file <- "../task data/01-Mar-2018 155452Marius_VicerCOMPACT_RESULTS.cs
 task_data <- read.csv(task_data_file, stringsAsFactors = FALSE, na.strings = NaN) %>%
   setDT() %>%
   #add in the trial column
-  .[, trial := 1:.N]
+  .[, trial := 1:.N] %>%
+  .[, c("adjust", "monkey_final_bid", "offer_value", "start_position",
+        "target_filled", "target_shift", "target_size", 
+        "task_failure", "trial")] %>%
+  .[, target_size := target_size / bidspace_height] %>%
+  .[, target_shift := 1 - (target_shift / bidspace_height)]
 
-#bidspace height in pixels to convert fractions to pixels
-bidspace_height <- 870
 #load the joystick data
-joystick_data <- read.csv(joystick_file, 
+joystick_data <- read.csv(joystick_data_file, 
                           #strings as factors = FALSE means (more but mostly) numbers won't be coerced to strings
                           #header = FALSE as there is no header row
                           #set the na.strings to tell R what to interept as NA
@@ -64,40 +76,29 @@ joystick_data <- read.csv(joystick_file,
   .[, total_movement := cumsum(movement), "trial"] %>%
   #add in the start positions from the task_data dt
   #matches the two trial columns and merges the start_position in for the relevant trial
-  .[, start := task_data$start_position[match(.$trial, task_data$trial)]] %>%
-  .[, bar_position := start - total_movement] %>%
-  #add in the errors status of the trial too
-  #made binary- im not sure the exact error add much
-  .[, error := task_data$task_failure[match(.$trial, task_data$trial)]] %>%
-  .[, error := ifelse(is.na(error), "N", "Y")] %>%
+  merge(., task_data, by = "trial") %>%
+  .[, bar_position := start_position - total_movement] %>%
+  .[, task_failure := ifelse(is.na(task_failure), "N", "Y")] %>%
   #get rid of the NAs just to save on memory
-  .[!is.na(bar_position)]
-
-#which target box position should we choose
-#I could be wrong here (I've not analysed the target stuff at all really) but I assume you're using 50
-#but change this to whatever is correct
-#add in the percent and it will take this as % of the max shift
-percentage_to_select <- 50
-max_shift <- max(task_data$target_value_shift)
-select_shift <- max_shift * (percentage_to_select / 100)
+  .[!is.na(movement)]
 
 ```
 
 ```{r}
 #first filter the data to get only the trials with the correct target box position
 p7 <- joystick_data %>%
-  .[trial %in% task_data$trial[which(task_data$target_value_shift == select_shift)]] %>%
   #pipe this into ggplot as data
   ggplot(., aes(x = epoch, y = bar_position, group = trial)) +
   #add the rectangle for the target box
   #could probably make it safer in terms of height but given its fixed for this should be fine
   geom_rect(aes(xmin = 0, xmax = max(joystick_data$epoch),
-                ymin = select_shift / bidspace_height,
-                ymax = (select_shift + unique(task_data$target_box_length)) / bidspace_height),
+                ymax = target_shift,
+                ymin = target_shift - target_size),
             fill = NA, colour = "darkblue", size = 3) +
   #plot the path of the bidding
-  geom_path(aes(linetype = error), colour = "red") +
-  theme_minimal()
+  geom_path(aes(linetype = task_failure, colour = factor(offer_value)), size = 1.2) +
+  theme_minimal() +
+  facet_wrap(~target_shift)
 
 ```
 

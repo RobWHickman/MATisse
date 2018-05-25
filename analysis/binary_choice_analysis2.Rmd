@@ -1,10 +1,11 @@
 ---
-title: "Binary Choice Analysis"
+title: "BCb Analysis- Early March"
 author: "Robert Hickman"
-date: "22 February 2018"
+date: "05 April 2018"
 output:
   pdf_document: default
   html_document: default
+classoption: landscape
 ---
 
 ```{r libraries, warning = FALSE, message = FALSE, include = FALSE}
@@ -18,11 +19,11 @@ library(hrbrthemes)
 
 ```{r parameters, warning = FALSE, message = FALSE}
 monkey <- "Ulysses"
-today <- "29-Mar-2018"
-look_back <- "26-Mar-2018"
+today <- "23-Apr-2018"
+look_back <- "16-Apr-2018"
 
 start_trial <- 0
-stop_trial <- "all"
+stop_trial <- 220
 
 merge_days <- TRUE
 
@@ -150,6 +151,7 @@ rm(list = ls()[-c(grep("task_data", ls()),
                   grep("_trial", ls()))])
 
 ```
+\newpage
 
 ```{r plot_choice_distance, message = FALSE, warning = FALSE, include = FALSE}
 p1 <- ggplot(data = task_data, aes(x = bundle_distance, colour = as.factor(juice_offered))) +
@@ -173,6 +175,7 @@ p1 <- ggplot(data = task_data, aes(x = bundle_distance, colour = as.factor(juice
 ```{r plot_p1, message = FALSE, warning = FALSE, fig.width = 12, fig.height = 8}
 p1
 ```
+\newpage
 
 ```{r, plot_block_regressions, warning = FALSE, message = FALSE, include = FALSE}
 #gather the data with respect the the distance from the bundle that the monkey choice
@@ -200,6 +203,7 @@ p2 <- task_data %>%
 ```{r plot_p2, message = FALSE, warning = FALSE, fig.width = 12, fig.height = 8}
 p2
 ```
+\newpage
 
 ```{r regression_model, warning = FALSE, message = FALSE}
 #generate a model of likelihood to choice for the fractal dependent on it's position,
@@ -219,6 +223,7 @@ binom.test(c(nrow(task_data %>%
 
 
 ```
+\newpage
 
 ```{r regression_model-MOST-RECENT-BLOCK, warning = FALSE, message = FALSE}
 #generate a model of likelihood to choice for the fractal dependent on it's position,
@@ -236,7 +241,7 @@ binom.test(c(nrow(task_data %>%
              nrow(task_data %>%
                     .[c(bundle_position == fractal_choice & block_no == max(block_no))])))
 ```
-
+\newpage
 
 ```{r task_failures_plot, warning = FALSE, message = FALSE, include = FALSE}
 p3 <- task_data %>%
@@ -260,7 +265,7 @@ p3 <- task_data %>%
 ```{r plot_p3, message = FALSE, warning = FALSE, fig.width = 12, fig.height = 8}
 p3
 ```
-
+\newpage
 
 ```{r monkey_choice_curves, warning = FALSE, message = FALSE, include = FALSE}
 binomial_smooth <- function(...) {
@@ -279,13 +284,14 @@ p4 <- ggplot(bundle_choices, aes(y = V1, x = water_offered, colour = as.factor(j
   theme(strip.text.x = element_text(size = 14)) +
   theme(axis.title.x = element_text(size = 14)) +
   theme(axis.title.y = element_text(size = 14)) +
-  facet_wrap(~date + block_no, ncol = 5)
+  facet_wrap(~block_no, ncol = 5)
 
 ```
 
 ```{r plot_p4, warning = FALSE, message = FALSE, fig.width = 12, fig.height = 8}
 p4
 ```
+\newpage
 
 ```{r monkey_choice_curves2, warning = FALSE, message = FALSE, include = FALSE}
 p5 <- ggplot(bundle_choices, aes(y = V1, x = water_offered, colour = factor(block_no), group = paste(block_no, juice_offered))) +
@@ -307,7 +313,7 @@ p5 <- ggplot(bundle_choices, aes(y = V1, x = water_offered, colour = factor(bloc
 ```{r plot_p5, warning = FALSE, message = FALSE, fig.width = 12, fig.height = 8}
 p5
 ```
-
+\newpage
 
 ```{r today_monkey_choice_curves, message = FALSE, warning = FALSE, include = FALSE}
 #if incluiding all trials
@@ -325,6 +331,7 @@ p6 <- rbindlist(list(
     .[, trials_included := "all"]
   )) %>%
   .[!grepl(max(trial), trials_included)] %>%
+  .[c(juice_offered > 0.2 & juice_offered < 0.6)] %>% #friday night quick munging
   ggplot(., aes(y = fractal_choice, x = water_offered, colour = as.factor(juice_offered), group = juice_offered)) +
   geom_point(size = 3, alpha = 0.5) +
   binomial_smooth(se = TRUE) +
@@ -343,6 +350,7 @@ p6 <- rbindlist(list(
 ```{r plot_p6, warning = FALSE, message = FALSE, plot.width = 12, plot.height = 8}
 p6
 ```
+\newpage
 
 ```{r monkey_task_progression, message = FALSE, warning = FALSE, include = FALSE}
 bernoulli_func <- function(dt, group){
@@ -392,6 +400,7 @@ p7 <- task_data %>%
 ```{r plot_p7, warning = FALSE, message = FALSE, plot.width = 12, plot.height = 8}
 p7
 ```
+\newpage
 
 ```{r monkey_bias_progression, message = FALSE, warning = FALSE, include = FALSE}
 p8 <- task_data %>%
@@ -420,3 +429,27 @@ p8 <- task_data %>%
 p8
 ```
 
+```{r pool_sessions, message = FALSE, warning = FALSE, include = FALSE}
+p9 <- task_data %>%
+  .[c(juice_offered > 0.2 & juice_offered < 0.6)] %>% #friday night quick munging
+  .[order(block_no, trial)] %>%
+  .[is.na(task_failure), completed := 1:.N, by = "block_no"] %>%
+  #.[completed < 180] %>%
+  ggplot(., aes(y = fractal_choice, x = water_offered, colour = as.factor(juice_offered), group = juice_offered)) +
+  geom_point(size = 3, alpha = 0.5) +
+  binomial_smooth(se = TRUE) +
+  scale_colour_brewer(palette = "Set1", name = "juice offered (ml)") +
+  xlab("water offered (ml)") +
+  ylab("proportion of bundle choices") +
+  ggtitle("Pooled Monkey Bundle Choice Binoimial Curves",
+          subtitle = paste(monkey, ":", today)) +
+  theme_minimal() +
+  theme(strip.text.x = element_text(size = 14)) +
+  theme(axis.title.x = element_text(size = 14)) +
+  theme(axis.title.y = element_text(size = 14))
+
+```
+
+```{r plot_p9, warning = FALSE, message = FALSE, plot.width = 12, plot.height = 8}
+p9
+```
