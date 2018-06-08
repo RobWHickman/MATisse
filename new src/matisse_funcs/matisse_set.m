@@ -4,7 +4,7 @@
 function [parameters] = matisse_set(parameters)
 
 %close any open screen
-sca;
+%Screen('CloseAll');
 
 %open a directory within which to save the trials
 parameters.directories.save = uigetdir(pwd, 'save directory');

@@ -4,7 +4,7 @@ function [parameters, results] = check_fixation(parameters, stimuli, results, ha
 
 %if not in testmode either check that the joystick is stationary orthat the
 %monkey is fixated on a cross
-if ~parameters.modification.testmode
+if ~parameters.break.testmode
     if strcmp(hardware.inputs.settings.fixation_test, 'joystick')
         [parameters, results] = check_joystick_stationary(parameters, hardware, results);
     elseif strcmp(hardware.inputs.settings.fixation_test, 'eye_tracker')

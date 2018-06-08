@@ -921,44 +921,90 @@ guidata(hObject, handles);
         guidata(hObject, handles);
 
 function Display_button_Callback(hObject, eventdata, handles)
-    display(handles.stimuli.fractals);
+    display(handles.parameters.timings);
 function Display_button_CreateFcn(hObject, eventdata, handles)
-
 
 function Choice_stimuli_Callback(hObject, eventdata, handles)
     clear handles.modifiers.fractals.no_fractals;
     clear handles.modifiers.budgets.no_budgets;
-    
-function Choice_stimuli_CreateFcn(hObject, eventdata, handles)
-
-    
-    function Remove_fractals_Callback(hObject, eventdata, handles)
-    showing_fractals = get(handles.Remove_fractals, 'Value');
-    handles.modifiers.fractals.no_fractals = showing_fractals;
-    %display a message
-    if showing_fractals == get(hObject,'Min')
+    stimuli_present = get(handles.Choice_stimuli,'Value');
+    if ~ismember(2, stimuli_present)
+        handles.modifiers.fractals.no_fractals = 1;
         disp('no longer showing fractals- trials will not be rewarded with juice');
-    elseif showing_fractals == get(hObject,'Max')
+    else
+        handles.modifiers.fractals.no_fractals = 0;
         disp('fractals will be shown and rewarded again');
     end
-guidata(hObject, handles);
-function Remove_fractals_CreateFcn(hObject, eventdata, handles)
-    handles.modifiers.fractals.no_fractals = 0;
-guidata(hObject, handles);
-
-%remove all budgets (and therefore water)
-function Remove_budgets_Callback(hObject, eventdata, handles)
-    clear handles.modifiers.budgets.no_budgets;
-    showing_budgets = get(handles.Remove_budgets, 'Value');
-    handles.modifiers.budgets.no_budgets = showing_budgets;
-    %display a message
-    if showing_budgets == get(hObject,'Min')
+    
+    if ~ismember(1, stimuli_present)
+        handles.modifiers.budgets.no_budgets = 1;
         disp('no longer showing budgets- trials will not be associated with water');
-    elseif showing_budgets == get(hObject,'Max')
-        disp('budgets will be shown and rewarded again');
+    else
+        handles.modifiers.budgets.no_budgets = 0;
+        disp('budgets will be shown and paid again');
     end
+    
+    if ~ismember(1, stimuli_present) && ~ismember(2, stimuli_present)
+        disp('no stimuli currently being shown!!');
+    end        
 guidata(hObject, handles);
-function Remove_budgets_CreateFcn(hObject, eventdata, handles)
+function Choice_stimuli_CreateFcn(hObject, eventdata, handles)
+    handles.modifiers.fractals.no_fractals = 0;
     handles.modifiers.budgets.no_budgets = 0;
 guidata(hObject, handles);
 
+
+%     function Remove_fractals_Callback(hObject, eventdata, handles)
+%     showing_fractals = get(handles.Remove_fractals, 'Value');
+%     handles.modifiers.fractals.no_fractals = showing_fractals;
+%     %display a message
+%     if showing_fractals == get(hObject,'Min')
+%         disp('no longer showing fractals- trials will not be rewarded with juice');
+%     elseif showing_fractals == get(hObject,'Max')
+%         disp('fractals will be shown and rewarded again');
+%     end
+% guidata(hObject, handles);
+% function Remove_fractals_CreateFcn(hObject, eventdata, handles)
+%     handles.modifiers.fractals.no_fractals = 0;
+% guidata(hObject, handles);
+% 
+% %remove all budgets (and therefore water)
+% function Remove_budgets_Callback(hObject, eventdata, handles)
+%     clear handles.modifiers.budgets.no_budgets;
+%     showing_budgets = get(handles.Remove_budgets, 'Value');
+%     handles.modifiers.budgets.no_budgets = showing_budgets;
+%     %display a message
+%     if showing_budgets == get(hObject,'Min')
+%         disp('no longer showing budgets- trials will not be associated with water');
+%     elseif showing_budgets == get(hObject,'Max')
+%         disp('budgets will be shown and rewarded again');
+%     end
+% guidata(hObject, handles);
+% function Remove_budgets_CreateFcn(hObject, eventdata, handles)
+%     handles.modifiers.budgets.no_budgets = 0;
+% guidata(hObject, handles);
+
+
+
+function Eyefixation_track_Callback(hObject, eventdata, handles)
+    fixate_eyes = get(handles.Eyefixation_track, 'Value');
+    if fixate_eyes == 1
+        disp('fixation testing using eye tracker');
+    else
+        disp('fixation testing using joystick only');
+    end
+    handles.hardware.eye_tracker.fixation = fixate_eyes;
+guidata(hObject, handles);
+function Eyefixation_track_CreateFcn(hObject, eventdata, handles)
+    handles.hardware.eye_tracker.fixation = 0;
+guidata(hObject, handles);
+
+function Eyesample_rate_Callback(hObject, eventdata, handles)
+guidata(hObject, handles);
+function Eyesample_rate_CreateFcn(hObject, eventdata, handles)
+guidata(hObject, handles);
+
+function Joysample_rate_Callback(hObject, eventdata, handles)
+guidata(hObject, handles);
+function Joysample_rate_CreateFcn(hObject, eventdata, handles)
+guidata(hObject, handles);

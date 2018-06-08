@@ -19,6 +19,7 @@ hardware.screen.refresh_rate = Screen('NominalFrameRate', hardware.screen.number
 %set the base background colour for the experimental screen
 hardware.screen.colours.grey = WhiteIndex(hardware.screen.number) / 2;
 hardware.screen.colours.white = WhiteIndex(hardware.screen.number);
+hardware.screen.colours.black = BlackIndex(hardware.screen.number);
 
 %get the screen dimensions
 [hardware.screen.dimensions.width, hardware.screen.dimensions.height] = Screen('WindowSize', hardware.screen.number);

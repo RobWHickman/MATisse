@@ -18,30 +18,26 @@ for frame = 1:parameters.timings.TrialTime('epoch8')
         %select the correct fractal for the trial and generate a texture
         if ~modifiers.fractals.no_fractals
             stimuli.fractals = select_fractal(stimuli, results, task_window);
-            if modifiers.fractals.only_fractals
-                stimuli.fractals2 = select_fractal(stimuli, results, task_window);
+            if modifiers.budgets.no_budgets
+                stimuli.second_fractal = select_fractal(stimuli, results, task_window);
             end
         end
 
         %generate the reversed bidspace budget for if the monkey wins
-        if ~modifiers.fractals.only_fractals
-            stimuli = generate_reverse_bidspace(parameters, stimuli, task_window);
+        if ~modifiers.budgets.no_budgets
+            stimuli = generate_reverse_bidspace(parameters, results, stimuli, task_window);
         end
     end
     
     %if the last frame of the epoch, clear the buffer
-    if frame == parameters.timings.TrialTime('epoch8')
-        Screen('Flip', task_window, [], 0);
-    else
-        Screen('Flip', task_window, [], 1);
-    end
+    flip_screen(frame, parameters, task_window, 'epoch8');
 end
 
 % EPOCH 1 - fixation cross
 for frame = 1:parameters.timings.TrialTime('epoch1')
     %draw the first epoch
     if frame == 1 || frame == parameters.timings.TrialTime('epoch1')
-        draw_epoch_1(stimuli, hardware, task_window);
+        draw_bc_epoch_1(stimuli, hardware, task_window);
     end
     
     %update the positions of the stimuli depending on which half of the
@@ -52,12 +48,8 @@ for frame = 1:parameters.timings.TrialTime('epoch1')
     
     %check if the monkey is fixating on the cross
     [parameters, results] = check_fixation(parameters, stimuli, results, hardware, task_window);
-
-    if frame == parameters.timings.TrialTime('epoch1')
-        Screen('Flip', task_window, [], 0);
-    else
-        Screen('Flip', task_window, [], 1);
-    end
+    
+    flip_screen(frame, parameters, task_window, 'epoch1');
 end
 
 %continue with task if monkey fixates

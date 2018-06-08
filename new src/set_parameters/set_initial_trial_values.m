@@ -74,8 +74,8 @@ end
 %work out the time per epoch for the trial
 %randomly generate a -1 or 1 and then randomly times the Variance and
 %rand() by this
-parameters.timings.TrialTime = parameters.timings.Frames +...
-    times(parameters.timings.Variance', times(rand(height(parameters.timings),1)', randsample([-1 1], 8, 1)))';
+parameters.timings.TrialTime = round(parameters.timings.Frames +...
+    times(parameters.timings.Variance', times(rand(height(parameters.timings),1)', randsample([-1 1], 8, 1)))');
 
 %generate the random value for the target box
 %shifts the box down from the top of the bidspace by x amount

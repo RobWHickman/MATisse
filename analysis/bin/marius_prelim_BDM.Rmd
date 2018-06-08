@@ -20,8 +20,8 @@ library(zoo)
 
 ```{r which data, warning = FALSE, message = FALSE}
 monkey <- "Ulysses"
-today <- "25-May-2018"
-look_back <- "21-May-2018"
+today <- "8-June-2018"
+look_back <- "24-May-2018"
 
 start_trial <- 0
 stop_trial <- "all"
@@ -131,8 +131,8 @@ rm(list = ls()[-c(grep("task_data", ls()),
 ```{r bid_headline_stats, warning = FALSE, message = FALSE, include = FALSE}
 p1 <- ggplot(data = task_data, aes(y = monkey_final_bid, factor(juice_offered))) +
   #geom_violin(fill = "darkgrey") +
-  geom_boxplot(notch = TRUE, alpha = 0.4) +
   geom_jitter(alpha = 0.5, width = 0.15, size = 3, aes(colour = trial)) +
+  geom_boxplot(notch = TRUE, alpha = 0.7) +
   scale_colour_continuous(low = "darkred", high = "darkblue") +
   xlab("Offer Value (/ml)") +
   ylab("Final Bid Fraction") +
