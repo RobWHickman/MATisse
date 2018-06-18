@@ -19,11 +19,11 @@ library(hrbrthemes)
 
 ```{r parameters, warning = FALSE, message = FALSE}
 monkey <- "Ulysses"
-today <- "23-Apr-2018"
-look_back <- "16-Apr-2018"
+today <- "20-Apr-2018"
+look_back <- "18-Apr-2018"
 
 start_trial <- 0
-stop_trial <- 220
+stop_trial <- 200
 
 merge_days <- TRUE
 
@@ -151,6 +151,14 @@ rm(list = ls()[-c(grep("task_data", ls()),
                   grep("_trial", ls()))])
 
 ```
+
+```{r}
+#task_data %<>% .[is.na(task_failure), completed_trials := 1:.N, by = "block_no"] %>%
+#  .[completed_trials < 181] %>%
+#  .[completed_trials > 59]
+```
+
+
 \newpage
 
 ```{r plot_choice_distance, message = FALSE, warning = FALSE, include = FALSE}
@@ -185,7 +193,7 @@ p2 <- task_data %>%
   #plot the monkeys bundle distance against all other variables
   ggplot(aes(x = value, y = bundle_distance)) +
   geom_point(alpha = 0.6, size = 2, aes(colour = factor(block_no))) +
-  stat_smooth() +
+  #stat_smooth() +
   scale_color_brewer(palette = "Set1", name = "Block") +
   coord_flip() +
   ggtitle("Monkey Choice Distance From Bundle on Binary Choice Task",

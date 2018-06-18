@@ -15,8 +15,8 @@ if hardware.joystick.direction == 'y'
         hardware.joystick.device = 'keyboard';
         %set the keys for inputs into the task
         KbName('UnifyKeyNames');
-        hardware.keyboard.more_key = KbName('UpArrow');
-        hardware.keyboard.less_key = KbName('DownArrow');
+        hardware.joystick.keyboard.more_key = KbName('UpArrow');
+        hardware.joystick.keyboard.less_key = KbName('DownArrow');
         fprintf('set keyboard');
     end
 elseif hardware.joystick.direction == 'x'
@@ -28,8 +28,8 @@ elseif hardware.joystick.direction == 'x'
         hardware.joystick.device = 'keyboard';
         %set the keys for inputs into the task
         KbName('UnifyKeyNames');
-        hardware.keyboard.more_key = KbName('RightArrow');
-        hardware.keyboard.less_key = KbName('LeftArrow');
+        hardware.joystick.keyboard.more_key = KbName('RightArrow');
+        hardware.joystick.keyboard.less_key = KbName('LeftArrow');
         fprintf('set keyboard');
     end
 end

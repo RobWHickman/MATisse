@@ -46,8 +46,14 @@ for frame = 1:parameters.timings.TrialTime('epoch1')
         stimuli = reflect_bundle(stimuli, hardware);
     end
     
+    %sample the joystick
+    joystick = sample_joystick(ni_devices, joystick);
+    
     %check if the monkey is fixating on the cross
-    [parameters, results] = check_fixation(parameters, stimuli, results, hardware, task_window);
+    parameters = check_joystick_stationary(parameters, joystick);
+    if parameters.task_checks.Status('hold_joystick') == 0;
+        break
+    end
     
     flip_screen(frame, parameters, task_window, 'epoch1');
 end

@@ -11,7 +11,7 @@ if session_version == 'analog'
     %analog version - deprecated
     joystick = analoginput('nidaq','Dev1');
     % add channels
-    addchannel(joystick, [0 1 2 3]);
+    addchannel(joystick, 0:7);
     joystick.SampleRate = sampling_rate;
     joystick.SamplesPerTrigger = inf;
     joystick.UserData = zeros(1,3);
