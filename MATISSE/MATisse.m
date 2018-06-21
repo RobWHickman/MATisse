@@ -60,7 +60,7 @@ function Gen_button_Callback(hObject, eventdata, handles)
             get(handles.Targeted_check, 'Value')];
         handles.parameters.task_checks.requirements = requirement_vector';
         %generate the task
-        [handles.parameters, handles.hardware, handles.stimuli, handles.task_window] =  Generate(handles.parameters, handles.hardware, handles.stimuli, handles.modifiers);
+        [handles.parameters, handles.hardware, handles.stimuli, handles.task_window] =  matisse_generate(handles.parameters, handles.hardware, handles.stimuli, handles.modifiers);
         %update the GUI with the calculated max trials
         %this can be edited after
         set(handles.Total_trials,'String', num2str(handles.parameters.trials.max_trials));
@@ -921,7 +921,7 @@ guidata(hObject, handles);
         guidata(hObject, handles);
 
 function Display_button_Callback(hObject, eventdata, handles)
-    display(handles.parameters.timings);
+    display(handles.stimuli.fixation_cross.fixation_cross_info);
 function Display_button_CreateFcn(hObject, eventdata, handles)
 
 function Choice_stimuli_Callback(hObject, eventdata, handles)
@@ -1000,11 +1000,26 @@ function Eyefixation_track_CreateFcn(hObject, eventdata, handles)
 guidata(hObject, handles);
 
 function Eyesample_rate_Callback(hObject, eventdata, handles)
+    disp('currently not set up!');
 guidata(hObject, handles);
 function Eyesample_rate_CreateFcn(hObject, eventdata, handles)
+    handles.hardware.eyetracker.sample_rate = 200;
 guidata(hObject, handles);
 
 function Joysample_rate_Callback(hObject, eventdata, handles)
+    disp('currently not set up!');
 guidata(hObject, handles);
 function Joysample_rate_CreateFcn(hObject, eventdata, handles)
+    handles.hardware.joystick.sample_rate = 200;
 guidata(hObject, handles);
+
+
+% --- Executes on button press in Dig_NIbox.
+function Dig_NIbox_Callback(hObject, eventdata, handles)
+     disp('currently not set up to run digital ni inputs!');
+guidata(hObject, handles);
+
+function Dig_NIbox_CreateFcn(hObject, eventdata, handles)
+    handles.hardware.ni_inputs = 'analog';
+guidata(hObject, handles);
+

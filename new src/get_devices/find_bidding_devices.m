@@ -1,7 +1,14 @@
 %function to find the devices that will be used to maniplate the task
 %this will be either the joystick or the keyboard in either the x or y
 %dimension
-function hardware = find_bidding_devices(parameters, hardware)
+function hardware = find_external_inputs(parameters, hardware)
+%clear the hardware in use
+daqreset();
+
+%for upstairs- not testmode
+if ~parameters.break.testmode
+    
+
 
 %which dimension ofthe screen is used for bidding?
 %n.b. up/right is 'more'

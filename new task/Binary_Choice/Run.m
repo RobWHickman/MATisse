@@ -37,7 +37,7 @@ end
 for frame = 1:parameters.timings.TrialTime('epoch1')
     %draw the first epoch
     if frame == 1 || frame == parameters.timings.TrialTime('epoch1')
-        draw_bc_epoch_1(stimuli, hardware, task_window);
+        draw_fixation_epoch(stimuli, hardware, task_window, 'Binary_Choice');
     end
     
     %update the positions of the stimuli depending on which half of the

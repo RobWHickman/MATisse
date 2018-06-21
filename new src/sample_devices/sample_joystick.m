@@ -1,8 +1,8 @@
-function joystick = sample_joystick(ni_devices, joystick)
+function joystick = sample_joystick(ni_devices, parameters)
 
 
 %check if in testmode or not
-if(strcmp(joystick.device, 'keyboard')
+if parameters.break.testmode
     %joystick_sample = KbCheck(:,3)
     [keyIsDown, secs, keyCode] = KbCheck;
     

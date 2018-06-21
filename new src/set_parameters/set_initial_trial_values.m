@@ -21,6 +21,8 @@ if ~parameters.trials.random_stimuli || ~strcmp(parameters.task.type, 'PAV')
         results.single_trial.bundle_value = parameters.trials.combinations(2,parameters.trials.combinations(results.trials.correct+1)) / modifiers.budget.divisions;
         results.single_trial.bundle_water = modifiers.budget.magnitude * results.single_trial.bundle_value;
         results.single_trial.bundle_half = parameters.trials.combinations(3,parameters.trials.combinations(results.trials.correct+1));
+    elseif strcmp(parameters.task.type, 'PAV')
+        results.single_trial.starting_bid_value = NaN;
     end
 else
     %randomly choose a reward value
@@ -75,7 +77,7 @@ end
 %randomly generate a -1 or 1 and then randomly times the Variance and
 %rand() by this
 parameters.timings.TrialTime = round(parameters.timings.Frames +...
-    times(parameters.timings.Variance', times(rand(height(parameters.timings),1)', randsample([-1 1], 8, 1)))');
+    times(parameters.timings.Variance', times(rand(height(parameters.timings),1)', randsample([-1 1], height(parameters.timings), 1)))');
 
 %generate the random value for the target box
 %shifts the box down from the top of the bidspace by x amount
