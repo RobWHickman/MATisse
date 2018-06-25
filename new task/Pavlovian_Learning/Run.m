@@ -54,16 +54,6 @@ for frame = 1:parameters.timings.TrialTime('fractal_offer')
         draw_fractaloffer_epoch(stimuli, hardware, task_window, 'Pavlovian')
     end
     
-    flip_screen(frame, parameters, task_window, 'fractal_offer');
-end
-
-%assign results and payout
-for frame = 1:parameters.timings.TrialTime('payout')
-    %draw the first epoch
-    if frame == 1 || frame == parameters.timings.TrialTime('payout')
-        draw_payout_epoch(stimuli, hardware, task_window, 'Pavlovian')
-    end
-    
     %assign the payouts
     if frame == 2
         %wins every time on the pavlovian task
@@ -71,14 +61,38 @@ for frame = 1:parameters.timings.TrialTime('payout')
         results = assign_payouts(parameters, modifiers, results);
     end
     
-    %payout the results
-    if frame == 3
-    end
-    
-    flip_screen(frame, parameters, task_window, 'payout');
+    flip_screen(frame, parameters, task_window, 'fractal_offer');
 end
 
-%%Set the data
+%assign results and payout
+for frame = 1:parameters.timings.TrialTime('reward_payout')
+    %draw the first epoch
+    if frame == 1 || frame == parameters.timings.TrialTime('reward_payout')
+        draw_payout_epoch(stimuli, hardware, task_window, 'Pavlovian')
+    end
+    
+    %payout the results on the last frame
+    if frame == parameters.timings.TrialTime('reward_payout')
+        results = payout_results(parameters, modifiers, hardware, results, 'reward');
+    end
+     
+    flip_screen(frame, parameters, task_window, 'reward_payout');
+end
+for frame = 1:parameters.timings.TrialTime('budget_payout')
+    %draw the first epoch
+    if frame == 1 || frame == parameters.timings.TrialTime('budget_payout')
+        draw_payout_epoch(stimuli, hardware, task_window, 'Pavlovian')
+    end
+    
+    %payout the results on the last frame
+    if frame == parameters.timings.TrialTime('budget_payout')
+        results = payout_results(parameters, modifiers, hardware, results, 'budget');
+    end
+     
+    flip_screen(frame, parameters, task_window, 'budget_payout');
+end
+
+%%set the data
 results = assign_experiment_metadata(parameters, stimuli, hardware, results);
 results = assign_outputs(results);
 

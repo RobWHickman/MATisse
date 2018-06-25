@@ -1,7 +1,7 @@
 %small function to generate sounds to indicate the payouts for a trial- the
 %remaining budget or the reward
 %used in testmode where there is no solenoid corrected 
-function results = sound_payout(results, payout)
+function sound_payout(results, payout)
 
 sound_duration = 0.5; %0.5s
 

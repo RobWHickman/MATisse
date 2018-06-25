@@ -21,6 +21,7 @@ parameters.task_checks = task_checks;
 %either finds a file called interval timings 
 directory = dir;
 if ~any(strcmp('interval_times.mat', {directory(~[directory.isdir]).name}))
+    disp('did not find timing file- generating own timings!');
     parameters.timings = set_interval_timings();
 %will by default load interval_times.mat unless otherwise specified
 else
