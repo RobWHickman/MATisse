@@ -797,7 +797,7 @@ function Calibration_spurts_Callback(hObject, eventdata, handles)
 guidata(hObject, handles);
 function Calibration_spurts_CreateFcn(hObject, eventdata, handles)
     %set default number of repeat openings to 50
-    handles.hardware.solenoid.calibration.spurt_repeats = 49;
+    handles.hardware.solenoid.calibration.spurt_repeats = 50;
 guidata(hObject, handles);
 %run the release_liquid function to open the tap for calibration
 function Calibrate_solenoid_Callback(hObject, eventdata, handles)
