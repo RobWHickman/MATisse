@@ -1,7 +1,7 @@
 %function to generate a cover image for the bidspace to reflect the amount
 %of the budget left after winning an auction
 %this is the area under the computer bid if monkey bid > computer bid
-function stimuli = generate_reverse_bidspace(parameters, stimuli, task_window)
+function stimuli = generate_reverse_bidspace(parameters, stimuli, task_window, results)
 bidspace = stimuli.bidspace;
 trial_values = parameters.single_trial_values;
 
@@ -9,7 +9,8 @@ trial_values = parameters.single_trial_values;
 %texture
 if strcmp(parameters.task, 'BDM')
 %task parameter for the new bidspace position
-value = trial_values.computer_bid_value;
+value = trial_values.computer_bid_value; %SECOND_PRICE_AUCTION
+%value = results.trial_results.monkey_bid; %FIRST_PRICE_AUCTION
 %crop the bidspace
 reverse_bidspace_crop = imcrop(bidspace.reverse_bidspace,...
     [0 bidspace.bidspace_info.height - (bidspace.bidspace_info.height * value)...

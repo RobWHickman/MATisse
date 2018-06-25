@@ -3,4 +3,4 @@
 %just a blank screen (error tone will sound at same time)
 function [] = draw_error_epoch(hardware, task_window)
 
-Screen('FillRect', task_window, [hardware.outputs.screen_info.white/2, hardware.outputs.screen_info.white/5, hardware.outputs.screen_info.white/5]);
+Screen('FillRect', task_window, [hardware.outputs.screen_info.white, hardware.outputs.screen_info.white, hardware.outputs.screen_info.white]);

@@ -436,7 +436,7 @@ guidata(hObject, handles);
 
 %display_button
 function pushbutton10_Callback(hObject, eventdata, handles)
-display(handles.parameters.single_trial_values);
+display(handles.stimuli.combinations);
 
 %set the direction of bidding
 function X_axis_bidding_Callback(hObject, eventdata, handles)

@@ -27,7 +27,7 @@ for frame = 1:(parameters.timings.Frames('epoch8') + parameters.timings.Delay('e
     stimuli = select_fractal(parameters, stimuli, task_window);
 
     %generate the reversed bidspace budget for if the monkey wins
-    stimuli = generate_reverse_bidspace(parameters, stimuli, task_window);
+    %stimuli = generate_reverse_bidspace(parameters, stimuli, task_window);
     end
     
     Screen('Flip', task_window);
@@ -40,17 +40,22 @@ for frame = 1:(parameters.timings.Frames('epoch1') + parameters.timings.Delay('e
     %check if the monkey is fixating on the cross
     [parameters, results] = check_fixation(parameters, stimuli, results, hardware, task_window);
     
-    results.trial_results.target_box_position1 = stimuli.target_box.position(1);
-    results.trial_results.target_box_position2 = stimuli.target_box.position(2);
-    results.trial_results.target_box_position3 = stimuli.target_box.position(3);
-    results.trial_results.target_box_position4 = stimuli.target_box.position(4);
-    results.trial_results.target_value_shift = parameters.single_trial_values.target_value_shift;
-    results.trial_results.target_box_length = stimuli.target_box.length;
+   % results.trial_results.target_box_position1 = stimuli.target_box.position(1);
+   % results.trial_results.target_box_position2 = stimuli.target_box.position(2);
+   % results.trial_results.target_box_position3 = stimuli.target_box.position(3);
+   % results.trial_results.target_box_position4 = stimuli.target_box.position(4);
+   % results.trial_results.target_value_shift = parameters.single_trial_values.target_value_shift;
+   % results.trial_results.target_box_length = stimuli.target_box.length;
     results.trial_results.start_position = parameters.single_trial_values.starting_bid_value;
 
     Screen('Flip', task_window);
 end
 
+    if results.trial_values.task_checks.Requirement('targeted_offer') == 1
+        results.trial_results.target_shift = parameters.single_trial_values.target_value_shift;
+        results.trial_results.target_size = stimuli.target_box.length;
+        results.trial_results.target_filled = parameters.targeting.filled;
+    end
 %continue with task if monkey fixates
 if (results.trial_values.task_checks.Status('fixation') | ~results.trial_values.task_checks.Requirement('fixation')) &&...
         (results.trial_values.task_checks.Status('hold_joystick') | ~results.trial_values.task_checks.Requirement('hold_joystick'));
@@ -79,7 +84,7 @@ for frame = 1:(parameters.timings.Frames('epoch5') + parameters.timings.Delay('e
     %update the value of the bid
     results.trial_results.monkey_bid = (parameters.single_trial_values.starting_bid_value * (stimuli.bidspace.bidspace_info.position(2) - stimuli.bidspace.bidspace_info.position(4)) + results.trial_results.adjust) /...
         (stimuli.bidspace.bidspace_info.position(2) - stimuli.bidspace.bidspace_info.position(4));
-
+    %stimuli = generate_reverse_bidspace(parameters, stimuli, task_window,results);%MARIUS
     %if there hasn't been any bid activity break out of the loop
     if results.trial_values.task_checks.Status('no_bid_activity') && results.trial_values.task_checks.Requirement('no_bid_activity')
         break
@@ -106,6 +111,7 @@ if results.trial_values.task_checks.Status('targeted_offer') | ~results.trial_va
 for frame = 1:(parameters.timings.Frames('epoch6') + parameters.timings.Delay('epoch6'))
     %draw the result of the auction depending if monkey wins or not
     if(results.trial_results.monkey_bid > parameters.single_trial_values.computer_bid_value)
+        stimuli = generate_reverse_bidspace(parameters, stimuli, task_window, results);%MARIUS
         draw_epoch_6_win(parameters, stimuli, hardware, results, task_window);
         results.trial_results.win = 1;
     else
@@ -142,6 +148,8 @@ for frame = 1:(parameters.timings.Frames('epoch7') + parameters.timings.Delay('e
     results.trial_results.task_failure = {NaN};
     
     Screen('Flip', task_window);
+    results.trial_results.offer_value = parameters.single_trial_values.offer_value;
+
 end
 
 
@@ -153,6 +161,7 @@ display('TARGETING FAIL');
 sound_error_tone(hardware);
 for frame = 1:(sum(parameters.timings.Frames(6:8)) + sum(parameters.timings.Delay(6:8)) + (3 * hardware.outputs.screen_info.hz))
     draw_error_epoch(hardware, task_window)
+    results.trial_results.offer_value = parameters.single_trial_values.offer_value;
     results = assign_error_results(parameters, results);
     Screen('Flip', task_window);
 end
@@ -164,6 +173,7 @@ display('FINIALISATION FAIL');
 sound_error_tone(hardware);
 for frame = 1:(sum(parameters.timings.Frames(6:8)) + sum(parameters.timings.Delay(6:8)) + (3 * hardware.outputs.screen_info.hz))
     draw_error_epoch(hardware, task_window)
+    results.trial_results.offer_value = parameters.single_trial_values.offer_value;
     results = assign_error_results(parameters, results);
     Screen('Flip', task_window);
 end
@@ -175,6 +185,7 @@ display('BIDDING FAIL');
 sound_error_tone(hardware);
 for frame = 1:(sum(parameters.timings.Frames(5:8)) + sum(parameters.timings.Delay(5:8)) + ((3 - parameters.settings.bid_timeout) * hardware.outputs.screen_info.hz))
     draw_error_epoch(hardware, task_window)
+    results.trial_results.offer_value = parameters.single_trial_values.offer_value;
     results = assign_error_results(parameters, results);
     Screen('Flip', task_window);
 end
@@ -194,7 +205,7 @@ end
 %close textures
 %make this into a function
 Screen('Close', stimuli.trial.trial_fractal_texture)
-Screen('Close', stimuli.trial.reverse_bidspace_texture)
+%Screen('Close', stimuli.trial.reverse_bidspace_texture)
 
 
 %%Set the data

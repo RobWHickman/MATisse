@@ -27,8 +27,8 @@ end
 
 %take how far the joystick is moved forward into account (or dont)
 if hardware.inputs.settings.joystick_velocity
-    joystick_impetus_r = (joystick_movement + joystick_bias) / 0.6; %0.6 is pretty much the max you can move it in any direction
-    joystick_impetus_l = (joystick_movement + joystick_bias) / 0.6; %0.6 is pretty much the max you can move it in any direction
+    joystick_impetus_r = ((joystick_movement + joystick_bias)) * 2.5/ 0.6; %0.6 is pretty much the max you can move it in any direction
+    joystick_impetus_l = ((joystick_movement + joystick_bias)) * 2.5/ 0.6; %0.6 is pretty much the max you can move it in any direction
 else
     joystick_impetus_l = 1;
     joystick_impetus_r = -1;
@@ -116,7 +116,7 @@ if (~results.trial_values.task_checks.Status('no_bid_activity') | ~results.trial
                 %reset the count
                 results.trial_values.stationary_frame_count = 0;
                 %adjust bar adjustment
-                frame_adjust = (hardware.inputs.settings.joystick_scalar * joystick_impetus_l * axis_multiplier) / joystick_added_bias; %THIS LINE
+                frame_adjust = -(hardware.inputs.settings.joystick_scalar * joystick_impetus_l * axis_multiplier) / joystick_added_bias; %THIS LINE
                 %if we overshoot bring the y adjust back to max it can be
                 if initial_bid_position + results.trial_results.adjust + frame_adjust < limits(1)
                     frame_adjust = limits(1) - (initial_bid_position + results.trial_results.adjust);
@@ -124,7 +124,7 @@ if (~results.trial_values.task_checks.Status('no_bid_activity') | ~results.trial
                 output_frame_adjust = frame_adjust;
             else %TOWARDS THE RIGHT
                 results.trial_values.stationary_frame_count = 0;
-                frame_adjust = (-hardware.inputs.settings.joystick_scalar * -joystick_impetus_r * axis_multiplier) * joystick_added_bias; %scalar = speed %THIS LINE
+                frame_adjust = (hardware.inputs.settings.joystick_scalar * -joystick_impetus_r * axis_multiplier) * joystick_added_bias; %scalar = speed %THIS LINE
                 if initial_bid_position + results.trial_results.adjust + frame_adjust > limits(2)
                     frame_adjust = limits(2) - (initial_bid_position + results.trial_results.adjust);
                 end

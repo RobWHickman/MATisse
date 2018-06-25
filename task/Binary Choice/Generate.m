@@ -68,6 +68,6 @@ end
 % end
 
 if parameters.random_stim == 0
-    stimuli.combinations = create_stimuli_order(stimuli.fractals.fractal_info.number, parameters.binary_choice.divisions, 2, parameters.max_trials);
+    stimuli.combinations = create_stimuli_order(parameters.task, stimuli.fractals.fractal_info.number, parameters.binary_choice.divisions, 2, 'na', parameters.max_trials);
     stimuli.combination_order = 1:parameters.max_trials;
 end

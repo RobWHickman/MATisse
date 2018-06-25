@@ -18,6 +18,7 @@ for frame = 1:(parameters.timings.Frames('epoch8') + parameters.timings.Delay('e
     %also the random delays at the end of epochs 3 and 7
     if frame == 1
     [parameters, results] = set_initial_trial_values(parameters, stimuli, hardware, results);
+    stimuli.occlusion_darkness = 100; %DELETE
     
     %select the correct fractal for the trial and generate a texture
     if ~parameters.binary_choice.no_fractals
@@ -193,6 +194,7 @@ for frame = 1:(sum(parameters.timings.Frames(6:8)) + sum(parameters.timings.Dela
     results = assign_error_results(parameters, results);
     if frame == (sum(parameters.timings.Frames(6:8)) + sum(parameters.timings.Delay(6:8)) + (3 * hardware.outputs.screen_info.hz))
         Screen('Flip', task_window, [], 0);
+        sound_error_tone(hardware);
     else
         Screen('Flip', task_window, [], 1);
     end
@@ -210,6 +212,7 @@ for frame = 1:(sum(parameters.timings.Frames(5:8)) + sum(parameters.timings.Dela
     results = assign_error_results(parameters, results);
     if frame == 1 | frame == (sum(parameters.timings.Frames(5:8)) + sum(parameters.timings.Delay(5:8)) + ((3 - parameters.settings.bid_timeout) * hardware.outputs.screen_info.hz))
         Screen('Flip', task_window, [], 0);
+        sound_error_tone(hardware);
     else
         Screen('Flip', task_window, [], 1);
     end
@@ -227,6 +230,7 @@ for frame = 1:(sum(parameters.timings.Frames(2:8)) + sum(parameters.timings.Dela
     results = assign_error_results(parameters, results);
     if frame == (sum(parameters.timings.Frames(2:8)) + sum(parameters.timings.Delay(2:8))  + (3 * hardware.outputs.screen_info.hz))
         Screen('Flip', task_window, [], 0);
+        sound_error_tone(hardware);
     else
         Screen('Flip', task_window, [], 1);
     end

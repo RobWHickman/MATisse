@@ -21,6 +21,7 @@ if strcmp(results.experiment_metadata.parameters.task, 'BC')
     results.trial_results = rmfield(results.trial_results, 'remaining_budget');
 end
 
+display(results.trial_results);
 %add the trial results (assign results) to the full experimental data
 if ~isempty(results.full_output_table)
     results.full_output_table.trial_values = vertcat(results.full_output_table.trial_values, struct2table(results.trial_values));
@@ -29,6 +30,7 @@ else
     results.full_output_table.trial_values = struct2table(results.trial_values);
     results.full_output_table.trial_results = struct2table(results.trial_results);
 end
+display(results.full_output_table.trial_results);
 
 %put the trial_results and trial_values in the last_trial field and remove
 %them

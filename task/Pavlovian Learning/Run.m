@@ -61,6 +61,7 @@ for frame = 1:(parameters.timings.Frames('epoch2') + parameters.timings.Delay('e
 end
 
 %wins every time on the pavlovian task
+%messy marius bug fixes for offer value
 results.trial_results.win = 1;
 results = assign_payouts(parameters, results);
 

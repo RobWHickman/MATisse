@@ -34,3 +34,16 @@ results.experiment_summary.total_budget = 0;
 results.experiment_summary.total_reward = 0;
 results.experiment_summary.correct = 0;
 
+%how many trials in total
+%should be a multiple of sides, and fractals (i.e. usually 6)
+while rem(parameters.max_trials, stimuli.fractals.fractal_info.number) ~= 0
+    parameters.max_trials = parameters.max_trials + 1;
+end
+
+if parameters.random_stim == 0
+    stimuli.combinations = create_stimuli_order(parameters.task, stimuli.fractals.fractal_info.number, parameters.binary_choice.divisions, 1, 'not_beta', parameters.max_trials);
+    stimuli.combination_order = 1:parameters.max_trials;
+    display('created stimuli order for x trials:');
+    display(parameters.max_trials);
+end
+

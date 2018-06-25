@@ -44,11 +44,13 @@ elseif strcmp(payout, 'reward')
 
         
     if results.trial_results.reward > 0
-        %results.trial_results.reward_liquid = 0.3 + (results.trial_results.reward - 1)*0.15; %MARIUS- 0.3, 0.45, 0.6
-        %results.trial_results.reward_liquid = 0.2 + (results.trial_results.reward - 1)*0.15; %MARIUS- 0.2, 0.35, 0.5
-        %results.trial_results.reward_liquid = 0.25 + (results.trial_results.reward - 1)*0.2; %ROB- 0.25, 0.45, 0.65
-        results.trial_results.reward_liquid = 0.25 + (results.trial_results.reward - 1)*0.125; %ROB; MARIUS- 0.25, 0.375, 0.5
-        %results.trial_results.reward_liquid = 0.2 + (results.trial_results.reward - 1)*0.12; %ROB- 0.2, 0.32, 0.44
+        %results.trial_results.reward_liquid = 0.25 + (results.trial_results.reward - 1)*0.125; %ROB; MARIUS- 0.25, 0.375, 0.5
+        %results.trial_results.reward_liquid = 0.2 + (results.trial_results.reward - 1)*0.1; %ROB- 0.2, 0.3, 0.4, 0.5, 0.6
+        %results.trial_results.reward_liquid = 0.2 + (results.trial_results.reward - 1)*0.15; %ROB- 0.2, 0.35, 0.5...
+        %results.trial_results.reward_liquid = 0.2 + (results.trial_results.reward - 1)*0.25; %ROB- 0.2, 0.45, 0.7
+        %results.trial_results.reward_liquid = 0.2 + (results.trial_results.reward - 1)*0.15; %MARIUS- 0.2, 0.35, 0.5, 0.65, 0.8
+        %results.trial_results.reward_liquid = 0.1 + (results.trial_results.reward - 1)*0.1; %ROB- 0.1, 0.2, 0.3
+        %results.trial_results.reward_liquid = 0.15 + (results.trial_results.reward - 1)*0.25;
     else
         results.trial_results.reward_liquid = 0;
     end
@@ -102,7 +104,7 @@ putvalue(hardware.outputs.reward_output, reset)
 end
 %if calibrating, do this 99 more times
 if strcmp(payout, 'calibrate')
-for calibration_loop = 1:149
+for calibration_loop = 1:49
    %open the tap
     putvalue(hardware.outputs.reward_output, tap_open)
 

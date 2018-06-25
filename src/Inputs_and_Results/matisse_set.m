@@ -4,7 +4,7 @@
 function [parameters] = matisse_set(parameters)
 
 %close any open screen
-sca;
+%sca; %no longer works in 2018a
 
 %open a directory within which to save the trials
 parameters.save_info.output_folder = uigetdir(pwd, 'save directory');

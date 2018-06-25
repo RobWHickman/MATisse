@@ -2,7 +2,7 @@ function stimuli = load_stimuli(parameters, hardware, task_window)
 %get the stimuli
 stimuli.settings.images_path = '../../images/';
 stimuli.settings.fractal_images = 'RL*.jpg';
-stimuli.settings.bidspace_images = 'hatched2.jpg';
+stimuli.settings.bidspace_images = 'hatched3.jpg';
 stimuli.settings.bidspace_overhang = 20;
 
 %load the fractals
