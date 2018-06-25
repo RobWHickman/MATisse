@@ -789,6 +789,17 @@ function Solenoid_open_time_CreateFcn(hObject, eventdata, handles)
     %set default tap opening time to 1s
     handles.hardware.solenoid.calibration.open_time = 1;
 guidata(hObject, handles);
+%how many times should the tap open during calibration
+function Calibration_spurts_Callback(hObject, eventdata, handles)
+    clear handles.hardware.solenoid.calibration.spurt_repeats;
+    repeats = get(handles.Calibration_spurts,'String');
+    handles.hardware.solenoid.calibration.spurt_repeats = str2num(repeats);
+guidata(hObject, handles);
+function Calibration_spurts_CreateFcn(hObject, eventdata, handles)
+    %set default number of repeat openings to 50
+    handles.hardware.solenoid.calibration.spurt_repeats = 49;
+guidata(hObject, handles);
+%run the release_liquid function to open the tap for calibration
 function Calibrate_solenoid_Callback(hObject, eventdata, handles)
     clear handles.hardware.solenoid.calibration.calibrate;
     button_state = get(hObject,'Value');
@@ -921,7 +932,7 @@ guidata(hObject, handles);
         guidata(hObject, handles);
 
 function Display_button_Callback(hObject, eventdata, handles)
-    display(handles.stimuli.fixation_cross.fixation_cross_info);
+    display(handles.modifiers.fractals.p_fractals_indexes);
 function Display_button_CreateFcn(hObject, eventdata, handles)
 
 function Choice_stimuli_Callback(hObject, eventdata, handles)
@@ -1021,5 +1032,22 @@ guidata(hObject, handles);
 
 function Dig_NIbox_CreateFcn(hObject, eventdata, handles)
     handles.hardware.ni_inputs = 'analog';
+guidata(hObject, handles);
+
+
+function Probabilistic_fractals_Callback(hObject, eventdata, handles)
+    probabilistic_fractals = str2num(get(handles.Probabilistic_fractals, 'String'));
+    handles.modifiers.fractals.p_fractals_indexes = probabilistic_fractals;
+guidata(hObject, handles);
+function Probabilistic_fractals_CreateFcn(hObject, eventdata, handles)
+    handles.modifiers.fractals.p_fractals_indexes = NaN;
+guidata(hObject, handles);
+
+function Fractal_probability_Callback(hObject, eventdata, handles)
+    fractal_probabilities = str2num(get(handles.Fractal_probability, 'String'));
+    handles.modifiers.fractals.fractal_probability = fractal_probabilities;
+guidata(hObject, handles);
+function Fractal_probability_CreateFcn(hObject, eventdata, handles)
+    handles.modifiers.fractals.fractal_probability = 50;
 guidata(hObject, handles);
 

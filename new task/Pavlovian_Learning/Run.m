@@ -3,6 +3,7 @@ function [results, parameters] = Run(parameters, stimuli, hardware, modifiers, r
 
 %% EPOCHS %%
 %% the different epochs in the task if all checks are met %%
+%inter trial interval
 for frame = 1:parameters.timings.TrialTime('ITI')
     %draw the seventh epoch
     if frame == 1 || frame == parameters.timings.TrialTime('ITI')
@@ -27,6 +28,7 @@ for frame = 1:parameters.timings.TrialTime('ITI')
     flip_screen(frame, parameters, task_window, 'ITI');
 end
 
+%fixation epoch
 for frame = 1:parameters.timings.TrialTime('fixation')
     %draw the first epoch
     if frame == 1 || frame == parameters.timings.TrialTime('fixation')
@@ -45,7 +47,7 @@ for frame = 1:parameters.timings.TrialTime('fixation')
     flip_screen(frame, parameters, task_window, 'fixation');
 end
 
-
+%display fractal
 for frame = 1:parameters.timings.TrialTime('fractal_offer')
     %draw the first epoch
     if frame == 1 || frame == parameters.timings.TrialTime('fractal_offer')
@@ -55,14 +57,22 @@ for frame = 1:parameters.timings.TrialTime('fractal_offer')
     flip_screen(frame, parameters, task_window, 'fractal_offer');
 end
 
-%wins every time on the pavlovian task
-results.trial_results.win = 1;
-results = assign_payouts(parameters, results);
-
+%assign results and payout
 for frame = 1:parameters.timings.TrialTime('payout')
     %draw the first epoch
     if frame == 1 || frame == parameters.timings.TrialTime('payout')
-        draw_fractaloffer_epoch(stimuli, hardware, task_window, 'Pavlovian')
+        draw_payout_epoch(stimuli, hardware, task_window, 'Pavlovian')
+    end
+    
+    %assign the payouts
+    if frame == 2
+        %wins every time on the pavlovian task
+        results.trial_results.win = 1;
+        results = assign_payouts(parameters, modifiers, results);
+    end
+    
+    %payout the results
+    if frame == 3
     end
     
     flip_screen(frame, parameters, task_window, 'payout');

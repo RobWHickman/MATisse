@@ -1,7 +1,7 @@
 %function to release liquid from a solenoid tap for a given number of
 %seconds
 %there are 4 solenoid taps, of which 3 are in use at the moment
-function results = release_liquid(parameters, modifiers, hardware, results, payout)
+function release_liquid(parameters, modifiers, hardware, results, payout)
 
 %payout the budget tap (tap 1)
 if strcmp(payout, 'budget')
@@ -14,15 +14,12 @@ if strcmp(payout, 'budget')
 %payout the reward tap (depends on the monkey)
 elseif strcmp(payout, 'reward')
     if results.trial_results.reward > 0
-        results.trial_results.reward_liquid = ((results.trial_results.reward * 2) - 1) * 0.15; %increments of 0.15ml of juice
+        results.output.reward_liquid = modifiers.fractals.magnitude_vector(results.trial_results.reward); %increments of 0.15ml of juice
     else
-        results.trial_results.reward_liquid = 0;
+        results.output.reward_liquid = 0;
     end
-    tap_open_time = (results.trial_results.reward_liquid) / simple_divider2;
-    if strcmp(parameters.save_info.primate, 'Ulysses')
-        tap = 3;
-    elseif strcmp(parameters.save_info.primate, 'Vicer')
-        tap = 3;
+    tap_open_time = (results.output.reward_liquid) / simple_divider2;
+    tap = hardware.solenoid.release.reward_tap;
     end
 
 %pays out a manually assigned tap via the GUI    
@@ -82,7 +79,7 @@ if strcmp(payout, 'calibrate')
         putvalue(hardware.outputs.reward_output, reset)
 
         %wait a little each loop
-        WaitSecs(0.05); %not really necessary but good to check its looping
-        %properly
+        WaitSecs(0.05); 
+        %not really necessary but good to check its looping properly
     end
 end

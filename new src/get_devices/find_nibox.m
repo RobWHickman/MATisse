@@ -3,8 +3,6 @@ function ni_devices = find_nibox(sampling_rate, session_version)
 %clear the hardware in use
 daqreset();
 
-
-
 if nargin == 0
     sampling_rate = 200;
 end

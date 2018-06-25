@@ -1,7 +1,18 @@
 %function to draw the fifth epoch- the result of the bidding
 %this function is called if the monkey wins i.e. if its bid is higher than
 %that of the computer
-function [] = draw_epoch_6_win(parameters, stimuli, hardware, results, task_window)
+function [] = draw_payout_epoch(stimuli, hardware, task_window, task, outcome)
+
+Screen('FillRect', task_window, hardware.screen.colours.grey);
+
+if strcmp(parameters.task, 'BDM')
+
+elseif strcmp(parameters.task, 'BC')
+
+elseif strcmp(parameters.task, 'PAV')
+    
+end
+
 
 %draw the victory condition
 %maintains fractal and reverses bidspace spent (under computer bid)

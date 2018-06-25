@@ -1,6 +1,6 @@
 %small function to calculate the remaining budget and reward the monkey
 %gets after an auction depending on whether it beats the computer or not
-function results = assign_payouts(parameters, results)
+function results = assign_payouts(parameters, modifiers, results)
 if strcmp(parameters.task, 'BDM')
     %if the monkey wins the auction
     if(parameters.single_trial_values.computer_bid_value < results.trial_results.monkey_bid)
@@ -34,6 +34,23 @@ elseif strcmp(parameters.task, 'BC')
 
 %for pavlovian trials, reward is always equal to offer value
 elseif strcmp(parameters.task, 'PAV')
-    results.output.reward = parameters.single_trial_values.offer_value;
+    %check if the fractal is probabilistic or not
+    %payout will either be a reward of value or 0
+    if~isnan(modifiers.fractals.p_fractals_indexes)
+        if(ismember(results.single_trial.reward_value, modifiers.fractals.p_fractals_indexes))
+            random_number_check = rand;
+            if(random_number_check > modifiers.fractals.fractal_probability)
+                results.output.reward = parameters.single_trial_values.offer_value;
+            else
+                results.output.reward = 0;
+            end
+        else
+            results.output.reward = parameters.single_trial_values.offer_value;
+        end
+    else
+        %if not probabilistic, just payout value
+        results.output.reward = parameters.single_trial_values.offer_value;
+    end
+    results.output.budget = NaN;
 end
 

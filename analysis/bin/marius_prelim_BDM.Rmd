@@ -20,7 +20,7 @@ library(zoo)
 
 ```{r which data, warning = FALSE, message = FALSE}
 monkey <- "Ulysses"
-today <- "20-June-2018"
+today <- "22-June-2018"
 look_back <- "11-June-2018"
 
 start_trial <- 0
