@@ -2,15 +2,16 @@
 %loads as much as possible without opening a task window
 %gets information on the screen being used and task parameters (how many
 %trials/ which monitor/ etc.)
-function [parameters, stimuli, hardware, results, task_window] =  Generate(parameters, hardware)
-if hardware.testmode
+function [parameters, hardware, stimuli, task_window] =  Generate(parameters, hardware, stimuli, modifiers)
+%skip sync tests when just testing out code
+if parameters.break.testmode
     Screen('Preference', 'SkipSyncTests', 1);
     Screen('Preference', 'SkipSyncTests', 2);
 end
 
 %open a psychtoolbox screen for the task
 %set it to black for now
-[task_window, task_windowrect] = PsychImaging('OpenWindow', hardware.outputs.screen_info.screen_number, 0);
+[task_window, task_windowrect] = PsychImaging('OpenWindow', hardware.screen.number, 0);
 Screen('BlendFunction', task_window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
 
 %set psychtoolbox to be the computers priority
@@ -18,25 +19,28 @@ Screen('BlendFunction', task_window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
 
 %find all necessary devices
 %task_window is needed to find the mouse
-hardware = get_task_devices(hardware, task_window);
+hardware = get_task_devices(parameters, hardware, task_window);
 
 %load/ generate the stimuli for the task
-stimuli = load_stimuli(parameters, hardware, task_window);
+stimuli = load_stimuli(parameters, hardware, stimuli, modifiers, task_window);
 
 %get the parameters for the task
 parameters = get_all_parameters(parameters, hardware);
 
 %set the max number of trials for the task
-if strcmp(parameters.task, 'BDM')
-        parameters.max_trials = parameters.max_trials + (stimuli.fractals.fractal_info.number - mod(parameters.max_trials, stimuli.fractals.fractal_info.number));
-elseif strcmp(parameters.task, 'BC')
-    %round up to the nearest whole divisor of divisions * fractals
-    parameters.max_trials = parameters.max_trials + ((parameters.binary_choice.divisions * stimuli.fractals.fractal_info.number)...
-        - mod(parameters.max_trials, (parameters.binary_choice.divisions * stimuli.fractals.fractal_info.number)));
-    parameters.max_trials = parameters.max_trials + mod(parameters.max_trials, 2 * (parameters.binary_choice.divisions * stimuli.fractals.fractal_info.number));
+%round up to the nearest whole divisor of divisions * fractals
+parameters.trials.max_trials = parameters.trials.max_trials + ((modifiers.budget.divisions * modifiers.fractals.number)...
+    - mod(parameters.trials.max_trials, (modifiers.budget.divisions * modifiers.fractals.number)));
+parameters.trials.max_trials = parameters.trials.max_trials + mod(parameters.trials.max_trials, 2 * (modifiers.budget.divisions * modifiers.fractals.number));
+
+%should the order be generated on the fly and fully randomly
+%might not result in even numbers of trial per combination and increase
+%task switching
+if parameters.trials.random_stimuli == 0
+    parameters.trials.combinations = create_stimuli_order(modifiers, parameters, 2);
 end
 
-if parameters.random_stim == 0
-    stimuli.combinations = create_stimuli_order(stimuli.fractals.fractal_info.number, parameters.binary_choice.divisions, 2, parameters.max_trials);
-    stimuli.combination_order = 1:parameters.max_trials;
-end
+%generate the task timings for the first trial
+%this is usally done in the ITI using set_initial_trial_values
+parameters.timings.TrialTime = parameters.timings.Frames +...
+    times(parameters.timings.Variance', times(rand(height(parameters.timings),1)', randsample([-1 1], 8, 1)))';

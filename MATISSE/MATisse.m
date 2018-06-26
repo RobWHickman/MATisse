@@ -26,7 +26,7 @@ function MATisse_OpeningFcn(hObject, eventdata, handles, varargin)
     cd(root);
     handles.output = hObject;
     %load the table containing the monkeys we run
-    load ../../misc/monkey_table.mat
+    load ../../decorators/misc/monkey_table.mat
     handles.parameters.participants.primate_table = monkeys;
     % Update handles structure
 guidata(hObject, handles);
@@ -925,14 +925,14 @@ guidata(hObject, handles);
         handles.results.trials.unrewarded = 0;
         guidata(hObject, handles);
     function water_text_CreateFcn(hObject, eventdata, handles)
-        handles.results.outputs.water = 0;
+        handles.results.trials.water = 0;
         guidata(hObject, handles);
     function juice_text_CreateFcn(hObject, eventdata, handles)
-        handles.results.outputs.juice = 0;
+        handles.results.trials.juice = 0;
         guidata(hObject, handles);
 
 function Display_button_Callback(hObject, eventdata, handles)
-    display(handles.modifiers.fractals.p_fractals_indexes);
+    display(handles.results);
 function Display_button_CreateFcn(hObject, eventdata, handles)
 
 function Choice_stimuli_Callback(hObject, eventdata, handles)
@@ -1051,3 +1051,41 @@ function Fractal_probability_CreateFcn(hObject, eventdata, handles)
     handles.modifiers.fractals.fractal_probability = 50;
 guidata(hObject, handles);
 
+
+%where the monkeys bid will start on the BDM
+function Random_starts_Callback(hObject, eventdata, handles)
+    handles.modifiers.specific_tasks.bdm.bid_start = 'random';
+    disp('monkeys bids start randomly');
+guidata(hObject, handles);
+function Topbottom_starts_Callback(hObject, eventdata, handles)
+    handles.modifiers.specific_tasks.bdm.bid_start = 'top_bottom';
+    disp('monkeys bids start at top or bottom');
+guidata(hObject, handles);
+function Bottom_starts_Callback(hObject, eventdata, handles)
+    handles.modifiers.specific_tasks.bdm.bid_start = 'bottom';
+    disp('monkeys bids start at bottom');
+guidata(hObject, handles);
+function Top_starts_Callback(hObject, eventdata, handles)
+    handles.modifiers.specific_tasks.bdm.bid_start = 'top';
+    disp('monkeys bids start at top');
+guidata(hObject, handles);
+function Random_starts_CreateFcn(hObject, eventdata, handles)
+    handles.modifiers.specific_tasks.bdm.bid_start = 'random';
+guidata(hObject, handles);
+
+%whether or not binary choice will be between bundles (fractal + reduced
+%budget vs. budget) or canonical (fractal vs. reduced budget)
+function Bundle_water_Callback(hObject, eventdata, handles)
+    bundles = get(handles.Bundle_water, 'Value');
+    if(bundles == 1)
+        modifiers.specific_tasks.binary_choice.bundles = 1;
+        disp('monkey will choose between bundles');
+    else
+        modifiers.specific_tasks.binary_choice.bundles = 0;
+        disp('monkey will perform canonical binary choice');
+    end
+guidata(hObject, handles);
+
+function Bundle_water_CreateFcn(hObject, eventdata, handles)
+%modifiers.specific_tasks.binary_choice.bundles = 1;
+guidata(hObject, handles);
