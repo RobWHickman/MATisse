@@ -22,7 +22,7 @@ elseif strcmp(payout, 'reward')
     end
     %if testmode- use speakers to indicate payout
     if parameters.break.testmode
-        sound_payout(results, 'budget');
+        sound_payout(results, 'reward');
     else
         %get the tap and use this taps calibration to get the open time
         tap = hardware.solenoid.release.budget_tap;

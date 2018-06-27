@@ -79,35 +79,33 @@ function Run_button_Callback(hObject, eventdata, handles)
     disp('running!');
     if get(hObject,'Value')
         set(handles.Run_button,'string','running...','enable','on','BackgroundColor','[1, 0, 1]');
-        while get(hObject,'Value') && handles.results.trials.correct < handles.parameters.trials.max_trials
+        while get(hObject,'Value') && handles.results.block_results.correct < handles.parameters.trials.max_trials
             [handles.results, handles.parameters] = Run(handles.parameters, handles.stimuli, handles.hardware, handles.modifiers, handles.results, handles.task_window);
             %save the data about the experimental set up at the start of
             %the task
             if handles.parameters.trials.total_trials < 1
-                handles.results = assign_experiment_metadata(handles.parameters, handles.stimuli, handles.hardware, handles.results);
+                %handles.results = assign_experiment_metadata(handles.parameters, handles.stimuli, handles.hardware, handles.results);
             end
-            handles.parameters.total_trials = handles.parameters.total_trials + 1;
             disp('trial number:');
-            %the trials are zero indexed so add one
-            disp(handles.parameters.trials.total_trials + 1);
+            disp(handles.results.block_results.completed);
             %save the results and parameters that came out of the last
             %trial
             guidata(hObject, handles);
             %update the graph
             axes(handles.Bidhistory_axes);
-            bar(handles.results.experiment_summary.means);
+            bar(handles.results.block_results.graph_output);
             %update the text
-            set(handles.total_text, 'String', handles.parameters.total_trials);
-            set(handles.correct_text, 'String', handles.results.experiment_summary.correct);
-            set(handles.error_text, 'String', handles.results.experiment_summary.error);
-            set(handles.percent_text, 'String', handles.results.experiment_summary.percent_correct);
-            set(handles.rewarded_text, 'String', handles.results.experiment_summary.rewarded);
-            set(handles.unrewarded_text, 'String', handles.results.experiment_summary.not_rewarded);
-            set(handles.water_text, 'String', handles.results.experiment_summary.total_budget);
-            set(handles.juice_text, 'String', handles.results.experiment_summary.total_reward);
+            set(handles.total_text, 'String', handles.results.block_results.completed);
+            set(handles.correct_text, 'String', handles.results.block_results.correct);
+            set(handles.error_text, 'String', handles.results.block_results.error);
+            set(handles.percent_text, 'String', handles.results.block_results.percent_correct);
+            set(handles.rewarded_text, 'String', handles.results.block_results.rewarded);
+            set(handles.unrewarded_text, 'String', handles.results.block_results.unrewarded);
+            set(handles.water_text, 'String', handles.results.block_results.water);
+            set(handles.juice_text, 'String', handles.results.block_results.juice);
             if strcmp(handles.parameters.task, 'BC')
-                set(handles.text57, 'String', handles.results.experiment_summary.left);
-                set(handles.text58, 'String', handles.results.experiment_summary.right);
+                set(handles.Left_choice, 'String', handles.results.block_results.left);
+                set(handles.Right_choice, 'String', handles.results.block_results.right);
             end
             %update the GUI with these fields
             drawnow;
@@ -245,7 +243,7 @@ function Random_stimuli_Callback(hObject, eventdata, handles)
     clear handles.parameters.trials.random_stimuli
     stimuli_button_state = get(hObject,'Value');
     if stimuli_button_state == get(hObject,'Max')
-        set(handles.parameters.trials.random_stimuli,'string','Random Stimuli','enable','on','BackgroundColor','green');
+        set(handles.Random_stimuli,'string','Random Stimuli','enable','on','BackgroundColor','green');
         handles.parameters.trials.random_stimuli = 1;
     elseif button_state == get(hObject,'Min')
         set(handles.Random_stimuli,'string','Pseudo-Random','enable','on','BackgroundColor','red');
@@ -909,30 +907,32 @@ guidata(hObject, handles);
     function Bidhistory_axes_CreateFcn(hObject, eventdata, handles)
     function Bidhistory_axes_DeleteFcn(hObject, eventdata, handles)
     function total_text_CreateFcn(hObject, eventdata, handles)
-        handles.results.trials.completed = 0;
+        handles.results.block_results.completed = 0;
         guidata(hObject, handles);
     function correct_text_CreateFcn(hObject, eventdata, handles)
-        handles.results.trials.correct = 0;
+        handles.results.block_results.correct = 0;
         guidata(hObject, handles);
     function error_text_CreateFcn(hObject, eventdata, handles)
-        handles.results.trials.error = 0;
+        handles.results.block_results.error = 0;
         guidata(hObject, handles);
     function percent_text_CreateFcn(hObject, eventdata, handles)
+        handles.results.block_results.percent_correct = 0;
+        guidata(hObject, handles);
     function rewarded_text_CreateFcn(hObject, eventdata, handles)
-        handles.results.trials.rewarded = 0;
+        handles.results.block_results.rewarded = 0;
         guidata(hObject, handles);
     function unrewarded_text_CreateFcn(hObject, eventdata, handles)
-        handles.results.trials.unrewarded = 0;
+        handles.results.block_results.unrewarded = 0;
         guidata(hObject, handles);
     function water_text_CreateFcn(hObject, eventdata, handles)
-        handles.results.trials.water = 0;
+        handles.results.block_results.water = 0;
         guidata(hObject, handles);
     function juice_text_CreateFcn(hObject, eventdata, handles)
-        handles.results.trials.juice = 0;
+        handles.results.block_results.juice = 0;
         guidata(hObject, handles);
 
 function Display_button_Callback(hObject, eventdata, handles)
-    display(handles.results);
+    display(handles.modifiers);
 function Display_button_CreateFcn(hObject, eventdata, handles)
 
 function Choice_stimuli_Callback(hObject, eventdata, handles)
@@ -942,6 +942,9 @@ function Choice_stimuli_Callback(hObject, eventdata, handles)
     if ~ismember(2, stimuli_present)
         handles.modifiers.fractals.no_fractals = 1;
         disp('no longer showing fractals- trials will not be rewarded with juice');
+        %cannot do bundles with only onestimuli type
+        modifiers.specific_tasks.binary_choice.bundles = 0;
+        set(handles.Bundle_water,'value',0);
     else
         handles.modifiers.fractals.no_fractals = 0;
         disp('fractals will be shown and rewarded again');
@@ -950,6 +953,8 @@ function Choice_stimuli_Callback(hObject, eventdata, handles)
     if ~ismember(1, stimuli_present)
         handles.modifiers.budgets.no_budgets = 1;
         disp('no longer showing budgets- trials will not be associated with water');
+        modifiers.specific_tasks.binary_choice.bundles = 0;
+        set(handles.Bundle_water,'value',0);
     else
         handles.modifiers.budgets.no_budgets = 0;
         disp('budgets will be shown and paid again');
@@ -957,7 +962,9 @@ function Choice_stimuli_Callback(hObject, eventdata, handles)
     
     if ~ismember(1, stimuli_present) && ~ismember(2, stimuli_present)
         disp('no stimuli currently being shown!!');
-    end        
+        modifiers.specific_tasks.binary_choice.bundles = 0;
+        set(handles.Bundle_water,'value',0);
+    end
 guidata(hObject, handles);
 function Choice_stimuli_CreateFcn(hObject, eventdata, handles)
     handles.modifiers.fractals.no_fractals = 0;
@@ -1087,5 +1094,13 @@ function Bundle_water_Callback(hObject, eventdata, handles)
 guidata(hObject, handles);
 
 function Bundle_water_CreateFcn(hObject, eventdata, handles)
-%modifiers.specific_tasks.binary_choice.bundles = 1;
+    modifiers.specific_tasks.binary_choice.bundles = 1;
+guidata(hObject, handles);
+
+
+function Left_choice_CreateFcn(hObject, eventdata, handles)
+    handles.results.block_results.left = 0;
+guidata(hObject, handles);
+function Right_choice_CreateFcn(hObject, eventdata, handles)
+    handles.results.block_results.right = 0;
 guidata(hObject, handles);
