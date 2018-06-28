@@ -107,6 +107,13 @@ function Run_button_Callback(hObject, eventdata, handles)
                 set(handles.Left_choice, 'String', handles.results.block_results.left);
                 set(handles.Right_choice, 'String', handles.results.block_results.right);
             end
+            
+            %save the data every 10 trials
+            if rem(handles.results.block_results.completed, 10)
+                save_data(handles.parameters, handles.results);
+                disp('data saved!')
+            end
+            
             %update the GUI with these fields
             drawnow;
         end
@@ -158,7 +165,8 @@ function Set_primate_Callback(hObject, eventdata, handles)
 guidata(hObject, handles);
 %set the default
 function Set_primate_CreateFcn(hObject, eventdata, handles)
-    handles.parameters.participants.primate = 'some_monkey';
+    %defaults to Ulysses
+    handles.parameters.participants.primate = 'Ulysses';
 guidata(hObject, handles);
 %set the task up using these parameters
 %this will set the inputs and ask you to find two folders:
@@ -932,7 +940,7 @@ guidata(hObject, handles);
         guidata(hObject, handles);
 
 function Display_button_Callback(hObject, eventdata, handles)
-    display(handles.results.experiment_metadata.trial_2.stimuli.fractals);
+    display(handles.results);
 function Display_button_CreateFcn(hObject, eventdata, handles)
 
 function Choice_stimuli_Callback(hObject, eventdata, handles)

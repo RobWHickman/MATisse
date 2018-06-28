@@ -101,15 +101,6 @@ end
 
 %output the results of the trial to save and update the GUI
 results = output_results(results, parameters);
-
-%save the metadata for the trial
-metadata.parameters = parameters;
-metadata.stimuli = stimuli;
-metadata.hardware = hardware;
-metadata.modifiers = modifiers;
-results.experiment_metadata.last_trial = metadata;
-last_trial = strcat('trial_', num2str(results.block_results.completed));
-[results.experiment_metadata.(last_trial)] = results.experiment_metadata.last_trial;
-rmfield(results.experiment_metadata, 'last_trial');
+results = set_trial_metadata(parameters, stimuli, hardware, modifiers, results);
 
 

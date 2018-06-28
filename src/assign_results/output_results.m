@@ -13,7 +13,7 @@ results.block_results.percent_correct = (results.block_results.correct / results
 if results.outputs.reward ~= 0
     results.block_results.rewarded = results.block_results.rewarded + 1;
 else
-    handles.results.block_results.unrewarded = handles.results.block_results.unrewarded + 1;
+    results.block_results.unrewarded = results.block_results.unrewarded + 1;
 end
 %update the amounts of liquid given out
 results.block_results.water = results.block_results.water + results.outputs.budget_liquid;
