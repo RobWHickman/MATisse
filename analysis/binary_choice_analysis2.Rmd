@@ -1,0 +1,463 @@
+---
+title: "BCb Analysis- Early March"
+author: "Robert Hickman"
+date: "05 April 2018"
+output:
+  pdf_document: default
+  html_document: default
+classoption: landscape
+---
+
+```{r libraries, warning = FALSE, message = FALSE, include = FALSE}
+library(data.table)
+library(tidyverse)
+library(magrittr)
+library(ggplot2)
+library(hrbrthemes)
+
+```
+
+```{r parameters, warning = FALSE, message = FALSE}
+monkey <- "Ulysses"
+today <- "21-Apr-2018"
+look_back <- "16-Apr-2018"
+
+start_trial <- 50
+stop_trial <- 200
+
+merge_days <- TRUE
+
+```
+
+```{r munge_data, warning = FALSE, message = FALSE, include = FALSE}
+if(!is.na(look_back)){
+  #use a selected range of dates
+  dates <- strftime(seq(as.Date(look_back, "%d-%b-%Y"), as.Date(today, "%d-%b-%Y"), "days"), "%d-%b-%Y")
+} else {
+  #else use the last week of data
+  dates <- strftime(seq(as.Date(today, "%d-%b-%Y") -7, as.Date(today, "%d-%b-%Y"), "days"), "%d-%b-%Y")
+}
+#create a string to search for in the filename
+search_string <- paste0(dates, ".*", monkey, "COMPACT")
+
+#find all the relevant data files
+directory <- "C:/Users/WS-Guest/Desktop/task data/"
+data_files <- dir(directory)
+specific_files <- unlist(sapply(search_string, grep, x = data_files))
+
+#load up all the files
+for(file in 1:length(specific_files)){
+  data <- read.csv(paste0(directory, dir(directory)[specific_files[file]]), stringsAsFactors = FALSE, na.strings = "NaN")
+  if(all(!grepl("bundle_position", names(data)))){
+    next
+  }
+  #remove the pavlovian data files
+  if(ncol(data) > 8){
+    #load in the data and munge it around a bit
+    BC_data <- data %>%
+      setDT() %>%
+      .[,trial:= 1:.N] %>%
+      .[,block_no := file] %>%
+      #get the date from the filename
+      .[,date := as.Date(gsub(" .*", "", dir(directory)[specific_files[file]]), "%d-%b-%Y")] %>%
+      #the distance between the final choice and the bundle
+      #used to work out if the monkey chose the bundle or not
+      .[bundle_position == 1, bundle_distance := (monkey_final_bid + 1)/2] %>%
+      .[bundle_position == 0, bundle_distance := (1-monkey_final_bid)/2] %>%
+      .[bundle_distance < 0.5, fractal_choice := 1] %>%
+      .[bundle_distance > 0.5, fractal_choice := 0] %>%
+      #the water offered on the trial
+      .[,water_offered := 1.2 - (bundle_water_perc * 1.2)]
+    if(ncol(BC_data) == 16){
+      BC_data$reward <- NULL
+    }
+    #merge into one df
+    if(!exists('task_data')){
+      task_data <- BC_data
+    }  else {
+      task_data <- rbindlist(list(task_data, BC_data)) %>%
+        .[order(block_no, trial)]
+    }
+  }
+}
+
+if(merge_days){
+  task_data <- task_data %>%
+    .[, block_no := as.numeric(as.factor(date))] %>%
+    .[, trial := 1:.N, by = block_no]
+}
+
+#reset the block nos
+task_data$block_no <- as.numeric(as.factor(task_data$block_no))
+task_data$task_failure <- gsub(" .*", "", task_data$task_failure)
+task_data$task_failure <- factor(task_data$task_failure)
+
+#loop to find the values of juice used in each block
+for(sub_block in 1:length(unique(task_data$block_no))){
+  data_sub <- task_data[block_no == sub_block]
+  for(sub_offer in 1:length(unique(data_sub$offer_value))){
+    data_subbed <- data_sub[offer_value == sub_offer]
+    
+    row <- data.frame(block_no = sub_block,
+                      offer_value = sub_offer,
+                      juice_offered = max(unique(data_subbed$reward_liquid), na.rm = TRUE))
+    if(sub_block == 1 & sub_offer == 1){
+      merge_df <- row
+    } else {
+      merge_df <- rbind(merge_df, row)
+    }
+  }
+}
+
+#get the actual amount of juice/water offered per trial
+task_data <- merge(task_data, merge_df, by = c("block_no", "offer_value")) %>%
+  #finally select and rearrange useful columns
+  .[,c("date", "block_no", "trial",
+       "bundle_position", "water_offered", "juice_offered",
+       "fractal_choice", "bundle_distance", "task_failure")] %>%
+  setcolorder(., c("date", "block_no", "trial",
+                   "bundle_position", "water_offered", "juice_offered",
+                   "fractal_choice", "bundle_distance", "task_failure"))
+
+#get the dates for each block
+dates <- task_data %>%
+  .[,c("date", "block_no")] %>%
+  unique(.)
+
+#get the trial numbers for each block
+trial_ns <- task_data %>%
+  .[,total_trials := .N, by = block_no] %>%
+  .[is.na(task_failure)] %>%
+  .[,correct_trials := .N, by = block_no] %>%
+  .[,c("block_no", "total_trials", "correct_trials")] %>%
+  unique(.)
+
+#get the proportion of bundle choices per bundle combination
+#remove failed choices
+bundle_choices <- task_data[!is.na(fractal_choice)] %>%
+  .[, .SD, block_no] %>%
+  #as a choice =1 the mean of the choices is the proportion
+  .[, mean(fractal_choice), by = .(juice_offered, water_offered, block_no)] %>%
+  #merge in the date and the trial numbers
+  merge(., dates, by = "block_no") %>%
+  merge(., trial_ns, by = "block_no")
+
+#get rid of all the crap in the environment
+rm(list = ls()[-c(grep("task_data", ls()),
+                  grep("bundle_choices", ls()),
+                  grep("monkey", ls()),
+                  grep("today", ls()),
+                  grep("look_back", ls()),
+                  grep("_trial", ls()))])
+
+```
+
+```{r}
+#task_data %<>% .[is.na(task_failure), completed_trials := 1:.N, by = "block_no"] %>%
+#  .[completed_trials < 181] %>%
+#  .[completed_trials > 59]
+```
+
+
+\newpage
+
+```{r plot_choice_distance, message = FALSE, warning = FALSE, include = FALSE}
+p1 <- ggplot(data = task_data, aes(x = bundle_distance, colour = as.factor(juice_offered))) +
+  geom_freqpoly(size = 3, alpha = 0.75) +
+  scale_colour_brewer(palette = "Set1", name = "fractal value") +
+  xlab("choice distance from bundle edge") +
+  ylab("count") +
+  annotate("text", label = "bundle choice", x = 0.25, y = 15, size = 7, colour = "darkgrey") +
+  annotate("text", label = "budget choice", x = 0.75, y = 15, size = 7, colour = "darkgrey") +
+  ggtitle("Monkey Choice Distance From Bundle on Binary Choice Task",
+          subtitle = paste(monkey, ":", look_back, "-", today)) +
+  #theme_fivethirtyeight() +
+  theme_minimal() +
+  theme(strip.text.x = element_text(size = 14)) +
+  theme(axis.title.x = element_text(size = 14)) +
+  theme(axis.title.y = element_text(size = 14)) +
+  facet_wrap(~date + block_no, ncol = 5)
+
+```
+
+```{r plot_p1, message = FALSE, warning = FALSE, fig.width = 12, fig.height = 8}
+p1
+```
+\newpage
+
+```{r, plot_block_regressions, warning = FALSE, message = FALSE, include = FALSE}
+#gather the data with respect the the distance from the bundle that the monkey choice
+p2 <- task_data %>%
+  .[, c("bundle_position", "water_offered", "juice_offered", "trial", "bundle_distance", "block_no", "date")] %>%
+  gather(-c(bundle_distance, block_no, date), key = "var", value = "value") %>%
+  #plot the monkeys bundle distance against all other variables
+  ggplot(aes(x = value, y = bundle_distance)) +
+  geom_point(alpha = 0.6, size = 2, aes(colour = factor(block_no))) +
+  #stat_smooth() +
+  scale_color_brewer(palette = "Set1", name = "Block") +
+  coord_flip() +
+  ggtitle("Monkey Choice Distance From Bundle on Binary Choice Task",
+          subtitle = paste(monkey, ":", look_back, "-", today)) +
+  #theme_fivethirtyeight() +
+  theme_minimal() +
+  theme(strip.text.x = element_text(size = 14)) +
+  theme(strip.text.y = element_text(size = 14)) +
+  theme(axis.title.x = element_text(size = 14)) +
+  theme(axis.title.y = element_text(size = 14)) +
+  facet_grid(var ~ date + block_no, scales = "free_y")
+
+```
+
+```{r plot_p2, message = FALSE, warning = FALSE, fig.width = 12, fig.height = 8}
+p2
+```
+\newpage
+
+```{r regression_model, warning = FALSE, message = FALSE}
+#generate a model of likelihood to choice for the fractal dependent on it's position,
+#value and associated water
+model <- glm(data = task_data,
+             fractal_choice ~ bundle_position + water_offered + juice_offered + trial + date,
+             family = "binomial")
+
+#summarise the parameters
+summary(model)
+
+#test for side bias with an exact binomial test
+binom.test(c(nrow(task_data %>%
+                    .[c(bundle_position != fractal_choice)]),
+             nrow(task_data %>%
+                    .[c(bundle_position == fractal_choice)])))
+
+
+```
+\newpage
+
+```{r regression_model-MOST-RECENT-BLOCK, warning = FALSE, message = FALSE}
+#generate a model of likelihood to choice for the fractal dependent on it's position,
+#value and associated water
+model <- glm(data = dplyr::filter(task_data, block_no == max(block_no)),
+             fractal_choice ~ bundle_position + water_offered + as.factor(juice_offered) + trial + date,
+             family = "binomial")
+
+#summarise the parameters
+summary(model)
+
+#test for side bias with an exact binomial test
+binom.test(c(nrow(task_data %>%
+                    .[c(bundle_position != fractal_choice & block_no == max(block_no))]),
+             nrow(task_data %>%
+                    .[c(bundle_position == fractal_choice & block_no == max(block_no))])))
+```
+\newpage
+
+```{r task_failures_plot, warning = FALSE, message = FALSE, include = FALSE}
+p3 <- task_data %>%
+  .[is.na(task_failure), count := .N, by = c("block_no", "juice_offered", "task_failure")] %>%
+  .[!is.na(task_failure), count := .N, by = c("block_no", "juice_offered", "task_failure")] %>%
+  .[,c("date", "block_no", "juice_offered", "count", "task_failure")] %>%
+  unique(.) %>%
+  ggplot(., aes(factor(juice_offered), count)) +
+  geom_col(aes(fill = task_failure)) +
+  ggtitle("Monkey Choice Failures",
+          subtitle = paste(monkey, ":", look_back, "-", today)) +
+  theme_minimal() +
+  theme(strip.text.x = element_text(size = 14)) +
+  theme(strip.text.y = element_text(size = 14)) +
+  theme(axis.title.x = element_text(size = 14)) +
+  theme(axis.title.y = element_text(size = 14)) +
+  facet_wrap(~date + block_no, ncol = 5)
+
+```
+
+```{r plot_p3, message = FALSE, warning = FALSE, fig.width = 12, fig.height = 8}
+p3
+```
+\newpage
+
+```{r monkey_choice_curves, warning = FALSE, message = FALSE, include = FALSE}
+binomial_smooth <- function(...) {
+  geom_smooth(method = "glm", method.args = list(family = "binomial"), ...)
+}
+
+p4 <- ggplot(bundle_choices, aes(y = V1, x = water_offered, colour = as.factor(juice_offered))) +
+  geom_point(size = 3, alpha = 0.5) +
+  binomial_smooth(se = FALSE) +
+  scale_colour_discrete(name = "juice offered (ml)", h = c(0, 250)) +
+  xlab("water offered (ml)") +
+  ylab("proportion of bundle choices") +
+  ggtitle("Monkey Bundle Choice Binoimial Curves",
+          subtitle = paste(monkey, ":", look_back, "-", today)) +
+  theme_minimal() +
+  theme(strip.text.x = element_text(size = 14)) +
+  theme(axis.title.x = element_text(size = 14)) +
+  theme(axis.title.y = element_text(size = 14)) +
+  facet_wrap(~block_no, ncol = 5)
+
+```
+
+```{r plot_p4, warning = FALSE, message = FALSE, fig.width = 12, fig.height = 8}
+p4
+```
+\newpage
+
+```{r monkey_choice_curves2, warning = FALSE, message = FALSE, include = FALSE}
+p5 <- ggplot(bundle_choices, aes(y = V1, x = water_offered, colour = factor(block_no), group = paste(block_no, juice_offered))) +
+  geom_point(size = 3, alpha = 0.5) +
+  binomial_smooth(se = FALSE) +
+  scale_colour_discrete(name = "block", h = c(0, 250)) +
+  xlab("water offered (ml)") +
+  ylab("proportion of bundle choices") +
+  ggtitle("Monkey Bundle Choice Binoimial Curves",
+          subtitle = paste(monkey, ":", look_back, "-", today)) +
+  theme_minimal() +
+  theme(strip.text.x = element_text(size = 14)) +
+  theme(axis.title.x = element_text(size = 14)) +
+  theme(axis.title.y = element_text(size = 14)) +
+  facet_wrap(~juice_offered)
+
+```
+
+```{r plot_p5, warning = FALSE, message = FALSE, fig.width = 12, fig.height = 8}
+p5
+```
+\newpage
+
+```{r today_monkey_choice_curves, message = FALSE, warning = FALSE, include = FALSE}
+#if incluiding all trials
+if(stop_trial == "all"){
+  stop_trial <- length(which(task_data$date == max(task_data$date)))
+}
+
+p6 <- rbindlist(list(
+  task_data %>%
+  .[date == max(date)] %>%
+  .[c(trial > start_trial & trial < stop_trial)] %>%
+  .[, trials_included := paste("limited to", stop_trial)],
+  task_data %>%
+    .[date == max(date)] %>%
+    .[, trials_included := "all"]
+  )) %>%
+  .[!grepl(max(trial), trials_included)] %>%
+  .[c(juice_offered > 0.2 & juice_offered < 0.6)] %>% #friday night quick munging
+  ggplot(., aes(y = fractal_choice, x = water_offered, colour = as.factor(juice_offered), group = juice_offered)) +
+  geom_point(size = 3, alpha = 0.5) +
+  binomial_smooth(se = TRUE) +
+  scale_colour_brewer(palette = "Set1", name = "juice offered (ml)") +
+  xlab("water offered (ml)") +
+  ylab("proportion of bundle choices") +
+  ggtitle("Today's Monkey Bundle Choice Binoimial Curves",
+          subtitle = paste(monkey, ":", today)) +
+  theme_minimal() +
+  theme(strip.text.x = element_text(size = 14)) +
+  theme(axis.title.x = element_text(size = 14)) +
+  theme(axis.title.y = element_text(size = 14)) +
+  facet_wrap(~trials_included)
+```
+
+```{r plot_p6, warning = FALSE, message = FALSE, plot.width = 12, plot.height = 8}
+p6
+```
+\newpage
+
+```{r monkey_task_progression, message = FALSE, warning = FALSE, include = FALSE}
+bernoulli_func <- function(dt, group){
+  grouped_dt <- split(dt, by = group)
+  groupwise_function <- function(dt){
+    rows <- nrow(dt)
+    rowwise_pvalues <- function(row, dt){
+      task_row <- dt[1:row,]
+      if(is.na(task_row$task_failure[row])){
+        left_bids <- nrow(task_row[left_bid == -1])
+        trial <- nrow(task_row[is.na(task_failure)])
+        test <- binom.test(left_bids, trial, p = 0.5, alternative = "two.sided")
+        p <- test$p.value
+      } else {
+        p <- NA
+      }
+      return(p)
+    }
+    dt[, exact_bias := unlist(lapply(1:rows, rowwise_pvalues, dt = dt))]
+    return(dt)
+  }
+  dt <- rbindlist(lapply(grouped_dt, groupwise_function))
+}
+
+p7 <- task_data %>%
+  .[order(block_no, trial)] %>%
+  .[,correct := cumsum(is.na(task_failure)), by = block_no] %>%
+  .[bundle_position == fractal_choice, left_bid := 1] %>%
+  .[bundle_position != fractal_choice, left_bid := -1] %>%
+  .[!is.na(left_bid), leftward_bias := cumsum(left_bid) / trial, by = block_no] %>%
+  bernoulli_func(., "block_no") %>%
+  ggplot(., aes(x = trial, y = correct)) +
+  geom_point(size = 3, aes(colour = log(exact_bias))) +
+  scale_colour_gradient(low = "darkred", high = "darkblue") +
+  xlab("trial number") +
+  ylab("correctly completed trials") +
+  ggtitle("Monkey Trial Progression and Bias",
+          subtitle = paste(monkey, ":", look_back, "-", today)) +
+  theme_minimal() +
+  theme(strip.text.x = element_text(size = 14)) +
+  theme(axis.title.x = element_text(size = 14)) +
+  theme(axis.title.y = element_text(size = 14)) +
+  facet_wrap(~date + block_no, ncol = 5)
+
+```
+
+```{r plot_p7, warning = FALSE, message = FALSE, plot.width = 12, plot.height = 8}
+p7
+```
+\newpage
+
+```{r monkey_bias_progression, message = FALSE, warning = FALSE, include = FALSE}
+p8 <- task_data %>%
+  .[order(block_no, trial)] %>%
+  .[,correct := cumsum(is.na(task_failure)), by = block_no] %>%
+  .[bundle_position == fractal_choice, left_bid := 1] %>%
+  .[bundle_position != fractal_choice, left_bid := -1] %>%
+  .[!is.na(left_bid), leftward_bias := cumsum(left_bid) / trial, by = block_no] %>%
+  .[leftward_bias < 0, bias_direction := "right"] %>%
+  .[leftward_bias > 0, bias_direction := "left"] %>%
+  bernoulli_func(., "block_no") %>%
+  ggplot(., aes(x = trial, y = log(exact_bias))) +
+  geom_segment(aes(xend = trial, yend = 0, colour = bias_direction)) +
+  scale_colour_manual(values = c("darkred", "darkblue"), name = "bias direction") +
+  geom_path(size = 1) +
+  geom_hline(yintercept = -3, linetype = "dashed") +
+  xlab("trial number") +
+  ylab("log bias pvalue") +
+  ggtitle("Monkey Trial Progression and Bias",
+          subtitle = paste(monkey, ":", look_back, "-", today)) +
+  theme_minimal() +
+  facet_wrap(~date + block_no, ncol = 5)
+```
+
+```{r plot_p8, warning = FALSE, message = FALSE, plot.width = 12, plot.height = 8}
+p8
+```
+
+```{r pool_sessions, message = FALSE, warning = FALSE, include = FALSE}
+p9 <- task_data %>%
+  .[c(juice_offered > 0.2 & juice_offered < 0.6)] %>% #friday night quick munging
+  .[order(block_no, trial)] %>%
+  .[is.na(task_failure), completed := 1:.N, by = "block_no"] %>%
+  #.[completed < 180] %>%
+  ggplot(., aes(y = fractal_choice, x = water_offered, colour = as.factor(juice_offered), group = juice_offered)) +
+  geom_point(size = 3, alpha = 0.5) +
+  binomial_smooth(se = TRUE) +
+  scale_colour_brewer(palette = "Set1", name = "juice offered (ml)") +
+  xlab("water offered (ml)") +
+  ylab("proportion of bundle choices") +
+  ggtitle("Pooled Monkey Bundle Choice Binoimial Curves",
+          subtitle = paste(monkey, ":", today)) +
+  theme_minimal() +
+  theme(strip.text.x = element_text(size = 14)) +
+  theme(axis.title.x = element_text(size = 14)) +
+  theme(axis.title.y = element_text(size = 14))
+
+```
+
+```{r plot_p9, warning = FALSE, message = FALSE, plot.width = 12, plot.height = 8}
+p9
+```

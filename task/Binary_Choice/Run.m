@@ -3,9 +3,9 @@ function [results, parameters] = Run(parameters, stimuli, hardware, modifiers, r
 
 %% EPOCHS %%
 %% the different epochs in the task if all checks are met %%
-for frame = 1:parameters.timings.TrialTime('epoch8')
+for frame = 1:parameters.timings.TrialTime('ITI')
     %draw the seventh epoch
-    if frame == 1 || frame == parameters.timings.TrialTime('epoch8')
+    if frame == 1 || frame == parameters.timings.TrialTime('ITI')
         draw_ITI(hardware, task_window);
     end
 
@@ -30,14 +30,17 @@ for frame = 1:parameters.timings.TrialTime('epoch8')
     end
     
     %if the last frame of the epoch, clear the buffer
-    flip_screen(frame, parameters, task_window, 'epoch8');
+    flip_screen(frame, parameters, task_window, 'ITI');
 end
 
+%set the systime for the start of the trial
+results = time_trial();
+
 % EPOCH 1 - fixation cross
-for frame = 1:parameters.timings.TrialTime('epoch1')
+for frame = 1:parameters.timings.TrialTime('fractal_offer')
     %draw the first epoch
-    if frame == 1 || frame == parameters.timings.TrialTime('epoch1')
-        draw_fixation_epoch(stimuli, hardware, task_window, 'Binary_Choice');
+    if frame == 1 || frame == parameters.timings.TrialTime('fractal_offer')
+        draw_fractaloffer_epoch(stimuli, hardware, task_window, parameters.task.type)
     end
     
     %update the positions of the stimuli depending on which half of the
@@ -55,7 +58,7 @@ for frame = 1:parameters.timings.TrialTime('epoch1')
         break
     end
     
-    flip_screen(frame, parameters, task_window, 'epoch1');
+    flip_screen(frame, parameters, task_window, 'fractal_offer');
 end
 
 %continue with task if monkey fixates

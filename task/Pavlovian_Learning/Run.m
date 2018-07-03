@@ -29,9 +29,7 @@ for frame = 1:parameters.timings.TrialTime('ITI')
 end
 
 %set the systime for the start of the trial
-systime = fix(clock);
-results.trial_results.date = systime(1:3);
-results.trial_results.time = systime(4:6);
+results = time_trial();
 
 %fixation epoch
 for frame = 1:parameters.timings.TrialTime('fixation')
