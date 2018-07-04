@@ -26,9 +26,10 @@ elseif strcmp(task, 'BDM')
         %block_vec = [repmat(2:4, 1, 10), repmat([1,5], 1, 2)]; %ulysses
         %block_vec = repmat(1:3, 1, 10); %vicer
         block_vec = repmat(1:5, 1, 10); %uly2
+        %block_vec = repmat(1:7, 1, 10); %vicer7
         fractals_vec = repmat(1:fractals, 1, total_trials/fractals);
         block_vec = block_vec(randperm(length(block_vec)));
-        fractals_vec = [fractals_vec, block_vec];
+        fractals_vec = fractals_vec(randperm(length(fractals_vec)));
     end
 end
 

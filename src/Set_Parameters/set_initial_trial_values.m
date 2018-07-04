@@ -21,7 +21,7 @@ if parameters.random_stim == 1 || strcmp(parameters.task, 'PAV')
     %MARIUS%
     if strcmp(parameters.task, 'BDM')
         %generate a random bid to start at
-        single_trial_values.starting_bid_value = rand(1); %START RANDOMLY
+        %single_trial_values.starting_bid_value = rand(1); %START RANDOMLY
         %single_trial_values.starting_bid_value = randi(2,1,1)-1; %START AT
         %TOP/BOTTOM
         %single_trial_values.starting_bid_value = 0; %START AT BOTTOM
@@ -42,7 +42,7 @@ if parameters.random_stim == 1 || strcmp(parameters.task, 'PAV')
             A = 10;
             B = 10;
         end
-        single_trial_values.computer_bid_value  = betarnd(A,B);
+        single_trial_values.computer_bid_value  = betarnd(1,1);
     %for binary choice, instead generate the value of the fractal water budget
     elseif strcmp(parameters.task, 'BC')
         single_trial_values.bundle_water = Sample(0:(1/parameters.binary_choice.divisions):1-(1/parameters.binary_choice.divisions));
@@ -64,7 +64,7 @@ else
      if strcmp(parameters.task, 'BDM')
          single_trial_values.offer_value = stimuli.combinations(1,stimuli.combination_order(results.experiment_summary.correct+1));
         %generate a random bid to start at
-        single_trial_values.starting_bid_value = rand(1); % RANDOM
+        %single_trial_values.starting_bid_value = rand(1); % RANDOM
         %single_trial_values.starting_bid_value = 0; BOTTOM
         %single_trial_values.starting_bid_value = randi(2,1,1)-1; %TOP &
         %BOTTOM
