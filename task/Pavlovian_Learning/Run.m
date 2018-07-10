@@ -29,7 +29,7 @@ for frame = 1:parameters.timings.TrialTime('ITI')
 end
 
 %set the systime for the start of the trial
-results = time_trial();
+results = time_trial(results, 'start');
 
 %fixation epoch
 for frame = 1:parameters.timings.TrialTime('fixation')
@@ -57,16 +57,25 @@ for frame = 1:parameters.timings.TrialTime('fractal_offer')
         draw_fractaloffer_epoch(stimuli, hardware, task_window, parameters.task.type)
     end
     
-    %assign the payouts
-    if frame == 2
-        %wins every time on the pavlovian task
-        results.trial_results.win = 1;
-        results.trial_results.task_error = NaN;
-        results = assign_payouts(parameters, modifiers, results);
-    end
-    
     flip_screen(frame, parameters, task_window, 'fractal_offer');
 end
+
+%display fractal
+for frame = 1:parameters.timings.TrialTime('bidding')
+    %draw the first epoch
+    if frame == 1 || frame == parameters.timings.TrialTime('bidding')
+        draw_bidding_epoch(stimuli, hardware, task_window, parameters.task.type)
+    end
+    
+    
+    flip_screen(frame, parameters, task_window, 'bidding');
+end
+
+%assign the payouts
+%wins every time on the pavlovian task
+results.trial_results.win = 1;
+results.trial_results.task_error = NaN;
+results = assign_payouts(parameters, modifiers, results);
 
 %assign results and payout
 for frame = 1:parameters.timings.TrialTime('reward_payout')
@@ -97,7 +106,10 @@ for frame = 1:parameters.timings.TrialTime('budget_payout')
     flip_screen(frame, parameters, task_window, 'budget_payout');
 end
 
+draw_ITI(hardware, task_window);
+Screen('Flip', task_window, [], 0)
 %output the results of the trial to save and update the GUI
+results = time_trial(results, 'end');
 results = output_results(results, parameters);
 results = set_trial_metadata(parameters, stimuli, hardware, modifiers, results);
 

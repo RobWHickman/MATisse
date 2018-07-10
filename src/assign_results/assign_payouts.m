@@ -51,6 +51,6 @@ elseif strcmp(parameters.task.type, 'PAV')
         %if not probabilistic, just payout value
         results.outputs.reward = results.single_trial.reward_value;
     end
-    results.outputs.budget = NaN;
+    results.outputs.budget = 0;
 end
 

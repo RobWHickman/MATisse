@@ -2,7 +2,6 @@ function stimuli = load_stimuli(parameters, hardware, stimuli, modifiers, task_w
 %get the stimuli location
 %fractal name set via the GUI
 modifiers.fractals.folder = '../../decorators/images/';
-modifiers.budget.string = 'hatched2.jpg';
 
 %set the width/height of the screen from which the dimensions of the
 %stimuli will be built

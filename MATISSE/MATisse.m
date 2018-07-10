@@ -1112,3 +1112,17 @@ guidata(hObject, handles);
 function Right_choice_CreateFcn(hObject, eventdata, handles)
     handles.results.block_results.right = 0;
 guidata(hObject, handles);
+
+
+
+function Budget_names_Callback(hObject, eventdata, handles)
+    %set the string at the start of the fractal files via string
+    clear handles.modifiers.fractals.string;
+    budget_string = get(handles.Budget_names, 'String');
+    handles.modifiers.budget.string = [num2str(budget_string), '.jpg'];
+    disp(['looking for budget file called ', handles.modifiers.budget.string, ' in image folder']);
+guidata(hObject, handles);
+function Budget_names_CreateFcn(hObject, eventdata, handles)
+    %set the default to hatched3
+    handles.modifiers.budget.string = 'hatched3.jpg';
+guidata(hObject, handles);

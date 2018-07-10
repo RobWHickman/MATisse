@@ -124,5 +124,4 @@ else
     results.single_trial.computer_bid = 1;
     results.single_trial.ordered = 'ordered';
 end
- 
             
