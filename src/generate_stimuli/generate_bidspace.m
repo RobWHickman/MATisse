@@ -21,11 +21,11 @@ end
 %set percentage of screen based on task as the denominator of a fraction
 %percentage of the screen
 if strcmp(parameters.task.type, 'BDM')
-    screen_width_fraction = 0.25; 
+    screen_width_fraction = 0.2; 
     screen_height_fraction = 0.9;
 elseif strcmp(parameters.task.type, 'BC')
-    screen_width_fraction = 6; %1/6th of the screen
-    screen_height_fraction = 1.5; %60% of the screen
+    screen_width_fraction = 0.2; %1/8th of the screen
+    screen_height_fraction = 0.9; %60% of the screen
 else
     warning('!unrecognised task to set bidspace size/position!');
 end
@@ -48,15 +48,11 @@ if strcmp(parameters.task.type, 'BDM')
         ((width/2) + ((width/100) * 10)) + width*screen_width_fraction,...
         height - ((height - dimensions.height)/2)];
 elseif strcmp(parameters.task.type, 'BC')
-    bidspace.position = [(((width/100) * modifiers.specific_tasks.binary_choice.bundle_width) - ((width/100) * screen_width_fraction)),...
-        (height - ((height/100) * (100 - (100 /screen_height_fraction))/2) - dimensions.height),...
+    bidspace.position = [(((width/100) * modifiers.specific_tasks.binary_choice.bundle_width) - width*screen_width_fraction),...
+        (height - ((height/100) * (100 - (100*screen_height_fraction))/2) - dimensions.height),...
         ((width/100) * modifiers.specific_tasks.binary_choice.bundle_width),...
-        ((height - (height/100) * (100 - (100 /screen_height_fraction))/2))];
+        ((height - (height/100) * (100 - (100*screen_height_fraction))/2))];
 end
-
-disp(height);
-disp(screen_height_fraction);
-disp(bidspace.position);
 
 %generate a white frame for the bidspace to help the monkey focus
 bidspace.dimensions.bounding_width = modifiers.budget.overhang/2;

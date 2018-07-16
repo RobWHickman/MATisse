@@ -34,7 +34,7 @@ for frame = 1:parameters.timings.TrialTime('ITI')
 end
 
 %set the systime for the start of the trial
-results = time_trial();
+results = time_trial(results, 'start');
 
 % EPOCH 1 - fixation cross
 for frame = 1:parameters.timings.TrialTime('fractal_offer')

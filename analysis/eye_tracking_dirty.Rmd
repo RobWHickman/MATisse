@@ -1,0 +1,103 @@
+---
+title: "Untitled"
+author: "Robert Hickman"
+date: "24 May 2018"
+output: html_document
+---
+
+```{r}
+library(data.table)
+library(dplyr)
+library(ggplot2)
+
+folder <- "C:/Users/WS-Guest/Desktop/eye tracker debug/"
+
+names <- c("channel0", "channel1", "channel2", "channel3", "channel4", "channel5", "channel6", "channel7",
+           "yellow", "blue", "eye1", "eye2", "eye3")
+
+df <- rbindlist(lapply(seq(length(dir(folder))), function(x) {
+  data <- read.csv(paste0(folder, dir(folder)[x]), na.strings = "NaN") %>%
+    setnames(names)
+  
+  channel_data <- data %>%
+    select(names(data)[grep("channel", names(data))]) %>%
+    setDT() %>%
+    melt.data.table()
+  
+  channels_of_interest <- data %>%
+    select(-c(1:8))
+  
+  interesting_data <- rbindlist(lapply(seq(ncol(channels_of_interest)), function(x) {
+    data <- channel_data[grep(as.numeric(unique(channels_of_interest[x])), channel_data$variable),]
+    data$channel <- paste("connected", names(channels_of_interest[x]))
+    if(all(is.na(data$voltage))) {
+      data <- NULL
+    }
+    return(data)
+  }))
+  
+  df <- rbind(channel_data, interesting_data) %>%
+    .[, sample := 1:.N, by = c("variable")]
+  df$file <- gsub(".csv", "", dir(folder)[x])
+  return(df)
+}))
+
+
+p <- ggplot() +
+  geom_line(data = dplyr::filter(df, !grepl("channel", df$variable)),
+          aes(x = sample, y = value, group = variable), size = 2, colour = "yellow") +
+  geom_line(data = df, aes(x = sample, y = value, group = variable)) +
+  facet_wrap(~file, ncol = 8)
+```
+
+
+```{r}
+library(data.table)
+library(dplyr)
+library(ggplot2)
+
+folder <- "C:/Users/WS-Guest/Desktop/eye tracker debug/"
+
+names <- c("channel0", "channel1", "channel2", "channel3", "channel4", "channel5", "channel6", "channel7",
+           "yellow", "blue", "eye1", "eye2", "eye3")
+
+df <- rbindlist(lapply(seq(length(dir(folder))), function(x) {
+  basic_data <- read.csv(paste0(folder, dir(folder)[x]), na.strings = "NaN") %>%
+    setnames(names)
+  
+  melted_channel_df <- basic_data %>%
+    select(names(.)[grep("channel", names(.))]) %>%
+    setDT() %>%
+    melt.data.table(measure.vars = names(.), variable.name = "channel", value.name = "voltage")
+  
+  connections <- basic_data %>%
+    select(-c(1:8))
+  
+  connection_data <- rbindlist(lapply(seq(ncol(connections)), function(x) {
+    data <- melted_channel_df[grep(as.numeric(unique(connections[x])), melted_channel_df$channel),]
+    data$channel <- paste("connected", names(connections[x]))
+    if(all(is.na(data$voltage))) {
+      data <- NULL
+    }
+    return(data)
+  }))
+  
+  output_df <- rbind(melted_channel_df, connection_data) %>%
+    .[, sample := 1:.N, by = c("channel")]
+  
+  joystick_connections <- unlist(strsplit(dir(folder)[x], ";"))
+  
+  output_df$yellow <- gsub(".*_", "", joystick_connections[1])
+  output_df$blue <- gsub(".*_", "", joystick_connections[2])
+  output_df$movement_direction <- gsub("\\.csv", "", joystick_connections[3])
+  
+  return(output_df)
+}))
+
+p <- ggplot() +
+  geom_line(data = dplyr::filter(df, grepl("connected", channel)), aes(x = sample, y = voltage, group = channel),
+            size = 2, colour = "green", alpha = 0.5) +
+  geom_line(data = dplyr::filter(df, grepl("channel", channel)), aes(x = sample, y = voltage, group = channel)) +
+  facet_grid(yellow~blue)
+```
+

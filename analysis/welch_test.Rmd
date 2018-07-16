@@ -1,0 +1,94 @@
+---
+title: "Untitled"
+author: "Robert Hickman"
+date: "12 July 2018"
+output: html_document
+---
+
+```{r}
+library(data.table)
+library(dplyr)
+library(magrittr)
+
+data <- readRDS("C:/Users/WS-Guest/Desktop/welch_data") %>%
+  setDT()
+
+data <- data %>%
+  .[is.na(task_failure)] %>%
+  setorder(date, trial) %>%
+  .[, trial := 1:.N, by = "date"] %>%
+  .[, c("date", "trial", "juice_offered", "monkey_final_bid")] %>%
+  split(.$date)
+
+variable <- "juice_offered"
+
+data <- lapply(data, function(data) Reduce(rbind, split(data, data$trial), accumulate=TRUE))
+
+get_p_values <- function(low, high, data) {
+  low_data <- data %>%
+    .[juice_offered == low] %>%
+    .[, c("monkey_final_bid")] %>%
+    unlist()
+  
+  high_data <- data %>%
+    .[juice_offered == high] %>%
+    .[, c("monkey_final_bid")] %>%
+    unlist()
+  
+  p <- t.test(low_data, high_data,
+              alternative = "less", var.equal = FALSE, conf.level = 1 - (0.05 / hypotheses))$p.value %>%
+    as.data.frame() %>%
+    mutate(low = low, high = high)
+  
+  return(p)
+}
+
+get_trial_p_values <- function(data) {
+  trial <- max(data$trial)
+  date <- unique(data$date)
+  
+  data <- data %>%
+    .[duplicated(juice_offered) | duplicated(juice_offered, fromLast = TRUE)]
+  
+  if(length(unique(data$juice_offered)) > 1) {
+    offer_values <- data[[variable]] %>%
+      unique() %>%
+      sort() %>%
+      combn(., m = 2)
+    hypotheses <- ncol(offer_values)
+    
+    low_value <- offer_values[1,]
+    high_value <- offer_values[2,]
+    
+    
+    p_values <- mapply(get_p_values, low_value, high_value, MoreArgs = list(data = data)) %>%
+      t() %>% as.data.frame() %>%
+      select(p = ".", lower_offer = low, higher_offer = high) %>%
+      mutate(trial = trial, date = date)
+  } else {
+    p_values <- data.frame(p = NA, lower_offer = NA, higher_offer = NA, trial = trial, date = date)
+  }
+  
+  return(p_values)
+}
+
+get_date_p_values <- function(data) {
+  date_p_values <- rbindlist(lapply(data, get_trial_p_values))
+  return(date_p_values)
+}
+
+all_p_values <- rbindlist(lapply(data, get_date_p_values)) %>%
+  .[!is.na(p)] %>%
+  .[, comparison := paste0(all_p_values$lower_offer, "~", all_p_values$higher_offer)]
+
+p <- ggplot(data = all_p_values, aes(x = trial, y = as.numeric(p))) +
+  geom_line(aes(colour = comparison), size = 2, alpha = 0.5) +
+  scale_color_viridis_d() +
+  theme_minimal() +
+  scale_y_log10() +
+  xlab("trial") +
+  ylab("log Welch test statistic") +
+  facet_wrap(~date)
+
+```
+

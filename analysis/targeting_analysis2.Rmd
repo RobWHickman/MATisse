@@ -1,0 +1,104 @@
+---
+title: "Untitled"
+author: "Robert Hickman"
+date: "1 March 2018"
+output: html_document
+---
+
+```{r libraries, warning = FALSE, message = FALSE, include = FALSE}
+library(data.table)
+library(tidyverse)
+library(magrittr)
+library(ggplot2)
+library(hrbrthemes)
+require(ggthemes)
+require(dplyr)
+require(magrittr)
+require(data.table)
+require(tidyr)
+require(extrafont)
+require(zoo)
+require(plotrix)
+require(BSDA)
+require(knitr)
+library(R.matlab)
+
+```
+
+
+```{r loading data, warning = FALSE, message = FALSE, include = FALSE}
+setwd("C:/Users/WS-Guest/Desktop/MATisse")
+filename <- "25-Apr-2018 155957Robert_Vicer"
+joystick_data_file <- "../task data/joystick_vectors" %>%
+  dir(.) %>%
+  .[grep(paste0(filename, "FULL"), dir("../task data/joystick_vectors"))] %>%
+  file.path("../task data/joystick_vectors", .)
+task_data_file <- "../task data" %>%
+  dir(.) %>%
+  .[grep(paste0(filename, "COMPACT"), dir("../task data"))] %>%
+  file.path("../task data", .)
+
+#bidspace height in pixels to convert fractions to pixels
+bidspace_height <- 870
+
+#load in the task data
+#I guess you load in multiple days, shouldn't matter so long as the trial column (+ date column)
+#allows you identify which rows for the joystick data
+task_data <- read.csv(task_data_file, stringsAsFactors = FALSE, na.strings = NaN) %>%
+  setDT() %>%
+  #add in the trial column
+  .[, trial := 1:.N] %>%
+  .[, c("adjust", "monkey_final_bid", "offer_value", "start_position",
+        "target_filled", "target_shift", "target_size", 
+        "task_failure", "trial")] %>%
+  .[, target_size := target_size / bidspace_height] %>%
+  .[, target_shift := 1 - (target_shift / bidspace_height)]
+
+#load the joystick data
+joystick_data <- read.csv(joystick_data_file, 
+                          #strings as factors = FALSE means (more but mostly) numbers won't be coerced to strings
+                          #header = FALSE as there is no header row
+                          #set the na.strings to tell R what to interept as NA
+                          stringsAsFactors = FALSE, header = FALSE, na.strings = "NaN") %>%
+  setDT() %>%
+  #get rid of columns which are just NA
+  .[, which(lapply(., mode) == "logical") := NULL] %>%
+  #set the names of each column as the 'epoch' (the sample of the joystick)
+  setnames(., old = names(.), new = as.character(1:ncol(.))) %>%
+  #allow us to select the trials correctly
+  .[, trial := 1:.N] %>%
+  #melt the data table
+  melt.data.table(id.vars = "trial", variable.name = "epoch", value.name = "movement") %>%
+  .[, epoch := as.numeric(epoch)] %>%
+  #convert to fraction
+  .[, movement := movement / bidspace_height] %>%
+  #add in the total movement by trial
+  .[, total_movement := cumsum(movement), "trial"] %>%
+  #add in the start positions from the task_data dt
+  #matches the two trial columns and merges the start_position in for the relevant trial
+  merge(., task_data, by = "trial") %>%
+  .[, bar_position := start_position - total_movement] %>%
+  .[, task_failure := ifelse(is.na(task_failure), "N", "Y")] %>%
+  #get rid of the NAs just to save on memory
+  .[!is.na(movement)]
+
+```
+
+```{r}
+#first filter the data to get only the trials with the correct target box position
+p7 <- joystick_data %>%
+  #pipe this into ggplot as data
+  ggplot(., aes(x = epoch, y = bar_position, group = trial)) +
+  #add the rectangle for the target box
+  #could probably make it safer in terms of height but given its fixed for this should be fine
+  geom_rect(aes(xmin = 0, xmax = max(joystick_data$epoch),
+                ymax = target_shift,
+                ymin = target_shift - target_size),
+            fill = NA, colour = "darkblue", size = 3) +
+  #plot the path of the bidding
+  geom_path(aes(linetype = task_failure, colour = factor(offer_value)), size = 1.2) +
+  theme_minimal() +
+  facet_wrap(~target_shift)
+
+```
+

@@ -594,7 +594,7 @@ function Bundles_width_Callback(hObject, eventdata, handles)
     disp(handles.modifiers.specific_tasks.binary_choice.bundle_width);
 guidata(hObject, handles);
 function Bundles_width_CreateFcn(hObject, eventdata, handles)
-    handles.modifiers.specific_tasks.binary_choice.bundle_width = 42;
+    handles.modifiers.specific_tasks.binary_choice.bundle_width = 45;
 guidata(hObject, handles);
 
 %set the direction of bidding- which direction the joystick must be moved
@@ -1093,16 +1093,16 @@ guidata(hObject, handles);
 function Bundle_water_Callback(hObject, eventdata, handles)
     bundles = get(handles.Bundle_water, 'Value');
     if(bundles == 1)
-        modifiers.specific_tasks.binary_choice.bundles = 1;
+        handles.modifiers.specific_tasks.binary_choice.bundles = 1;
         disp('monkey will choose between bundles');
     else
-        modifiers.specific_tasks.binary_choice.bundles = 0;
+        handles.modifiers.specific_tasks.binary_choice.bundles = 0;
         disp('monkey will perform canonical binary choice');
     end
 guidata(hObject, handles);
 
 function Bundle_water_CreateFcn(hObject, eventdata, handles)
-    modifiers.specific_tasks.binary_choice.bundles = 1;
+    handles.modifiers.specific_tasks.binary_choice.bundles = 1;
 guidata(hObject, handles);
 
 

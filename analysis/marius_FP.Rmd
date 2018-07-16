@@ -1,0 +1,153 @@
+---
+title: "FP_General_Analysis"
+author: "Marius"
+date: "28 March 2018"
+output: html_document
+---
+```{r libraries, warning = FALSE, message = FALSE, include = FALSE, echo=FALSE}
+require(ggplot2)
+require(ggthemes)
+require(dplyr)
+require(magrittr)
+require(data.table)
+require(tidyr)
+require(extrafont)
+require(zoo)
+require(plotrix)
+require(BSDA)
+require(knitr)
+knitr::opts_chunk$set(fig.width=14, fig.height=8)
+```
+
+```{r read data}
+directory <- "C:/Users/Marius/Documents/R/Schultz Lab/Input Data.Vicer/FP/COMPACT/"
+data_files <- dir(directory)
+data <- rbindlist(lapply(paste0(directory, data_files), read.csv, na.strings = "NaN"), idcol = "session")
+rewards <- unique(data$reward_liquid)
+rewards <- sort(rewards[rewards!=0])
+data <- data %>%
+  .[, trial_t:=1:.N] %>%
+  .[, trial_s:=1:.N, by = session ]%>%
+  .[, offer_volume := rewards[offer_value]]%>%
+  .[ monkey_final_bid > 1, monkey_final_bid := 1]%>%
+  .[adjust > 0, moved := "Down"] %>%
+  .[adjust < 0, moved := "Up"]
+data_correct <- data[!is.na(reward)] %>%
+  .[, trial_cor_t:=1:.N] %>%
+  .[, trial_cor_s:=1:.N, by = session ]%>%
+  .[, task_failure := NULL]%>%
+  .[, monkey_bid_volume := monkey_final_bid*1.2]%>%
+  .[, computer_bid_volume := computer_bid*1.2]%>%
+  .[offer_volume == 0.250, optimal_bid := 0.065]%>%
+  .[offer_volume == 0.375, optimal_bid := 0.30]%>%
+  .[offer_volume == 0.500, optimal_bid := 0.48]%>%
+  .[offer_volume == 0.250, bcb_value := 0.13]%>%
+  .[offer_volume == 0.375, bcb_value := 0.605]%>%
+  .[offer_volume == 0.50, bcb_value := 0.955]%>%
+  .[win == 1, payoff_actual := (1.2 - monkey_bid_volume) + bcb_value]%>%
+  .[win == 0, payoff_actual := 1.2]%>%
+  .[,payoff_ceiling := 1.2 - optimal_bid + bcb_value]%>%
+  .[optimal_bid >= computer_bid_volume, win_at_opt :=1 ]%>%
+  .[optimal_bid < computer_bid_volume, win_at_opt :=0 ]%>%
+  .[win_at_opt == 1 ,payoff_bestbid := 1.2 - optimal_bid + bcb_value]%>%
+  .[win_at_opt == 0, payoff_bestbid := 1.2]%>%
+  .[,payoff_fraction := payoff_actual / payoff_bestbid]
+#data_correct %>%
+ #    group_by(session) %>%
+  #   mutate_all(funs(na.locf(., na.rm = TRUE, fromLast = TRUE)))
+```
+
+```{r stats 1}
+no_sessions <- max(data_correct$session)
+session_stats <- data.table(means_bid_0.25=numeric(no_sessions),means_bid_0.375 = numeric(no_sessions), means_bid_0.5=numeric(no_sessions), spearman_r = numeric(no_sessions), frac_pay_0.25 = numeric(no_sessions),frac_pay_0.375 = numeric(no_sessions),frac_pay_0.5 = numeric(no_sessions)) 
+means_bid_0.25 <- data_correct %>% .[offer_volume == 0.250, mean(monkey_final_bid)*1.2,by = session]
+means_bid_0.375 <- data_correct %>% .[offer_volume == 0.375, mean(monkey_final_bid)*1.2,by = session]
+means_bid_0.5 <- data_correct %>% .[offer_volume == 0.50, mean(monkey_final_bid)*1.2,by = session]
+spearman_rs <- data_correct[,list(corr = cor(offer_volume,monkey_final_bid,method = 'spearman')), by = session]
+frac_pay_0.25 <- data_correct %>% .[offer_volume == 0.250, mean(payoff_fraction), by = session]
+frac_pay_0.375 <- data_correct %>% .[offer_volume == 0.375, mean(payoff_fraction), by = session]
+frac_pay_0.5 <- data_correct %>% .[offer_volume == 0.50, mean(payoff_fraction), by = session]
+payoff_actual_0.25 <- data_correct %>% .[offer_volume == 0.250, mean(payoff_actual), by = session]
+payoff_actual_0.375 <- data_correct %>% .[offer_volume == 0.375, mean(payoff_actual), by = session]
+payoff_actual_0.5 <- data_correct %>% .[offer_volume == 0.5, mean(payoff_actual), by = session]
+session_stats$means_bid_0.25 <- means_bid_0.25$V1
+session_stats$means_bid_0.375 <- means_bid_0.375$V1
+session_stats$means_bid_0.5 <- means_bid_0.5$V1
+session_stats$frac_pay_0.25 <- frac_pay_0.25$V1
+session_stats$frac_pay_0.375 <- frac_pay_0.375$V1
+session_stats$frac_pay_0.5 <- frac_pay_0.5$V1
+session_stats$payoff_actual_0.25 <- payoff_actual_0.25$V1
+session_stats$payoff_actual_0.375 <- payoff_actual_0.375$V1
+session_stats$payoff_actual_0.5 <- payoff_actual_0.5$V1
+session_stats$spearman_r <- spearman_rs$corr
+session_stats <- session_stats[,session := 1:.N]
+```
+
+```{r plot 1}
+p1 <- ggplot(data = session_stats, mapping = aes(x = session))+
+    geom_point(aes(y = means_bid_0.25, colour = "0.25"), size = 2)+
+    geom_point(aes(y = means_bid_0.375, colour = "0.375"), size = 2)+
+    geom_point(aes(y = means_bid_0.5, colour = "0.5"), size = 2)+
+    geom_smooth(aes(y = means_bid_0.25,colour = "0.25"), size = 2, method = "glm")+
+    geom_smooth(aes(y = means_bid_0.375, colour = "0.375"), size = 2, method = "glm")+
+    geom_smooth(aes(y = means_bid_0.5, colour = "0.5"), size = 2, method = "glm")+
+    scale_colour_brewer(name = "Offer value", labels = c("0.25","0.375","0.5"), type = "qual", palette = 6) +
+  labs(title = "Mean bids for all usable FP sessions", x = "Session", y = "Mean bid (ml water)")+
+  theme(legend.text = element_text(size = 12, face = "bold"), legend.position = "bottom",
+    axis.text.x = element_text(size = 10, face = "bold"), axis.text.y = element_text(size = 10, face = "bold"),
+    axis.title = element_text(size = 14, face = "bold"), panel.background = element_rect(fill = "white"),
+    legend.title = element_text(size = 12, face = "bold"))+
+  geom_vline(mapping = NULL, data = NULL, xintercept = 1, na.rm = FALSE, show.legend = NA, size = 2, alpha = 0.5)
+p1
+#e41a1c
+#377eb8
+#4daf4a
+```
+
+```{r plots 2}
+p2 <- ggplot(data = session_stats, mapping = aes(x = session))+
+    geom_point(aes(y = frac_pay_0.25, colour = "0.25", size = abs(means_bid_0.25-0.065)))+
+    geom_point(aes(y = frac_pay_0.375, colour = "0.375",size = abs(means_bid_0.375-0.3)))+
+    geom_point(aes(y = frac_pay_0.5, colour = "0.5",size = abs(means_bid_0.5-0.48)))+
+    scale_colour_brewer(name = "Offer value", labels = c("0.25","0.375","0.5"), type = "qual", palette = 6) +
+  labs(title = "Actual payoff / payoff if all bids were FP optimal given experienced comp bids", x = "Session", y = "Actual/optimal payoff")+
+  theme(legend.text = element_text(size = 12, face = "bold"), legend.position = "bottom",
+    axis.text.x = element_text(size = 10, face = "bold"), axis.text.y = element_text(size = 10, face = "bold"),
+    axis.title = element_text(size = 14, face = "bold"), panel.background = element_rect(fill = "white"),
+    legend.title = element_text(size = 12, face = "bold"))+
+  geom_hline(mapping = NULL, data = NULL, yintercept = 1, na.rm = FALSE, show.legend = NA, size = 2, alpha = 0.5)
+p2
+```
+```{r plots 3}
+p4 <- ggplot(data = session_stats, mapping = aes(x = session))+
+    geom_line(aes(y = payoff_actual_0.25, colour = "0.25"), size = 2)+
+    geom_line(aes(y = payoff_actual_0.375, colour = "0.375"), size = 2)+
+    geom_line(aes(y = payoff_actual_0.5, colour = "0.5"), size = 2)+
+  labs(title = "Average payoff per offer volume, grey lines are maximum average amounts, ordered", x = "Session", y = "Payoff value (ml water)")+
+  theme(legend.text = element_text(size = 12, face = "bold"), legend.position = "bottom",
+    axis.text.x = element_text(size = 10, face = "bold"), axis.text.y = element_text(size = 10, face = "bold"),
+    axis.title = element_text(size = 14, face = "bold"), panel.background = element_rect(fill = "white"),
+    legend.title = element_text(size = 12, face = "bold"))+
+  geom_vline(mapping = NULL, data = NULL, xintercept = 1, na.rm = FALSE, show.legend = NA, size = 2, alpha = 0.5)+
+ geom_hline(mapping = aes(colour = "0.25"), data = NULL, yintercept = 1.2 + (1.265-1.2)*(0.065/1.2), show.legend = NA,na.rm = FALSE, size = 2, alpha = 0.5)+
+  geom_hline(mapping = aes(colour = "0.375"), data = NULL, yintercept = 1.2 + (1.505-1.2)*(0.3/1.2), na.rm = FALSE, size = 2, alpha = 0.5)+
+  geom_hline(mapping = aes(colour = "0.5"), data = NULL, yintercept = 1.2 + (1.675-1.2)*(0.48/1.2), na.rm = FALSE, size = 2, alpha = 0.5)+
+  scale_colour_brewer(name = "Offer value", labels = c("0.25","0.375","0.5"), type = "qual", palette = 6) 
+p4
+#e41a1c
+#377eb8
+#4daf4a
+```
+
+```{r plots 2}
+p3 <- ggplot(data = session_stats, mapping = aes(x = session))+
+    geom_point(aes(y = session_stats$spearman_r), size = 3)+
+  geom_smooth(aes(y = session_stats$spearman_r), method = "glm")+
+  labs(title = "Spearman's rank r for each session's bids", x = "Session",y = "Spearman's rank r")+
+  theme(legend.text = element_text(size = 12, face = "bold"), legend.position = "bottom",
+    axis.text.x = element_text(size = 10, face = "bold"), axis.text.y = element_text(size = 10, face = "bold"),
+    axis.title = element_text(size = 14, face = "bold"), panel.background = element_rect(fill = "white"),
+    legend.title = element_text(size = 12, face = "bold"))+
+  geom_vline(mapping = NULL, data = NULL, xintercept = 1, na.rm = FALSE, show.legend = NA, size = 2, alpha = 0.5)
+p3
+```

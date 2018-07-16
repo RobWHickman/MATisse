@@ -18,7 +18,14 @@ for frame = 1:parameters.timings.TrialTime('ITI')
 
         %select the correct fractal for the trial and generate a texture
         if ~modifiers.fractals.no_fractals
-            stimuli.fractals.texture = select_fractal(stimuli, results, task_window);
+            stimuli.fractals.texture = select_fractal(stimuli, results.single_trial.reward_value, task_window);
+        end
+        if strcmp(parameters.task.type, 'BC') && modifiers.budgets.no_budgets
+            stimuli.fractals.second_texture = select_fractal(stimuli, results.single_trial.second_reward_value, task_window);
+        end
+        
+        if strcmp(parameters.task.type, 'BDM') || strcmp(parameters.task.type, 'BC')
+            stimuli = generate_reverse_bidspace(parameters, results, stimuli, modifiers, task_window);
         end
     else
         %do samply stuff

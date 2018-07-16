@@ -12,7 +12,7 @@ parameters.directories.save = uigetdir('C:\Users\WS-Guest\Desktop\MATisse\savefi
 
 %open a directory from which to run the experiment scripts
 %parameters.directories.run = uigetdir(pwd, 'task scripts directory');
-parameters.directories.run = uigetdir('C:\Users\WS-Guest\Desktop\MATisse\new task\Pavlovian_Learning', 'task scripts directory');
+parameters.directories.run = uigetdir('C:\Users\WS-Guest\Desktop\MATisse\task\Pavlovian_Learning', 'task scripts directory');
 
 %change into this directory
 cd(parameters.directories.run)

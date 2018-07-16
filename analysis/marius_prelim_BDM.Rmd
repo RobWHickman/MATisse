@@ -20,8 +20,8 @@ library(zoo)
 
 ```{r which data, warning = FALSE, message = FALSE}
 monkey <- "Ulysses"
-today <- "8-June-2018"
-look_back <- "6-June-2018"
+today <- "12-July-2018"
+look_back <- "9-July-2018"
 
 start_trial <- 0
 stop_trial <- "all"
@@ -203,105 +203,142 @@ p3 <- task_data %>%
   facet_wrap(~date)
 
 
-task_data$juice_offered[which(task_data$juice_offered == 0.35)] <- 0.32
-task_data$juice_offered[which(task_data$juice_offered == 0.5)] <- 0.44
-p3symposium <- task_data %>%
+p3 <- task_data %>%
   .[is.na(task_failure)] %>%
+  #.[, rolling_mean := na.locf(rolling_mean, na.rm = TRUE), by = c("block_no", "juice_offered")] %>%
+  #.[, rolling_se := append(NA, na.locf(rolling_se, na.rm = TRUE)), by = c("block_no", "juice_offered")] %>%
   ggplot(., aes(x = trial, y = rolling_mean, group = factor(juice_offered))) +
-    geom_ribbon(aes(ymin = (rolling_mean - rolling_se), ymax = (rolling_mean + rolling_se)),
-                alpha = 0.4, fill = "grey60") +
   geom_line(aes(colour = factor(juice_offered)), size = 2) +
-    scale_colour_manual(values = c("red", "blue", "green"), name = "juice offered (ml)") +
-    #scale_fill_manual(values = c("red", "blue", "green"), guide = FALSE) +
-  geom_hline(yintercept = 0.11, colour = "darkred", linetype = "dashed", size = 1.5) +
-  geom_hline(yintercept = 0.30, colour = "darkblue", linetype = "dashed", size = 1.5) +
-  geom_hline(yintercept = 0.86, colour = "darkgreen", linetype = "dashed", size = 1.5) +
-  xlab("trial number") +
-  ylab("monkey bid (ml water)") +
-  scale_y_continuous(limits = c(0, 1.2)) +
+  geom_ribbon(aes(ymin = rolling_mean - rolling_se, ymax = rolling_mean + rolling_se, fill = factor(juice_offered)), alpha = 0.4) +
+  geom_line(data = dplyr::filter(task_data, is.na(task_data$task_failure)), aes(x = trial, y = rolling_mean, group = factor(juice_offered), colour = factor(juice_offered))) +
+  scale_fill_discrete(guide = FALSE) +
+  scale_colour_discrete(name = "Reward Offered (ml)") +
+  xlab("Task Trials") +
+  ylab("Cumulative Mean Bid") +
+  ggtitle("Monkey Mean Bids (+/- SE) on BDM 2nd Price Task") +
   theme_minimal() +
-  theme(axis.text = element_text(size = 14)) +
-  theme(legend.text = element_text(size = 14)) +
-    theme(legend.title = element_text(size = 16)) +
-  theme(axis.title = element_text(size = 16))  + guides(colour = guide_legend(reverse=T))
+  theme(strip.text.x = element_text(size = 14)) +
+  theme(strip.text.y = element_text(size = 14)) +
+  theme(axis.title.x = element_text(size = 14)) +
+  theme(axis.title.y = element_text(size = 14)) +
+  facet_wrap(~date)
+
+p3.5 <- task_data %>%
+  .[is.na(task_failure)] %>%
+  #.[, rolling_mean := na.locf(rolling_mean, na.rm = TRUE), by = c("block_no", "juice_offered")] %>%
+  #.[, rolling_se := append(NA, na.locf(rolling_se, na.rm = TRUE)), by = c("block_no", "juice_offered")] %>%
+  ggplot(., aes(x = correct_trials, y = rolling_mean, group = factor(juice_offered))) +
+  geom_line(aes(colour = factor(juice_offered)), size = 2) +
+  geom_ribbon(aes(ymin = rolling_mean - rolling_se, ymax = rolling_mean + rolling_se, fill = factor(juice_offered)), alpha = 0.4) +
+  scale_fill_discrete(guide = FALSE) +
+  scale_colour_discrete(name = "Reward Offered (ml)") +
+  xlab("Correct Trials Per Fractal") +
+  ylab("Cumulative Mean Bid") +
+  ggtitle("Monkey Mean Bids (+/- SE) on BDM 2nd Price Task") +
+  theme_minimal() +
+  theme(strip.text.x = element_text(size = 14)) +
+  theme(strip.text.y = element_text(size = 14)) +
+  theme(axis.title.x = element_text(size = 14)) +
+  theme(axis.title.y = element_text(size = 14)) +
+  facet_wrap(~date)
 
 ```
 
 ```{r plot_p3, warning = FALSE, message = FALSE, fig.width = 12, fig.height = 8}
 p3
 
+p3.5
 ```
 \newpage
 
-```{r rowwise_welch_tests, warning = FALSE, message = FALSE, include = FALSE}
-rowwise_welchy <- function(trial, dt, group, group_value, direction){
+```{r rowwise_welch_tests, warning = FALSE, message = FALSE, include = FALSE, eval = FALSE}
+get_p_values <- function(low, high, data, hypotheses) {
+  low_data <- data %>%
+    .[juice_offered == low] %>%
+    .[, c("monkey_final_bid")] %>%
+    unlist()
   
-  #subset by group
-  dt_group <- dt[which(dt[[group]] == group_value),] %>%
-    .[is.na(task_failure)]
+  high_data <- data %>%
+    .[juice_offered == high] %>%
+    .[, c("monkey_final_bid")] %>%
+    unlist()
   
-  #how many hypotheses are we testing
-  hypotheses <- length(unique(dt$juice_offered))
+  p <- t.test(low_data, high_data,
+              alternative = "less", var.equal = FALSE, conf.level = 1 - (0.05 / hypotheses))$p.value %>%
+    as.data.frame() %>%
+    mutate(low = low, high = high)
   
-  #find the most recent trial for each juice offer
-  low <- dt_group$monkey_final_bid[which(dt_group$trial <= trial &
-                                     dt_group$juice_offered == min(dt_group$juice_offered))]
-  mid <- dt_group$monkey_final_bid[which(dt_group$trial <= trial &
-                                     dt_group$juice_offered != min(dt_group$juice_offered) &
-                                     dt_group$juice_offered != max(dt_group$juice_offered))]
-  high <- dt_group$monkey_final_bid[which(dt_group$trial <= trial &
-                                      dt_group$juice_offered == max(dt_group$juice_offered))]
+  return(p)
+}
+
+get_trial_p_values <- function(data) {
+  trial <- max(data$trial)
+  date <- unique(data$date)
   
-  #do a t test with unequal variances and take the p value
-  if(length(low) > 1 & length(mid) > 1){
-  welch_test_lowmid <- t.test(low, mid, alternative = direction, var.equal = FALSE, conf.level = 1 - (0.05 / hypotheses))$p.value
-  } else {welch_test_lowmid <- NA}
-  if(length(low) > 1 & length(high) > 1){
-  welch_test_lowhigh <- t.test(low, high, alternative = direction, var.equal = FALSE, conf.level = 1 - (0.05 / hypotheses))$p.value
-  } else {welch_test_lowhigh <- NA}
-  if(length(mid) > 1 & length(high) > 1){
-  welch_test_midhigh <- t.test(mid, high, alternative = direction, var.equal = FALSE, conf.level = 1 - (0.05 / hypotheses))$p.value
-  } else {welch_test_midhigh <- NA}
+  data <- data %>%
+    .[duplicated(juice_offered) | duplicated(juice_offered, fromLast = TRUE)]
   
-  #get the difference between this p value and the bonferroni corrected p level
-  lowmid_sig <- welch_test_lowmid - (0.05 / hypotheses)
-  lowhigh_sig <- welch_test_lowhigh - (0.05 / hypotheses)
-  midhigh_sig <- welch_test_midhigh - (0.05 / hypotheses)
+  if(length(unique(data$juice_offered)) > 1) {
+    offer_values <- data[[variable]] %>%
+      unique() %>%
+      sort() %>%
+      combn(., m = 2)
+    
+    hypotheses <- ncol(offer_values)
+    
+    low_value <- offer_values[1,]
+    high_value <- offer_values[2,]
+    
+    
+    p_values <- mapply(get_p_values, low_value, high_value, MoreArgs = list(data = data, hypotheses = hypotheses)) %>%
+      t() %>% as.data.frame() %>%
+      select(p = ".", lower_offer = low, higher_offer = high) %>%
+      mutate(trial = trial, date = date)
+  } else {
+    p_values <- data.frame(p = NA, lower_offer = NA, higher_offer = NA, trial = trial, date = date)
+  }
   
-  p_values <- data.frame(block = group_value,
-                         trial = trial,
-                         lowmid = lowmid_sig,
-                         lowhigh = lowhigh_sig,
-                         midhigh = midhigh_sig)
   return(p_values)
 }
 
-p4 <- as.data.frame(t(mapply(rowwise_welchy,
-                             trial = task_data$trial,
-                             group_value = task_data$date,
-                             MoreArgs = list(dt = task_data, group = "date", direction = "less")))) %>%
-  setDT() %>%
-  .[,block := as.Date(unlist(.$block))] %>%
-  melt.data.table(measure.vars = c("lowmid", "lowhigh", "midhigh")) %>%
-  .[,value := unlist(value)] %>%
-  .[,trial := unlist(trial)] %>%
-  ggplot(., aes(x = trial, y = value, colour = variable)) +
-  geom_line(size = 2) +
-  geom_hline(yintercept = 0, linetype = "dashed") +
-  scale_colour_discrete(name = "Rewards Compared") +
-  xlab("Task Trials") +
-  ylab("p Value - Corrected p Threshold") +
-  ggtitle("Monkey Bid Separation p Values") +
+get_date_p_values <- function(data) {
+  date_p_values <- rbindlist(lapply(data, get_trial_p_values))
+  return(date_p_values)
+}
+
+data <- task_data %>%
+  .[is.na(task_failure)] %>%
+  setorder(date, trial) %>%
+  .[, trial := 1:.N, by = "date"] %>%
+  .[, c("date", "trial", "juice_offered", "monkey_final_bid")] %>%
+  split(.$date) %>%
+  lapply(., function(data) Reduce(rbind, split(data, data$trial), accumulate=TRUE))
+
+variable = "juice_offered"
+
+all_p_values <- task_data %>%
+  .[is.na(task_failure)] %>%
+  setorder(date, trial) %>%
+  .[, trial := 1:.N, by = "date"] %>%
+  .[, c("date", "trial", "juice_offered", "monkey_final_bid")] %>%
+  split(.$date) %>%
+  lapply(., function(data) Reduce(rbind, split(data, data$trial), accumulate=TRUE)) %>%
+  rbindlist(lapply(., get_date_p_values)) %>%
+  .[!is.na(p)] %>%
+  .[, comparison := paste0(all_p_values$lower_offer, "~", all_p_values$higher_offer)]
+
+p4 <- ggplot(data = all_p_values, aes(x = trial, y = as.numeric(p))) +
+  geom_line(aes(colour = comparison), size = 2, alpha = 0.5) +
+  scale_color_viridis_d() +
   theme_minimal() +
-  theme(strip.text.x = element_text(size = 14)) +
-  theme(strip.text.y = element_text(size = 14)) +
-  theme(axis.title.x = element_text(size = 14)) +
-  theme(axis.title.y = element_text(size = 14)) +
-  facet_wrap(~block)
+  scale_y_log10() +
+  xlab("trial") +
+  ylab("log Welch test statistic") +
+  facet_wrap(~date)
 
 ```
 
-```{r plot_p4, warning = FALSE, message = FALSE, fig.width = 12, fig.height = 8}
+```{r plot_p4, warning = FALSE, message = FALSE, eval = FALSE, fig.width = 12, fig.height = 8}
 p4
 
 ```

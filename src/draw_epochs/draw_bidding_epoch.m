@@ -10,4 +10,33 @@ elseif strcmp(task, 'BDM')
     Screen('DrawTexture', task_window, stimuli.bidspace.texture, [], stimuli.bidspace.position, 0);
 
 elseif strcmp(task, 'BC')
+    if ~modifiers.budgets.no_budgets
+        Screen('DrawTexture', task_window, stimuli.fractals.texture, [], stimuli.fractals.position, 0);
+    end
+    
+    if modifiers.specific_tasks.binary_choice.bundles && ~modifiers.budgets.no_budgets
+        Screen('DrawTexture', task_window, stimuli.bidspace.texture, [], stimuli.bidspace.position, 0);
+        Screen('DrawTexture', task_window, stimuli.bidspace.reverse_texture, [], stimuli.bidspace.reverse_texture_position, 0);
+        Screen('FrameRect', task_window, [hardware.screen.colours.white], stimuli.bidspace.bidspace_bounding_box, stimuli.bidspace.dimensions.bounding_width);
+    end
+
+    position_reflector = hardware.screen.dimensions.width - stimuli.bidspace.position(1) - stimuli.bidspace.position(3);
+    
+    if ~modifiers.fractals.no_fractals
+        Screen('FrameRect', task_window, [hardware.screen.colours.white], stimuli.bidspace.bidspace_bounding_box + [position_reflector, 0, position_reflector, 0], stimuli.bidspace.dimensions.bounding_width);
+        Screen('DrawTexture', task_window, stimuli.bidspace.texture, [], stimuli.bidspace.position + [position_reflector, 0, position_reflector, 0], 0);
+    else
+        
+    end
+    
+    %create the bidding circle as an oval in a rect
+    %center it on the current bid (0 for this epoch)
+    bidding_circle = [0 0 50 50];
+    maxDiameter = max(bidding_circle) * 1.01;
+    centered_bidding_circle = CenterRectOnPointd(bidding_circle, hardware.screen.dimensions.width/2 + (hardware.screen.dimensions.width/2 * monkey_bid), hardware.screen.dimensions.height/2);
+    %purple for the active epoch
+    bidding_circle_colour = [hardware.screen.colours.white, 0 hardware.screen.colours.white];
+
+    %draw the bidding circle
+    Screen('FillOval', task_window, bidding_circle_colour, centered_bidding_circle, maxDiameter);
 end

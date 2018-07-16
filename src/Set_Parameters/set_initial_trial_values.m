@@ -1,7 +1,6 @@
 function [parameters, results] = set_initial_trial_values(parameters, stimuli, modifiers, results)
 %get the offer values for the trial
 %follow a predetermined order from create_stimuli_order()
-
 if parameters.trials.random_stimuli
     if strcmp(parameters.task.type, 'BDM')
         %rewards
@@ -30,7 +29,7 @@ if parameters.trials.random_stimuli
         
     elseif strcmp(parameters.task.type, 'BC')
         %rewards
-        if ~modifiers.budgets.no_fractals
+        if ~modifiers.fractals.no_fractals
             results.single_trial.reward_value = randi(modifiers.fractals.number);
             %second reward cannot equal first reward
             results.single_trial.second_reward_value = randi(modifiers.fractals.number);
