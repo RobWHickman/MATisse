@@ -727,7 +727,7 @@ guidata(hObject, handles);
 %based movement
 function Joystick_speed_Callback(hObject, eventdata, handles)
     clear handles.hardware.joystick.movement.speed;
-    handles.hardware.joystick.movement.speed = str2num(get(handles.Joystick_scalar,'String'));
+    handles.hardware.joystick.movement.speed = str2num(get(handles.Joystick_speed,'String'));
     disp('set new joystick scalar');
 guidata(hObject, handles);
 %default is 8- reasonable for scalar based movement
@@ -940,7 +940,7 @@ guidata(hObject, handles);
         guidata(hObject, handles);
 
 function Display_button_Callback(hObject, eventdata, handles)
-    display(handles.results);
+    display(handles.parameters.task_checks);
 function Display_button_CreateFcn(hObject, eventdata, handles)
 
 function Choice_stimuli_Callback(hObject, eventdata, handles)
@@ -1125,4 +1125,23 @@ guidata(hObject, handles);
 function Budget_names_CreateFcn(hObject, eventdata, handles)
     %set the default to hatched3
     handles.modifiers.budget.string = 'hatched3.jpg';
+guidata(hObject, handles);
+
+
+function Finalisation_pause_Callback(hObject, eventdata, handles)
+    clear handles.parameters.timings.finalisation_pause
+    bid_stabilisation_time = get(handles.Finalisation_pause_Callback, 'String');
+    handles.parameters.task_checks.finalisation_pause = num2str(bid_stabilisation_time);
+guidata(hObject, handles);
+function Finalisation_pause_CreateFcn(hObject, eventdata, handles)
+    handles.parameters.task_checks.finalisation_pause = 2;
+guidata(hObject, handles);
+
+function Bid_latency_Callback(hObject, eventdata, handles)
+    clear handles.parameters.timings.finalisation_pause
+    bid_stabilisation_time = get(handles.Finalisation_pause_Callback, 'String');
+    handles.parameters.task_checks.bid_latency = num2str(bid_stabilisation_time);
+guidata(hObject, handles);
+function Bid_latency_CreateFcn(hObject, eventdata, handles)
+    handles.parameters.task_checks.bid_latency = 2;
 guidata(hObject, handles);

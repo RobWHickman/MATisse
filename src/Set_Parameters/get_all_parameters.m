@@ -14,7 +14,7 @@ if parameters.break.testmode
     task_checks.Status('fixation') = 0;
 end
 %overwrite the vector set by the GUI with the table for neatness
-parameters.task_checks = task_checks;
+parameters.task_checks.table = task_checks;
 
 %get the rest of the parameters
 %timings- which need to be multiplied by the monitor refresh rate

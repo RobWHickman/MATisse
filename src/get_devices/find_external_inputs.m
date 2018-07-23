@@ -11,26 +11,26 @@ if ~parameters.break.testmode
     if hardware.ni_inputs == 'analog'
         fprintf('finding analog ni devices');
         %analog version - deprecated
-        ni_devices = analoginput('nidaq','Dev1');
+        hardware.ni_devices = analoginput('nidaq','Dev1');
         % add channels
-        addchannel(ni_devices, 0:7);
-        ni_devices.SampleRate = sampling_rate;
-        ni_devices.SamplesPerTrigger = inf;
-        ni_devices.UserData = zeros(1,3);
+        addchannel(hardware.ni_devices, 0:7);
+        hardware.ni_devices.SampleRate = sampling_rate;
+        hardware.ni_devices.SamplesPerTrigger = inf;
+        hardware.ni_devices.UserData = zeros(1,3);
         %start the joystick
-        start(ni_devices);
+        start(hardware.ni_devices);
     else
         %add session stuff here
         fprintf('finding digital ni devices');
-        ni_devices = daq.createSession('ni');
-        addAnalogOutputChannel(ni_devices,'Dev1',0,'Voltage');
-        ni_devices.IsContinuous = true;
-        ni_devices.Rate=10000;
+        hardware.ni_devices = daq.createSession('ni');
+        addAnalogOutputChannel(hardware.ni_devices,'Dev1',0,'Voltage');
+        hardware.ni_devices.IsContinuous = true;
+        hardware.ni_devices.Rate=10000;
         data=linspace(-1,1,5000)';
-        lh = addlistener(ni_devices,'DataRequired', ...
+        lh = addlistener(hardware.ni_devices,'DataRequired', ...
             @(src,event) src.queueOutputData(data));
-        queueOutputData(ni_devices,data) 
-        startBackground(ni_devices); 
+        queueOutputData(hardware.ni_devices,data) 
+        startBackground(hardware.ni_devices); 
     end
 else
     if hardware.joystick.direction == 'x'

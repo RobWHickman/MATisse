@@ -44,3 +44,4 @@ end
 %this is usally done in the ITI using set_initial_trial_values
 parameters.timings.TrialTime = parameters.timings.Frames +...
     times(parameters.timings.Variance', times(rand(height(parameters.timings),1)', randsample([-1 1], height(parameters.timings), 1)))';
+

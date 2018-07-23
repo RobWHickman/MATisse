@@ -1,6 +1,5 @@
 %BDM task function
 function [results, parameters] = Run(parameters, stimuli, hardware, modifiers, results, task_window)
-
 %% EPOCHS %%
 %% the different epochs in the task if all checks are met %%
 %inter trial interval
@@ -27,6 +26,9 @@ for frame = 1:parameters.timings.TrialTime('ITI')
         if strcmp(parameters.task.type, 'BDM') || strcmp(parameters.task.type, 'BC')
             stimuli = generate_reverse_bidspace(parameters, results, stimuli, modifiers, task_window);
         end
+        
+        %create an empty movement vector
+        hardware.joystick.trial.deflection = [];
     else
         %do samply stuff
     end
@@ -45,15 +47,12 @@ for frame = 1:parameters.timings.TrialTime('fixation')
         draw_fixation_epoch(stimuli, hardware, task_window, parameters.task.type);
     end
     
-    %sample the joystick
-    %joystick = sample_joystick(ni_devices, joystick);
-    
-    %check if the monkey is fixating on the cross
+    %sample the input devices
+    [parameters, hardware] = munge_epoch_inputs(parameters, hardware, frame, 'fixation');    
     %parameters = check_joystick_stationary(parameters, joystick);
-    if parameters.task_checks.Status('hold_joystick') == 0
+    if parameters.task_checks.table.Status('hold_joystick') == 1 && parameters.task_checks.table.Requirement('hold_joystick') == 1
         break
     end
-    
     flip_screen(frame, parameters, task_window, 'fixation');
 end
 
@@ -61,20 +60,40 @@ end
 for frame = 1:parameters.timings.TrialTime('fractal_offer')
     %draw the first epoch
     if frame == 1 || frame == parameters.timings.TrialTime('fractal_offer')
-        draw_fractaloffer_epoch(stimuli, hardware, task_window, parameters.task.type)
+        draw_fractaloffer_epoch(stimuli, modifiers, hardware, task_window, parameters.task.type)
+    end
+    
+    [parameters, hardware] = munge_epoch_inputs(parameters, hardware, frame, 'fractal_display');
+    %check if the monkey is fixating on the cross
+    if parameters.task_checks.table.Status('hold_joystick') == 1 && parameters.task_checks.table.Requirement('hold_joystick') == 1
+        break
     end
     
     flip_screen(frame, parameters, task_window, 'fractal_offer');
 end
 
 %display fractal
+results.movement.bidding_vector = zeros(1, parameters.timings.TrialTime('bidding'));
+results.movement.total_movement = 0;
+results.movement.stationary_count = 0;
 for frame = 1:parameters.timings.TrialTime('bidding')
-    %draw the first epoch
-    if frame == 1 || frame == parameters.timings.TrialTime('bidding')
-        draw_bidding_epoch(stimuli, hardware, task_window, parameters.task.type)
+    
+    [parameters, hardware] = munge_epoch_inputs(parameters, hardware, frame, 'bidding');
+    
+    if (~parameters.task_checks.table.Status('no_bid_activity') || ~parameters.task_checks.table.Requirement('no_bid_activity')) &&...
+        (~parameters.task_checks.table.Status('stabilised_offer') || ~parameters.task_checks.table.Requirement('stabilised_offer'))
+        [results, hardware] = update_bid_position(hardware, results, parameters, stimuli);
+        results.movement.bidding_vector(frame) = hardware.joystick.movement.stimuli_movement;
+        results.movement.total_movement = results.movement.total_movement + hardware.joystick.movement.stimuli_movement;
+    else
+        results.movement.bidding_vector(frame) = NaN;
     end
     
+    if(all(results.movement.bidding_vector == 0) && results.movement.stationary_count == parameters.task_checks.bid_latency * hardware.screen.refresh_rate) 
+        parameters.task_checks.Status('no_bid_activity') = true;
+    end
     
+    draw_bidding_epoch(stimuli, modifiers, hardware, results, task_window, parameters.task.type)
     flip_screen(frame, parameters, task_window, 'bidding');
 end
 

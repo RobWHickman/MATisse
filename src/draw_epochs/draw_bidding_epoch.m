@@ -1,6 +1,8 @@
-function [] = draw_bidding_epoch(stimuli, hardware, task_window, task)
+function [] = draw_bidding_epoch(stimuli, modifiers, hardware, results, task_window, task)
 
 Screen('FillRect', task_window, hardware.screen.colours.grey);
+
+current_bid_position = results.single_trial.starting_bid + results.movement.total_movement;
 
 if strcmp(task, 'PAV')
     Screen('DrawTexture', task_window, stimuli.fractals.texture, [], stimuli.fractals.position, 0);
@@ -33,7 +35,7 @@ elseif strcmp(task, 'BC')
     %center it on the current bid (0 for this epoch)
     bidding_circle = [0 0 50 50];
     maxDiameter = max(bidding_circle) * 1.01;
-    centered_bidding_circle = CenterRectOnPointd(bidding_circle, hardware.screen.dimensions.width/2 + (hardware.screen.dimensions.width/2 * monkey_bid), hardware.screen.dimensions.height/2);
+    centered_bidding_circle = CenterRectOnPointd(bidding_circle, hardware.screen.dimensions.width * current_bid_position, hardware.screen.dimensions.height/2);
     %purple for the active epoch
     bidding_circle_colour = [hardware.screen.colours.white, 0 hardware.screen.colours.white];
 
