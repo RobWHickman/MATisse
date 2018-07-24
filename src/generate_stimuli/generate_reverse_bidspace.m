@@ -5,8 +5,12 @@ function stimuli = generate_reverse_bidspace(parameters, results, stimuli, modif
 %crop the reverse bidspace to the size under the computer bid and make a
 %texture
 if strcmp(parameters.task.type, 'BDM')
-    %task parameter for the new bidspace position
-    value = results.single_trial.computer_bid;
+    if strcmp(results.single_trial.subtask, 'BDM')
+        %task parameter for the new bidspace position
+        value = results.single_trial.computer_bid;
+    elseif strcmp(results.single_trial.subtask, 'FP')
+        value = results.single_trial.final_monkey_bid;
+    end
 elseif strcmp(parameters.task.type, 'BC')
     value = 1 - results.single_trial.second_budget_value;
     second_value = 1- results.single_trial.budget_value;
@@ -43,7 +47,12 @@ elseif strcmp(parameters.task.type, 'BDM')
             bidspace.dimensions.width bidspace.dimensions.height]);
   
         stimuli.bidspace.reverse_texture = Screen('MakeTexture', task_window, reverse_budget_crop);
- 
+    elseif strcmp(results.single_trial.subtask, 'FP')
+        reverse_budget_crop = imcrop(bidspace.reverse_bidspace_image,...
+            [0, bidspace.dimensions.height - (bidspace.dimensions.height * value)...
+            bidspace.dimensions.width bidspace.dimensions.height]);
+  
+        stimuli.bidspace.reverse_texture = Screen('MakeTexture', task_window, reverse_budget_crop);
     end
 end
 

@@ -12,13 +12,14 @@ elseif strcmp(task, 'BDM')
     Screen('DrawTexture', task_window, stimuli.bidspace.texture, [], stimuli.bidspace.position, 0);
 
 elseif strcmp(task, 'BC')
-    position_reflector = hardware.screen.dimensions.width - stimuli.bidspace.position(1) - stimuli.bidspace.position(3);
+    bidspace_reflector = hardware.screen.dimensions.width - stimuli.bidspace.position(1) - stimuli.bidspace.position(3);
+    fractal_reflector = hardware.screen.dimensions.width - stimuli.fractals.position(1) - stimuli.fractals.position(3);
 
     %draw the fractals
     if ~strcmp(results.single_trial.subtask, 'binary_budget_choice')
         Screen('DrawTexture', task_window, stimuli.fractals.texture, [], stimuli.fractals.position, 0);
         if strcmp(results.single_trial.subtask, 'binary_fractal_choice')
-            Screen('DrawTexture', task_window, stimuli.fractals.second_texture, [], stimuli.fractals.position + [position_reflector, 0, position_reflector, 0], 0);
+            Screen('DrawTexture', task_window, stimuli.fractals.second_texture, [], stimuli.fractals.position + [fractal_reflector, 0, fractal_reflector, 0], 0);
         end
     end
     
@@ -29,10 +30,10 @@ elseif strcmp(task, 'BC')
             Screen('FrameRect', task_window, [hardware.screen.colours.white], stimuli.bidspace.bidspace_bounding_box, stimuli.bidspace.dimensions.bounding_width);
         end
         
-        Screen('FrameRect', task_window, [hardware.screen.colours.white], stimuli.bidspace.bidspace_bounding_box + [position_reflector, 0, position_reflector, 0], stimuli.bidspace.dimensions.bounding_width);
-        Screen('DrawTexture', task_window, stimuli.bidspace.texture, [], stimuli.bidspace.position + [position_reflector, 0, position_reflector, 0], 0);
+        Screen('FrameRect', task_window, [hardware.screen.colours.white], stimuli.bidspace.position + [bidspace_reflector, 0, bidspace_reflector, 0], stimuli.bidspace.dimensions.bounding_width);
+        Screen('DrawTexture', task_window, stimuli.bidspace.texture, [], stimuli.bidspace.position + [bidspace_reflector, 0, bidspace_reflector, 0], 0);
         if isfield(stimuli.bidspace, 'second_reverse_texture')
-            Screen('DrawTexture', task_window, stimuli.bidspace.second_reverse_texture, [], stimuli.bidspace.reverse_texture_position, 0);
+            Screen('DrawTexture', task_window, stimuli.bidspace.second_reverse_texture, [], stimuli.bidspace.second_reverse_texture_position, 0);
         end
     end
     

@@ -39,6 +39,8 @@ if parameters.trials.random_stimuli
             end
         end
         
+        results.single_trial.primary_side = 'left';
+        
     elseif strcmp(parameters.task.type, 'BC')
         %rewards
         if ~modifiers.fractals.no_fractals
@@ -102,6 +104,11 @@ if parameters.trials.random_stimuli
         %bids
         results.single_trial.starting_bid = 0.5;
         results.single_trial.computer_bid = NaN;
+        if(round(rand))
+            results.single_trial.primary_side = 'left';
+        else
+            results.single_trial.primary_side = 'right';
+        end
         
         %task
         if modifiers.specific_tasks.binary_choice.bundles
@@ -133,9 +140,10 @@ if parameters.trials.random_stimuli
         results.single_trial.second_budget_value = NaN;
         results.single_trial.starting_bid = NaN;
         results.single_trial.computer_bid = NaN;
+        results.single_trial.subtask = 'Pavlovian';
+        results.single_trial.primary_side = 'left';
     end
     results.single_trial.ordered = 'random';
-    results.single_trial.subtask = 'Pavlovian';
     
     
 else

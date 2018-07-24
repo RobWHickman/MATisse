@@ -1,11 +1,12 @@
 %quick function to move the fractal and the reversed bidspace to the
 %opposite half of the screen if left is selected for the bundle half
-function stimuli = reflect_bundle(stimuli, hardware)
+function stimuli = reflect_stimuli(stimuli, hardware)
 
 %move the reversed bidspace over the other side
 %the budget should always be on the opposite side to the bundle water
-bidspace_reflector = results.single_trial.bundle_half * (hardware.screen.dimensions.width - stimuli.bidspace.reverse_texture_position(1) - stimuli.bidspace.reverse_texture_position(3));
-budget_reflector = abs(results.single_trial.bundle_half - 1) * (hardware.screen.dimensions.width - stimuli.trial.reversed_bidspace_position(1) - stimuli.bidspace.reverse_texture_position(3));
+bidspace_reflector = hardware.screen.dimensions.width - stimuli.bidspace.position(1) - stimuli.bidspace.position(3);
+fractal_reflector = hardware.screen.dimensions.width - stimuli.fractals.position(1) - stimuli.fractals.position(3);
+
 %reflect the bundle and budget water reverses
 stimuli.bidspace.reverse_texture_position = stimuli.bidspace.reverse_texture_position + [bidspace_reflector, 0, bidspace_reflector, 0];
 stimuli.budget.reverse_texture_position = stimuli.bidspace.reverse_texture_position + [budget_reflector, 0, budget_reflector, 0];

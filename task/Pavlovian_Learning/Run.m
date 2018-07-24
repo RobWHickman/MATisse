@@ -29,9 +29,18 @@ for frame = 1:parameters.timings.TrialTime('ITI')
         
         %create an empty movement vector
         hardware.joystick.trial.deflection = [];
+        
+        results.single_trial.primary_side = 'right';
+        disp(results.single_trial.primary_side);
+        if(strcmp(results.single_trial.primary_side, 'right'))
+            stimuli = reflect_stimuli(stimuli, hardware, modifiers);
+            disp('reflected stuff');
+        end
     else
         %do samply stuff
     end
+    
+
     
     %if the last frame of the epoch, clear the buffer
     flip_screen(frame, parameters, task_window, 'ITI');
