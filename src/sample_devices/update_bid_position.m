@@ -2,8 +2,8 @@ function [results, hardware] = update_bid_position(hardware, results, parameters
 
 if strcmp(parameters.task.type, 'BDM')
     limits = [stimuli.fractals.position(2), stimuli.fractals.position(4)];
-    initial_bid_position = stimuli.bidspace.bidspace_info.position(4) - ...
-        (stimuli.bidspace.bidspace_info.height * results.single_trial.starting_bid) + results.movement.total_movement;
+    initial_bid_position = stimuli.bidspace.position(4) - ...
+        (stimuli.bidspace.dimensions.height * results.single_trial.starting_bid) + results.movement.total_movement;
     axis_multiplier = -1;
 elseif strcmp(parameters.task.type, 'BC')
     limits = [0, hardware.screen.dimensions.width];
