@@ -1145,3 +1145,28 @@ guidata(hObject, handles);
 function Bid_latency_CreateFcn(hObject, eventdata, handles)
     handles.parameters.task_checks.bid_latency = 2;
 guidata(hObject, handles);
+
+
+function Basic_BDM_Callback(hObject, eventdata, handles)
+    BDM_subtask = get(handles.Y_axis_bidding, 'Value');
+    if BDM_subtask == 1
+        handles.modifiers.specific_tasks.BDM.contingency = 'BDM';
+    end
+guidata(hObject, handles);
+function First_price_Callback(hObject, eventdata, handles)
+    FP_subtask = get(handles.Y_axis_bidding, 'Value');
+    if FP_subtask == 1
+        handles.modifiers.specific_tasks.BDM.contingency = 'FP';
+    end
+guidata(hObject, handles);
+function FP_vs_BDM_Callback(hObject, eventdata, handles)
+    mixed_subtask = get(handles.Y_axis_bidding, 'Value');
+    if mixed_subtask == 1
+        handles.modifiers.specific_tasks.BDM.contingency = 'BDM_FP';
+    end
+guidata(hObject, handles);
+function Basic_BDM_CreateFcn(hObject, eventdata, handles)
+    handles.modifiers.specific_tasks.BDM.contingency = 'BDM';
+guidata(hObject, handles);
+
+

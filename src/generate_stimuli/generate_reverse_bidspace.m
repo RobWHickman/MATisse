@@ -9,6 +9,7 @@ if strcmp(parameters.task.type, 'BDM')
     value = results.single_trial.computer_bid;
 elseif strcmp(parameters.task.type, 'BC')
     value = 1 - results.single_trial.second_budget_value;
+    second_value = 1- results.single_trial.budget_value;
 end
 
 %abbreviate bidspace object
@@ -18,23 +19,31 @@ bidspace = stimuli.bidspace;
 %doesn't need a position as this will be derived from the bidspace position
 %when reflecting the bundle
 if strcmp(parameters.task.type, 'BC')
+    %crop the bidspace
+    reverse_bidspace_crop = imcrop(bidspace.reverse_bidspace_image,...
+        [0, bidspace.dimensions.height - (bidspace.dimensions.height * value)...
+        bidspace.dimensions.width, bidspace.dimensions.height]);
+
+    stimuli.bidspace.reverse_texture = Screen('MakeTexture', task_window, reverse_bidspace_crop);
+    
     if modifiers.budget.random || modifiers.budget.pegged
         reverse_budget_crop = imcrop(bidspace.reverse_bidspace_image,...
-            [0, bidspace.dimensions.height - (bidspace.dimensions.height * trial_values.budget_water)...
-        bidspace.bidspace_info.width bidspace.bidspace_info.height]);
+            [0, bidspace.dimensions.height - (bidspace.dimensions.height * second_value)...
+            bidspace.dimensions.width bidspace.dimensions.height]);
   
-        stimuli.budget.reverse_texture = Screen('MakeTexture', task_window, reverse_budget_crop);
-    else
-        %crop the bidspace
-        reverse_bidspace_crop = imcrop(bidspace.reverse_bidspace_image,...
-            [0, bidspace.dimensions.height - (bidspace.dimensions.height * value)...
-            bidspace.dimensions.width, bidspace.dimensions.height]);
-        
-        stimuli.bidspace.reverse_texture = Screen('MakeTexture', task_window, reverse_bidspace_crop);
+        stimuli.bidspace.second_reverse_texture = Screen('MakeTexture', task_window, reverse_budget_crop);
+        stimuli.bidspace.second_reverse_texture_position = bidspace.position;
+        stimuli.bidspace.second_reverse_texture_position(2) = stimuli.bidspace.second_reverse_texture_position(4) - (bidspace.dimensions.height * second_value);
     end
+    
 elseif strcmp(parameters.task.type, 'BDM')
-    if first_price
-    else
+    if strcmp(results.single_trial.subtask, 'BDM')
+        reverse_budget_crop = imcrop(bidspace.reverse_bidspace_image,...
+            [0, bidspace.dimensions.height - (bidspace.dimensions.height * value)...
+            bidspace.dimensions.width bidspace.dimensions.height]);
+  
+        stimuli.bidspace.reverse_texture = Screen('MakeTexture', task_window, reverse_budget_crop);
+ 
     end
 end
 

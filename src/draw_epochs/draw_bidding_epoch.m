@@ -12,23 +12,28 @@ elseif strcmp(task, 'BDM')
     Screen('DrawTexture', task_window, stimuli.bidspace.texture, [], stimuli.bidspace.position, 0);
 
 elseif strcmp(task, 'BC')
-    if ~modifiers.budgets.no_budgets
-        Screen('DrawTexture', task_window, stimuli.fractals.texture, [], stimuli.fractals.position, 0);
-    end
-    
-    if modifiers.specific_tasks.binary_choice.bundles && ~modifiers.budgets.no_budgets
-        Screen('DrawTexture', task_window, stimuli.bidspace.texture, [], stimuli.bidspace.position, 0);
-        Screen('DrawTexture', task_window, stimuli.bidspace.reverse_texture, [], stimuli.bidspace.reverse_texture_position, 0);
-        Screen('FrameRect', task_window, [hardware.screen.colours.white], stimuli.bidspace.bidspace_bounding_box, stimuli.bidspace.dimensions.bounding_width);
-    end
-
     position_reflector = hardware.screen.dimensions.width - stimuli.bidspace.position(1) - stimuli.bidspace.position(3);
+
+    %draw the fractals
+    if ~strcmp(results.single_trial.subtask, 'binary_budget_choice')
+        Screen('DrawTexture', task_window, stimuli.fractals.texture, [], stimuli.fractals.position, 0);
+        if strcmp(results.single_trial.subtask, 'binary_fractal_choice')
+            Screen('DrawTexture', task_window, stimuli.fractals.second_texture, [], stimuli.fractals.position + [position_reflector, 0, position_reflector, 0], 0);
+        end
+    end
     
-    if ~modifiers.fractals.no_fractals
+    if ~strcmp(results.single_trial.subtask, 'binary_fractal_choice')
+        if ~strcmp(results.single_trial.subtask, 'binary_choice')
+            Screen('DrawTexture', task_window, stimuli.bidspace.texture, [], stimuli.bidspace.position, 0);
+            Screen('DrawTexture', task_window, stimuli.bidspace.reverse_texture, [], stimuli.bidspace.reverse_texture_position, 0);
+            Screen('FrameRect', task_window, [hardware.screen.colours.white], stimuli.bidspace.bidspace_bounding_box, stimuli.bidspace.dimensions.bounding_width);
+        end
+        
         Screen('FrameRect', task_window, [hardware.screen.colours.white], stimuli.bidspace.bidspace_bounding_box + [position_reflector, 0, position_reflector, 0], stimuli.bidspace.dimensions.bounding_width);
         Screen('DrawTexture', task_window, stimuli.bidspace.texture, [], stimuli.bidspace.position + [position_reflector, 0, position_reflector, 0], 0);
-    else
-        
+        if isfield(stimuli.bidspace, 'second_reverse_texture')
+            Screen('DrawTexture', task_window, stimuli.bidspace.second_reverse_texture, [], stimuli.bidspace.reverse_texture_position, 0);
+        end
     end
     
     %create the bidding circle as an oval in a rect

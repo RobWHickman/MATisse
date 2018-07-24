@@ -26,6 +26,18 @@ if parameters.trials.random_stimuli
         end
         results.single_trial.computer_bid = rand();
         
+        %task
+        if strcmp(modifiers.specific_tasks.BDM.contingency, 'BDM')
+            results.single_trial.subtask = BDM;
+        elseif strcmp(modifiers.specific_tasks.BDM.contingency, 'FP')
+            results.single_trial.subtask = BDM;
+        elseif strcmp(modifiers.specific_tasks.BDM.contingency, 'BDM_FP')
+            if round(rand)
+                results.single_trial.subtask = BDM;
+            else
+                results.single_trial.subtask = FP;
+            end
+        end
         
     elseif strcmp(parameters.task.type, 'BC')
         %rewards
@@ -91,6 +103,19 @@ if parameters.trials.random_stimuli
         results.single_trial.starting_bid = 0.5;
         results.single_trial.computer_bid = NaN;
         
+        %task
+        if modifiers.specific_tasks.binary_choice.bundles
+            results.single_trial.subtask = 'bundle_choice';
+        else
+            if modifiers.budgets.no_budgets
+                results.single_trial.subtask = 'binary_fractal_choice';
+            elseif modifiers.fractals.no_fractals
+                results.single_trial.subtask = 'binary_budget_choice';
+            else
+                results.single_trial.subtask = 'binary_choice';
+            end
+        end
+        
         
     elseif strcmp(parameters.task.type, 'PAV')
         %only care about rewards for pavlovian
@@ -110,6 +135,7 @@ if parameters.trials.random_stimuli
         results.single_trial.computer_bid = NaN;
     end
     results.single_trial.ordered = 'random';
+    results.single_trial.subtask = 'Pavlovian';
     
     
 else
