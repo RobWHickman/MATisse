@@ -12,7 +12,7 @@ if ~modifiers.fractals.no_fractals
     stimuli.bidspace.position = stimuli.bidspace.position + [bidspace_reflector, 0, bidspace_reflector, 0];
     stimuli.bidspace.reverse_texture_position = stimuli.bidspace.reverse_texture_position + [bidspace_reflector, 0, bidspace_reflector, 0];
     [bidspace_xcenter, bidspace_ycenter] = RectCenter(stimuli.bidspace.position);
-    stimuli.bidspace.bidspace_bounding_box = CenterRectOnPointd([stimuli.bidspace.position + stimuli.bidspace.dimensions.bounding_width], bidspace_xcenter, bidspace_ycenter);
+    stimuli.bidspace.bidspace_bounding_box = CenterRectOnPointd(stimuli.bidspace.bidspace_frame, bidspace_xcenter, bidspace_ycenter);
 end
 
 %first set the position of the hypothetical second fractal to opposite the first fractal

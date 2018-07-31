@@ -40,8 +40,6 @@ for frame = 1:parameters.timings.TrialTime('ITI')
         %do samply stuff
     end
     
-
-    
     %if the last frame of the epoch, clear the buffer
     flip_screen(frame, parameters, task_window, 'ITI');
 end
@@ -102,21 +100,39 @@ for frame = 1:parameters.timings.TrialTime('bidding')
         parameters.task_checks.Status('no_bid_activity') = true;
     end
     
-    draw_bidding_epoch(stimuli, modifiers, hardware, results, task_window, parameters.task.type)
+    draw_bidding_epoch(parameters, stimuli, modifiers, hardware, results, task_window, parameters.task.type)
     flip_screen(frame, parameters, task_window, 'bidding');
 end
 
 %assign the payouts
 %wins every time on the pavlovian task
-results.trial_results.win = 1;
-results.trial_results.task_error = NaN;
-results = assign_payouts(parameters, modifiers, results);
+results = assign_payouts(parameters, modifiers, stimuli, results);
+
+%generate the reverse bidspace for the first price auctions
+%might affect timings- be careful for electrophys
+if strcmp(parameters.task.type, 'BDM') && strcmp(results.single_trial.subtask, 'FP') && strcmp(results.outputs.results, 'win')
+    stimuli = generate_reverse_bidspace(parameters, results, stimuli, modifiers, task_window);
+end    
 
 %assign results and payout
-for frame = 1:parameters.timings.TrialTime('reward_payout')
+for frame = 1:parameters.timings.TrialTime('budget_payout')
+    %draw the first epoch
+    if frame == 1 || frame == parameters.timings.TrialTime('budget_payout')
+        draw_payout_epoch(parameters, modifiers, results, stimuli, hardware, task_window, parameters.task.type, 'budget')
+    end
+    
+    %payout the results on the last frame
+    if frame == parameters.timings.TrialTime('budget_payout')
+        results = payout_results(parameters, modifiers, hardware, results, 'budget');
+    end
+     
+    flip_screen(frame, parameters, task_window, 'reward_payout');
+end
+
+for frame = 1:parameters.timings.TrialTime('budget_payout')
     %draw the first epoch
     if frame == 1 || frame == parameters.timings.TrialTime('reward_payout')
-        draw_payout_epoch(stimuli, hardware, task_window, parameters.task.type)
+        draw_payout_epoch(parameters, modifiers, results, stimuli, hardware, task_window, parameters.task.type, 'reward')
     end
     
     %payout the results on the last frame
@@ -127,23 +143,10 @@ for frame = 1:parameters.timings.TrialTime('reward_payout')
     flip_screen(frame, parameters, task_window, 'reward_payout');
 end
 
-for frame = 1:parameters.timings.TrialTime('budget_payout')
-    %draw the first epoch
-    if frame == 1 || frame == parameters.timings.TrialTime('budget_payout')
-        draw_payout_epoch(stimuli, hardware, task_window, parameters.task.type)
-    end
-    
-    %payout the results on the last frame
-    if frame == parameters.timings.TrialTime('budget_payout')
-        results = payout_results(parameters, modifiers, hardware, results, 'budget');
-    end
-     
-    flip_screen(frame, parameters, task_window, 'budget_payout');
-end
-
 draw_ITI(hardware, task_window);
 Screen('Flip', task_window, [], 0)
 %output the results of the trial to save and update the GUI
+results.trial_results.task_error = 0;
 results = time_trial(results, 'end');
 results = output_results(results, parameters);
 results = set_trial_metadata(parameters, stimuli, hardware, modifiers, results);

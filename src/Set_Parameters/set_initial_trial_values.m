@@ -85,7 +85,7 @@ if parameters.trials.random_stimuli
             else
                 results.single_trial.budget_value = randi(modifiers.budget.divisions) / modifiers.budget.divisions;
                 %if a binary choice between budgets
-                if ~handles.modifiers.fractals.no_fractals
+                if ~modifiers.fractals.no_fractals
                     results.single_trial.second_budget_value = NaN;
                 else
                     results.single_trial.second_budget_value = randi(modifiers.budget.divisions) / modifiers.budget.divisions;

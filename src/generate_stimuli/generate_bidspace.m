@@ -54,12 +54,15 @@ elseif strcmp(parameters.task.type, 'BC')
         ((height - (height/100) * (100 - (100*screen_height_fraction))/2))];
 end
 
+%used to generate covers when assigning payouts
+bidspace.initial_position = bidspace.position;
+
 %generate a white frame for the bidspace to help the monkey focus
-bidspace.dimensions.bounding_width = modifiers.budget.overhang/2;
-bidspace_frame = bidspace.position + bidspace.dimensions.bounding_width;
-bidspace_frame(1:2) = bidspace_frame(1:2) - 2 * bidspace.dimensions.bounding_width;
+bidspace.dimensions.bounding_width = modifiers.budget.overhang/5;
+bidspace.bidspace_frame = bidspace.position + bidspace.dimensions.bounding_width;
+bidspace.bidspace_frame(1:2) = bidspace.bidspace_frame(1:2) - 2 * bidspace.dimensions.bounding_width;
 [bidspace_xcenter, bidspace_ycenter] = RectCenter(bidspace.position);
-bidspace.bidspace_bounding_box = CenterRectOnPointd(bidspace_frame, bidspace_xcenter, bidspace_ycenter);
+bidspace.bidspace_bounding_box = CenterRectOnPointd(bidspace.bidspace_frame, bidspace_xcenter, bidspace_ycenter);
 
 %generate a flipped image to show spent budget
 bidspace.reverse_bidspace_image = flipdim(bidspace_image ,2);

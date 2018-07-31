@@ -550,7 +550,7 @@ function Budget_overhang_Callback(hObject, eventdata, handles)
     handles.modifiers.budget.occlusion_darkness = str2num(overhang);
 guidata(hObject, handles);
 function Budget_overhang_CreateFcn(hObject, eventdata, handles)
-    handles.modifiers.budget.overhang = 20;
+    handles.modifiers.budget.overhang = 50;
 guidata(hObject, handles);
 
 %Functions to define the parameters supplied to a beta distribution to
@@ -1169,4 +1169,16 @@ function Basic_BDM_CreateFcn(hObject, eventdata, handles)
     handles.modifiers.specific_tasks.BDM.contingency = 'BDM';
 guidata(hObject, handles);
 
-
+function Show_stabilisation_Callback(hObject, eventdata, handles)
+    stabilisation = get(handles.Bundle_water, 'Value');
+    if stabilisation == 1
+        handles.modifiers.bidding.stabilisation_transform = 1;
+        disp('bar will widen and change colour upon bid stablisation');
+    else
+        handles.modifiers.bidding.stabilisation_transform = 0;
+        disp('no change to bar once bid is set');
+    end
+guidata(hObject, handles);
+function Show_stabilisation_CreateFcn(hObject, eventdata, handles)
+    handles.modifiers.bidding.stabilisation_transform = 0;
+guidata(hObject, handles);

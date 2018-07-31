@@ -42,8 +42,10 @@ end
 
 %calculate the results to be graphed
 if strcmp(parameters.task.type, 'BDM')
-    results.experiment_summary.means = grpstats(results.full_output_table.trial_results.monkey_final_bid, results.full_output_table.trial_results.offer_value);
+    results.experiment_summary.means = grpstats(full_output_table.trial_results.monkey_final_bid, full_output_table.trial_results.offer_value);
 elseif strcmp(parameters.task.type, 'BC')
+    results.block_results.fractal_means = grpstats(full_output_table.monkey_bid, full_output_table.reward);
+    results.block_results.graph_output = grpstats(full_output_table.reward, results.block_results.fractal_means, 'numel');
 elseif strcmp(parameters.task.type, 'PAV')
     %dont care about means of anything for pavlovian
     results.block_results.fractal_means = NaN;
@@ -53,7 +55,7 @@ end
 
 %if doing the binary choice update whether the monkey went left or right
 if strcmp(parameters.task.type, 'BC')
-    if results.movement > 0
+    if results.movement.total_movement > 0
         results.block_results.left = results.block_results.left + 1;
     else
         results.block_results.right = results.block_results.right + 1;
