@@ -26,8 +26,8 @@ if strcmp(parameters.task.type, 'BDM')
 
 elseif strcmp(parameters.task.type, 'BC')
     if strcmp(results.single_trial.subtask, 'binary_choice') || strcmp(results.single_trial.subtask, 'bundle_choice')
-        if (strcmp(results.single_trial.primary_side, 'left') && results.trial_results.monkey_bid * 100 > modifiers.specific_tasks.binary_choice.bundle_width) ||...
-                (strcmp(results.single_trial.primary_side, 'right') && results.trial_results.monkey_bid * 100 < 100 - modifiers.specific_tasks.binary_choice.bundle_width)
+        if (strcmp(results.single_trial.primary_side, 'right') && results.trial_results.monkey_bid * 100 > modifiers.specific_tasks.binary_choice.bundle_width) ||...
+                (strcmp(results.single_trial.primary_side, 'left') && results.trial_results.monkey_bid * 100 < 100 - modifiers.specific_tasks.binary_choice.bundle_width)
             results.outputs.results = 'fractal_chosen';
             results.outputs.reward = results.single_trial.reward_value;
             

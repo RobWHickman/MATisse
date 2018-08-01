@@ -22,11 +22,11 @@ function MATisse_OpeningFcn(hObject, eventdata, handles, varargin)
     warning('off','daq:digitalio:adaptormismatch')
     warning('off','daq:analoginput:adaptormismatch')
     %set the default directory to Desktop/MATisse
-    root = ['C:/Users/', getenv('username'), '/Desktop/MATisse/task/BDM/'];
+    root = ['C:/Users/', getenv('username'), '/Desktop/MATisse/task/'];
     cd(root);
     handles.output = hObject;
     %load the table containing the monkeys we run
-    load ../../decorators/misc/monkey_table.mat
+    load ../decorators/misc/monkey_table.mat
     handles.parameters.participants.primate_table = monkeys;
     % Update handles structure
 guidata(hObject, handles);
@@ -93,7 +93,7 @@ function Run_button_Callback(hObject, eventdata, handles)
             guidata(hObject, handles);
             %update the graph
             axes(handles.Bidhistory_axes);
-            bar(handles.results.block_results.graph_output);
+            bar(handles.results.graph_output);
             %update the text
             set(handles.total_text, 'String', handles.results.block_results.completed);
             set(handles.correct_text, 'String', handles.results.block_results.correct);
@@ -281,7 +281,7 @@ function Timing_filestring_Callback(hObject, eventdata, handles)
     assert(exist(fullfile(cd, string), 'file') == 2, '!timing file not found in current directory!');
 guidata(hObject, handles);    
 function Timing_filestring_CreateFcn(hObject, eventdata, handles)
-    handles.parameters.timing.load_filestring = missing;
+    handles.parameters.timing.load_filestring = 'fractal_file_here.mat';
 guidata(hObject, handles);    
 
 %Functions to modify the task in ways that we don't want to when recording
@@ -940,7 +940,7 @@ guidata(hObject, handles);
         guidata(hObject, handles);
 
 function Display_button_Callback(hObject, eventdata, handles)
-    display(handles.parameters.task_checks);
+    display(handles.stimuli.fractals);
 function Display_button_CreateFcn(hObject, eventdata, handles)
 
 function Choice_stimuli_Callback(hObject, eventdata, handles)
@@ -1181,4 +1181,14 @@ function Show_stabilisation_Callback(hObject, eventdata, handles)
 guidata(hObject, handles);
 function Show_stabilisation_CreateFcn(hObject, eventdata, handles)
     handles.modifiers.bidding.stabilisation_transform = 0;
+guidata(hObject, handles);
+
+
+
+function Fractal_string_Callback(hObject, eventdata, handles)
+    fractals_filestring = get(handles.Fractal_string,'String');
+    handles.modifiers.fractals.fractals_file = fractals_filestring;
+guidata(hObject, handles);
+function Fractal_string_CreateFcn(hObject, eventdata, handles)
+    handles.modifiers.fractals.fractals_file = 'fractal_file_here.mat';
 guidata(hObject, handles);

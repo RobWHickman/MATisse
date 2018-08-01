@@ -45,20 +45,15 @@ if parameters.trials.random_stimuli
         %rewards
         if ~modifiers.fractals.no_fractals
             results.single_trial.reward_value = randi(modifiers.fractals.number);
-            %second reward cannot equal first reward
-            results.single_trial.second_reward_value = randi(modifiers.fractals.number);
-            while(results.single_trial.reward_value == results.single_trial.second_reward_value)
-                results.single_trial.second_reward_value = randi(modifiers.fractals.number);
-            end
-
             results.single_trial.reward_chance = 1;
-            results.single_trial.second_reward_chance = 1;
+
         %if no fractals then no reward values
         else
             results.single_trial.reward_value = NaN;
             results.single_trial.second_reward_value = NaN;
             results.single_trial.reward_chance = NaN;
             results.single_trial.second_reward_chance = NaN;
+            
         end
         
         %budgets
@@ -99,6 +94,13 @@ if parameters.trials.random_stimuli
             results.single_trial.budget_magnitude = NaN;
             results.single_trial.budget_value = NaN;
             results.single_trial.second_budget_value= NaN;
+            
+            %second reward cannot equal first reward
+            results.single_trial.second_reward_value = randi(modifiers.fractals.number);
+            while(results.single_trial.reward_value == results.single_trial.second_reward_value)
+                results.single_trial.second_reward_value = randi(modifiers.fractals.number);
+            end
+            results.single_trial.second_reward_chance = 1;
         end
         
         %bids
@@ -129,7 +131,7 @@ if parameters.trials.random_stimuli
         results.single_trial.reward_value = randi(modifiers.fractals.number);
         results.single_trial.second_reward_value = NaN;
         if(ismember(results.single_trial.reward_value, modifiers.fractals.p_fractals_indexes))
-            results.single_trial.reward_chance = modifiers.fractals.fractal_probability;
+            results.single_trial.reward_chance = fractals.fractal_properties;
         else
             results.single_trial.reward_chance = 1;
         end
