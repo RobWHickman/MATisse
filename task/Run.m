@@ -14,6 +14,10 @@ for frame = 1:parameters.timings.TrialTime('ITI')
     %also the random delays at the end of epochs 3 and 7
     if frame == 1
         [parameters, results] = set_initial_trial_values(parameters, stimuli, modifiers, results);
+        
+        %generate the task timings
+        parameters.timings.TrialTime = parameters.timings.Frames +...
+            times(parameters.timings.Variance', times(rand(height(parameters.timings),1)', randsample([-1 1], height(parameters.timings), 1)))';
 
         %select the correct fractal for the trial and generate a texture
         if ~modifiers.fractals.no_fractals
@@ -30,8 +34,6 @@ for frame = 1:parameters.timings.TrialTime('ITI')
         %create an empty movement vector
         hardware.joystick.trial.deflection = [];
         
-        results.single_trial.primary_side = 'right';
-        disp(results.single_trial.primary_side);
         if(strcmp(results.single_trial.primary_side, 'right'))
             stimuli = reflect_stimuli(stimuli, hardware, modifiers);
             disp('reflected stuff');
@@ -87,8 +89,9 @@ for frame = 1:parameters.timings.TrialTime('bidding')
     
     [parameters, hardware] = munge_epoch_inputs(parameters, hardware, frame, 'bidding');
     
-    if (~parameters.task_checks.table.Status('no_bid_activity') || ~parameters.task_checks.table.Requirement('no_bid_activity')) &&...
-        (~parameters.task_checks.table.Status('stabilised_offer') || ~parameters.task_checks.table.Requirement('stabilised_offer'))
+    if ~strcmp(parameters.task.type, 'PAV') &&...
+            (~parameters.task_checks.table.Status('no_bid_activity') || ~parameters.task_checks.table.Requirement('no_bid_activity')) &&...
+            (~parameters.task_checks.table.Status('stabilised_offer') || ~parameters.task_checks.table.Requirement('stabilised_offer'))
         [results, hardware] = update_bid_position(hardware, results, parameters, stimuli);
         results.movement.bidding_vector(frame) = hardware.joystick.movement.stimuli_movement;
         results.movement.total_movement = results.movement.total_movement + hardware.joystick.movement.stimuli_movement;
@@ -123,7 +126,7 @@ for frame = 1:parameters.timings.TrialTime('budget_payout')
     
     %payout the results on the last frame
     if frame == parameters.timings.TrialTime('budget_payout')
-        results = payout_results(parameters, modifiers, hardware, results, 'budget');
+        results = payout_results(stimuli, parameters, modifiers, hardware, results, 'budget');
     end
      
     flip_screen(frame, parameters, task_window, 'reward_payout');
@@ -137,18 +140,22 @@ for frame = 1:parameters.timings.TrialTime('budget_payout')
     
     %payout the results on the last frame
     if frame == parameters.timings.TrialTime('reward_payout')
-        results = payout_results(parameters, modifiers, hardware, results, 'reward');
+        results = payout_results(stimuli, parameters, modifiers, hardware, results, 'reward');
     end
      
     flip_screen(frame, parameters, task_window, 'reward_payout');
 end
+
+if ~isnan(results.single_trial.task_failure)
+    <TASK FAILURE>
+end    
 
 draw_ITI(hardware, task_window);
 Screen('Flip', task_window, [], 0)
 %output the results of the trial to save and update the GUI
 results.trial_results.task_error = 0;
 results = time_trial(results, 'end');
-results = output_results(results, parameters);
+results = output_results(results, parameters, hardware);
 results = set_trial_metadata(parameters, stimuli, hardware, modifiers, results);
 
 

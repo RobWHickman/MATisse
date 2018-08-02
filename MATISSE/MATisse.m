@@ -93,7 +93,7 @@ function Run_button_Callback(hObject, eventdata, handles)
             guidata(hObject, handles);
             %update the graph
             axes(handles.Bidhistory_axes);
-            bar(handles.results.graph_output);
+            bar(handles.results.block_results.graph_output);
             %update the text
             set(handles.total_text, 'String', handles.results.block_results.completed);
             set(handles.correct_text, 'String', handles.results.block_results.correct);
@@ -201,14 +201,10 @@ function Binary_choice_Callback(hObject, eventdata, handles)
         set(handles.Pavlovian_learning,'string','Pavlovian','enable','on','BackgroundColor','red');
         set(handles.Pavlovian_learning,'value',0);
         handles.parameters.task.type = 'BC';
-        %set the directory to the pavlovian task
-        cd('../Binary_Choice');
     elseif binary_button_state == get(hObject,'Min')
         set(handles.Binary_choice,'string','Binary Choice','enable','on','BackgroundColor','red');
         handles.parameters.task.type = 'BDM';
-        handles.parameters = rmfield(handles.parameters, 'binary_choice');
-        %set the directory back to the root
-        cd('../BDM/');
+        %handles.parameters = rmfield(handles.parameters, 'binary_choice');
     end
 guidata(hObject, handles);
 function Pavlovian_learning_Callback(hObject, eventdata, handles)
@@ -220,13 +216,9 @@ function Pavlovian_learning_Callback(hObject, eventdata, handles)
         set(handles.Binary_choice,'string','Binary Choice','enable','on','BackgroundColor','red');
         set(handles.Binary_choice,'value',0);
         handles.parameters.task.type = 'PAV';
-        %set the directory to the pavlovian task
-        cd('../Pavlovian_Learning');
     elseif pav_button_state == get(hObject,'Min')
         set(handles.Pavlovian_learning,'string','Pavlovian','enable','on','BackgroundColor','red');
         handles.parameters.task.type = 'BDM';
-        %set the directory back to the root
-        cd('../BDM/');
     end
 guidata(hObject, handles);
 
@@ -281,7 +273,7 @@ function Timing_filestring_Callback(hObject, eventdata, handles)
     assert(exist(fullfile(cd, string), 'file') == 2, '!timing file not found in current directory!');
 guidata(hObject, handles);    
 function Timing_filestring_CreateFcn(hObject, eventdata, handles)
-    handles.parameters.timing.load_filestring = 'fractal_file_here.mat';
+    handles.parameters.timing.load_filestring = missing;
 guidata(hObject, handles);    
 
 %Functions to modify the task in ways that we don't want to when recording
@@ -940,7 +932,7 @@ guidata(hObject, handles);
         guidata(hObject, handles);
 
 function Display_button_Callback(hObject, eventdata, handles)
-    display(handles.stimuli.fractals);
+    display(timing_cols);
 function Display_button_CreateFcn(hObject, eventdata, handles)
 
 function Choice_stimuli_Callback(hObject, eventdata, handles)
@@ -951,7 +943,7 @@ function Choice_stimuli_Callback(hObject, eventdata, handles)
         handles.modifiers.fractals.no_fractals = 1;
         disp('no longer showing fractals- trials will not be rewarded with juice');
         %cannot do bundles with only onestimuli type
-        modifiers.specific_tasks.binary_choice.bundles = 0;
+        handles.modifiers.specific_tasks.binary_choice.bundles = 0;
         set(handles.Bundle_water,'value',0);
     else
         handles.modifiers.fractals.no_fractals = 0;
@@ -961,7 +953,7 @@ function Choice_stimuli_Callback(hObject, eventdata, handles)
     if ~ismember(1, stimuli_present)
         handles.modifiers.budgets.no_budgets = 1;
         disp('no longer showing budgets- trials will not be associated with water');
-        modifiers.specific_tasks.binary_choice.bundles = 0;
+        handles.modifiers.specific_tasks.binary_choice.bundles = 0;
         set(handles.Bundle_water,'value',0);
     else
         handles.modifiers.budgets.no_budgets = 0;
@@ -970,7 +962,7 @@ function Choice_stimuli_Callback(hObject, eventdata, handles)
     
     if ~ismember(1, stimuli_present) && ~ismember(2, stimuli_present)
         disp('no stimuli currently being shown!!');
-        modifiers.specific_tasks.binary_choice.bundles = 0;
+        handles.modifiers.specific_tasks.binary_choice.bundles = 0;
         set(handles.Bundle_water,'value',0);
     end
 guidata(hObject, handles);
@@ -979,36 +971,35 @@ function Choice_stimuli_CreateFcn(hObject, eventdata, handles)
     handles.modifiers.budgets.no_budgets = 0;
 guidata(hObject, handles);
 
+function Remove_fractals_Callback(hObject, eventdata, handles)
+    showing_fractals = get(handles.Remove_fractals, 'Value');
+    handles.modifiers.fractals.no_fractals = showing_fractals;
+    %display a message
+    if showing_fractals == get(hObject,'Min')
+        disp('no longer showing fractals- trials will not be rewarded with juice');
+    elseif showing_fractals == get(hObject,'Max')
+        disp('fractals will be shown and rewarded again');
+    end
+guidata(hObject, handles);
+function Remove_fractals_CreateFcn(hObject, eventdata, handles)
+    handles.modifiers.fractals.no_fractals = 0;
+guidata(hObject, handles);
 
-%     function Remove_fractals_Callback(hObject, eventdata, handles)
-%     showing_fractals = get(handles.Remove_fractals, 'Value');
-%     handles.modifiers.fractals.no_fractals = showing_fractals;
-%     %display a message
-%     if showing_fractals == get(hObject,'Min')
-%         disp('no longer showing fractals- trials will not be rewarded with juice');
-%     elseif showing_fractals == get(hObject,'Max')
-%         disp('fractals will be shown and rewarded again');
-%     end
-% guidata(hObject, handles);
-% function Remove_fractals_CreateFcn(hObject, eventdata, handles)
-%     handles.modifiers.fractals.no_fractals = 0;
-% guidata(hObject, handles);
-% 
-% %remove all budgets (and therefore water)
-% function Remove_budgets_Callback(hObject, eventdata, handles)
-%     clear handles.modifiers.budgets.no_budgets;
-%     showing_budgets = get(handles.Remove_budgets, 'Value');
-%     handles.modifiers.budgets.no_budgets = showing_budgets;
-%     %display a message
-%     if showing_budgets == get(hObject,'Min')
-%         disp('no longer showing budgets- trials will not be associated with water');
-%     elseif showing_budgets == get(hObject,'Max')
-%         disp('budgets will be shown and rewarded again');
-%     end
-% guidata(hObject, handles);
-% function Remove_budgets_CreateFcn(hObject, eventdata, handles)
-%     handles.modifiers.budgets.no_budgets = 0;
-% guidata(hObject, handles);
+%remove all budgets (and therefore water)
+function Remove_budgets_Callback(hObject, eventdata, handles)
+    clear handles.modifiers.budgets.no_budgets;
+    showing_budgets = get(handles.Remove_budgets, 'Value');
+    handles.modifiers.budgets.no_budgets = showing_budgets;
+    %display a message
+    if showing_budgets == get(hObject,'Min')
+        disp('no longer showing budgets- trials will not be associated with water');
+    elseif showing_budgets == get(hObject,'Max')
+        disp('budgets will be shown and rewarded again');
+    end
+guidata(hObject, handles);
+function Remove_budgets_CreateFcn(hObject, eventdata, handles)
+    handles.modifiers.budgets.no_budgets = 0;
+guidata(hObject, handles);
 
 
 
@@ -1190,5 +1181,5 @@ function Fractal_string_Callback(hObject, eventdata, handles)
     handles.modifiers.fractals.fractals_file = fractals_filestring;
 guidata(hObject, handles);
 function Fractal_string_CreateFcn(hObject, eventdata, handles)
-    handles.modifiers.fractals.fractals_file = 'fractal_file_here.mat';
+    handles.modifiers.fractals.fractals_file = missing;
 guidata(hObject, handles);

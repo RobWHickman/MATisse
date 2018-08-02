@@ -3,12 +3,17 @@
 %e.g. fractals_in_array = load_fractal_images(path_to_fractals, fractal_names)
 function fractals = load_fractal_images(parameters, modifiers, width, height)
 
-fractals_table = load(fullfile(modifiers.fractals.folder, 'fractals.mat'));
-fractals_table = fractals_table(find(fractals_table.active),:);
+if ismissing(parameters.timing.load_filestring)
+    fractals_table = load(fullfile(modifiers.fractals.folder, 'fractals.mat'));
+else
+    fractals_table = load(fullfile(modifiers.fractals.folder, modifiers.fractals.fractals_file));
+end
+
+fractals_table = fractals_table.fractals(find(fractals_table.fractals.active),:);
 fractal_filenames = fractals_table.file;
 
 %find all the matching images
-all_images = [repmat(modifiers.fractals.folder, length(fractal_filenames),1), char(fractal_filenames)];
+all_images = [repmat(modifiers.fractals.folder, length(fractal_filenames),1), char(fractal_filenames), repmat('.jpg', length(fractal_filenames),1)];
 
 %error if no matching images are found
 if(size(all_images, 1) < 1)
@@ -50,8 +55,8 @@ end
 
 %for each image, load it and add to the array
 %each fractal is scaled to 75% of the screen height
-for image = 1:length(size(all_images, 1))
-    full_size_fractal = imread([modifiers.fractals.folder all_images(image).name]);
+for image = 1:length(all_images(:,1))
+    full_size_fractal = imread(all_images(image,:));
     image_size = size(full_size_fractal);
     image_scalar = (height * stimuli_size) / image_size(2);
     fractals.images{image} = imresize(full_size_fractal, image_scalar);

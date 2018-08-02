@@ -1,4 +1,4 @@
-function results = payout_results(parameters, modifiers, hardware, results, payout)
+function results = payout_results(stimuli, parameters, modifiers, hardware, results, payout)
 %if the budget is being paid
 if strcmp(payout, 'budget')
     %always give percentage of a fixed budget
@@ -16,7 +16,7 @@ if strcmp(payout, 'budget')
 elseif strcmp(payout, 'reward')
     %calculate the amount of reward to give
     if results.outputs.reward > 0
-        results.outputs.reward_liquid = modifiers.fractals.magnitude_vector(results.outputs.reward); %increments of 0.15ml of juice
+        results.outputs.reward_liquid = stimuli.fractals.fractal_properties.magnitude(results.outputs.reward); %increments of 0.15ml of juice
     else
         results.outputs.reward_liquid = 0;
     end

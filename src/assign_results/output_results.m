@@ -1,4 +1,4 @@
-function results = output_results(results, parameters)
+function results = output_results(results, parameters, hardware)
 
 %update the results for the block
 results.block_results.completed = results.block_results.completed + 1;
@@ -28,27 +28,34 @@ if strcmp(parameters.task.type, 'BC')
     end
 end
 
+timing_cols = table2array(parameters.timings(:,6)) / hardware.screen.refresh_rate;
+timing_cols = array2table(timing_cols.');
+timing_cols.Properties.VariableNames = parameters.timings.Properties.RowNames;
+
+
 %convert to tables and horzcat
 trial_output_table = horzcat(struct2table(results.trial_results,'AsArray',true),...
     struct2table(results.outputs,'AsArray',true),...
     struct2table(results.single_trial,'AsArray',true),...
     struct2table(results.block_results,'AsArray',true),...
-    struct2table(parameters.task));
+    struct2table(parameters.task),...
+    timing_cols);
 
 %vertcat unless the first trial
 if results.block_results.completed == 1
     full_output_table = trial_output_table;
 else
-    %trial_output_table = removevars(trial_output_table,{'fractal_means','graph_output'});
+    trial_output_table = removevars(trial_output_table,{'fractal_means','graph_output'});
     full_output_table = vertcat(results.full_output_table, trial_output_table);
 end
 
 %calculate the results to be graphed
 if strcmp(parameters.task.type, 'BDM')
-    results.experiment_summary.mean_bids = grpstats(full_output_table.trial_results.monkey_final_bid, full_output_table.trial_results.offer_value);
+    results.block_results.fractal_means = grpstats(full_output_table.monkey_bid, full_output_table.reward_value);
+    results.block_results.graph_output = results.block_results.fractal_means;
 elseif strcmp(parameters.task.type, 'BC')
-    results.experiment_summary.mean_bids = grpstats(full_output_table.monkey_bid, full_output_table.reward_value);
-    results.graph_output = results.experiment_summary.mean_bids;
+    results.block_results.fractal_means = grpstats(full_output_table.monkey_bid, full_output_table.reward_value);
+    results.block_results.graph_output = results.block_results.fractal_means;
 elseif strcmp(parameters.task.type, 'PAV')
     %dont care about means of anything for pavlovian
     results.block_results.fractal_means = NaN;
