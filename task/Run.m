@@ -6,7 +6,7 @@ function [results, parameters] = Run(parameters, stimuli, hardware, modifiers, r
 for frame = 1:parameters.timings.TrialTime('ITI')
     %draw the seventh epoch
     if frame == 1 || frame == parameters.timings.TrialTime('ITI')
-        draw_ITI(hardware, task_window);
+        draw_ITI(stimuli, task_window);
     end
 
     %get trial values for the offer, computer bid and random monkey bid
@@ -147,10 +147,10 @@ for frame = 1:parameters.timings.TrialTime('budget_payout')
 end
 
 if ~isnan(results.single_trial.task_failure)
-    <TASK FAILURE>
+    disp('TASK FAILURE')
 end    
 
-draw_ITI(hardware, task_window);
+draw_ITI(stimuli, task_window);
 Screen('Flip', task_window, [], 0)
 %output the results of the trial to save and update the GUI
 results.trial_results.task_error = 0;

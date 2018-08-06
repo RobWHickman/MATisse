@@ -1183,3 +1183,12 @@ guidata(hObject, handles);
 function Fractal_string_CreateFcn(hObject, eventdata, handles)
     handles.modifiers.fractals.fractals_file = missing;
 guidata(hObject, handles);
+
+
+function Background_colours_Callback(hObject, eventdata, handles)
+    coloured_bgs = get(handles.Bundle_water, 'Value');
+    handles.modifiers.background.colours = coloured_bgs;
+guidata(hObject, handles);
+function Background_colours_CreateFcn(hObject, eventdata, handles)
+    handles.modifiers.background.colours = 0;
+guidata(hObject, handles);

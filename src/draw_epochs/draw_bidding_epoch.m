@@ -1,6 +1,6 @@
 function [] = draw_bidding_epoch(parameters, stimuli, modifiers, hardware, results, task_window, task)
 
-Screen('FillRect', task_window, hardware.screen.colours.grey);
+Screen('FillRect', task_window, stimuli.background_colour);
 
 current_bid_position = results.single_trial.starting_bid + results.movement.total_movement;
 bidding_colour = [hardware.screen.colours.white, 0 hardware.screen.colours.white];

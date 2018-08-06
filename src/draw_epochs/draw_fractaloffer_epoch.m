@@ -1,6 +1,6 @@
 function [] = draw_fractaloffer_epoch(stimuli, modifiers, hardware, task_window, task)
 
-Screen('FillRect', task_window, hardware.screen.colours.grey);
+Screen('FillRect', task_window, stimuli.background_colour);
 
 if strcmp(task, 'PAV')
     Screen('DrawTexture', task_window, stimuli.fractals.texture, [], stimuli.fractals.position, 0);
