@@ -28,11 +28,30 @@ for frame = 1:(parameters.timings.Frames('epoch8') + parameters.timings.Delay('e
 
     %generate the reversed bidspace budget for if the monkey wins
     %stimuli = generate_reverse_bidspace(parameters, stimuli, task_window);
+  
+    %QUICK CODE FOR TOUCH
+    dio = digitalio('nidaq','Dev1');
+
+    behavIn1 = addline(dio, 0:7, 1, 'In');
+    behavIn2 = addline(dio, 0:7, 2, 'In');
+
+    set(behavIn1(2),'LineName','KT1')
+    set(behavIn1(4),'LineName','KT2')
+
+    set(behavIn1(8),'LineName','HandShakeIn')
+    set(behavIn2, 'LineName', 'dirConnIn')
+
+    dio.Tag = 'ModigInputDio';
+    touch = dio;
+    start(touch);
+    
     end
     
     Screen('Flip', task_window);
 end
 
+touch_vec = [];
+touch_req = 0.5; %how many of the values must be 1 (monkey touchnig joystick)
 % EPOCH 1 - fixation cross
 for frame = 1:(parameters.timings.Frames('epoch1') + parameters.timings.Delay('epoch1'))
     %draw the first epoch
@@ -47,8 +66,18 @@ for frame = 1:(parameters.timings.Frames('epoch1') + parameters.timings.Delay('e
    % results.trial_results.target_value_shift = parameters.single_trial_values.target_value_shift;
    % results.trial_results.target_box_length = stimuli.target_box.length;
     results.trial_results.start_position = parameters.single_trial_values.starting_bid_value;
-
+    
+    touch_val = getvalue(touch);
+    touch_vec = [touch_vec, touch_val(2)];
+    
     Screen('Flip', task_window);
+end
+
+touch_vec_perc = length(find(touch_vec)) / length(touch_vec);
+
+if ~results.trial_values.task_checks.Status('fixation') && touch_vec_perc < touch_req
+    disp('not holding joystick!');
+    results.trial_values.task_checks.Status('fixation') = true;
 end
 
     if results.trial_values.task_checks.Requirement('targeted_offer') == 1
@@ -58,8 +87,10 @@ end
     end
 %continue with task if monkey fixates
 if (results.trial_values.task_checks.Status('fixation') | ~results.trial_values.task_checks.Requirement('fixation')) &&...
-        (results.trial_values.task_checks.Status('hold_joystick') | ~results.trial_values.task_checks.Requirement('hold_joystick'));
+        (results.trial_values.task_checks.Status('hold_joystick') | ~results.trial_values.task_checks.Requirement('hold_joystick')) &&...
+        touch_vec_perc > touch_req;
 %if pass_all_tests
+
 
 for frame = 1:(parameters.timings.Frames('epoch2') + parameters.timings.Delay('epoch2'))
     draw_epoch_2(stimuli, task_window);

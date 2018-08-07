@@ -47,11 +47,11 @@ elseif strcmp(payout, 'reward')
         %results.trial_results.reward_liquid = 0.25 + (results.trial_results.reward - 1)*0.125; %ROB; MARIUS- 0.25, 0.375, 0.5
         %results.trial_results.reward_liquid = 0.2 + (results.trial_results.reward - 1)*0.1; %ROB- 0.2, 0.3, 0.4, 0.5, 0.6
         %results.trial_results.reward_liquid = 0.2 + (results.trial_results.reward - 1)*0.25; %ROB- 0.2, 0.45, 0.7
-        %results.trial_results.reward_liquid = 0.2 + (results.trial_results.reward - 1)*0.4; %MARIUS- 0.2, 0.35, 0.5, 0.65, 0.8
+        results.trial_results.reward_liquid = 0.2 + (results.trial_results.reward - 1)*0.4; %MARIUS- 0.2, 0.35, 0.5, 0.65, 0.8
         %results.trial_results.reward_liquid = 0.1 + (results.trial_results.reward - 1)*0.1; %ROB- 0.1, 0.2, 0.3
         
         %%%START UNCOMMENT
-         results.trial_results.reward_liquid = 0.2 + (results.trial_results.reward - 1)*0.15; %ROB- 0.2, 0.35, 0.5...
+         %results.trial_results.reward_liquid = 0.2 + (results.trial_results.reward - 1)*0.15; %ROB- 0.2, 0.35, 0.5...
 %         %super dirty and quick prob stimuli
 % %         if(results.trial_results.reward_liquid == 0.2)
 % %             if round(rand)

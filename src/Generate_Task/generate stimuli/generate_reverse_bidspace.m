@@ -9,8 +9,8 @@ trial_values = parameters.single_trial_values;
 %texture
 if strcmp(parameters.task, 'BDM')
 %task parameter for the new bidspace position
-value = trial_values.computer_bid_value; %SECOND_PRICE_AUCTION
-%value = results.trial_results.monkey_bid; %FIRST_PRICE_AUCTION
+%value = trial_values.computer_bid_value; %SECOND_PRICE_AUCTION
+value = results.trial_results.monkey_bid; %FIRST_PRICE_AUCTION
 %REVERSE FPA
 %value = 1-results.trial_results.monkey_bid; %FIRST_PRICE_AUCTION
 %END REVERSE FPA

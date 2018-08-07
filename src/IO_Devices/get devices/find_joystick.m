@@ -16,7 +16,9 @@ if session_version == 'analog'
     joystick.SamplesPerTrigger = inf;
     joystick.UserData = zeros(1,3);
     %start the joystick
+    
     start(joystick);
+
 else
     %add session stuff here
     joystick = daq.createSession('ni');

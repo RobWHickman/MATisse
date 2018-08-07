@@ -4,8 +4,8 @@ function results = assign_payouts(parameters, results)
 if strcmp(parameters.task, 'BDM')
 %if the monkey wins the auction
 if(parameters.single_trial_values.computer_bid_value < results.trial_results.monkey_bid)
-   results.trial_results.remaining_budget = (1 -  parameters.single_trial_values.computer_bid_value); %SECOND_PRICE_AUCTION
-   %results.trial_results.remaining_budget = (1 - results.trial_results.monkey_bid); %FIRST_PRICE_AUCTION
+   %results.trial_results.remaining_budget = (1 -  parameters.single_trial_values.computer_bid_value); %SECOND_PRICE_AUCTION
+   results.trial_results.remaining_budget = (1 - results.trial_results.monkey_bid); %FIRST_PRICE_AUCTION
 
 %REVERSE AUCTION: HIGHER MONKEY BID = LOSS
 %if(parameters.single_trial_values.computer_bid_value > results.trial_results.monkey_bid)

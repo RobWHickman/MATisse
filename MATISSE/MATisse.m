@@ -436,7 +436,13 @@ guidata(hObject, handles);
 
 %display_button
 function pushbutton10_Callback(hObject, eventdata, handles)
-display(cell2mat(handles.stimuli.fractals.fractals(handles.parameters.single_trial_values.offer_value)));
+disp(handles.hardware.touch);
+
+value = getvalue(handles.hardware.touch);
+disp(value);
+
+values = peekdata(handles.hardware.inputs.joystick, 4);
+disp(values);
 
 %set the direction of bidding
 function X_axis_bidding_Callback(hObject, eventdata, handles)
