@@ -7,7 +7,7 @@ end
 
 if strcmp(task, 'BC')
     %randomise order of fractals
-    fractals = 3; %might need to delete this for marius
+    fractals = 5; %might need to delete this for marius
     fractals_vec = 1:fractals;
     %overwrite for adding ends to 3 middle fractals
     for subblock = 1:round(total_trials/(divisions * fractals))
@@ -26,9 +26,11 @@ elseif strcmp(task, 'BDM')
         %block_vec = [repmat(2:4, 1, 10), repmat([1,5], 1, 2)]; %ulysses
         %block_vec = repmat(1:3, 1, 10); %vicer
         block_vec = repmat(1:5, 1, 10); %uly2
-        %block_vec = repmat(1:7, 1, 10); %vicer7
+        %block_vec = repmat(1:5, 1, 10); %vicer7
         fractals_vec = repmat(1:fractals, 1, total_trials/fractals);
         block_vec = block_vec(randperm(length(block_vec)));
+        fractals_vec = fractals_vec(randperm(length(fractals_vec)));
+        fractals_vec = fractals_vec(randperm(length(fractals_vec)));
         fractals_vec = fractals_vec(randperm(length(fractals_vec)));
     end
 end
@@ -94,5 +96,8 @@ elseif strcmp(task, 'BDM')
         %starts = repmat([repmat(0, 1, 30), repmat(1, 1, 30)], 1, 5);
         %%vicer
     end
+        fractals_vec = fractals_vec(randperm(length(fractals_vec)));
+        comp_bid = comp_bid(randperm(length(comp_bid)));
+        starts = starts(randperm(length(starts)));
     combinations = [fractals_vec; comp_bid; starts];
 end

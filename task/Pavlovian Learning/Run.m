@@ -75,7 +75,6 @@ for frame = 1:(parameters.timings.Frames('epoch3') + parameters.timings.Delay('e
             results = release_liquid(parameters, hardware, results, 'reward');
         end
     end
-    display('flipping');
     draw_pav_epoch_2(stimuli, parameters, task_window);
     Screen('Flip', task_window);
 end

@@ -47,17 +47,32 @@ elseif strcmp(payout, 'reward')
         %results.trial_results.reward_liquid = 0.25 + (results.trial_results.reward - 1)*0.125; %ROB; MARIUS- 0.25, 0.375, 0.5
         %results.trial_results.reward_liquid = 0.2 + (results.trial_results.reward - 1)*0.1; %ROB- 0.2, 0.3, 0.4, 0.5, 0.6
         %results.trial_results.reward_liquid = 0.2 + (results.trial_results.reward - 1)*0.25; %ROB- 0.2, 0.45, 0.7
-        %results.trial_results.reward_liquid = 0.2 + (results.trial_results.reward - 1)*0.15; %MARIUS- 0.2, 0.35, 0.5, 0.65, 0.8
+        %results.trial_results.reward_liquid = 0.2 + (results.trial_results.reward - 1)*0.4; %MARIUS- 0.2, 0.35, 0.5, 0.65, 0.8
         %results.trial_results.reward_liquid = 0.1 + (results.trial_results.reward - 1)*0.1; %ROB- 0.1, 0.2, 0.3
-        %results.trial_results.reward_liquid = 0.2 + (results.trial_results.reward - 1)*0.15; %ROB- 0.2, 0.35, 0.5...
-        %results.trial_results.reward_liquid = 0.15 + (results.trial_results.reward - 1)*0.25;
-%         if results.trial_results.reward == 1
-%             results.trial_results.reward_liquid = 0;
-%         elseif results.trial_results.reward == 7
+        
+        %%%START UNCOMMENT
+         results.trial_results.reward_liquid = 0.2 + (results.trial_results.reward - 1)*0.15; %ROB- 0.2, 0.35, 0.5...
+%         %super dirty and quick prob stimuli
+% %         if(results.trial_results.reward_liquid == 0.2)
+% %             if round(rand)
+% %                 results.trial_results.reward_liquid = 1;
+% %                 disp('PAYOUT FULL ON PROB');
+% %             else
+% %                 results.trial_results.reward_liquid = 0;
+% %                 disp('NO PAYOUT ON PROB');
+% %             end
+% %         end
+        
+        %%%END UNCOMMENT
+        
+        
+%         results.trial_results.reward_liquid = 0.15 + (results.trial_results.reward - 1)*0.25;
+%         if results.trial_results.reward == 5
 %             results.trial_results.reward_liquid = 1.65;
 %         else
-%             results.trial_results.reward_liquid = 0.15 + (results.trial_results.reward - 2)*0.25;
+%             results.trial_results.reward_liquid = 0.15 + (results.trial_results.reward - 1)*0.25;
 %         end
+          %results.trial_results.reward_liquid = 0.3 + (results.trial_results.reward - 1)*0.4;
     else
         results.trial_results.reward_liquid = 0;
         

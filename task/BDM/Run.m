@@ -97,8 +97,14 @@ end
 
 %pass all test = 1 %for testing
 %only progress if there was bidding activity in the first x seconds
+% ---------------- 02/08/18 NEW: Added minimum bid time 'hack'-----------
+%bid_vec = results.trial_values.bidding_vector;
+%min_bid_length = 0.2 * hardware.screen.refresh_rate;
+%bid_length = length(find(bid_vec(~isnan(bid_vec))));
+%if ~results.trial_values.task_checks.Status('no_bid_activity') | ~results.trial_values.task_checks.Requirement('no_bid_activity') | bid_length > min_bid_length
 if ~results.trial_values.task_checks.Status('no_bid_activity') | ~results.trial_values.task_checks.Requirement('no_bid_activity') 
-    
+% ---------------- 02/08/18 END OF NEW SECTION -------------------------- 
+
 %only progress if a bid has been finished (i.e. a sufficient pause at the
 %end)
 if results.trial_values.task_checks.Status('stabilised_offer') | ~results.trial_values.task_checks.Requirement('stabilised_offer')
@@ -111,9 +117,12 @@ if results.trial_values.task_checks.Status('targeted_offer') | ~results.trial_va
 for frame = 1:(parameters.timings.Frames('epoch6') + parameters.timings.Delay('epoch6'))
     %draw the result of the auction depending if monkey wins or not
     if(results.trial_results.monkey_bid > parameters.single_trial_values.computer_bid_value)
-        stimuli = generate_reverse_bidspace(parameters, stimuli, task_window, results);%MARIUS
-        draw_epoch_6_win(parameters, stimuli, hardware, results, task_window);
-        results.trial_results.win = 1;
+        %REVERSE FPA
+        % if(results.trial_results.monkey_bid < parameters.single_trial_values.computer_bid_value)
+        %END REVERSE FPA
+            stimuli = generate_reverse_bidspace(parameters, stimuli, task_window, results);%MARIUS
+            draw_epoch_6_win(parameters, stimuli, hardware, results, task_window);
+            results.trial_results.win = 1;
     else
         draw_epoch_6_lose(parameters, stimuli, hardware, results, task_window);
         results.trial_results.win = 0;

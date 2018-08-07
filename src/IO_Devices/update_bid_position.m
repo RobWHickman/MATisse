@@ -8,6 +8,10 @@
 %the final part uses this to update the bidding vector and the current
 %value of the monkey bid
 function [results, stimuli] = update_bid_position(hardware, results, parameters, stimuli)
+
+%manual joystick snesitivity threshold for movement
+manual_sensitivity = 0.1;
+
 %if using testmode look for keystrokes
 if hardware.testmode
     [keyIsDown, secs, keyCode] = KbCheck;
@@ -100,7 +104,7 @@ if (~results.trial_values.task_checks.Status('no_bid_activity') | ~results.trial
     %% JOYSTICK %%
     else
         %look for joystick movement greater than the sensitivity threshold
-        if abs(joystick_movement + joystick_bias) < hardware.inputs.settings.joystick_sensitivity
+        if abs(joystick_movement + joystick_bias) < manual_sensitivity
             %start counting
             results.trial_values.stationary_frame_count = results.trial_values.stationary_frame_count + 1;
             %if count reaches max for a pause in movement time out the bidding

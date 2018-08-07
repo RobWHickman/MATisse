@@ -21,28 +21,37 @@ if parameters.random_stim == 1 || strcmp(parameters.task, 'PAV')
     %MARIUS%
     if strcmp(parameters.task, 'BDM')
         %generate a random bid to start at
-        %single_trial_values.starting_bid_value = rand(1); %START RANDOMLY
+        single_trial_values.starting_bid_value = rand(1); %START RANDOMLY
         %single_trial_values.starting_bid_value = randi(2,1,1)-1; %START AT
         %TOP/BOTTOM
-        %single_trial_values.starting_bid_value = 0; %START AT BOTTOM
+        %single_trial_values.starting_bid_value = 1; %START AT BOTTOM
+        
         %generate a computer bid 
         %change these for Marius- specifies the beta distribution controlling the
         %computers  uniformly random bids
         %A = 1;
         %B = 1;
-        %generate peaked distributions with means at 0.1, 0.5 and 0.8 -
-        %which correspond with BCb values for 0.25, 0.375, 0.5 mL
-        if single_trial_values.offer_value == 1
-            A = 1;
-            B = 9;
-        elseif single_trial_values.offer_value == 2
-            A = 10;
-            B = 10;
-        elseif single_trial_values.offer_value == 3
-            A = 10;
-            B = 10;
-        end
-        single_trial_values.computer_bid_value  = betarnd(1,1);
+        %generate peaked distributions for each fractal
+%         if single_trial_values.offer_value == 1
+%             A = 1;
+%             B = 1;
+%         elseif single_trial_values.offer_value == 2
+%             A = 1;
+%             B = 1;
+%         elseif single_trial_values.offer_value == 3
+%             A = 1;
+%             B = 1;
+%         elseif single_trial_values.offer_value == 4
+%             A = 2;
+%             B = 8;
+%         elseif single_trial_values.offer_value == 5
+%             A = 2;
+%             B = 8;
+%         end
+%          single_trial_values.computer_bid_value  = betarnd(A,B);
+       %generate UNIFORM distribution for across all the offers
+       single_trial_values.computer_bid_value  = betarnd(1,1);
+
     %for binary choice, instead generate the value of the fractal water budget
     elseif strcmp(parameters.task, 'BC')
         single_trial_values.bundle_water = Sample(0:(1/parameters.binary_choice.divisions):1-(1/parameters.binary_choice.divisions));
@@ -64,8 +73,8 @@ else
      if strcmp(parameters.task, 'BDM')
          single_trial_values.offer_value = stimuli.combinations(1,stimuli.combination_order(results.experiment_summary.correct+1));
         %generate a random bid to start at
-        %single_trial_values.starting_bid_value = rand(1); % RANDOM
-        %single_trial_values.starting_bid_value = 0; BOTTOM
+        single_trial_values.starting_bid_value = rand(1); % RANDOM
+        %single_trial_values.starting_bid_value = 1; %BOTTOM
         %single_trial_values.starting_bid_value = randi(2,1,1)-1; %TOP &
         %BOTTOM
         %single_trial_values.starting_bid_value = stimuli.combinations(3,stimuli.combination_order(results.experiment_summary.correct+1));
@@ -73,6 +82,18 @@ else
         %change these for Marius- specifies the beta distribution controlling the
         %computers random bids
         single_trial_values.computer_bid_value = stimuli.combinations(2,stimuli.combination_order(results.experiment_summary.correct+1));
+        %peaked distribution
+%         if single_trial_values.offer_value == 1
+%             A = 4;
+%             B = 4;
+%         elseif single_trial_values.offer_value == 2
+%             A = 4;
+%             B = 4;
+%         elseif single_trial_values.offer_value == 3
+%             A = 4;
+%             B = 4;
+%         end
+%        single_trial_values.computer_bid_value  = betarnd(A,B);
     %for binary choice, instead generate the value of the fractal water budget
      end
     

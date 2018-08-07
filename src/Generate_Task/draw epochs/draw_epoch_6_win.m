@@ -10,6 +10,9 @@ Screen('DrawTexture', task_window, stimuli.trial.trial_fractal_texture, [], stim
 Screen('FrameRect', task_window, [hardware.outputs.screen_info.white], stimuli.bidspace.bidspace_bounding_box, stimuli.bidspace.bidspace_info.bounding_width);
 Screen('DrawTexture', task_window, stimuli.bidspace.bidspace_texture, [], stimuli.bidspace.bidspace_info.position, 0);
 Screen('DrawTexture', task_window, stimuli.trial.reverse_bidspace_texture, [], stimuli.trial.reversed_bidspace_position , 0);
+%REVERSE FPA
+%Screen('DrawTexture', task_window, stimuli.trial.reverse_bidspace_texture, [], stimuli.trial.reversed_bidspace_position + [0, -(stimuli.bidspace.bidspace_info.height*results.trial_results.monkey_bid),0, -(stimuli.bidspace.bidspace_info.height*results.trial_results.monkey_bid)], 0);
+%END REVERSE FPA
 
 vertical_position_monkey_bid = (results.trial_results.monkey_bid * (stimuli.bidspace.bidspace_info.position(2) - stimuli.bidspace.bidspace_info.position(4))) + stimuli.bidspace.bidspace_info.position(4);
 round(vertical_position_monkey_bid);
