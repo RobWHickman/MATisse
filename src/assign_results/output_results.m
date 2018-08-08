@@ -3,7 +3,7 @@ function results = output_results(results, parameters, hardware)
 %update the results for the block
 results.block_results.completed = results.block_results.completed + 1;
 %whether or not the trial was completed succesfully
-if results.trial_results.task_error ~= 1
+if results.single_trial.task_failure ~= 1
     results.block_results.correct = results.block_results.correct + 1;
 else
     results.block_results.error = results.block_results.error + 1;
@@ -32,7 +32,6 @@ timing_cols = table2array(parameters.timings(:,6)) / hardware.screen.refresh_rat
 timing_cols = array2table(timing_cols.');
 timing_cols.Properties.VariableNames = parameters.timings.Properties.RowNames;
 
-
 %convert to tables and horzcat
 trial_output_table = horzcat(struct2table(results.trial_results,'AsArray',true),...
     struct2table(results.outputs,'AsArray',true),...
@@ -40,6 +39,7 @@ trial_output_table = horzcat(struct2table(results.trial_results,'AsArray',true),
     struct2table(results.block_results,'AsArray',true),...
     struct2table(parameters.task),...
     timing_cols);
+
 
 %vertcat unless the first trial
 if results.block_results.completed == 1

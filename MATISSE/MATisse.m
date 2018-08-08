@@ -932,7 +932,7 @@ guidata(hObject, handles);
         guidata(hObject, handles);
 
 function Display_button_Callback(hObject, eventdata, handles)
-    display(timing_cols);
+    display(handles.parameters.task_checks.table.Status);
 function Display_button_CreateFcn(hObject, eventdata, handles)
 
 function Choice_stimuli_Callback(hObject, eventdata, handles)
@@ -1120,18 +1120,18 @@ guidata(hObject, handles);
 
 
 function Finalisation_pause_Callback(hObject, eventdata, handles)
-    clear handles.parameters.timings.finalisation_pause
-    bid_stabilisation_time = get(handles.Finalisation_pause_Callback, 'String');
-    handles.parameters.task_checks.finalisation_pause = num2str(bid_stabilisation_time);
+    clear handles.parameters.task_checks.finalisation_pause
+    bid_stabilisation_time = get(handles.Finalisation_pause, 'String');
+    handles.parameters.task_checks.finalisation_pause = str2double(bid_stabilisation_time);
 guidata(hObject, handles);
 function Finalisation_pause_CreateFcn(hObject, eventdata, handles)
     handles.parameters.task_checks.finalisation_pause = 2;
 guidata(hObject, handles);
 
 function Bid_latency_Callback(hObject, eventdata, handles)
-    clear handles.parameters.timings.finalisation_pause
-    bid_stabilisation_time = get(handles.Finalisation_pause_Callback, 'String');
-    handles.parameters.task_checks.bid_latency = num2str(bid_stabilisation_time);
+    clear handles.parameters.task_checks.bid_latency
+    bid_stabilisation_time = get(handles.Bid_latency, 'String');
+    handles.parameters.task_checks.bid_latency = str2double(bid_stabilisation_time);
 guidata(hObject, handles);
 function Bid_latency_CreateFcn(hObject, eventdata, handles)
     handles.parameters.task_checks.bid_latency = 2;

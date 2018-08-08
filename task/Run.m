@@ -48,8 +48,10 @@ end
 
 %set the systime for the start of the trial
 results = time_trial(results, 'start');
+disp(results.single_trial.task_failure);
 
 %fixation epoch
+if ~results.single_trial.task_failure
 for frame = 1:parameters.timings.TrialTime('fixation')
     %draw the first epoch
     if frame == 1 || frame == parameters.timings.TrialTime('fixation')
@@ -60,12 +62,16 @@ for frame = 1:parameters.timings.TrialTime('fixation')
     [parameters, hardware] = munge_epoch_inputs(parameters, hardware, frame, 'fixation');    
     %parameters = check_joystick_stationary(parameters, joystick);
     if parameters.task_checks.table.Status('hold_joystick') == 1 && parameters.task_checks.table.Requirement('hold_joystick') == 1
+        results.single_trial.task_failure = true;
         break
     end
     flip_screen(frame, parameters, task_window, 'fixation');
 end
+results = check_requirements(parameters, results);
+end
 
 %display fractal
+if ~results.single_trial.task_failure
 for frame = 1:parameters.timings.TrialTime('fractal_offer')
     %draw the first epoch
     if frame == 1 || frame == parameters.timings.TrialTime('fractal_offer')
@@ -75,13 +81,17 @@ for frame = 1:parameters.timings.TrialTime('fractal_offer')
     [parameters, hardware] = munge_epoch_inputs(parameters, hardware, frame, 'fractal_display');
     %check if the monkey is fixating on the cross
     if parameters.task_checks.table.Status('hold_joystick') == 1 && parameters.task_checks.table.Requirement('hold_joystick') == 1
+        results.single_trial.task_failure = true;
         break
     end
     
     flip_screen(frame, parameters, task_window, 'fractal_offer');
 end
+results = check_requirements(parameters, results);
+end
 
-%display fractal
+%bidding phase
+if ~results.single_trial.task_failure
 results.movement.bidding_vector = zeros(1, parameters.timings.TrialTime('bidding'));
 results.movement.total_movement = 0;
 results.movement.stationary_count = 0;
@@ -99,17 +109,25 @@ for frame = 1:parameters.timings.TrialTime('bidding')
         results.movement.bidding_vector(frame) = NaN;
     end
     
-    if(all(results.movement.bidding_vector == 0) && results.movement.stationary_count == parameters.task_checks.bid_latency * hardware.screen.refresh_rate) 
-        parameters.task_checks.Status('no_bid_activity') = true;
+    if(all(results.movement.bidding_vector == 0) && results.movement.stationary_count > round(parameters.task_checks.bid_latency * hardware.screen.refresh_rate))
+        parameters.task_checks.table.Status('no_bid_activity') = 1;
+        break
     end
+    
+%     if
+%         parameters.task_checks.Status('stabilised_offer') = true;
+%     end
+%     
+%     if
+%         parameters.task_checks.Status('targeted_offer') = true;
+%     end
     
     draw_bidding_epoch(parameters, stimuli, modifiers, hardware, results, task_window, parameters.task.type)
     flip_screen(frame, parameters, task_window, 'bidding');
 end
+results = check_requirements(parameters, results);
+end
 
-%assign the payouts
-%wins every time on the pavlovian task
-results = assign_payouts(parameters, modifiers, stimuli, results);
 
 %generate the reverse bidspace for the first price auctions
 %might affect timings- be careful for electrophys
@@ -117,10 +135,14 @@ if strcmp(parameters.task.type, 'BDM') && strcmp(results.single_trial.subtask, '
     stimuli = generate_reverse_bidspace(parameters, results, stimuli, modifiers, task_window);
 end    
 
-%assign results and payout
+%paayout the budget and then reward
+if ~results.single_trial.task_failure
 for frame = 1:parameters.timings.TrialTime('budget_payout')
     %draw the first epoch
     if frame == 1 || frame == parameters.timings.TrialTime('budget_payout')
+        %assign the payouts
+        results = assign_payouts(parameters, modifiers, stimuli, results);
+        
         draw_payout_epoch(parameters, modifiers, results, stimuli, hardware, task_window, parameters.task.type, 'budget')
     end
     
@@ -129,10 +151,12 @@ for frame = 1:parameters.timings.TrialTime('budget_payout')
         results = payout_results(stimuli, parameters, modifiers, hardware, results, 'budget');
     end
      
-    flip_screen(frame, parameters, task_window, 'reward_payout');
+    flip_screen(frame, parameters, task_window, 'budget_payout');
 end
-
-for frame = 1:parameters.timings.TrialTime('budget_payout')
+results = check_requirements(parameters, results);
+end
+if ~results.single_trial.task_failure
+for frame = 1:parameters.timings.TrialTime('reward_payout')
     %draw the first epoch
     if frame == 1 || frame == parameters.timings.TrialTime('reward_payout')
         draw_payout_epoch(parameters, modifiers, results, stimuli, hardware, task_window, parameters.task.type, 'reward')
@@ -145,15 +169,27 @@ for frame = 1:parameters.timings.TrialTime('budget_payout')
      
     flip_screen(frame, parameters, task_window, 'reward_payout');
 end
+results = check_requirements(parameters, results);
+end
 
-if ~isnan(results.single_trial.task_failure)
-    disp('TASK FAILURE')
+if results.single_trial.task_failure
+for frame = 1:parameters.timings.TrialTime('error_timeout')
+    if frame == 1 || frame == parameters.timings.TrialTime('error_timeout')
+        draw_error_epoch(hardware, task_window)
+    end
+    
+    if frame == 2
+        results = assign_error_results(results, parameters);
+    end
+    
+    flip_screen(frame, parameters, task_window, 'error_timeout');
 end    
+results = check_requirements(parameters, results);
+end
 
 draw_ITI(stimuli, task_window);
 Screen('Flip', task_window, [], 0)
 %output the results of the trial to save and update the GUI
-results.trial_results.task_error = 0;
 results = time_trial(results, 'end');
 results = output_results(results, parameters, hardware);
 results = set_trial_metadata(parameters, stimuli, hardware, modifiers, results);

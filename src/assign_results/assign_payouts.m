@@ -9,7 +9,7 @@ end
 
 if strcmp(parameters.task.type, 'BDM')
     %if the monkey wins the auction
-    if(results.single_trial.starting_bid < results.trial_results.monkey_bid)
+    if(results.single_trial.computer_bid < results.trial_results.monkey_bid)
         results.outputs.results = 'win';
         
        results = pay_notpay(results);    
@@ -24,6 +24,7 @@ if strcmp(parameters.task.type, 'BDM')
         results.outputs.results = 'lose';
         results.outputs.budget = 1;
         results.outputs.reward = 0;
+        results.outputs.paid = 0;
     end    
 
 elseif strcmp(parameters.task.type, 'BC')
@@ -44,6 +45,7 @@ elseif strcmp(parameters.task.type, 'BC')
             results.outputs.budget = 1;
             results.outputs.results = 'budget_chosen';
             results.outputs.reward = 0;
+            results.outputs.paid = 0;
         end
     elseif strcmp(results.single_trial.subtask, 'binary_fractal_choice')
         results.outputs.results = 'fractal_chosen';

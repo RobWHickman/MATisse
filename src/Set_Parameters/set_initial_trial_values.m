@@ -124,9 +124,6 @@ if parameters.trials.random_stimuli
             end
         end
         
-        disp(results.single_trial.subtask);
-        
-        
     elseif strcmp(parameters.task.type, 'PAV')
         %only care about rewards for pavlovian
         results.single_trial.reward_value = randi(height(stimuli.fractals.fractal_properties));
@@ -157,6 +154,6 @@ else
     results.single_trial.ordered = 'ordered';
 end
 
-%set the task failure to NaN at the start of the task
-results.single_trial.task_failure = NaN;
+%set the task failure to false at the start of the task
+results.single_trial.task_failure = false;
             
