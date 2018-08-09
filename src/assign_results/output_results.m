@@ -13,7 +13,7 @@ results.block_results.percent_correct = (results.block_results.correct / results
 %update whether or not block was rewarded with juice
 if results.outputs.reward ~= 0
     results.block_results.rewarded = results.block_results.rewarded + 1;
-else
+else%if ~isnan(results.output.budget)
     results.block_results.unrewarded = results.block_results.unrewarded + 1;
 end
 %update the amounts of liquid given out

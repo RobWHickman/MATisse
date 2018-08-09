@@ -18,6 +18,9 @@ for frame = 1:parameters.timings.TrialTime('ITI')
         %generate the task timings
         parameters.timings.TrialTime = parameters.timings.Frames +...
             times(parameters.timings.Variance', times(rand(height(parameters.timings),1)', randsample([-1 1], height(parameters.timings), 1)))';
+        
+        %reset the status of all task checks
+        parameters.task_checks.table.Status = zeros(length(parameters.task_checks.table.Status), 1);
 
         %select the correct fractal for the trial and generate a texture
         if ~modifiers.fractals.no_fractals
@@ -48,7 +51,6 @@ end
 
 %set the systime for the start of the trial
 results = time_trial(results, 'start');
-disp(results.single_trial.task_failure);
 
 %fixation epoch
 if ~results.single_trial.task_failure
@@ -95,13 +97,12 @@ if ~results.single_trial.task_failure
 results.movement.bidding_vector = zeros(1, parameters.timings.TrialTime('bidding'));
 results.movement.total_movement = 0;
 results.movement.stationary_count = 0;
+results.movement.stabilised = 0;
 for frame = 1:parameters.timings.TrialTime('bidding')
     
     [parameters, hardware] = munge_epoch_inputs(parameters, hardware, frame, 'bidding');
     
-    if ~strcmp(parameters.task.type, 'PAV') &&...
-            (~parameters.task_checks.table.Status('no_bid_activity') || ~parameters.task_checks.table.Requirement('no_bid_activity')) &&...
-            (~parameters.task_checks.table.Status('stabilised_offer') || ~parameters.task_checks.table.Requirement('stabilised_offer'))
+    if ~strcmp(parameters.task.type, 'PAV') && ~results.movement.stabilised
         [results, hardware] = update_bid_position(hardware, results, parameters, stimuli);
         results.movement.bidding_vector(frame) = hardware.joystick.movement.stimuli_movement;
         results.movement.total_movement = results.movement.total_movement + hardware.joystick.movement.stimuli_movement;
@@ -114,10 +115,19 @@ for frame = 1:parameters.timings.TrialTime('bidding')
         break
     end
     
-%     if
-%         parameters.task_checks.Status('stabilised_offer') = true;
-%     end
-%     
+    if any(results.movement.bidding_vector ~= 0)
+        if results.movement.stationary_count > round(parameters.task_checks.finalisation_pause * hardware.screen.refresh_rate)
+            results.movement.stabilised = 1;
+            parameters.task_checks.table.Status('stabilised_offer') = 0;
+        else
+            parameters.task_checks.table.Status('stabilised_offer') = 1;
+        end
+    end
+    if parameters.task_checks.table.Status('stabilised_offer') &&...
+            frame + round(parameters.task_checks.finalisation_pause * hardware.screen.refresh_rate) > parameters.timings.TrialTime('bidding')
+        break
+    end
+    
 %     if
 %         parameters.task_checks.Status('targeted_offer') = true;
 %     end
