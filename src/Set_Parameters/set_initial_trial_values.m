@@ -2,6 +2,35 @@ function [parameters, results] = set_initial_trial_values(parameters, stimuli, m
 %get the offer values for the trial
 %follow a predetermined order from create_stimuli_order()
 if parameters.trials.random_stimuli
+    
+    if strcmp(parameters.task.type, 'BC')
+        if modifiers.specific_tasks.binary_choice.bundles
+            results.single_trial.subtask = 'bundle_choice';
+        else
+            if modifiers.budgets.no_budgets
+                results.single_trial.subtask = 'binary_fractal_choice';
+            elseif modifiers.fractals.no_fractals
+                results.single_trial.subtask = 'binary_budget_choice';
+            else
+                results.single_trial.subtask = 'binary_choice';
+            end
+        end
+    elseif strcmp(parameters.task.type, 'BDM')
+        if strcmp(modifiers.specific_tasks.BDM.contingency, 'BDM')
+            results.single_trial.subtask = 'BDM';
+        elseif strcmp(modifiers.specific_tasks.BDM.contingency, 'FP')
+            results.single_trial.subtask = 'FP';
+        elseif strcmp(modifiers.specific_tasks.BDM.contingency, 'BDM_FP')
+            if round(rand)
+                results.single_trial.subtask = 'BDM';
+            else
+                results.single_trial.subtask = 'FP';
+            end
+        end
+    else
+        results.single_trial.subtask = NaN;
+    end
+    
     if strcmp(parameters.task.type, 'BDM')
         %rewards
         results.single_trial.reward_value = randi(height(stimuli.fractals.fractal_properties));
@@ -27,17 +56,6 @@ if parameters.trials.random_stimuli
         results.single_trial.computer_bid = rand();
         
         %task
-        if strcmp(modifiers.specific_tasks.BDM.contingency, 'BDM')
-            results.single_trial.subtask = 'BDM';
-        elseif strcmp(modifiers.specific_tasks.BDM.contingency, 'FP')
-            results.single_trial.subtask = 'FP';
-        elseif strcmp(modifiers.specific_tasks.BDM.contingency, 'BDM_FP')
-            if round(rand)
-                results.single_trial.subtask = 'BDM';
-            else
-                results.single_trial.subtask = 'FP';
-            end
-        end
         
         results.single_trial.primary_side = 'left';
         
@@ -111,19 +129,6 @@ if parameters.trials.random_stimuli
             results.single_trial.primary_side = 'right';
         end
         
-        %task
-        if modifiers.specific_tasks.binary_choice.bundles
-            results.single_trial.subtask = 'bundle_choice';
-        else
-            if modifiers.budgets.no_budgets
-                results.single_trial.subtask = 'binary_fractal_choice';
-            elseif modifiers.fractals.no_fractals
-                results.single_trial.subtask = 'binary_budget_choice';
-            else
-                results.single_trial.subtask = 'binary_choice';
-            end
-        end
-        
     elseif strcmp(parameters.task.type, 'PAV')
         %only care about rewards for pavlovian
         results.single_trial.reward_value = randi(height(stimuli.fractals.fractal_properties));
@@ -140,7 +145,6 @@ if parameters.trials.random_stimuli
         results.single_trial.primary_side = 'left';
     end
     results.single_trial.ordered = 'random';
-    
     
 else
     results.single_trial.reward_value = 1;
