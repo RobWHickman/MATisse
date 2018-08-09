@@ -63,7 +63,7 @@ for frame = 1:parameters.timings.TrialTime('fixation')
     %sample the input devices
     [parameters, hardware] = munge_epoch_inputs(parameters, hardware, frame, 'fixation');    
     %parameters = check_joystick_stationary(parameters, joystick);
-    if parameters.task_checks.table.Status('hold_joystick') == 1 && parameters.task_checks.table.Requirement('hold_joystick') == 1
+    if parameters.task_checks.table.Status('joystick_centered') && parameters.task_checks.table.Requirement('joystick_centered')
         results.single_trial.task_failure = true;
         break
     end
@@ -82,7 +82,7 @@ for frame = 1:parameters.timings.TrialTime('fractal_offer')
     
     [parameters, hardware] = munge_epoch_inputs(parameters, hardware, frame, 'fractal_display');
     %check if the monkey is fixating on the cross
-    if parameters.task_checks.table.Status('hold_joystick') == 1 && parameters.task_checks.table.Requirement('hold_joystick') == 1
+    if parameters.task_checks.table.Status('joystick_centered') && parameters.task_checks.table.Requirement('joystick_centered')
         results.single_trial.task_failure = true;
         break
     end
@@ -123,6 +123,7 @@ for frame = 1:parameters.timings.TrialTime('bidding')
             parameters.task_checks.table.Status('stabilised_offer') = 1;
         end
     end
+    %cut out the task if there is not enough time for monkey to stabilise
     if parameters.task_checks.table.Status('stabilised_offer') &&...
             frame + round(parameters.task_checks.finalisation_pause * hardware.screen.refresh_rate) > parameters.timings.TrialTime('bidding')
         break

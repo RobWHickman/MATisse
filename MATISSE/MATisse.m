@@ -55,9 +55,11 @@ function Gen_button_Callback(hObject, eventdata, handles)
         %update the task checks with the values of the checkboxes
         requirement_vector = [get(handles.Fixation_check, 'Value'),...
             get(handles.Centered_check, 'Value'),...
+            get(handles.Touch_check, 'Value'),...
             get(handles.Bidding_check, 'Value'),...
             get(handles.Finalised_check, 'Value'),...
-            get(handles.Targeted_check, 'Value')];
+            get(handles.Targeted_check, 'Value'),...
+            get(handles.Maximal_check, 'Value')];
         handles.parameters.task_checks.requirements = requirement_vector';
         %generate the task
         [handles.parameters, handles.hardware, handles.stimuli, handles.task_window] =  matisse_generate(handles.parameters, handles.hardware, handles.stimuli, handles.modifiers);
@@ -263,6 +265,8 @@ function Fixation_check_Callback(hObject, eventdata, handles)
 function Bidding_check_Callback(hObject, eventdata, handles)
 function Finalised_check_Callback(hObject, eventdata, handles)
 function Targeted_check_Callback(hObject, eventdata, handles)
+function Maximal_check_Callback(hObject, eventdata, handles)
+function Touch_check_Callback(hObject, eventdata, handles)
 
 %function which determines which file (if not the default
 %interval_times.mat) should set the timings of the epochs
