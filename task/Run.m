@@ -98,6 +98,7 @@ results.movement.bidding_vector = zeros(1, parameters.timings.TrialTime('bidding
 results.movement.total_movement = 0;
 results.movement.stationary_count = 0;
 results.movement.stabilised = 0;
+results.movement.limited_bidding = 0;
 for frame = 1:parameters.timings.TrialTime('bidding')
     
     [parameters, hardware] = munge_epoch_inputs(parameters, hardware, frame, 'bidding');
@@ -128,6 +129,8 @@ for frame = 1:parameters.timings.TrialTime('bidding')
             frame + round(parameters.task_checks.finalisation_pause * hardware.screen.refresh_rate) > parameters.timings.TrialTime('bidding')
         break
     end
+    
+    
     
 %     if
 %         parameters.task_checks.Status('targeted_offer') = true;

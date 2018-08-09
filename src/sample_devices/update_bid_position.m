@@ -24,15 +24,15 @@ elseif implied_movement > 0
     results.movement.stationary_count = 0;
     hardware.joystick.movement.stimuli_movement = axis_multiplier * implied_movement / hardware.joystick.bias.manual_bias;
     if axis_multiplier * (initial_bid_position + hardware.joystick.movement.stimuli_movement) > axis_multiplier * limits(2)
-        disp('limiting bidding');
         hardware.joystick.movement.stimuli_movement = limits(2) - initial_bid_position;
+        results.movement.limited_bidding = 1;
     end
 elseif implied_movement < 0
     results.movement.stationary_count = 0;
     hardware.joystick.movement.stimuli_movement = axis_multiplier * implied_movement * hardware.joystick.bias.manual_bias;
     if axis_multiplier * (initial_bid_position + hardware.joystick.movement.stimuli_movement) < axis_multiplier * limits(1)
-        disp('limiting bidding');
         hardware.joystick.movement.stimuli_movement = limits(1) - initial_bid_position;
+        results.movement.limited_bidding = 1;
     end
 end
 
