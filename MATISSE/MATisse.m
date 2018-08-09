@@ -64,7 +64,7 @@ function Gen_button_Callback(hObject, eventdata, handles)
         %generate the task
         [handles.parameters, handles.hardware, handles.stimuli, handles.task_window] =  matisse_generate(handles.parameters, handles.hardware, handles.stimuli, handles.modifiers);
         %update the GUI with the calculated max trials
-        %this can be edited after
+        %this can be edted after
         set(handles.Total_trials,'String', num2str(handles.parameters.trials.max_trials));
         %confirm that everything has loaded
         disp('everything generated as expected')
@@ -936,7 +936,7 @@ guidata(hObject, handles);
         guidata(hObject, handles);
 
 function Display_button_Callback(hObject, eventdata, handles)
-    display(handles.parameters.task_checks.table.Status);
+    display(handles.results.single_trial.subtask);
 function Display_button_CreateFcn(hObject, eventdata, handles)
 
 function Choice_stimuli_Callback(hObject, eventdata, handles)

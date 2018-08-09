@@ -30,7 +30,7 @@ if parameters.trials.random_stimuli
         if strcmp(modifiers.specific_tasks.BDM.contingency, 'BDM')
             results.single_trial.subtask = 'BDM';
         elseif strcmp(modifiers.specific_tasks.BDM.contingency, 'FP')
-            results.single_trial.subtask = 'BDM';
+            results.single_trial.subtask = 'FP';
         elseif strcmp(modifiers.specific_tasks.BDM.contingency, 'BDM_FP')
             if round(rand)
                 results.single_trial.subtask = 'BDM';

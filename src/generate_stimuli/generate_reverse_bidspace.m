@@ -9,7 +9,7 @@ if strcmp(parameters.task.type, 'BDM')
         %task parameter for the new bidspace position
         value = results.single_trial.computer_bid;
     elseif strcmp(results.single_trial.subtask, 'FP')
-        value = results.single_trial.final_monkey_bid;
+        value = results.single_trial.starting_bid + results.movement.total_movement;
     end
 elseif strcmp(parameters.task.type, 'BC')
     value = 1 - results.single_trial.second_budget_value;

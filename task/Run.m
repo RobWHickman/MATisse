@@ -26,11 +26,11 @@ for frame = 1:parameters.timings.TrialTime('ITI')
         if ~modifiers.fractals.no_fractals
             stimuli.fractals.texture = select_fractal(stimuli, results.single_trial.reward_value, task_window);
         end
-        if strcmp(parameters.task.type, 'BC') && modifiers.budgets.no_budgets
+        if strcmp(parameters.task.type, 'BC') && modifiers.budgets.no_budgets 
             stimuli.fractals.second_texture = select_fractal(stimuli, results.single_trial.second_reward_value, task_window);
         end
         
-        if strcmp(parameters.task.type, 'BDM') || strcmp(parameters.task.type, 'BC')
+        if (strcmp(parameters.task.type, 'BDM') || strcmp(parameters.task.type, 'BC')) && ~ strcmp(results.single_trial.subtask, 'FP')
             stimuli = generate_reverse_bidspace(parameters, results, stimuli, modifiers, task_window);
         end
         
@@ -142,7 +142,9 @@ end
 
 %generate the reverse bidspace for the first price auctions
 %might affect timings- be careful for electrophys
-if strcmp(parameters.task.type, 'BDM') && strcmp(results.single_trial.subtask, 'FP') && strcmp(results.outputs.results, 'win')
+if strcmp(parameters.task.type, 'BDM') && strcmp(results.single_trial.subtask, 'FP') &&...
+        results.single_trial.starting_bid + results.movement.total_movement > results.single_trial.computer_bid
+    disp('reversing bidspace');
     stimuli = generate_reverse_bidspace(parameters, results, stimuli, modifiers, task_window);
 end    
 
