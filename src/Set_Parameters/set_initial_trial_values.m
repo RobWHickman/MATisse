@@ -1,8 +1,6 @@
 function [parameters, results] = set_initial_trial_values(parameters, stimuli, modifiers, results)
-%get the offer values for the trial
-%follow a predetermined order from create_stimuli_order()
+
 if parameters.trials.random_stimuli
-    
     if strcmp(parameters.task.type, 'BC')
         if modifiers.specific_tasks.binary_choice.bundles
             results.single_trial.subtask = 'bundle_choice';
@@ -28,9 +26,9 @@ if parameters.trials.random_stimuli
             end
         end
     else
-        results.single_trial.subtask = NaN;
+    results.single_trial.subtask = NaN;
     end
-    
+
     if strcmp(parameters.task.type, 'BDM')
         %rewards
         results.single_trial.reward_value = randi(height(stimuli.fractals.fractal_properties));
@@ -147,15 +145,35 @@ if parameters.trials.random_stimuli
     results.single_trial.ordered = 'random';
     
 else
-    results.single_trial.reward_value = 1;
-    results.single_trial.second_reward_value = 1;
-    results.single_trial.reward_chance = 1;
-    results.single_trial.budget_magnitude = 1;
-    results.single_trial.budget_value = 1;
-    results.single_trial.second_budget_value = 1;
-    results.single_trial.starting_bid = 1;
-    results.single_trial.computer_bid = 1;
+    
+    combinations_column = parameters.trials.combinations(:,1);
+    struct_table = array2table(transpose(table2array(combinations_column)));
+    struct_table.Properties.VariableNames = combinations_column.Properties.RowNames;
+    
+    all_fields = {'subtask', 'reward_value', 'second_reward_value', 'reward_chance', 'second_reward_chance', 'budget_magnitude', 'budget_value', 'second_budget_value', 'starting_bid', 'computer_bid', 'primary_side'};
+    missing = ~ismember(all_fields, struct_table.Properties.VariableNames);
+    disp(missing);
+    missing_table = array2table(1:length(find(missing)));
+    missing_table.Properties.VariableNames = all_fields(find(missing));
+    missing_table{1,:} = NaN;
+    
+    struct_table = horzcat(struct_table, missing_table);
+    
+    results.single_trial = table2struct(struct_table);
     results.single_trial.ordered = 'ordered';
+    
+    if strcmp(parameters.task.type, 'BDM')
+        if strcmp(modifiers.specific_tasks.BDM.contingency, 'BDM')
+            results.single_trial.subtask = 'BDM';
+        elseif strcmp(modifiers.specific_tasks.BDM.contingency, 'FP')
+            results.single_trial.subtask = 'FP';
+        elseif strcmp(modifiers.specific_tasks.BDM.contingency, 'BDM_FP')
+            auctions = {'BDM', 'FP'};
+            results.single_trial.subtask = auctions(results.single_trial.subtask);
+        end
+    end
+    
+    disp(results.single_trial);
 end
 
 %set the task failure to false at the start of the task

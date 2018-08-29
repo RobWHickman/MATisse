@@ -37,7 +37,7 @@ parameters.trials.max_trials = parameters.trials.max_trials + mod(parameters.tri
 %might not result in even numbers of trial per combination and increase
 %task switching
 if parameters.trials.random_stimuli == 0
-    parameters.trials.combinations = create_stimuli_order(modifiers, parameters, 2);
+    parameters.trials.combinations = create_stimuli_order(modifiers, parameters, stimuli);
 end
 
 %generate the task timings for the first trial
