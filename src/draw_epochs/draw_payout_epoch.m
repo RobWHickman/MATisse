@@ -17,6 +17,7 @@ if strcmp(task, 'BDM')
     if strfind(results.outputs.results, 'win')
         Screen('DrawTexture', task_window, stimuli.bidspace.reverse_texture, [], stimuli.bidspace.reverse_texture_position , 0);
     elseif strcmp(results.outputs.results, 'lose')
+        Screen('FillRect', task_window, stimuli.background_colour, [0, 0, hardware.screen.dimensions.width/2, hardware.screen.dimensions.height]);
     end
     
     Screen('FillRect', task_window, [hardware.screen.colours.white, 0 hardware.screen.colours.white],...

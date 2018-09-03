@@ -146,13 +146,20 @@ if parameters.trials.random_stimuli
     
 else
     
-    combinations_column = parameters.trials.combinations(:,1);
+    %get the trial number (the column of the table to select parameters
+    %from)
+    if ~isfield(results.block_results, 'completed')
+        trial_number = 1;
+    else
+        trial_number = results.block_results.correct + 1;
+    end
+   
+    combinations_column = parameters.trials.combinations(:, trial_number);
     struct_table = array2table(transpose(table2array(combinations_column)));
     struct_table.Properties.VariableNames = combinations_column.Properties.RowNames;
     
     all_fields = {'subtask', 'reward_value', 'second_reward_value', 'reward_chance', 'second_reward_chance', 'budget_magnitude', 'budget_value', 'second_budget_value', 'starting_bid', 'computer_bid', 'primary_side'};
     missing = ~ismember(all_fields, struct_table.Properties.VariableNames);
-    disp(missing);
     missing_table = array2table(1:length(find(missing)));
     missing_table.Properties.VariableNames = all_fields(find(missing));
     missing_table{1,:} = NaN;
@@ -161,6 +168,9 @@ else
     
     results.single_trial = table2struct(struct_table);
     results.single_trial.ordered = 'ordered';
+    
+    results.single_trial.budget_magnitude = modifiers.budget.magnitude;
+    results.single_trial.reward_chance = stimuli.fractals.fractal_properties.probability(results.single_trial.reward_value);
     
     if strcmp(parameters.task.type, 'BDM')
         if strcmp(modifiers.specific_tasks.BDM.contingency, 'BDM')
@@ -171,9 +181,23 @@ else
             auctions = {'BDM', 'FP'};
             results.single_trial.subtask = auctions(results.single_trial.subtask);
         end
+    elseif strcmp(parameters.task.type, 'BC')
+        results.single_trial.starting_bid = 0.5;
+        sides = {'left', 'right'};
+        results.single_trial.primary_side = sides(results.single_trial.primary_side);
+        
+        if modifiers.specific_tasks.binary_choice.bundles
+            results.single_trial.subtask = 'bundle_choice';
+        else
+            if modifiers.budgets.no_budgets
+                results.single_trial.subtask = 'binary_fractal_choice';
+            elseif modifiers.fractals.no_fractals
+                results.single_trial.subtask = 'binary_budget_choice';
+            else
+                results.single_trial.subtask = 'binary_choice';
+            end
+        end
     end
-    
-    disp(results.single_trial);
 end
 
 %set the task failure to false at the start of the task

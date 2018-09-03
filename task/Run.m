@@ -155,13 +155,12 @@ end
 if ~results.single_trial.task_failure
 for frame = 1:parameters.timings.TrialTime('budget_payout')
     %draw the first epoch
-    if frame == 1 || frame == parameters.timings.TrialTime('budget_payout')
+    if frame == 1% || frame == parameters.timings.TrialTime('budget_payout')
         %assign the payouts
         results = assign_payouts(parameters, modifiers, stimuli, results);
         
         draw_payout_epoch(parameters, modifiers, results, stimuli, hardware, task_window, parameters.task.type, 'budget')
     end
-    
     %payout the results on the last frame
     if frame == parameters.timings.TrialTime('budget_payout')
         results = payout_results(stimuli, parameters, modifiers, hardware, results, 'budget');
