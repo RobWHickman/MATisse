@@ -40,8 +40,3 @@ if parameters.trials.random_stimuli == 0
     parameters.trials.combinations = create_stimuli_order(modifiers, parameters, stimuli);
 end
 
-%generate the task timings for the first trial
-%this is usally done in the ITI using set_initial_trial_values
-parameters.timings.TrialTime = parameters.timings.Frames +...
-    times(parameters.timings.Variance', times(rand(height(parameters.timings),1)', randsample([-1 1], height(parameters.timings), 1)))';
-

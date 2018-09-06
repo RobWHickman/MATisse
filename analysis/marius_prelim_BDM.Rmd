@@ -20,8 +20,8 @@ library(zoo)
 
 ```{r which data, warning = FALSE, message = FALSE}
 monkey <- "Vicer"
-today <- "29-August-2018"
-look_back <- "28-August-2018"
+today <- "06-September-2018"
+look_back <- "01-September-2018"
 
 start_trial <- 0
 stop_trial <- "all"

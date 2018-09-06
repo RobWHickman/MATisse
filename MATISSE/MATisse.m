@@ -543,7 +543,7 @@ guidata(hObject, handles);
 function Budget_overhang_Callback(hObject, eventdata, handles)
     clear handles.modifiers.budget.overhang;
     overhang = get(handles.Budget_overhang,'String');
-    handles.modifiers.budget.occlusion_darkness = str2num(overhang);
+    handles.modifiers.budget.overhang = str2num(overhang);
 guidata(hObject, handles);
 function Budget_overhang_CreateFcn(hObject, eventdata, handles)
     handles.modifiers.budget.overhang = 50;
@@ -937,6 +937,7 @@ guidata(hObject, handles);
 
 function Display_button_Callback(hObject, eventdata, handles)
     display(handles.parameters.trials.combinations);
+    display(handles.parameters.task_checks.table);
 function Display_button_CreateFcn(hObject, eventdata, handles)
 
 function Choice_stimuli_Callback(hObject, eventdata, handles)
@@ -1195,4 +1196,13 @@ function Background_colours_Callback(hObject, eventdata, handles)
 guidata(hObject, handles);
 function Background_colours_CreateFcn(hObject, eventdata, handles)
     handles.modifiers.background.colours = 0;
+guidata(hObject, handles);
+
+%doesn't seem to be working
+function Truncate_times_Callback(hObject, eventdata, handles)
+    clear handles.parameters.trials.truncated_times
+    truncate_epoch_times = get(handles.Truncate_times, 'Value');
+    handles.parameters.trials.truncated_times = truncate_epoch_times;
+function Truncate_times_CreateFcn(hObject, eventdata, handles)
+    handles.parameters.trials.truncated_times = 1;
 guidata(hObject, handles);

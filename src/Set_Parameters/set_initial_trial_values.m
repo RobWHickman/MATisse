@@ -1,4 +1,4 @@
-function [parameters, results] = set_initial_trial_values(parameters, stimuli, modifiers, results)
+function results = set_initial_trial_values(parameters, stimuli, modifiers, results)
 
 if parameters.trials.random_stimuli
     if strcmp(parameters.task.type, 'BC')

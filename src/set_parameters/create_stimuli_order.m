@@ -51,6 +51,12 @@ elseif strcmp(parameters.task.type, 'BDM')
     combinations = [repmat(1:n_fractals, 1, comb_length/n_fractals); repelem(1:auctions, 1, comb_length/auctions); starts; computer];
     
     rownames = {'reward_value', 'subtask', 'starting_bid', 'computer_bid'};
+elseif strcmp(parameters.task.type, 'PAV')
+    n_fractals = length(stimuli.fractals.images);
+    
+    comb_length = n_fractals;
+    combinations = 1:n_fractals;
+    rownames = {'reward_value'};
 end
 
 parameters.trials.max_trials = ceil(parameters.trials.max_trials/comb_length) * comb_length;

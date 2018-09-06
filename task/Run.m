@@ -1,5 +1,16 @@
 %BDM task function
 function [results, parameters] = Run(parameters, stimuli, hardware, modifiers, results, task_window)
+
+%generate the task timings
+if parameters.trials.truncated_times
+    times = generate_truncated_times(parameters);
+    parameters.timings.TrialTime = rot90(round(times), 3);
+    disp(parameters.timings);
+else
+    parameters.timings.TrialTime = parameters.timings.Frames +...
+        times(parameters.timings.Variance', times(rand(height(parameters.timings),1)', randsample([-1 1], height(parameters.timings), 1)))';
+end
+
 %% EPOCHS %%
 %% the different epochs in the task if all checks are met %%
 %inter trial interval
@@ -13,11 +24,7 @@ for frame = 1:parameters.timings.TrialTime('ITI')
     %start position
     %also the random delays at the end of epochs 3 and 7
     if frame == 1
-        [parameters, results] = set_initial_trial_values(parameters, stimuli, modifiers, results);
-        
-        %generate the task timings
-        parameters.timings.TrialTime = parameters.timings.Frames +...
-            times(parameters.timings.Variance', times(rand(height(parameters.timings),1)', randsample([-1 1], height(parameters.timings), 1)))';
+        results = set_initial_trial_values(parameters, stimuli, modifiers, results);
         
         %reset the status of all task checks
         parameters.task_checks.table.Status = zeros(length(parameters.task_checks.table.Status), 1);
@@ -32,6 +39,16 @@ for frame = 1:parameters.timings.TrialTime('ITI')
         
         if (strcmp(parameters.task.type, 'BDM') || strcmp(parameters.task.type, 'BC')) && ~ strcmp(results.single_trial.subtask, 'FP')
             stimuli = generate_reverse_bidspace(parameters, results, stimuli, modifiers, task_window);
+            
+            if parameters.task_checks.table.Requirement('targeted_offer')
+                if parameters.trials.total_trials < 1
+                    correct = 0;
+                else
+                    correct = results.experiment_summary.correct;
+                end
+                
+                stimuli.target_box = generate_target_box(parameters, stimuli, hardware, correct);
+            end
         end
         
         %create an empty movement vector
@@ -52,28 +69,28 @@ end
 %set the systime for the start of the trial
 results = time_trial(results, 'start');
 
-%fixation epoch
-if ~results.single_trial.task_failure
-for frame = 1:parameters.timings.TrialTime('fixation')
-    %draw the first epoch
-    if frame == 1 || frame == parameters.timings.TrialTime('fixation')
-        draw_fixation_epoch(stimuli, hardware, task_window, parameters.task.type);
-    end
-    
-    %sample the input devices
-    [parameters, hardware] = munge_epoch_inputs(parameters, hardware, frame, 'fixation');    
-    %parameters = check_joystick_stationary(parameters, joystick);
-    if parameters.task_checks.table.Status('joystick_centered') && parameters.task_checks.table.Requirement('joystick_centered')
-        results.single_trial.task_failure = true;
-        break
-    end
-    flip_screen(frame, parameters, task_window, 'fixation');
-end
-results = check_requirements(parameters, results);
-end
+% %fixation epoch
+% if ~results.single_trial.task_failure
+% for frame = 1:parameters.timings.TrialTime('fixation')
+%     %draw the first epoch
+%     if frame == 1 || frame == parameters.timings.TrialTime('fixation')
+%         draw_fixation_epoch(stimuli, hardware, task_window, parameters.task.type);
+%     end
+%     
+%     %sample the input devices
+%     [parameters, hardware] = munge_epoch_inputs(parameters, hardware, frame, 'fixation');    
+%     %parameters = check_joystick_stationary(parameters, joystick);
+%     if parameters.task_checks.table.Status('joystick_centered') && parameters.task_checks.table.Requirement('joystick_centered')
+%         results.single_trial.task_failure = true;
+%         break
+%     end
+%     flip_screen(frame, parameters, task_window, 'fixation');
+% end
+% results = check_requirements(parameters, results);
+% end
 
 %display fractal
-if ~results.single_trial.task_failure
+if ~results.single_trial.task_failure || strcmp(parameters.task.type, 'PAV')
 for frame = 1:parameters.timings.TrialTime('fractal_offer')
     %draw the first epoch
     if frame == 1 || frame == parameters.timings.TrialTime('fractal_offer')
@@ -93,7 +110,7 @@ results = check_requirements(parameters, results);
 end
 
 %bidding phase
-if ~results.single_trial.task_failure
+if ~results.single_trial.task_failure || strcmp(parameters.task.type, 'PAV')
 results.movement.bidding_vector = zeros(1, parameters.timings.TrialTime('bidding'));
 results.movement.total_movement = 0;
 results.movement.stationary_count = 0;
@@ -152,7 +169,7 @@ if strcmp(parameters.task.type, 'BDM') && strcmp(results.single_trial.subtask, '
 end    
 
 %paayout the budget and then reward
-if ~results.single_trial.task_failure
+if ~results.single_trial.task_failure || strcmp(parameters.task.type, 'PAV')
 for frame = 1:parameters.timings.TrialTime('budget_payout')
     %draw the first epoch
     if frame == 1% || frame == parameters.timings.TrialTime('budget_payout')
@@ -170,7 +187,7 @@ for frame = 1:parameters.timings.TrialTime('budget_payout')
 end
 results = check_requirements(parameters, results);
 end
-if ~results.single_trial.task_failure
+if ~results.single_trial.task_failure || strcmp(parameters.task.type, 'PAV')
 for frame = 1:parameters.timings.TrialTime('reward_payout')
     %draw the first epoch
     if frame == 1 || frame == parameters.timings.TrialTime('reward_payout')
@@ -187,7 +204,7 @@ end
 results = check_requirements(parameters, results);
 end
 
-if results.single_trial.task_failure
+if results.single_trial.task_failure && ~strcmp(parameters.task.type, 'PAV')
 for frame = 1:parameters.timings.TrialTime('error_timeout')
     if frame == 1 || frame == parameters.timings.TrialTime('error_timeout')
         draw_error_epoch(hardware, task_window)
