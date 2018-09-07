@@ -1130,7 +1130,7 @@ function Finalisation_pause_Callback(hObject, eventdata, handles)
     handles.parameters.task_checks.finalisation_pause = str2double(bid_stabilisation_time);
 guidata(hObject, handles);
 function Finalisation_pause_CreateFcn(hObject, eventdata, handles)
-    handles.parameters.task_checks.finalisation_pause = 2;
+    handles.parameters.task_checks.finalisation_pause = 1;
 guidata(hObject, handles);
 
 function Bid_latency_Callback(hObject, eventdata, handles)
@@ -1139,7 +1139,7 @@ function Bid_latency_Callback(hObject, eventdata, handles)
     handles.parameters.task_checks.bid_latency = str2double(bid_stabilisation_time);
 guidata(hObject, handles);
 function Bid_latency_CreateFcn(hObject, eventdata, handles)
-    handles.parameters.task_checks.bid_latency = 2;
+    handles.parameters.task_checks.bid_latency = 1;
 guidata(hObject, handles);
 
 

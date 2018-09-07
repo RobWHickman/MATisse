@@ -1,40 +1,19 @@
 %function to generate a semi transparent box randomly within the bidspace 
 %to be used as a target for monkey bidding
-function target_box = generate_target_box(modifiers, stimuli, hardware, correct_trials)
-if stimuli.target_box.static
-    target_box.length = stimuli.bidspace.dimensions.height * stimuli.target_box.startsize;
+function stimuli = generate_target_box(modifiers, stimuli, hardware, results)
 
-    target_box_y1 = stimuli.bidspace.position(2);
-    target_box_y2 = target_box_y1 + target_box.length;
-    
-    shifts = 0:0.1:1;
-    shifts = shifts(54 + (stimuli.bidspace.dimensions.height * (0:0.1:1)) >= target_box.length);
-    
-    shift = shifts(randi(length(shifts)));
-else
-    %5% of the original height is ample for it to collapse to
-    minimum_size = stimuli.bidspace.dimensions.height * 0.05;
-    maximum_size = stimuli.bidspace.dimensions.height * stimuli.target_box.startsize;
-    %starts at max size and converges to minimum size with a softmax
-    %function
-    target_box.length = ((maximum_size - minimum_size) - ((maximum_size - minimum_size) * (1/ (1 + exp(1) ^ (-(correct_trials-50)/20))))) + minimum_size;
-
-    %generates the upper (in space not value) limit on the targeting box
-    target_box_y1 = stimuli.bidspace.position(2);
-    target_box_y2 = target_box_y1 + target_box.length;
-    %shift it by a random percentrage of the max possible shift
-    shift = rand() * (stimuli.bidspace.position(4) - target_box_y2);
-end
-
+stimuli.target_box.length = stimuli.bidspace.dimensions.height * results.single_trial.target_box_size;
+stimuli.target_box.shift = stimuli.bidspace.dimensions.height * results.single_trial.target_box_shift;
 
 %make sure the width of the target box is slightly wider than the bounding
 %box
-%target_box_width = modifiers.budget.overhang * 2;
-target_box_width = 100;
+target_box_width = modifiers.budget.overhang * 2;
 
+target_box_y1 = stimuli.bidspace.position(2);
+target_box_y2 = target_box_y1 + stimuli.target_box.length;
 %get the full position
-target_box.position = [stimuli.bidspace.position(1) - target_box_width, target_box_y1 + shift,...
-    stimuli.bidspace.position(3) + target_box_width, target_box_y2 + shift];
+stimuli.target_box.position = [stimuli.bidspace.position(1) - target_box_width, target_box_y1 + stimuli.target_box.shift,...
+    stimuli.bidspace.position(3) + target_box_width, target_box_y2 + stimuli.target_box.shift];
 
 %semi transparent light blue colouring
-target_box.colour = [0 0 hardware.screen.colours.white];
+stimuli.target_box.colour = [0 0 hardware.screen.colours.white];

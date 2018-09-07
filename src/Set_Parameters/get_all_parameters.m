@@ -26,6 +26,7 @@ if ~any(ismember({timing_files.name}, 'interval_times.mat'))
 %will by default load interval_times.mat unless otherwise specified
 else
     if ismissing(parameters.timing.load_filestring)
+        disp('loading epoch times from decorators folder');
         load('../decorators/timings/interval_times.mat');
         parameters.timings = interval_times;
     else

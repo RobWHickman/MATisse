@@ -12,9 +12,24 @@ elseif strcmp(task, 'BDM')
     Screen('FrameRect', task_window, [hardware.screen.colours.white], stimuli.bidspace.bidspace_bounding_box, stimuli.bidspace.dimensions.bounding_width);
     Screen('DrawTexture', task_window, stimuli.bidspace.texture, [], stimuli.bidspace.position, 0);
     
-%     Screen('DrawLine', task_window, bidding_colour,...
-%         stimuli.bidspace.position(1), stimuli.bidspace.position(2) + (current_bid_position * stimuli.bidspace.dimensions.height),...
-%         stimuli.bidspace.position(3), stimuli.bidspace.position(2) + (current_bid_position * stimuli.bidspace.dimensions.height), 5);
+    %draw the targeting box if the value for the test if false
+    if parameters.task_checks.table.Requirement('targeted_offer')
+        %Screen('BlendFunction', task_window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
+        if parameters.task_checks.table.Status('targeted_offer')
+            %if the box should be filled or not
+            if stimuli.target_box.filled
+                Screen('FillRect', task_window, stimuli.target_box.colour, stimuli.target_box.position);
+            elseif ~stimuli.target_box.filled
+                Screen('FrameRect', task_window, stimuli.target_box.colour, stimuli.target_box.position, 12);
+            end
+        elseif ~parameters.task_checks.table.Status('targeted_offer')
+            if stimuli.target_box.filled
+                Screen('FillRect', task_window, [0 hardware.screen.colours.white 0], stimuli.target_box.position);
+            elseif ~stimuli.target_box.filled
+                Screen('FrameRect', task_window, [0 hardware.screen.colours.white 0], stimuli.target_box.position, 12);
+            end
+        end
+    end
 
     if parameters.task_checks.table.Status('stabilised_offer') && modifiers.bidding.stabilisation_transform
         Screen('FillRect', task_window, bidding_colour,...

@@ -53,8 +53,32 @@ if parameters.trials.random_stimuli
         end
         results.single_trial.computer_bid = rand();
         
-        %task
-        
+        if parameters.task_checks.table.Requirement('targeted_offer')
+            if stimuli.target_box.static
+                results.single_trial.target_box_size = stimuli.target_box.startsize;
+                
+                shifts = 0:0.1:1;
+                shifts = shifts(shifts > results.single_trial.target_box_size);
+                results.single_trial.target_box_shift = 1 - shifts(randi(length(shifts)));
+            else
+                if parameters.trials.total_trials < 1
+                    correct = 0;
+                else
+                    correct = results.experiment_summary.correct;
+                end
+                minimum_size = stimuli.bidspace.dimensions.height * 0.05;
+                maximum_size = stimuli.bidspace.dimensions.height * stimuli.target_box.startsize;
+                results.single_trial.target_box_size = ((maximum_size - minimum_size) - ((maximum_size - minimum_size) * (1/ (1 + exp(1) ^ (-(correct-50)/20))))) + minimum_size;
+                results.single_trial.target_box_size = results.single_trial.target_box_size / stimuli.bidspace.dimensions.height;
+                
+                results.single_trial.target_box_shift = (rand() * results.single_trial.target_box_size);
+            end
+            
+        else
+            results.single_trial.target_box_shift = NaN;
+            results.single_trial.target_box_size = NaN;
+        end
+
         results.single_trial.primary_side = 'left';
         
     elseif strcmp(parameters.task.type, 'BC')
@@ -121,6 +145,8 @@ if parameters.trials.random_stimuli
         %bids
         results.single_trial.starting_bid = 0.5;
         results.single_trial.computer_bid = NaN;
+        results.single_trial.target_box_shift = NaN;
+        results.single_trial.target_box_size = NaN;
         if(round(rand))
             results.single_trial.primary_side = 'left';
         else
@@ -139,6 +165,8 @@ if parameters.trials.random_stimuli
         results.single_trial.second_budget_value = NaN;
         results.single_trial.starting_bid = NaN;
         results.single_trial.computer_bid = NaN;
+        results.single_trial.target_box_shift = NaN;
+        results.single_trial.target_box_size = NaN;
         results.single_trial.subtask = 'Pavlovian';
         results.single_trial.primary_side = 'left';
     end

@@ -5,11 +5,11 @@ function [results, parameters] = Run(parameters, stimuli, hardware, modifiers, r
 if parameters.trials.truncated_times
     times = generate_truncated_times(parameters);
     parameters.timings.TrialTime = rot90(round(times), 3);
-    disp(parameters.timings);
 else
     parameters.timings.TrialTime = parameters.timings.Frames +...
         times(parameters.timings.Variance', times(rand(height(parameters.timings),1)', randsample([-1 1], height(parameters.timings), 1)))';
 end
+disp(parameters.timings);
 
 %% EPOCHS %%
 %% the different epochs in the task if all checks are met %%
@@ -41,13 +41,7 @@ for frame = 1:parameters.timings.TrialTime('ITI')
             stimuli = generate_reverse_bidspace(parameters, results, stimuli, modifiers, task_window);
             
             if parameters.task_checks.table.Requirement('targeted_offer')
-                if parameters.trials.total_trials < 1
-                    correct = 0;
-                else
-                    correct = results.experiment_summary.correct;
-                end
-                
-                stimuli.target_box = generate_target_box(parameters, stimuli, hardware, correct);
+                stimuli = generate_target_box(modifiers, stimuli, hardware, results);
             end
         end
         
@@ -111,11 +105,7 @@ end
 
 %bidding phase
 if ~results.single_trial.task_failure || strcmp(parameters.task.type, 'PAV')
-results.movement.bidding_vector = zeros(1, parameters.timings.TrialTime('bidding'));
-results.movement.total_movement = 0;
-results.movement.stationary_count = 0;
-results.movement.stabilised = 0;
-results.movement.limited_bidding = 0;
+results.movement = initialise_movement(parameters);
 for frame = 1:parameters.timings.TrialTime('bidding')
     
     [parameters, hardware] = munge_epoch_inputs(parameters, hardware, frame, 'bidding');
@@ -141,17 +131,16 @@ for frame = 1:parameters.timings.TrialTime('bidding')
             parameters.task_checks.table.Status('stabilised_offer') = 1;
         end
     end
+    
     %cut out the task if there is not enough time for monkey to stabilise
     if parameters.task_checks.table.Status('stabilised_offer') &&...
             frame + round(parameters.task_checks.finalisation_pause * hardware.screen.refresh_rate) > parameters.timings.TrialTime('bidding')
         break
     end
     
-    
-    
-%     if
-%         parameters.task_checks.Status('targeted_offer') = true;
-%     end
+    if parameters.task_checks.table.Requirement('targeted_offer')
+        parameters = check_targeted_offer(parameters, results, stimuli);
+    end
     
     draw_bidding_epoch(parameters, stimuli, modifiers, hardware, results, task_window, parameters.task.type)
     flip_screen(frame, parameters, task_window, 'bidding');
