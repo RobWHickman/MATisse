@@ -18,12 +18,12 @@ library(hrbrthemes)
 ```
 
 ```{r parameters, warning = FALSE, message = FALSE}
-monkey <- "Ulysses"
-today <- "21-Apr-2018"
-look_back <- "16-Apr-2018"
+monkey <- "Vicer"
+today <- "14-September-2018"
+look_back <- "05-September-2018"
 
-start_trial <- 50
-stop_trial <- 200
+start_trial <- 0
+stop_trial <- 400
 
 merge_days <- TRUE
 

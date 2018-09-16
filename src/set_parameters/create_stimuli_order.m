@@ -47,6 +47,18 @@ elseif strcmp(parameters.task.type, 'BDM')
     
     %the computer bids- consider changing if using distributions
     computer = rand(1, comb_length);
+    
+    %the targeting parameters
+    if parameters.task_checks.table.Requirement('targeted_offer')
+        if stimuli.target_box.static
+            target_size = stimuli.target_box.startsize;
+        else
+        end
+        
+    else
+        target_size = 1;
+        target_start = 1;
+    end
 
     combinations = [repmat(1:n_fractals, 1, comb_length/n_fractals); repelem(1:auctions, 1, comb_length/auctions); starts; computer];
     
