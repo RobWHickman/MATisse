@@ -1015,10 +1015,10 @@ function Eyefixation_track_Callback(hObject, eventdata, handles)
     else
         disp('fixation testing using joystick only');
     end
-    handles.hardware.eye_tracker.fixation = fixate_eyes;
+    handles.hardware.eyetracker.fixation = fixate_eyes;
 guidata(hObject, handles);
 function Eyefixation_track_CreateFcn(hObject, eventdata, handles)
-    handles.hardware.eye_tracker.fixation = 0;
+    handles.hardware.eyetracker.fixation = 0;
 guidata(hObject, handles);
 
 function Eyesample_rate_Callback(hObject, eventdata, handles)

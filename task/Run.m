@@ -9,8 +9,6 @@ else
     parameters.timings.TrialTime = parameters.timings.Frames +...
         times(parameters.timings.Variance', times(rand(height(parameters.timings),1)', randsample([-1 1], height(parameters.timings), 1)))';
 end
-disp(parameters.timings);
-disp(results);
 
 %% EPOCHS %%
 %% the different epochs in the task if all checks are met %%
@@ -46,10 +44,7 @@ for frame = 1:parameters.timings.TrialTime('ITI')
                 stimuli = generate_target_box(modifiers, stimuli, hardware, results);
             end
         end
-        
-        %create an empty movement vector
-        hardware.joystick.trial.deflection = [];
-        
+      
         if(strcmp(results.single_trial.primary_side, 'right'))
             stimuli = reflect_stimuli(stimuli, hardware, modifiers);
             disp('reflected stuff');
@@ -74,7 +69,9 @@ for frame = 1:parameters.timings.TrialTime('fixation')
     end
     
     %sample the input devices
-    [parameters, hardware] = munge_epoch_inputs(parameters, hardware, frame, 'fixation');    
+    hardware = sample_input_devices(parameters, hardware);
+    [parameters, hardware, results] = munge_epoch_inputs(parameters, hardware, results, frame, 'fixation');    
+
     %parameters = check_joystick_stationary(parameters, joystick);
     if parameters.task_checks.table.Status('joystick_centered') && parameters.task_checks.table.Requirement('joystick_centered')
         results.single_trial.task_failure = true;

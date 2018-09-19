@@ -1,9 +1,15 @@
-function [parameters, hardware] = munge_epoch_inputs(parameters, hardware, frame, epoch)
-hardware = sample_inputs(parameters, hardware, 100);
+function [parameters, hardware, results] = munge_epoch_inputs(parameters, hardware, results, frame, epoch)
 
-epoch_number = find(strcmp(parameters.timings.Description, epoch));
-hardware.joystick.trial.deflection = vertcat(hardware.joystick.trial.deflection, [hardware.joystick.movement.deflection_y, hardware.joystick.movement.deflection_x, frame, epoch_number]);
+%add in to the behaviour table
+disp(epoch);
+disp(results.behaviour_table.epoch);
+strcmp(results.behvaiour_table.epoch, epoch)
+disp(results.behaviour.frame == frame);
 
+datacell = [parameters.trials.total_trials, {epoch}]
+
+if ~parameters.break.testmode
+%munge joystick inputs
 if strcmp(epoch, 'bidding')
     sensitivity = hardware.joystick.sensitivity.movement;
 else
@@ -38,5 +44,10 @@ if strcmp(epoch, 'bidding')
     end
 
     hardware.joystick.movement.joy_movement = hardware.joystick.movement.speed * impetus;
+end
+
+%munge touch inputs
+
+
 end
 
