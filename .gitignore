@@ -10,6 +10,4 @@ analysis/knitted_pdfs/*
 **/*.asv
 
 #ignore any data files
-**/*.csv
-**/*.xls
-**/*.mat
+savefiles/*

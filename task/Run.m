@@ -10,6 +10,7 @@ else
         times(parameters.timings.Variance', times(rand(height(parameters.timings),1)', randsample([-1 1], height(parameters.timings), 1)))';
 end
 disp(parameters.timings);
+disp(results);
 
 %% EPOCHS %%
 %% the different epochs in the task if all checks are met %%

@@ -20,17 +20,19 @@ if ~parameters.break.testmode
         %start the joystick
         start(hardware.ni_devices);
     else
-        %add session stuff here
-        fprintf('finding digital ni devices');
-        hardware.ni_devices = daq.createSession('ni');
-        addAnalogOutputChannel(hardware.ni_devices,'Dev1',0,'Voltage');
-        hardware.ni_devices.IsContinuous = true;
-        hardware.ni_devices.Rate=10000;
-        data=linspace(-1,1,5000)';
-        lh = addlistener(hardware.ni_devices,'DataRequired', ...
-            @(src,event) src.queueOutputData(data));
-        queueOutputData(hardware.ni_devices,data) 
-        startBackground(hardware.ni_devices); 
+        %clear the hardware in use
+        daqreset();
+
+        joystick = daq.createSession('ni');
+        joystick.Rate=20;
+        joystick.DurationInSeconds = 1/screen_refresh;
+        addAnalogInputChannel(joystick, 'Dev1',0,'Voltage');
+        addAnalogInputChannel(joystick, 'Dev1',1,'Voltage');
+        hardware.joystick = joystick;
+
+        touch = daq.createSession('ni');
+        addDigitalChannel(touch,'Dev1','Port1/Line1','InputOnly');
+        hardware.touch = touch;
     end
 else
     if hardware.joystick.direction == 'x'
