@@ -1,7 +1,9 @@
 function movement = initialise_movement(parameters)
 
-movement.bidding_vector = zeros(1, parameters.timings.TrialTime('bidding'));
-movement.total_movement = 0;
-movement.stationary_count = 0;
-movement.stabilised = 0;
-movement.limited_bidding = 0;
+total_frames = sum(parameters.timings.TrialTime);
+
+bidding_vector = zeros(1, total_frames);
+behave_vector = NaN(1, total_frames);
+
+epochs = repelem(parameters.timings, 1, parameters.timings);
+trial = 

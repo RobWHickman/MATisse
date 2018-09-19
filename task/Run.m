@@ -26,6 +26,7 @@ for frame = 1:parameters.timings.TrialTime('ITI')
     %also the random delays at the end of epochs 3 and 7
     if frame == 1
         results = set_initial_trial_values(parameters, stimuli, modifiers, results);
+        results.behaviour_table = initialise_behaviour(parameters);
         
         %reset the status of all task checks
         parameters.task_checks.table.Status = zeros(length(parameters.task_checks.table.Status), 1);
@@ -65,24 +66,24 @@ end
 results = time_trial(results, 'start');
 
 % %fixation epoch
-% if ~results.single_trial.task_failure
-% for frame = 1:parameters.timings.TrialTime('fixation')
-%     %draw the first epoch
-%     if frame == 1 || frame == parameters.timings.TrialTime('fixation')
-%         draw_fixation_epoch(stimuli, hardware, task_window, parameters.task.type);
-%     end
-%     
-%     %sample the input devices
-%     [parameters, hardware] = munge_epoch_inputs(parameters, hardware, frame, 'fixation');    
-%     %parameters = check_joystick_stationary(parameters, joystick);
-%     if parameters.task_checks.table.Status('joystick_centered') && parameters.task_checks.table.Requirement('joystick_centered')
-%         results.single_trial.task_failure = true;
-%         break
-%     end
-%     flip_screen(frame, parameters, task_window, 'fixation');
-% end
-% results = check_requirements(parameters, results);
-% end
+if ~results.single_trial.task_failure
+for frame = 1:parameters.timings.TrialTime('fixation')
+    %draw the first epoch
+    if frame == 1 || frame == parameters.timings.TrialTime('fixation')
+        draw_fixation_epoch(stimuli, hardware, task_window, parameters.task.type);
+    end
+    
+    %sample the input devices
+    [parameters, hardware] = munge_epoch_inputs(parameters, hardware, frame, 'fixation');    
+    %parameters = check_joystick_stationary(parameters, joystick);
+    if parameters.task_checks.table.Status('joystick_centered') && parameters.task_checks.table.Requirement('joystick_centered')
+        results.single_trial.task_failure = true;
+        break
+    end
+    flip_screen(frame, parameters, task_window, 'fixation');
+end
+results = check_requirements(parameters, results);
+end
 
 %display fractal
 if ~results.single_trial.task_failure || strcmp(parameters.task.type, 'PAV')
@@ -106,7 +107,7 @@ end
 
 %bidding phase
 if ~results.single_trial.task_failure || strcmp(parameters.task.type, 'PAV')
-results.movement = initialise_movement(parameters);
+%results.movement = initialise_movement(parameters);
 for frame = 1:parameters.timings.TrialTime('bidding')
     
     [parameters, hardware] = munge_epoch_inputs(parameters, hardware, frame, 'bidding');

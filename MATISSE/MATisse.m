@@ -1038,7 +1038,7 @@ guidata(hObject, handles);
 
 % --- Executes on button press in Dig_NIbox.
 function Dig_NIbox_Callback(hObject, eventdata, handles)
-     disp('currently not set up to run digital ni inputs!');
+     handles.hardware.ni_inputs = 'digital';
 guidata(hObject, handles);
 
 function Dig_NIbox_CreateFcn(hObject, eventdata, handles)
