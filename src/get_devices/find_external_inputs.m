@@ -47,13 +47,11 @@ if ~parameters.break.testmode
 %         lh = addlistener(joystick,'DataRequired', ...
 %             @(src,event) src.queueOutputData(data));
         hardware.joystick.joystick = joystick;
-        startBackground(hardware.joystick.joystick);
         
         %get the touch sensor
         touch = daq.createSession('ni');
         addDigitalChannel(touch,'Dev1','Port1/Line1','InputOnly');
         hardware.joystick.touch = touch;
-        startBackground(hardware.joystick.touch);
         hardware.joystick.touch_perc = 0.4;
         hardware.joystick.touch_error = 0;
     end
@@ -76,5 +74,5 @@ else
 end
 
 %no lick or eye data input as yet
-hardware.lick = NaN;
-hardware.eyetracker = NaN;
+hardware.lick = 'missing';
+hardware.eyetracker = 'missing';

@@ -19,9 +19,9 @@ if ~parameters.break.testmode
     hardware.joystick.movement.deflection_y = joystick_sample(2);
 
     %no eye tracker for testmode
-    hardware.eyetracker.movement = NaN;
+    %hardware.eyetracker.movement = NaN;
     %no lick for testmode
-    hardware.solenoid.lick = NaN;
+    %hardware.solenoid.lick = NaN;
     
 else
     [keyIsDown, secs, keyCode] = KbCheck;
@@ -47,9 +47,9 @@ else
     end
 
     %no eye tracker for testmode
-    hardware.eyetracker.movement = NaN;
+    %hardware.eyetracker.movement = NaN;
     %no touch for testmode
-    hardware.touch.hold = NaN;
+    %hardware.touch.hold = NaN;
     %no lick for testmode
-    hardware.solenoid.lick = NaN;
+   % hardware.solenoid.lick = NaN;
 end
