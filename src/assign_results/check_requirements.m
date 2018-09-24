@@ -9,5 +9,3 @@ if any(parameters.task_checks.table.Status & parameters.task_checks.table.Requir
 else
     results.single_trial.task_failure = false;
 end
-
-disp(parameters.task_checks.table);

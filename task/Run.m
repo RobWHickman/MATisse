@@ -80,7 +80,6 @@ for frame = 1:parameters.timings.TrialTime('fixation')
     
     if parameters.task_checks.table.Status('touch_joystick') && parameters.task_checks.table.Requirement('touch_joystick')
         results.single_trial.task_failure = true;
-        disp('TOUCH ERROR')
         break
     end
     
