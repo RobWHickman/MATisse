@@ -3,14 +3,14 @@ function hardware = sample_input_devices(parameters, hardware)
 if ~parameters.break.testmode
     %legacy for analog sampling
     if strcmp(hardware.ni_inputs, 'analog')
-        joystick_sample = peekdata(hardware.ni_devices, measure_frames);
-        touch_val = getvalue(hardware.touch);
+        joystick_sample = peekdata(hardware.joystick.joystick, measure_frames);
+        touch_val = getvalue(hardware.touch.touch);
         hardware.touch.hold = touch_val(2);
     
     %sample digitial joystick
     elseif strcmp(hardware.ni_inputs, 'digital')
         joystick_sample = inputSingleScan(hardware.joystick.joystick);
-        touch_sample = inputSingleScan(hardware.joystick.touch);
+        touch_sample = inputSingleScan(hardware.touch.touch);
         hardware.touch.hold = touch_sample(1);
     end
     
@@ -18,11 +18,17 @@ if ~parameters.break.testmode
     hardware.joystick.movement.deflection_x = joystick_sample(1);
     hardware.joystick.movement.deflection_y = joystick_sample(2);
 
-    %no eye tracker for testmode
-    %hardware.eyetracker.movement = NaN;
-    %no lick for testmode
-    %hardware.solenoid.lick = NaN;
-    
+    if strcmp(hardware.eyetracker, 'missing')
+        hardware.missing.eye = NaN;
+    else
+        disp('error-must code up eyetracker sampling');
+    end
+    if strcmp(hardware.lick, 'missing')
+        hardware.missing.lick = NaN;
+    else
+        disp('error-must code up lick sampling');
+    end
+
 else
     [keyIsDown, secs, keyCode] = KbCheck;
     
@@ -45,11 +51,8 @@ else
         end
         hardware.joystick.movement.deflection_y = 0;
     end
-
-    %no eye tracker for testmode
-    %hardware.eyetracker.movement = NaN;
-    %no touch for testmode
-    %hardware.touch.hold = NaN;
-    %no lick for testmode
-   % hardware.solenoid.lick = NaN;
+    
+    hardware.touch.hold = NaN;
+    hardware.missing.eye = NaN;
+    hardware.missing.lick = NaN;
 end

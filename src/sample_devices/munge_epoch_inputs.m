@@ -1,13 +1,5 @@
 function [parameters, hardware, results] = munge_epoch_inputs(parameters, hardware, results, frame, epoch)
 
-%add in to the behaviour table
-disp(epoch);
-disp(results.behaviour_table.epoch);
-strcmp(results.behvaiour_table.epoch, epoch)
-disp(results.behaviour.frame == frame);
-
-datacell = [parameters.trials.total_trials, {epoch}]
-
 if ~parameters.break.testmode
 %munge joystick inputs
 if strcmp(epoch, 'bidding')
@@ -44,10 +36,27 @@ if strcmp(epoch, 'bidding')
     end
 
     hardware.joystick.movement.joy_movement = hardware.joystick.movement.speed * impetus;
+else
+    hardware.joystick.movement.joy_movement = NaN;
+end
 end
 
-%munge touch inputs
+%add in to the behaviour table
+datarow = find(results.behaviour_table.frame == frame & strcmp(results.behaviour_table.epoch, epoch));
+datacell = [parameters.trials.total_trials, {epoch}, frame,...
+    hardware.joystick.movement.deflection_x, hardware.joystick.movement.deflection_y, hardware.touch.hold, hardware.missing.eye, hardware.missing.lick,...
+    hardware.joystick.movement.joy_movement];
 
+results.behaviour_table(datarow,:) = datacell;
 
+%check touch inputs
+
+epoch_subset = results.behaviour_table(find(strcmp(results.behaviour_table.epoch, epoch)),:);
+
+if frame > 9
+    touch_vals = epoch_subset.touch((frame - 9):frame,:);
+    touch_percentage = sum(touch_vals)/frame;
+    if touch_percentage < hardware.touch.touch_perc
+        parameters.task_checks.table.Status('touch_joystick') = 1;
+    end
 end
-

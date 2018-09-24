@@ -33,10 +33,11 @@ if ~parameters.break.testmode
         set(behavIn2, 'LineName', 'dirConnIn')
 
         dio.Tag = 'ModigInputDio';
-        hardware.joystick.touch = dio;
-        hardware.joystick.touch_perc = 0.4;
+        hardware.touch.touch = dio;
+        hardware.touch.touch_perc = 0.4;
+        hardware.touch.touch_error = 0;
 
-        start(hardware.joystick.touch);
+        start(hardware.touch.touch);
 
     elseif strcmp(hardware.ni_inputs, 'digital')
         %get the joystick
@@ -51,9 +52,9 @@ if ~parameters.break.testmode
         %get the touch sensor
         touch = daq.createSession('ni');
         addDigitalChannel(touch,'Dev1','Port1/Line1','InputOnly');
-        hardware.joystick.touch = touch;
-        hardware.joystick.touch_perc = 0.4;
-        hardware.joystick.touch_error = 0;
+        hardware.touch.touch = touch;
+        hardware.touch.touch_perc = 0.4;
+        hardware.touch.touch_error = 0;
     end
 else
     if hardware.joystick.direction == 'x'

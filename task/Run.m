@@ -70,13 +70,20 @@ for frame = 1:parameters.timings.TrialTime('fixation')
     
     %sample the input devices
     hardware = sample_input_devices(parameters, hardware);
-    [parameters, hardware, results] = munge_epoch_inputs(parameters, hardware, results, frame, 'fixation');    
+    [parameters, hardware, results] = munge_epoch_inputs(parameters, hardware, results, frame, 'fixation');   
 
     %parameters = check_joystick_stationary(parameters, joystick);
     if parameters.task_checks.table.Status('joystick_centered') && parameters.task_checks.table.Requirement('joystick_centered')
         results.single_trial.task_failure = true;
         break
     end
+    
+    if parameters.task_checks.table.Status('touch_joystick') && parameters.task_checks.table.Requirement('touch_joystick')
+        results.single_trial.task_failure = true;
+        disp('TOUCH ERROR')
+        break
+    end
+    
     flip_screen(frame, parameters, task_window, 'fixation');
 end
 results = check_requirements(parameters, results);
@@ -90,7 +97,8 @@ for frame = 1:parameters.timings.TrialTime('fractal_offer')
         draw_fractaloffer_epoch(stimuli, modifiers, hardware, task_window, parameters.task.type)
     end
     
-    [parameters, hardware] = munge_epoch_inputs(parameters, hardware, frame, 'fractal_display');
+    [parameters, hardware, results] = munge_epoch_inputs(parameters, hardware, results, frame, 'fractal_offer');
+    
     %check if the monkey is fixating on the cross
     if parameters.task_checks.table.Status('joystick_centered') && parameters.task_checks.table.Requirement('joystick_centered')
         results.single_trial.task_failure = true;
@@ -107,7 +115,7 @@ if ~results.single_trial.task_failure || strcmp(parameters.task.type, 'PAV')
 %results.movement = initialise_movement(parameters);
 for frame = 1:parameters.timings.TrialTime('bidding')
     
-    [parameters, hardware] = munge_epoch_inputs(parameters, hardware, frame, 'bidding');
+    [parameters, hardware, results] = munge_epoch_inputs(parameters, hardware, results, frame, 'bidding');
     
     if ~strcmp(parameters.task.type, 'PAV') && ~results.movement.stabilised
         [results, hardware] = update_bid_position(hardware, results, parameters, stimuli);
