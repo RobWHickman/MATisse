@@ -55,7 +55,7 @@ epoch_subset = results.behaviour_table(find(strcmp(results.behaviour_table.epoch
 
 if frame > 9
     touch_vals = epoch_subset.touch((frame - 9):frame,:);
-    touch_percentage = sum(touch_vals)/frame;
+    touch_percentage = sum(touch_vals)/length(touch_vals);
     if touch_percentage < hardware.touch.touch_perc
         parameters.task_checks.table.Status('touch_joystick') = 1;
     end

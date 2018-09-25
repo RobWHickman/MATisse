@@ -70,7 +70,7 @@ for frame = 1:parameters.timings.TrialTime('fixation')
     
     %sample the input devices
     hardware = sample_input_devices(parameters, hardware);
-    [parameters, hardware, results] = munge_epoch_inputs(parameters, hardware, results, frame, 'fixation');   
+    [parameters, hardware, results] = munge_epoch_inputs(parameters, hardware, results, frame, 'fixation');  
 
     %parameters = check_joystick_stationary(parameters, joystick);
     if parameters.task_checks.table.Status('joystick_centered') && parameters.task_checks.table.Requirement('joystick_centered')
@@ -96,7 +96,8 @@ for frame = 1:parameters.timings.TrialTime('fractal_offer')
         draw_fractaloffer_epoch(stimuli, modifiers, hardware, task_window, parameters.task.type)
     end
     
-    [parameters, hardware, results] = munge_epoch_inputs(parameters, hardware, results, frame, 'fractal_offer');
+    hardware = sample_input_devices(parameters, hardware);
+    [parameters, hardware, results] = munge_epoch_inputs(parameters, hardware, results, frame, 'fixation'); 
     
     %check if the monkey is fixating on the cross
     if parameters.task_checks.table.Status('joystick_centered') && parameters.task_checks.table.Requirement('joystick_centered')
@@ -104,6 +105,11 @@ for frame = 1:parameters.timings.TrialTime('fractal_offer')
         break
     end
     
+    if parameters.task_checks.table.Status('touch_joystick') && parameters.task_checks.table.Requirement('touch_joystick')
+        results.single_trial.task_failure = true;
+        break
+    end
+
     flip_screen(frame, parameters, task_window, 'fractal_offer');
 end
 results = check_requirements(parameters, results);
@@ -114,9 +120,14 @@ if ~results.single_trial.task_failure || strcmp(parameters.task.type, 'PAV')
 %results.movement = initialise_movement(parameters);
 for frame = 1:parameters.timings.TrialTime('bidding')
     
+    hardware = sample_input_devices(parameters, hardware);
     [parameters, hardware, results] = munge_epoch_inputs(parameters, hardware, results, frame, 'bidding');
+    disp(results.behaviour_table);
     
-    if ~strcmp(parameters.task.type, 'PAV') && ~results.movement.stabilised
+    movement = 
+    total_movement = %feed these into update bid position
+    
+    if ~strcmp(parameters.task.type, 'PAV') && ~hardware.joystick.stabilised
         [results, hardware] = update_bid_position(hardware, results, parameters, stimuli);
         results.movement.bidding_vector(frame) = hardware.joystick.movement.stimuli_movement;
         results.movement.total_movement = results.movement.total_movement + hardware.joystick.movement.stimuli_movement;
@@ -147,6 +158,12 @@ for frame = 1:parameters.timings.TrialTime('bidding')
     if parameters.task_checks.table.Requirement('targeted_offer')
         parameters = check_targeted_offer(parameters, results, stimuli);
     end
+    
+    if parameters.task_checks.table.Status('touch_joystick') && parameters.task_checks.table.Requirement('touch_joystick')
+        results.single_trial.task_failure = true;
+        break
+    end
+
     
     draw_bidding_epoch(parameters, stimuli, modifiers, hardware, results, task_window, parameters.task.type)
     flip_screen(frame, parameters, task_window, 'bidding');
