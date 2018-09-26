@@ -1,13 +1,26 @@
 %function to find an attached joystick and set parameters for it
-function [joystick, touch] = find_joystick(screen_refresh)
+function joystick = find_joystick(session, sampling_rate)
 %clear the hardware in use
 daqreset();
 
-joystick = daq.createSession('ni');
-joystick.Rate=20;
-joystick.DurationInSeconds = 1/screen_refresh;
-addAnalogInputChannel(joystick, 'Dev1',0,'Voltage');
-addAnalogInputChannel(joystick, 'Dev1',1,'Voltage');
+if strcmp(session, 'analog')
+    fprintf('finding analog ni devices');
+    %analog version - deprecated
+    joystick = analoginput('nidaq','Dev1');
+    % add channels
+    addchannel(joystick, 0:7);
+    joystick.SampleRate = sampling_rate;
+    joystick.SamplesPerTrigger = inf;
+    joystick.UserData = zeros(1,3);
+    %start the joystick
+    start(joystick);
 
-touch = daq.createSession('ni');
-addDigitalChannel(touch,'Dev1','Port1/Line1','InputOnly');
+elseif strcmp(session, 'digital')
+    %get the joystick
+    joystick = daq.createSession('ni');
+    addAnalogInputChannel(joystick, 'Dev1',0,'Voltage');
+    addAnalogInputChannel(joystick, 'Dev1',1,'Voltage');
+%         data=linspace(-1,1,5000)';
+%         lh = addlistener(joystick,'DataRequired', ...
+%             @(src,event) src.queueOutputData(data));
+end
