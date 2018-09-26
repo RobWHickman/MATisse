@@ -72,6 +72,7 @@ function Gen_button_Callback(hObject, eventdata, handles)
         disp('save_info not found! Did you remember to run Set?')
     end
 guidata(hObject, handles);
+
 %function to actually run the task
 %runs one trial at a time and outputs a mat file with all the data for the
 %task (note experiment parameters will reflect the parameters on the LAST
@@ -622,20 +623,24 @@ guidata(hObject, handles);
 %use this to correct to zero so that 'at rest' - when the monkey is not
 %moving it- it shows 0v
 function Joystick_button_Callback(hObject, eventdata, handles)
-    %reset the devices
-    daqreset();
     %get the joystick data
-    joystick = find_joystick(200, 'analog');
+    joystick = find_joystick(handles.hardware.ni_inputs, 200);
     %start(joystick); %throw an error- not sure why
     pause(0.1);
     %get the current joystick voltages (when stationary)
-    test_data = peekdata(joystick,30);
-    test_data_x = test_data(:,1);
-    disp('remaining x bias:');
-    joy_x   = mean(test_data_x)
-    test_data_y = test_data(:,2);
-    disp('remaining y bias:');
-    joy_y   = mean(test_data_y)
+    if strcmp(handles.hardware.ni_inputs, 'digital')
+        test_data = inputSingleScan(joystick);
+        joy_y = test_data(2);
+        joy_x = test_data(1);
+    elseif strcmp(handles.hardware.ni_inputs, 'analog')
+        test_data = peekdata(joystick,30);
+        test_data_x = test_data(:,1);
+        disp('remaining x bias:');
+        joy_x   = mean(test_data_x);
+        test_data_y = test_data(:,2);
+        disp('remaining y bias:');
+        joy_y   = mean(test_data_y);
+    end
     %automatically update the x and y bias and the gui with these values
     %can be overridden manually after
     set(handles.Set_x_offset,'String', num2str(-joy_x));
