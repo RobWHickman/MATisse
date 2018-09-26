@@ -127,12 +127,11 @@ for frame = 1:parameters.timings.TrialTime('bidding')
     disp(results.behaviour_table);
     
     if ~strcmp(parameters.task.type, 'PAV') && ~parameters.task_checks.table.Status('stabilised_offer')
+        disp('run script line 130 -updating bidding');
         [results, hardware] = update_bid_position(hardware, results, parameters, stimuli);
     end
     
     movement_vec = results.behaviour_table.movement(find(strcmp(results.behaviour_table.epoch, 'bidding')),:);
-    disp(movement_vec);
-    disp(sum(movement_vec));
    
     if(all(movement_vec) == 0 &&...
             frame > round(parameters.task_checks.bid_latency * hardware.screen.refresh_rate))
@@ -162,7 +161,6 @@ for frame = 1:parameters.timings.TrialTime('bidding')
         results.single_trial.task_failure = true;
         break
     end
-
     
     draw_bidding_epoch(parameters, stimuli, modifiers, hardware, results, task_window, parameters.task.type)
     flip_screen(frame, parameters, task_window, 'bidding');

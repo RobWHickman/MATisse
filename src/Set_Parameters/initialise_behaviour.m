@@ -13,8 +13,8 @@ for epoch = 1:length(parameters.timings.Properties.RowNames)
     frames = [frames, 1:parameters.timings.TrialTime(epoch)];
 end
 
-behave_table = table(trial,epochs',frames',behave_vector',behave_vector',behave_vector',behave_vector',behave_vector',movement_vector',...
-    'VariableNames',{'trial','epoch','frame','joy_x','joy_y','touch','eye','lick','movement'});
+behave_table = table(trial,epochs',frames',behave_vector',behave_vector',behave_vector',behave_vector',behave_vector',movement_vector',behave_vector',...
+    'VariableNames',{'trial','epoch','frame','joy_x','joy_y','touch','eye','lick','movement','stimuli_movement'});
 
 %remove the frames for ITI epochs
 noniti_frames = logical(~strcmp(behave_table.epoch, 'ITI'));

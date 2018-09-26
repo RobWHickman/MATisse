@@ -45,7 +45,7 @@ end
 datarow = find(results.behaviour_table.frame == frame & strcmp(results.behaviour_table.epoch, epoch));
 datacell = [parameters.trials.total_trials, {epoch}, frame,...
     hardware.joystick.movement.deflection_x, hardware.joystick.movement.deflection_y, hardware.touch.hold, hardware.missing.eye, hardware.missing.lick,...
-    hardware.joystick.movement.joy_movement];
+    hardware.joystick.movement.joy_movement, NaN];
 
 results.behaviour_table(datarow,:) = datacell;
 
