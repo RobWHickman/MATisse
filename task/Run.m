@@ -25,6 +25,7 @@ for frame = 1:parameters.timings.TrialTime('ITI')
     if frame == 1
         results = set_initial_trial_values(parameters, stimuli, modifiers, results);
         results.behaviour_table = initialise_behaviour(parameters);
+        hardware.joystick = reset_joystick(hardware.joystick);
         
         %reset the status of all task checks
         parameters.task_checks.table.Status = zeros(length(parameters.task_checks.table.Status), 1);
@@ -97,7 +98,7 @@ for frame = 1:parameters.timings.TrialTime('fractal_offer')
     end
     
     hardware = sample_input_devices(parameters, hardware);
-    [parameters, hardware, results] = munge_epoch_inputs(parameters, hardware, results, frame, 'fixation'); 
+    [parameters, hardware, results] = munge_epoch_inputs(parameters, hardware, results, frame, 'fractal_offer'); 
     
     %check if the monkey is fixating on the cross
     if parameters.task_checks.table.Status('joystick_centered') && parameters.task_checks.table.Requirement('joystick_centered')
@@ -122,27 +123,25 @@ for frame = 1:parameters.timings.TrialTime('bidding')
     
     hardware = sample_input_devices(parameters, hardware);
     [parameters, hardware, results] = munge_epoch_inputs(parameters, hardware, results, frame, 'bidding');
+    
     disp(results.behaviour_table);
     
-    movement = 
-    total_movement = %feed these into update bid position
-    
-    if ~strcmp(parameters.task.type, 'PAV') && ~hardware.joystick.stabilised
+    if ~strcmp(parameters.task.type, 'PAV') && ~parameters.task_checks.table.Status('stabilised_offer')
         [results, hardware] = update_bid_position(hardware, results, parameters, stimuli);
-        results.movement.bidding_vector(frame) = hardware.joystick.movement.stimuli_movement;
-        results.movement.total_movement = results.movement.total_movement + hardware.joystick.movement.stimuli_movement;
-    else
-        results.movement.bidding_vector(frame) = NaN;
     end
     
-    if(all(results.movement.bidding_vector == 0) && results.movement.stationary_count > round(parameters.task_checks.bid_latency * hardware.screen.refresh_rate))
+    movement_vec = results.behaviour_table.movement(find(strcmp(results.behaviour_table.epoch, 'bidding')),:);
+    disp(movement_vec);
+    disp(sum(movement_vec));
+   
+    if(all(movement_vec) == 0 &&...
+            frame > round(parameters.task_checks.bid_latency * hardware.screen.refresh_rate))
         parameters.task_checks.table.Status('no_bid_activity') = 1;
         break
     end
     
-    if any(results.movement.bidding_vector ~= 0)
-        if results.movement.stationary_count > round(parameters.task_checks.finalisation_pause * hardware.screen.refresh_rate)
-            results.movement.stabilised = 1;
+    if any(movement_vec ~= 0)
+        if hardware.joystick.movement.stationary_count > round(parameters.task_checks.finalisation_pause * hardware.screen.refresh_rate)
             parameters.task_checks.table.Status('stabilised_offer') = 0;
         else
             parameters.task_checks.table.Status('stabilised_offer') = 1;

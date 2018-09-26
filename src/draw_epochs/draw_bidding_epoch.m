@@ -2,7 +2,7 @@ function [] = draw_bidding_epoch(parameters, stimuli, modifiers, hardware, resul
 
 Screen('FillRect', task_window, stimuli.background_colour);
 
-current_bid_position = results.single_trial.starting_bid + results.movement.total_movement;
+current_bid_position = results.single_trial.starting_bid + sum(results.behaviour_table.movement(find(strcmp(results.behaviour_table.epoch, 'bidding')),:));
 bidding_colour = [hardware.screen.colours.white, 0 hardware.screen.colours.white];
 
 if strcmp(task, 'PAV')
