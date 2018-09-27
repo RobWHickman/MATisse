@@ -75,17 +75,16 @@ for frame = 1:parameters.timings.TrialTime('fixation')
 
     %parameters = check_joystick_stationary(parameters, joystick);
     if parameters.task_checks.table.Status('joystick_centered') && parameters.task_checks.table.Requirement('joystick_centered')
-        results.single_trial.task_failure = true;
         break
     end
     
     if parameters.task_checks.table.Status('touch_joystick') && parameters.task_checks.table.Requirement('touch_joystick')
-        results.single_trial.task_failure = true;
         break
     end
     
     flip_screen(frame, parameters, task_window, 'fixation');
 end
+parameters.task_checks.table
 results = check_requirements(parameters, results);
 end
 
@@ -102,17 +101,16 @@ for frame = 1:parameters.timings.TrialTime('fractal_offer')
     
     %check if the monkey is fixating on the cross
     if parameters.task_checks.table.Status('joystick_centered') && parameters.task_checks.table.Requirement('joystick_centered')
-        results.single_trial.task_failure = true;
         break
     end
     
     if parameters.task_checks.table.Status('touch_joystick') && parameters.task_checks.table.Requirement('touch_joystick')
-        results.single_trial.task_failure = true;
         break
     end
 
     flip_screen(frame, parameters, task_window, 'fractal_offer');
 end
+parameters.task_checks.table
 results = check_requirements(parameters, results);
 end
 
@@ -150,25 +148,20 @@ for frame = 1:parameters.timings.TrialTime('bidding')
     %cut out the task if there is not enough time for monkey to stabilise
     if parameters.task_checks.table.Status('stabilised_offer') &&...
             frame + (round(parameters.task_checks.finalisation_pause * hardware.screen.refresh_rate) - hardware.joystick.movement.stationary_count) > parameters.timings.TrialTime('bidding')
-        disp('STABLY ERROR TIME');
         break
     end
     
     if parameters.task_checks.table.Requirement('targeted_offer')
-        disp('TARGET ERROR TIME');
         parameters = check_targeted_offer(parameters, results, stimuli);
     end
     
     if parameters.task_checks.table.Status('touch_joystick') && parameters.task_checks.table.Requirement('touch_joystick')
-         disp('TOUCHY ERROR TIME');
-       results.single_trial.task_failure = true;
         break
     end
     
     draw_bidding_epoch(parameters, stimuli, modifiers, hardware, results, task_window, parameters.task.type)
     flip_screen(frame, parameters, task_window, 'bidding');
 end
-disp(parameters.task_checks.table);
 results = check_requirements(parameters, results);
 end
 

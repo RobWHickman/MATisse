@@ -6,10 +6,10 @@ if strcmp(epoch, 'bidding')
     sensitivity = hardware.joystick.sensitivity.movement;
 else
     sensitivity = hardware.joystick.sensitivity.centered;
-end
-
-if((abs(hardware.joystick.movement.deflection_x) > sensitivity || abs(hardware.joystick.movement.deflection_y) > sensitivity) && ~strcmp(epoch, 'bidding'))
-    parameters.task_checks.Status('hold_joystick') = 1;
+    
+    if((abs(hardware.joystick.movement.deflection_x) > sensitivity || abs(hardware.joystick.movement.deflection_y) > sensitivity) && ~strcmp(epoch, 'bidding'))
+        parameters.task_checks.table.Status('joystick_centered') = 1;
+    end
 end
 
 if strcmp(epoch, 'bidding')
