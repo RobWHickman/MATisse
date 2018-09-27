@@ -25,6 +25,6 @@ else
     joystick.movement.deflection_x = mean(joystick_sample(:,1));
 
     %include the offset in the movement score
-    joystick.movement.movement_y = joystick.movement.deflection_y + joystick.bias.y_offset;
-    joystick.movement.movement_x = joystick.movement.deflection_x + joystick.bias.x_offset;
+    joystick.movement.movement_y = joystick.movement.deflection_y - joystick.bias.y_offset;
+    joystick.movement.movement_x = joystick.movement.deflection_x - joystick.bias.x_offset;
 end

@@ -1,6 +1,10 @@
 function [results, hardware] = update_bid_position(hardware, results, parameters, stimuli)
 
-total_movement = sum(results.behaviour_table.movement(find(strcmp(results.behaviour_table.epoch, 'bidding')),:));
+bidding = find(strcmp(results.behaviour_table.epoch, 'bidding'));
+total_movement = sum(results.behaviour_table.stimuli_movement(bidding,:));
+if isnan(total_movement)
+    total_movement = 0;
+end
 
 if strcmp(parameters.task.type, 'BDM')
     limits = [stimuli.bidspace.position(4), stimuli.bidspace.position(2)];
@@ -38,8 +42,12 @@ elseif implied_movement < 0
     end
 end
 
-%stimuli_movement = stimuli_movement / (limits(2) - limits(1));
-row = find(isnan(results.behaviour_table.stimuli_movement(find(strcmp(results.behaviour_table.epoch, 'bidding')),:)), 1);
-disp('row');
-disp(row);
 
+stimuli_movement = stimuli_movement / (limits(2) - limits(1));
+
+nan_rows = find(isnan(results.behaviour_table.stimuli_movement(bidding,:)));
+%disp('nan rows');
+%disp(nan_rows);
+first_nan = bidding(nan_rows(1));
+
+results.behaviour_table.stimuli_movement(first_nan) = stimuli_movement;

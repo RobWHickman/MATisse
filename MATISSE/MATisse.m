@@ -644,9 +644,9 @@ function Joystick_button_Callback(hObject, eventdata, handles)
     %automatically update the x and y bias and the gui with these values
     %can be overridden manually after
     set(handles.Set_x_offset,'String', num2str(-joy_x));
-    handles.hardware.joystick.bias.x_offset = get(handles.Set_x_offset,'String');
+    handles.hardware.joystick.bias.x_offset = -joy_x;
     set(handles.Set_y_offset,'String', num2str(-joy_y));
-    handles.hardware.joystick.bias.y_offset = get(handles.Set_y_offset,'String');
+    handles.hardware.joystick.bias.y_offset = -joy_y;
     %assign this to the workspace to use later on
     assignin('base', 'joystick_bias_x', [handles.hardware.joystick.bias.x_offset]);
     assignin('base', 'joystick_bias_y', [handles.hardware.joystick.bias.y_offset]);

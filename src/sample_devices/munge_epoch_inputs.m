@@ -50,7 +50,6 @@ datacell = [parameters.trials.total_trials, {epoch}, frame,...
 results.behaviour_table(datarow,:) = datacell;
 
 %check touch inputs
-
 epoch_subset = results.behaviour_table(find(strcmp(results.behaviour_table.epoch, epoch)),:);
 
 if frame > 9

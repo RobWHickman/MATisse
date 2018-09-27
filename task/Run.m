@@ -120,23 +120,23 @@ end
 if ~results.single_trial.task_failure || strcmp(parameters.task.type, 'PAV')
 %results.movement = initialise_movement(parameters);
 for frame = 1:parameters.timings.TrialTime('bidding')
-    
+
     hardware = sample_input_devices(parameters, hardware);
     [parameters, hardware, results] = munge_epoch_inputs(parameters, hardware, results, frame, 'bidding');
     
-    disp(results.behaviour_table);
-    
-    if ~strcmp(parameters.task.type, 'PAV') && ~parameters.task_checks.table.Status('stabilised_offer')
-        disp('run script line 130 -updating bidding');
+    if ~strcmp(parameters.task.type, 'PAV') && parameters.task_checks.table.Status('stabilised_offer')
         [results, hardware] = update_bid_position(hardware, results, parameters, stimuli);
     end
     
-    movement_vec = results.behaviour_table.movement(find(strcmp(results.behaviour_table.epoch, 'bidding')),:);
-   
-    if(all(movement_vec) == 0 &&...
+    movement_vec = results.behaviour_table.stimuli_movement(find(strcmp(results.behaviour_table.epoch, 'bidding')),:);
+    hardware.joystick.total_movement = nansum(movement_vec);
+    
+    if(all(movement_vec == 0) &&...
             frame > round(parameters.task_checks.bid_latency * hardware.screen.refresh_rate))
         parameters.task_checks.table.Status('no_bid_activity') = 1;
         break
+    else
+        parameters.task_checks.table.Status('no_bid_activity') = 0;
     end
     
     if any(movement_vec ~= 0)
@@ -149,22 +149,26 @@ for frame = 1:parameters.timings.TrialTime('bidding')
     
     %cut out the task if there is not enough time for monkey to stabilise
     if parameters.task_checks.table.Status('stabilised_offer') &&...
-            frame + round(parameters.task_checks.finalisation_pause * hardware.screen.refresh_rate) > parameters.timings.TrialTime('bidding')
+            frame + (round(parameters.task_checks.finalisation_pause * hardware.screen.refresh_rate) - hardware.joystick.movement.stationary_count) > parameters.timings.TrialTime('bidding')
+        disp('STABLY ERROR TIME');
         break
     end
     
     if parameters.task_checks.table.Requirement('targeted_offer')
+        disp('TARGET ERROR TIME');
         parameters = check_targeted_offer(parameters, results, stimuli);
     end
     
     if parameters.task_checks.table.Status('touch_joystick') && parameters.task_checks.table.Requirement('touch_joystick')
-        results.single_trial.task_failure = true;
+         disp('TOUCHY ERROR TIME');
+       results.single_trial.task_failure = true;
         break
     end
     
     draw_bidding_epoch(parameters, stimuli, modifiers, hardware, results, task_window, parameters.task.type)
     flip_screen(frame, parameters, task_window, 'bidding');
 end
+disp(parameters.task_checks.table);
 results = check_requirements(parameters, results);
 end
 
