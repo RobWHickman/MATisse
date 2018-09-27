@@ -84,7 +84,6 @@ for frame = 1:parameters.timings.TrialTime('fixation')
     
     flip_screen(frame, parameters, task_window, 'fixation');
 end
-parameters.task_checks.table
 results = check_requirements(parameters, results);
 end
 
@@ -110,7 +109,6 @@ for frame = 1:parameters.timings.TrialTime('fractal_offer')
 
     flip_screen(frame, parameters, task_window, 'fractal_offer');
 end
-parameters.task_checks.table
 results = check_requirements(parameters, results);
 end
 
@@ -127,7 +125,6 @@ for frame = 1:parameters.timings.TrialTime('bidding')
     end
     
     movement_vec = results.behaviour_table.stimuli_movement(find(strcmp(results.behaviour_table.epoch, 'bidding')),:);
-    hardware.joystick.total_movement = nansum(movement_vec);
     
     if(all(movement_vec == 0) &&...
             frame > round(parameters.task_checks.bid_latency * hardware.screen.refresh_rate))

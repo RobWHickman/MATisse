@@ -2,7 +2,7 @@
 %gets after an auction depending on whether it beats the computer or not
 function results = assign_payouts(parameters, modifiers, stimuli, results)
 if ~ strcmp(parameters.task.type, 'Pavlovian')
-    results.trial_results.monkey_bid = results.single_trial.starting_bid + results.movement.total_movement;
+    results.trial_results.monkey_bid = results.single_trial.starting_bid + nansum(results.behaviour_table.stimuli_movement(find(strcmp(results.behaviour_table.epoch, 'bidding')),:));
 else
     results.trial_results.monkey_bid = NaN;
 end

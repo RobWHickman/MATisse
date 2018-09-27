@@ -5,7 +5,6 @@ function [] = draw_payout_epoch(parameters, modifiers, results, stimuli, hardwar
 
 if ~strcmp(task, 'PAV')
     bidspace_reflector = hardware.screen.dimensions.width - stimuli.bidspace.initial_position(1) - stimuli.bidspace.initial_position(3);
-    current_bid_position = results.single_trial.starting_bid + results.movement.total_movement;
 end
 
 if strcmp(task, 'BDM')
@@ -21,8 +20,8 @@ if strcmp(task, 'BDM')
     end
     
     Screen('FillRect', task_window, [hardware.screen.colours.white, 0 hardware.screen.colours.white],...
-        [stimuli.bidspace.position(1) - modifiers.budget.overhang, (stimuli.bidspace.position(4) - 25) - (current_bid_position * stimuli.bidspace.dimensions.height),...
-        stimuli.bidspace.position(3) + modifiers.budget.overhang, (stimuli.bidspace.position(4) + 25) - (current_bid_position * stimuli.bidspace.dimensions.height)]);
+        [stimuli.bidspace.position(1) - modifiers.budget.overhang, (stimuli.bidspace.position(4) - 25) - (results.trial_results.monkey_bid * stimuli.bidspace.dimensions.height),...
+        stimuli.bidspace.position(3) + modifiers.budget.overhang, (stimuli.bidspace.position(4) + 25) - (results.trial_results.monkey_bid * stimuli.bidspace.dimensions.height)]);
     
     Screen('FillRect', task_window, [0 hardware.screen.colours.white, 0],...
         [stimuli.bidspace.position(1) - modifiers.budget.overhang, (stimuli.bidspace.position(4) - 25) - (results.single_trial.computer_bid * stimuli.bidspace.dimensions.height),...
