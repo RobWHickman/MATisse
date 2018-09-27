@@ -1,9 +1,14 @@
 function [results, hardware] = update_bid_position(hardware, results, parameters, stimuli)
 
 bidding = find(strcmp(results.behaviour_table.epoch, 'bidding'));
-total_movement = sum(results.behaviour_table.stimuli_movement(bidding,:));
-if isnan(total_movement)
+
+if all(isnan(results.behaviour_table.stimuli_movement))
     total_movement = 0;
+    move_row = bidding(1);
+else
+    total_movement = nansum(results.behaviour_table.stimuli_movement(bidding,:));
+    move_rows = find(~isnan(results.behaviour_table.stimuli_movement));
+    move_row = move_rows(end) + 1;
 end
 
 if strcmp(parameters.task.type, 'BDM')
@@ -18,7 +23,7 @@ elseif strcmp(parameters.task.type, 'BC')
     axis_multiplier = 1;
 end
 
-implied_movement = hardware.joystick.movement.joy_movement;
+implied_movement = results.behaviour_table.movement(move_row);
 
 if implied_movement == 0
     hardware.joystick.movement.stationary_count = hardware.joystick.movement.stationary_count + 1;
@@ -42,12 +47,9 @@ elseif implied_movement < 0
     end
 end
 
-
 stimuli_movement = stimuli_movement / (limits(2) - limits(1));
 
 nan_rows = find(isnan(results.behaviour_table.stimuli_movement(bidding,:)));
-%disp('nan rows');
-%disp(nan_rows);
 first_nan = bidding(nan_rows(1));
 
 results.behaviour_table.stimuli_movement(first_nan) = stimuli_movement;
