@@ -13,5 +13,5 @@ hardware = get_screen_information(hardware);
 hardware = find_external_inputs(parameters, hardware);
 
 %get the output devices
-hardware = find_payout_devices(parameters, hardware);
+hardware = find_solenoid(parameters, hardware);
 hardware = find_error_devices(hardware);
