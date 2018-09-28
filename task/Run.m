@@ -25,7 +25,7 @@ for frame = 1:parameters.timings.TrialTime('ITI')
     if frame == 1
         results = set_initial_trial_values(parameters, stimuli, modifiers, results);
         results.behaviour_table = initialise_behaviour(parameters);
-        hardware.joystick = reset_joystick(hardware.joystick);
+        hardware.joystick.movement.stationary_count = 0;
         
         %reset the status of all task checks
         parameters.task_checks.table.Status = zeros(length(parameters.task_checks.table.Status), 1);

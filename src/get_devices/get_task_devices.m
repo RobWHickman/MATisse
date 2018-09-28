@@ -13,5 +13,7 @@ hardware = get_screen_information(hardware);
 hardware = find_external_inputs(parameters, hardware);
 
 %get the output devices
-hardware = find_solenoid(parameters, hardware);
+if ~parameters.break.testmode
+    hardware = find_solenoid(hardware);
+end
 hardware = find_error_devices(hardware);
