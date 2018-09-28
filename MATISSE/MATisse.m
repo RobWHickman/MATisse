@@ -710,7 +710,7 @@ function Joystick_sensitivty_Callback(hObject, eventdata, handles)
     disp(['set joystick sensitivity to ', joystick_sensitivity]);
 guidata(hObject, handles);
 function Joystick_sensitivty_CreateFcn(hObject, eventdata, handles)
-    handles.hardware.joystick.sensitivity.movement = str2num('0.05');
+    handles.hardware.joystick.sensitivity.movement = str2num('0.1');
 guidata(hObject, handles);
 %set the centered sensitivity- the sensitivity the monkey must keep the
 %joystick movement below to pass a centered check
@@ -721,7 +721,7 @@ function Centre_sensitivity_Callback(hObject, eventdata, handles)
     disp(['set joystick sensitivity to ', joystick_sensitivity]);
 guidata(hObject, handles);
 function Centre_sensitivity_CreateFcn(hObject, eventdata, handles)
-    handles.hardware.joystick.sensitivity.centered = str2num('0.05');
+    handles.hardware.joystick.sensitivity.centered = str2num('0.1');
 guidata(hObject, handles);
 %set the joystick scalar (how fast it makes the bar travel)
 %generally around 10 is fast enough for scalar based and 50 for voltage
