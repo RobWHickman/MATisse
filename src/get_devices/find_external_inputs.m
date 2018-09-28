@@ -17,8 +17,6 @@ if ~parameters.break.testmode
         hardware.joystick.joystick.SampleRate = sampling_rate;
         hardware.joystick.joystick.SamplesPerTrigger = inf;
         hardware.joystick.joystick.UserData = zeros(1,3);
-        hardware.joystick.stabilised = 0;
-        hardware.joystick.total_movement = 0;
         %start the joystick
         start(hardware.joystick.joystick);
         
@@ -49,8 +47,6 @@ if ~parameters.break.testmode
 %         data=linspace(-1,1,5000)';
 %         lh = addlistener(joystick,'DataRequired', ...
 %             @(src,event) src.queueOutputData(data));
-        hardware.joystick.stabilised = 0;
-        hardware.joystick.total_movement = 0;
         hardware.joystick.joystick = joystick;
         
         %get the touch sensor
