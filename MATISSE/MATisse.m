@@ -1042,11 +1042,17 @@ guidata(hObject, handles);
 
 % --- Executes on button press in Dig_NIbox.
 function Dig_NIbox_Callback(hObject, eventdata, handles)
-     handles.hardware.ni_inputs = 'digital';
+    ni_session = get(handles.Dig_NIbox, 'Value');
+    if ni_session
+        handles.hardware.ni_inputs = 'digital';
+        disp('switched to digital session');
+    else
+        handles.hardware.ni_inputs = 'analog';
+        disp('switched to analog session - DEPRECATED!');
+    end
 guidata(hObject, handles);
-
 function Dig_NIbox_CreateFcn(hObject, eventdata, handles)
-    handles.hardware.ni_inputs = 'analog';
+    handles.hardware.ni_inputs = 'digital';
 guidata(hObject, handles);
 
 
