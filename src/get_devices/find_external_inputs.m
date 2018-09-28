@@ -34,7 +34,6 @@ if ~parameters.break.testmode
 
         dio.Tag = 'ModigInputDio';
         hardware.touch.touch = dio;
-        hardware.touch.touch_perc = 0.4;
         hardware.touch.touch_error = 0;
 
         start(hardware.touch.touch);
@@ -53,7 +52,6 @@ if ~parameters.break.testmode
         touch = daq.createSession('ni');
         addDigitalChannel(touch,'Dev1','Port1/Line1','InputOnly');
         hardware.touch.touch = touch;
-        hardware.touch.touch_perc = 0.4;
         hardware.touch.touch_error = 0;
     end
 else

@@ -1216,3 +1216,24 @@ function Truncate_times_Callback(hObject, eventdata, handles)
 function Truncate_times_CreateFcn(hObject, eventdata, handles)
     handles.parameters.trials.truncated_times = 1;
 guidata(hObject, handles);
+
+
+%set the percentage of time the monkey must be touching the joystick over
+%the sampled period (touch_samples)
+function Touch_perc_Callback(hObject, eventdata, handles)
+    clear handles.hardware.touch.touch_perc
+    touch_requirement = get(handles.Touch_perc, 'Value');
+    handles.hardware.touch.touch_perc = touch_requirement;
+function Touch_perc_CreateFcn(hObject, eventdata, handles)
+    handles.hardware.touch.touch_perc = 0.4;
+guidata(hObject, handles);
+
+%set the numberof samples (1 per frame) that the task takes into account
+%when deciding if monkey passes the touch requirement
+function Touch_samples_Callback(hObject, eventdata, handles)
+    clear handles.hardware.touch.touch_samples
+    touch_sampling = get(handles.Touch_samples, 'Value');
+    handles.hardware.touch.touch_samples = touch_sampling;
+function Touch_samples_CreateFcn(hObject, eventdata, handles)
+    handles.hardware.touch.touch_samples = 10;
+guidata(hObject, handles);
