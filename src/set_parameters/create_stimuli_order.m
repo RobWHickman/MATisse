@@ -23,7 +23,7 @@ if strcmp(parameters.task.type, 'BC')
 
 elseif strcmp(parameters.task.type, 'BDM')
     n_fractals = length(stimuli.fractals.images);
-    if ~strcmp(modifiers.specific_tasks.BDM.contingency, 'BDM_FP')
+    if strcmp(modifiers.specific_tasks.BDM.contingency, 'BDM_FP')
         auctions = 2;
     else
         auctions = 1;
@@ -75,9 +75,10 @@ parameters.trials.max_trials = ceil(parameters.trials.max_trials/comb_length) * 
 subblocks = parameters.trials.max_trials / comb_length;
 for subblock = 1:subblocks
     if subblock == 1
-        comb_vector = combinations(:, randperm(length(combinations)));
+        x = randperm(size(combinations, 2));
+        comb_vector = combinations(:, randperm(size(combinations, 2)));
     else
-        comb_vector = [comb_vector, combinations(:, randperm(length(combinations)))];
+        comb_vector = [comb_vector, combinations(:, randperm(size(combinations, 2)))];
     end
 end
 

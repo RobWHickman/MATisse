@@ -112,10 +112,8 @@ function Run_button_Callback(hObject, eventdata, handles)
             end
             
             %save the data every 10 trials
-            if rem(handles.results.block_results.completed, 10)
-                save_data(handles.parameters, handles.results);
-                disp('data saved!')
-            end
+            save_data(handles.parameters, handles.results);
+            disp('data saved!')
             
             %update the GUI with these fields
             drawnow;
@@ -855,7 +853,7 @@ function Reward_tap_Callback(hObject, eventdata, handles)
     disp(['reward tap set to ', reward_tap]);
 guidata(hObject, handles);
 function Reward_tap_CreateFcn(hObject, eventdata, handles)
-    handles.hardware.solenoid.release.reward_tap = 1;
+    handles.hardware.solenoid.release.reward_tap = 3;
 guidata(hObject, handles);
 %set whether to give free juice or free water via the GUI
 function Free_water_CreateFcn(hObject, eventdata, handles)

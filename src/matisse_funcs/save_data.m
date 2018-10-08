@@ -15,7 +15,7 @@ monkey = parameters.participants.primate;
 writetable(results.full_output_table, fullfile(dir, regexprep(char(strcat(string(datetime('now')), human, '_', monkey, 'COMPACT_RESULTS.csv')), ':', '')));
 
 %save metadata as .mat
-metadata = results.experiment_metadata;
-save(fullfile(dir, regexprep(char(strcat(string(datetime('now')), human, '_', monkey, 'METADATA.mat')), ':', '')), 'metadata');
+%metadata = results.experiment_metadata;
+%save(fullfile(dir, regexprep(char(strcat(string(datetime('now')), human, '_', monkey, 'METADATA.mat')), ':', '')), 'metadata');
 
 

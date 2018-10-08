@@ -34,17 +34,3 @@ end
 %get rid of magic numbers which correspond to:
 %length, thickness, colour and surrounding box scalar
 stimuli.fixation_cross = generate_fixation_cross(12, 4, 3, hardware);
-
-if modifiers.background.colours
-    %set the background for the task
-    if strcmp(parameters.task.type, 'BDM')
-        stimuli.background_colour = [hardware.screen.colours.grey, 0, hardware.screen.colours.grey];
-    elseif strcmp(parameters.task.type, 'BC')
-        stimuli.background_colour = [hardware.screen.colours.grey, hardware.screen.colours.grey, 0];
-    elseif strcmp(parameters.task.type, 'PAV')
-        stimuli.background_colour = [0, hardware.screen.colours.grey, hardware.screen.colours.grey];
-    end
-else
-    %else set to grey
-    stimuli.background_colour = hardware.screen.colours.grey;
-end

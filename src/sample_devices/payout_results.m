@@ -25,8 +25,8 @@ elseif strcmp(payout, 'reward')
         sound_payout(results, 'reward');
     else
         %get the tap and use this taps calibration to get the open time
-        tap = hardware.solenoid.release.budget_tap;
-        tap_open_time = calculate_open_time(tap, results.outputs.budget_liquid);
+        tap = hardware.solenoid.release.reward_tap;
+        tap_open_time = calculate_open_time(tap, results.outputs.reward_liquid);
         %release the liquid
         release_liquid(hardware, tap, tap_open_time)
     end

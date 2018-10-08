@@ -16,16 +16,30 @@ end
 %% the different epochs in the task if all checks are met %%
 %inter trial interval
 for frame = 1:parameters.timings.TrialTime('ITI')
-    %draw the seventh epoch
-    if frame == 1 || frame == parameters.timings.TrialTime('ITI')
-        draw_ITI(stimuli, task_window);
-    end
 
     %get trial values for the offer, computer bid and random monkey bid
     %start position
     %also the random delays at the end of epochs 3 and 7
     if frame == 1
         results = set_initial_trial_values(parameters, stimuli, modifiers, results);
+        
+        %set up the background colours for the task
+        if modifiers.background.colours
+            %set the background for the task
+            if strcmp(parameters.task.type, 'BDM')
+                if strcmp(results.single_trial.subtask, 'FP')
+                    stimuli.background_colour = [hardware.screen.colours.grey, 0, hardware.screen.colours.grey];
+                elseif strcmp(results.single_trial.subtask, 'BDM')
+                    stimuli.background_colour = [hardware.screen.colours.grey, hardware.screen.colours.grey, 0];
+                end
+            elseif strcmp(parameters.task.type, 'BC')
+                stimuli.background_colour = [0, hardware.screen.colours.grey, hardware.screen.colours.grey];
+            end
+        else
+            %else set to grey
+            stimuli.background_colour = hardware.screen.colours.grey;
+        end
+        
         %set a table for the behavioural inputs on each frame to be held
         results.behaviour_table = initialise_behaviour(parameters);
         
@@ -63,12 +77,62 @@ for frame = 1:parameters.timings.TrialTime('ITI')
     else
         %currently we don't sample behaviour in the ITI
         %could be worth changing
-        
-        %Getty Handshake
     end
     
-    %if the last frame of the epoch, clear the buffer
-    flip_screen(frame, parameters, task_window, 'ITI');
+    %Getty Handshake on final frame
+    if frame == parameters.timings.TrialTime('ITI')
+%         %Matisse offers its hand to Getty 
+%         MATisse_offer1 = outputSingleScan();
+% 
+%         Getty_offer1 = 0;
+%         while(~Getty_offer1)
+%             Getty_offer1 = inputSingleScan();
+%         end
+% 
+%         %format the data from the last trial to be sent to GETTY
+%         if parameters.trials.total_trials > 0
+%             previous_trial = height(results.full_output_table);
+%             table_row = results.full_output_table(previous_trial,:);
+% 
+%             %set the key as the trial number for the previous trial
+%             %GETTY must respond with this to confirm it has received the
+%             %data
+%             key = table_row(:,width(results.full_output_table));
+% 
+%             %handshake before data transmission
+%             MATisse_offer2 = outputSingleScan();
+% 
+%             %send data to GETTY
+% 
+%             %receive offer from GETTY
+%             Getty_offer2 = 0;
+%             while(~Getty_offer2)
+%                 Getty_offer2 = inputSingleScan();
+%             end
+% 
+%             %check that the second GETTY handshake matches this key
+%             if Getty_offer2 ~= key
+%                 fprintf('Getty handshake does not match key!');
+%             end
+% 
+%         %otherwise simply handshake again
+%         else
+%             MATisse_offer2 = outputSingleScan();
+% 
+%             Getty_offer2 = 0;
+%             while(~Getty_offer2)
+%                 Getty_offer2 = inputSingleScan();
+%             end
+%         end
+
+        %if the last frame of the epoch, clear the buffer
+        flip_screen(frame, parameters, task_window, 'ITI');
+    end
+    
+    %draw the seventh epoch
+    if frame == 1 || frame == parameters.timings.TrialTime('ITI')
+        draw_ITI(stimuli, task_window);
+    end
 end
 
 %set the systime for the start of the trial
@@ -197,7 +261,7 @@ end
 %generate the reverse bidspace for the first price auctions
 %might affect timings- be careful for electrophys
 if strcmp(parameters.task.type, 'BDM') && strcmp(results.single_trial.subtask, 'FP') &&...
-        results.single_trial.starting_bid + results.movement.total_movement > results.single_trial.computer_bid
+        results.single_trial.starting_bid + nansum(results.behaviour_table.stimuli_movement(find(strcmp(results.behaviour_table.epoch, 'bidding')),:)) > results.single_trial.computer_bid
     disp('reversing bidspace');
     stimuli = generate_reverse_bidspace(parameters, results, stimuli, modifiers, task_window);
 end    
