@@ -29,8 +29,10 @@ if ~parameters.break.testmode
         disp('error-must code up lick sampling');
     end
     
-    hardware.joystick.movement.deflection_x = hardware.joystick.movement.deflection_x + hardware.joystick.bias.x_offset;
+    hardware.joystick.movement.deflection_x = hardware.joystick.movement.deflection_x + hardware.joystick.bias.x_offset * -1;
     hardware.joystick.movement.deflection_y = hardware.joystick.movement.deflection_y + hardware.joystick.bias.y_offset;
+    disp(hardware.joystick.movement.deflection_y);
+    %disp(hardware.joystick.movement.deflection_x);
 
 else
     [keyIsDown, secs, keyCode] = KbCheck;

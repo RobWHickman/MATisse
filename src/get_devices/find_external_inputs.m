@@ -43,9 +43,6 @@ if ~parameters.break.testmode
         joystick = daq.createSession('ni');
         addAnalogInputChannel(joystick, 'Dev1',0,'Voltage');
         addAnalogInputChannel(joystick, 'Dev1',1,'Voltage');
-%         data=linspace(-1,1,5000)';
-%         lh = addlistener(joystick,'DataRequired', ...
-%             @(src,event) src.queueOutputData(data));
         hardware.joystick.joystick = joystick;
         
         %get the touch sensor
