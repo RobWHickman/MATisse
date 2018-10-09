@@ -198,6 +198,7 @@ end
 if ~results.single_trial.task_failure || strcmp(parameters.task.type, 'PAV')
 %results.movement = initialise_movement(parameters);
 for frame = 1:parameters.timings.TrialTime('bidding')
+    disp(frame)
     
     %sample behaviour
     hardware = sample_input_devices(parameters, hardware);
@@ -209,33 +210,38 @@ for frame = 1:parameters.timings.TrialTime('bidding')
     
     %get the vector of all movement to simplify munging lines below
     movement_vec = results.behaviour_table.stimuli_movement(find(strcmp(results.behaviour_table.epoch, 'bidding')),:);
-    
+   
     %if no bid is made error
-    if(all(movement_vec == 0) &&...
-            frame > round(parameters.task_checks.bid_latency * hardware.screen.refresh_rate))
+    %latest frame is a simplification of the time by which the monkey must
+    %move the joystick
+    latest_frame = round(parameters.task_checks.bid_latency * hardware.screen.refresh_rate);
+    if (all(movement_vec(~isnan(movement_vec)) == 0) &&...
+            frame > latest_frame)
         parameters.task_checks.table.Status('no_bid_activity') = 1;
         break
     else
         parameters.task_checks.table.Status('no_bid_activity') = 0;
     end
-    
+
     %if the monkey moves then stops stabilise the bid
     %monkey will no longer be able to update position and no stimuli
     %movement will be recorded
     %n.b. 1 refers to error condition (unstabilised), not that bid is stabilised
     if any(movement_vec ~= 0)
-        if hardware.joystick.movement.stationary_count > round(parameters.task_checks.finalisation_pause * hardware.screen.refresh_rate) &&...
-                frame > round(parameters.task_checks.bid_latency * hardware.screen.refresh_rate)
+        if (hardware.joystick.movement.stationary_count > round(parameters.task_checks.finalisation_pause * hardware.screen.refresh_rate) &&...
+                frame > latest_frame)
             parameters.task_checks.table.Status('stabilised_offer') = 0;
         else
             parameters.task_checks.table.Status('stabilised_offer') = 1;
         end
     end
     
+    
     %cut out the task if there is not enough time for monkey to stabilise
     %the bid
     if parameters.task_checks.table.Status('stabilised_offer') &&...
             frame + (round(parameters.task_checks.finalisation_pause * hardware.screen.refresh_rate) - hardware.joystick.movement.stationary_count) > parameters.timings.TrialTime('bidding')
+        disp('did not stabilise!')
         break
     end
     
