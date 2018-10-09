@@ -66,13 +66,13 @@ elseif strcmp(parameters.task.type, 'PAV')
 end
 
 %if doing the binary choice update whether the monkey went left or right
-if strcmp(parameters.task.type, 'BC')
-    if results.movement.total_movement > 0
-        results.block_results.left = results.block_results.left + 1;
-    else
-        results.block_results.right = results.block_results.right + 1;
-    end
-end
+% if strcmp(parameters.task.type, 'BC')
+%     if results.single_trial.starting_bid + nansum(results.behaviour_table.stimuli_movement(find(strcmp(results.behaviour_table.epoch, 'bidding')),:)) > 0
+%         results.block_results.left = results.block_results.left + 1;
+%     else
+%         results.block_results.right = results.block_results.right + 1;
+%     end
+% end
 
 %remove all fields from results except block_results and full_putput_table
 fields = {'trial_results','outputs','single_trial'};

@@ -224,7 +224,8 @@ for frame = 1:parameters.timings.TrialTime('bidding')
     %movement will be recorded
     %n.b. 1 refers to error condition (unstabilised), not that bid is stabilised
     if any(movement_vec ~= 0)
-        if hardware.joystick.movement.stationary_count > round(parameters.task_checks.finalisation_pause * hardware.screen.refresh_rate)
+        if hardware.joystick.movement.stationary_count > round(parameters.task_checks.finalisation_pause * hardware.screen.refresh_rate) &&...
+                frame > round(parameters.task_checks.bid_latency * hardware.screen.refresh_rate)
             parameters.task_checks.table.Status('stabilised_offer') = 0;
         else
             parameters.task_checks.table.Status('stabilised_offer') = 1;

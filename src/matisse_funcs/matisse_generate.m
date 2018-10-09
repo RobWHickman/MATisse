@@ -40,5 +40,3 @@ if parameters.trials.random_stimuli == 0
     parameters.trials.combinations = create_stimuli_order(modifiers, parameters, stimuli);
 end
 
-disp(parameters.trials.combinations);
-
