@@ -75,13 +75,16 @@ epoch_subset = results.behaviour_table(find(strcmp(results.behaviour_table.epoch
 %sample the last x frames
 if frame >= hardware.touch.touch_samples
     touch_vals = epoch_subset.touch((frame - (hardware.touch.touch_samples - 1)):frame,:);
-    touch_percentage = sum(touch_vals)/length(touch_vals);
-    %if touch percentage lower than the threshold, monkey has failed the
-    %touch requirement for the trial
-%     if touch_percentage < hardware.touch.touch_perc
-%         parameters.task_checks.table.Status('touch_joystick') = 1;
-%     end
-    if all(touch_vals == 0)
-        parameters.task_checks.table.Status('touch_joystick') = 1;
+    if strcmp(hardware.touch.touch_req, 'any')
+        if all(touch_vals == 0)
+            parameters.task_checks.table.Status('touch_joystick') = 1;
+        end
+    else
+        touch_percentage = sum(touch_vals)/length(touch_vals);
+        %if touch percentage lower than the threshold, monkey has failed the
+        %touch requirement for the trial
+        if touch_percentage < hardware.touch.touch_perc
+            parameters.task_checks.table.Status('touch_joystick') = 1;
+        end
     end
 end

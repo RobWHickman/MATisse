@@ -1265,3 +1265,25 @@ function Clear_requirements_Callback(hObject, eventdata, handles)
 guidata(hObject, handles);
 function Clear_requirements_CreateFcn(hObject, eventdata, handles)
 guidata(hObject, handles);
+
+
+function Touch_any_Callback(hObject, eventdata, handles)
+    any_touch_required = get(handles.Touch_any, 'Value');
+    if any_touch_required == 1
+        hardware.touch.percent_touch_req = 'any';
+    else
+        hardware.touch.touch_req = 'percent';
+    end
+guidata(hObject, handles);
+function Touch_any_CreateFcn(hObject, eventdata, handles)
+    hardware.touch.touch_req = 'any';
+guidata(hObject, handles);
+function Touch_percent_CreateFcn(hObject, eventdata, handles)
+function Touch_percent_Callback(hObject, eventdata, handles)
+    perc_touch_required = get(handles.Touch_percent, 'Value');
+    if perc_touch_required == 1
+        hardware.touch.percent_touch_req = 'percent';
+    else
+        hardware.touch.touch_req = 'any';
+    end
+guidata(hObject, handles);
