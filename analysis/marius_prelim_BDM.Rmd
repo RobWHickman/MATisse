@@ -19,18 +19,16 @@ library(zoo)
 ```
 
 ```{r which data, warning = FALSE, message = FALSE}
+rm(list=ls())
 monkey <- "Ulysses"
-today <- "13-September-2018"
-look_back <- "01-September-2018"
+today <- "05-October-2018"
+look_back <- "01-October-2018"
 
 start_trial <- 0
 stop_trial <- "all"
 
 merge_days <- FALSE
 
-```
-
-```{r data_input, warning = FALSE, message = FALSE, include = FALSE}
 if(!is.na(look_back)){
   #use a selected range of dates
   dates <- strftime(seq(as.Date(look_back, "%d-%b-%Y"), as.Date(today, "%d-%b-%Y"), "days"), "%d-%b-%Y")
