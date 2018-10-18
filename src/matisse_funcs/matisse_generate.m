@@ -40,3 +40,9 @@ if parameters.trials.random_stimuli == 0
     parameters.trials.combinations = create_stimuli_order(modifiers, parameters, stimuli);
 end
 
+if parameters.Getty
+    %set up the handshake for getty
+    hardware.getty_handshake = set_up_handshake();
+    outputSingleScan(hardware.getty_handshake.to_getty, 0);
+    disp('set getty handshake to 0');
+end

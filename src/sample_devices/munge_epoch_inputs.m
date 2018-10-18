@@ -78,7 +78,10 @@ if frame >= hardware.touch.touch_samples
     touch_percentage = sum(touch_vals)/length(touch_vals);
     %if touch percentage lower than the threshold, monkey has failed the
     %touch requirement for the trial
-    if touch_percentage < hardware.touch.touch_perc
+%     if touch_percentage < hardware.touch.touch_perc
+%         parameters.task_checks.table.Status('touch_joystick') = 1;
+%     end
+    if all(touch_vals == 0)
         parameters.task_checks.table.Status('touch_joystick') = 1;
     end
 end

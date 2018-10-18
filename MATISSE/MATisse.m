@@ -1235,3 +1235,33 @@ function Touch_samples_Callback(hObject, eventdata, handles)
 function Touch_samples_CreateFcn(hObject, eventdata, handles)
     handles.hardware.touch.touch_samples = 10;
 guidata(hObject, handles);
+
+%Turn on to enforce handshake with Getty and sending of bits to Getty
+%computer
+function Getty_switch_Callback(hObject, eventdata, handles)
+    getty_on = get(handles.Getty_switch, 'Value');
+    if getty_on == 1
+        handles.parameters.Getty = 1;
+        set(handles.Getty_switch,'string','GETTY ON','enable','on','BackgroundColor','green');
+    else
+        handles.parameters.Getty = 0;
+        set(handles.Getty_switch,'string','GETTY OFF','enable','on','BackgroundColor','red');
+    end
+guidata(hObject, handles);
+function Getty_switch_CreateFcn(hObject, eventdata, handles)
+    handles.parameters.Getty = 0;
+guidata(hObject, handles);
+
+%Clears all requirements
+function Clear_requirements_Callback(hObject, eventdata, handles)
+    set(handles.Fixation_check,'value',0);
+    set(handles.Centered_check,'value',0);
+    set(handles.Touch_check,'value',0);
+    set(handles.Bidding_check,'value',0);
+    set(handles.Finalised_check,'value',0);
+    set(handles.Targeted_check,'value',0);
+    set(handles.Maximal_check,'value',0);
+    set(handles.Clear_requirements,'value',0);
+guidata(hObject, handles);
+function Clear_requirements_CreateFcn(hObject, eventdata, handles)
+guidata(hObject, handles);

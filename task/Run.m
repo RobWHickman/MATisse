@@ -81,51 +81,18 @@ for frame = 1:parameters.timings.TrialTime('ITI')
     
     %Getty Handshake on final frame
     if frame == parameters.timings.TrialTime('ITI')
-%         %Matisse offers its hand to Getty 
-%         MATisse_offer1 = outputSingleScan();
-% 
-%         Getty_offer1 = 0;
-%         while(~Getty_offer1)
-%             Getty_offer1 = inputSingleScan();
-%         end
-% 
-%         %format the data from the last trial to be sent to GETTY
-%         if parameters.trials.total_trials > 0
-%             previous_trial = height(results.full_output_table);
-%             table_row = results.full_output_table(previous_trial,:);
-% 
-%             %set the key as the trial number for the previous trial
-%             %GETTY must respond with this to confirm it has received the
-%             %data
-%             key = table_row(:,width(results.full_output_table));
-% 
-%             %handshake before data transmission
-%             MATisse_offer2 = outputSingleScan();
-% 
-%             %send data to GETTY
-% 
-%             %receive offer from GETTY
-%             Getty_offer2 = 0;
-%             while(~Getty_offer2)
-%                 Getty_offer2 = inputSingleScan();
-%             end
-% 
-%             %check that the second GETTY handshake matches this key
-%             if Getty_offer2 ~= key
-%                 fprintf('Getty handshake does not match key!');
-%             end
-% 
-%         %otherwise simply handshake again
-%         else
-%             MATisse_offer2 = outputSingleScan();
-% 
-%             Getty_offer2 = 0;
-%             while(~Getty_offer2)
-%                 Getty_offer2 = inputSingleScan();
-%             end
-%         end
-
-        %if the last frame of the epoch, clear the buffer
+        if parameters.Getty
+            %send a bit to getty
+            outputSingleScan(hardware.getty_handshake.to_getty, 1);
+        
+            handshake_in = inputSingleScan(hardware.getty_handshake.from_getty);
+            while(handshake_in == 0)
+                disp('could not find anything from getty')
+               pause(1);
+                handshake_in = inputSingleScan(hardware.getty_handshake.from_getty);
+            end
+        end
+        
         flip_screen(frame, parameters, task_window, 'ITI');
     end
     
@@ -198,8 +165,7 @@ end
 if ~results.single_trial.task_failure || strcmp(parameters.task.type, 'PAV')
 %results.movement = initialise_movement(parameters);
 for frame = 1:parameters.timings.TrialTime('bidding')
-    disp(frame)
-    
+   
     %sample behaviour
     hardware = sample_input_devices(parameters, hardware);
     [parameters, hardware, results] = munge_epoch_inputs(parameters, hardware, results, frame, 'bidding');
@@ -336,11 +302,18 @@ end
 %get the time of the end of the task to match up with neuro data
 results = time_trial(results, 'end');
 
+if parameters.Getty
+    %tell getty that the trial is over
+    disp(hardware.getty_handshake.to_getty);
+    outputSingleScan(hardware.getty_handshake.to_getty, 0);
+end
+
 %draw the ITI again to output the results from the trial briefly
 draw_ITI(stimuli, task_window);
 Screen('Flip', task_window, [], 0)
 %output the results of the trial to save and update the GUI
 results = output_results(results, parameters, hardware);
 results = set_trial_metadata(parameters, stimuli, hardware, modifiers, results);
+
 
 
