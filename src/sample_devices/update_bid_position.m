@@ -22,12 +22,15 @@ if strcmp(parameters.task.type, 'BDM')
     box_in = limits(2);
     
 elseif strcmp(parameters.task.type, 'BC')
-    limits = [0, hardware.screen.dimensions.width];
+    limits = [hardware.screen.dimensions.width, 0];
     box_in = 0;
 else
     %pavlovian
 end
 
+disp('setup');
+disp(results.single_trial.starting_bid);
+disp(total_movement);
 current_position = (results.single_trial.starting_bid + total_movement) *...
     abs(limits(1)-limits(2)) +...
     box_in;
@@ -46,11 +49,6 @@ elseif implied_movement > 0
     hardware.joystick.movement.stationary_count = 0;
     screen_movement = (implied_movement / hardware.joystick.bias.manual_bias);
     
-    disp(implied_movement);
-    disp(screen_movement);
-    disp(current_position);
-    disp(limits);
-    
     if (current_position + screen_movement) > limits(1)
         screen_movement = limits(1) - current_position;
         hardware.joystick.movement.limited_bidding = 1;
@@ -59,7 +57,12 @@ elseif implied_movement < 0
     hardware.joystick.movement.stationary_count = 0;
     screen_movement = (implied_movement * hardware.joystick.bias.manual_bias);
 
-    if (current_position + screen_movement) > limits(2)
+        disp(implied_movement);
+    disp(screen_movement);
+    disp(current_position);
+    disp(limits);
+
+    if (current_position + screen_movement) < limits(2)
         screen_movement = limits(2) - current_position;
         hardware.joystick.movement.limited_bidding = 1;
     end
