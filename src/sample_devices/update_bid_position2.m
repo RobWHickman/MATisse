@@ -1,4 +1,4 @@
-function [results, hardware] = update_bid_position(hardware, results, parameters, stimuli)
+function [results, hardware] = update_bid_position2(hardware, results, parameters, stimuli)
 
 %find the rows that correspond to bidding in the behaviour table
 bidding = find(strcmp(results.behaviour_table.epoch, 'bidding'));
