@@ -28,9 +28,6 @@ else
     %pavlovian
 end
 
-disp('setup');
-disp(results.single_trial.starting_bid);
-disp(total_movement);
 current_position = (results.single_trial.starting_bid + total_movement) *...
     abs(limits(1)-limits(2)) +...
     box_in;
@@ -56,11 +53,6 @@ elseif implied_movement > 0
 elseif implied_movement < 0
     hardware.joystick.movement.stationary_count = 0;
     screen_movement = (implied_movement * hardware.joystick.bias.manual_bias);
-
-        disp(implied_movement);
-    disp(screen_movement);
-    disp(current_position);
-    disp(limits);
 
     if (current_position + screen_movement) < limits(2)
         screen_movement = limits(2) - current_position;
