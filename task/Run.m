@@ -81,18 +81,6 @@ for frame = 1:parameters.timings.TrialTime('ITI')
     
     %Getty Handshake on final frame
     if frame == parameters.timings.TrialTime('ITI')
-        if parameters.Getty
-            %send a bit to getty
-            outputSingleScan(hardware.getty_handshake.to_getty, 1);
-        
-            handshake_in = inputSingleScan(hardware.getty_handshake.from_getty);
-            while(handshake_in == 0)
-                disp('could not find anything from getty')
-               pause(1);
-                handshake_in = inputSingleScan(hardware.getty_handshake.from_getty);
-            end
-        end
-        
         flip_screen(frame, parameters, task_window, 'ITI');
     end
     
@@ -301,12 +289,6 @@ end
 
 %get the time of the end of the task to match up with neuro data
 results = time_trial(results, 'end');
-
-if parameters.Getty
-    %tell getty that the trial is over
-    disp(hardware.getty_handshake.to_getty);
-    outputSingleScan(hardware.getty_handshake.to_getty, 0);
-end
 
 %draw the ITI again to output the results from the trial briefly
 draw_ITI(stimuli, task_window);

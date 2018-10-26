@@ -1236,21 +1236,6 @@ function Touch_samples_CreateFcn(hObject, eventdata, handles)
     handles.hardware.touch.touch_samples = 10;
 guidata(hObject, handles);
 
-%Turn on to enforce handshake with Getty and sending of bits to Getty
-%computer
-function Getty_switch_Callback(hObject, eventdata, handles)
-    getty_on = get(handles.Getty_switch, 'Value');
-    if getty_on == 1
-        handles.parameters.Getty = 1;
-        set(handles.Getty_switch,'string','GETTY ON','enable','on','BackgroundColor','green');
-    else
-        handles.parameters.Getty = 0;
-        set(handles.Getty_switch,'string','GETTY OFF','enable','on','BackgroundColor','red');
-    end
-guidata(hObject, handles);
-function Getty_switch_CreateFcn(hObject, eventdata, handles)
-    handles.parameters.Getty = 0;
-guidata(hObject, handles);
 
 %Clears all requirements
 function Clear_requirements_Callback(hObject, eventdata, handles)
@@ -1286,4 +1271,53 @@ function Touch_percent_Callback(hObject, eventdata, handles)
     else
         handles.hardware.touch.touch_req = 'any';
     end
+guidata(hObject, handles);
+
+%%%GETTY TESTING%%%
+
+%Turn on to enforce handshake with Getty and sending of bits to Getty
+%computer
+function Getty_switch_Callback(hObject, eventdata, handles)
+    getty_on = get(handles.Getty_switch, 'Value');
+    if getty_on == 1
+        handles.parameters.Getty = 1;
+        MODIG_tcp_open_connection();        
+        set(handles.Getty_switch,'string','CONNECTED TO GETTY','enable','on','BackgroundColor','green');
+    else
+        handles.parameters.Getty = 0;
+        set(handles.Getty_switch,'string','DISCONNECTED FROM GETTY','enable','off','BackgroundColor','red');
+    end
+guidata(hObject, handles);
+function Getty_switch_CreateFcn(hObject, eventdata, handles)
+    handles.parameters.Getty = 0;
+guidata(hObject, handles);
+
+
+%These are test functions that need to be deleted from the final MATisse
+
+%make the array of data to send Getty
+%its all bullshit for testing
+
+%Array consists of 4 variables
+%Length: the length of the array before adding itself
+%Reward: the value of the reward fractal 1-3
+%Bid: the value of the bid 1-10
+%Win/Lose: if the monkey won or lost 0-1
+function GETTYMAKEARRAY_Callback(hObject, eventdata, handles)
+    Reward = randi(3);
+    Bid = randi(11) - 1;
+    Win_lose = randi(2)-1;
+    Length = 3;
+    handles.valToGetty = [Length, Reward, Bid, Win_lose];
+    disp('valToGetty');
+    disp(handles.valToGetty);
+ guidata(hObject, handles);
+function GETTYMAKEARRAY_CreateFcn(hObject, eventdata, handles)
+guidata(hObject, handles);
+
+
+%runs a 'pseudo-task' and sends bits to getty
+
+function GETTYSENDBITS_Callback(hObject, eventdata, handles)
+    bit_output = getty_bit_outputs();
 guidata(hObject, handles);
