@@ -18,9 +18,9 @@ end
 outputSingleScan(device, send_bits);
 
 %for testing- probably want to delete in production
-WaitSecs(2);
+%WaitSecs(2);
 
 %set all bits back to null ??
-outputSingleScan(device, null_bits);
+%outputSingleScan(device, null_bits);
 
 

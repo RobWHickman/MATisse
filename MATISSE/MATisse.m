@@ -939,7 +939,7 @@ guidata(hObject, handles);
         guidata(hObject, handles);
 
 function Display_button_Callback(hObject, eventdata, handles)
-    display(handles.results.behaviour_table);
+    display(handles.parameters.getty_connected);
 function Display_button_CreateFcn(hObject, eventdata, handles)
 
 function Choice_stimuli_Callback(hObject, eventdata, handles)
@@ -1281,11 +1281,17 @@ function Getty_switch_Callback(hObject, eventdata, handles)
     getty_on = get(handles.Getty_switch, 'Value');
     if getty_on == 1
         handles.parameters.Getty = 1;
-        MODIG_tcp_open_connection();        
-        set(handles.Getty_switch,'string','CONNECTED TO GETTY','enable','on','BackgroundColor','green');
+        handles.parameters.getty_connected = MODIG_tcp_open_connection();
+        if handles.parameters.getty_connected
+            set(handles.Getty_switch,'string','CONNECTED TO GETTY','enable','on','BackgroundColor','green');
+        end
     else
         handles.parameters.Getty = 0;
-        set(handles.Getty_switch,'string','DISCONNECTED FROM GETTY','enable','off','BackgroundColor','red');
+        if handles.parameters.getty_connected
+            MODIG_tcp_close_connection();  
+            handles.parameters.getty_connected = 0;
+        end
+        set(handles.Getty_switch,'string','DISCONNECTED FROM GETTY','enable','on','BackgroundColor','red');
     end
 guidata(hObject, handles);
 function Getty_switch_CreateFcn(hObject, eventdata, handles)
@@ -1319,5 +1325,21 @@ guidata(hObject, handles);
 %runs a 'pseudo-task' and sends bits to getty
 
 function GETTYSENDBITS_Callback(hObject, eventdata, handles)
-    bit_output = getty_bit_outputs();
+    if handles.parameters.Getty && handles.parameters.getty_connected
+        disp('connecting ni card');
+        
+        %set up the outputs for the timings and the juice
+        timing = getty_bit_output;
+        juice =  daq.createSession('ni');
+        addDigitalChannel(juice,'Dev1','Port0/Line12:14','OutputOnly');
+        disp('outputs connected!');
+        
+        %run a fake trial- turn bits on and off
+        %this mirrors a pavlovian trial fairly well
+        disp('running fake trial');
+        disp('----------------------');
+        getty_fake_trial(timing, juice)
+    else
+        disp('make sure getty is on and connected!');
+    end
 guidata(hObject, handles);

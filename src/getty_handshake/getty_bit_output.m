@@ -5,4 +5,5 @@ daqreset;
 
 %only digital input for now as draft
 bits_out = daq.createSession('ni');
-addDigitalChannel(bits_out,'Dev1','Port0/Line8:15','OutputOnly');
+addDigitalChannel(bits_out,'Dev1','Port0/Line8:11','OutputOnly');
+addDigitalChannel(bits_out,'Dev1','Port0/Line15','OutputOnly');
