@@ -82,6 +82,29 @@ for frame = 1:parameters.timings.TrialTime('ITI')
     %Getty Handshake on final frame
     if frame == parameters.timings.TrialTime('ITI')
         flip_screen(frame, parameters, task_window, 'ITI');
+        
+%         if parameters.getty.on
+%             getty_send_vals(parameters.trials.total_trials + 1);
+%             
+%             n=0;
+%             disp('receiving getty handshake');
+%             
+%             while n==0
+%                 %is handshake up
+%                 shake_in_value = inputSingleScan(parameters.getty.bits.shake_in);
+%                 if shake_in_value==1
+%                     break
+%                 end
+%             end
+%             
+%             %send hard trigger
+%             disp('sending hard trigger');
+%             outputSingleScan(parameters.getty.bits.trigger_out, 1)
+%             pause(0.1)
+%             % set the hardtrigger down
+%             outputSingleScan(parameters.getty.bits.trigger_out, 0)
+%            
+%         end
     end
     
     %draw the seventh epoch
@@ -145,6 +168,16 @@ for frame = 1:parameters.timings.TrialTime('fractal_offer')
     end
 
     flip_screen(frame, parameters, task_window, 'fractal_offer');
+    
+    if frame == 1 || frame == parameters.timings.TrialTime('fixation')
+        if frame == 1
+            bit_out = 1;
+        else
+            bit_out = 0;
+        end
+%         outputSingleScan(getty.bits.fractal_display, bit_out)
+    end
+
 end
 results = check_requirements(parameters, results);
 end
@@ -296,6 +329,14 @@ Screen('Flip', task_window, [], 0)
 %output the results of the trial to save and update the GUI
 results = output_results(results, parameters, hardware);
 results = set_trial_metadata(parameters, stimuli, hardware, modifiers, results);
+
+% if getty.on
+%     disp('closing trial');
+%     outputSingleScan(parameters.bits.shake_out, 1)
+%     pause(0.1)
+%     outputSingleScan(parameters.bits.shake_out, 0)
+% end
+
 
 
 

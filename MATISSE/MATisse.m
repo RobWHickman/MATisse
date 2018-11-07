@@ -1280,22 +1280,22 @@ guidata(hObject, handles);
 function Getty_switch_Callback(hObject, eventdata, handles)
     getty_on = get(handles.Getty_switch, 'Value');
     if getty_on == 1
-        handles.parameters.Getty = 1;
-        handles.parameters.getty_connected = MODIG_tcp_open_connection();
-        if handles.parameters.getty_connected
+        handles.parameters.getty.on = 1;
+        handles.parameters.getty.getty_connected = MODIG_tcp_open_connection();
+        if handles.parameters.getty.getty_connected
             set(handles.Getty_switch,'string','CONNECTED TO GETTY','enable','on','BackgroundColor','green');
         end
     else
-        handles.parameters.Getty = 0;
-        if handles.parameters.getty_connected
+        handles.parameters.getty.on = 0;
+        if handles.parameters.getty.getty_connected
             MODIG_tcp_close_connection();  
-            handles.parameters.getty_connected = 0;
+            handles.parameters.getty.getty_connected = 0;
         end
         set(handles.Getty_switch,'string','DISCONNECTED FROM GETTY','enable','on','BackgroundColor','red');
     end
 guidata(hObject, handles);
 function Getty_switch_CreateFcn(hObject, eventdata, handles)
-    handles.parameters.Getty = 0;
+    handles.parameters.getty.on = 0;
 guidata(hObject, handles);
 
 
@@ -1329,16 +1329,19 @@ function GETTYSENDBITS_Callback(hObject, eventdata, handles)
         disp('connecting ni card');
         
         %set up the outputs for the timings and the juice
-        timing = getty_bit_output;
-        juice =  daq.createSession('ni');
-        addDigitalChannel(juice,'Dev1','Port0/Line12:14','OutputOnly');
+        bits_out = getty_bit_output;
+        shake_in = daq.createSession('ni');
+        addDigitalChannel(shake_in,'Dev1','Port1/Line7','InputOnly');
         disp('outputs connected!');
         
         %run a fake trial- turn bits on and off
         %this mirrors a pavlovian trial fairly well
-        disp('running fake trial');
-        disp('----------------------');
-        getty_fake_trial(timing, juice)
+        for trial = 1:100
+            disp('running fake trial');
+            disp(trial);
+            disp('----------------------');
+            getty_fake_trial(bits_out, shake_in, trial)
+        end
     else
         disp('make sure getty is on and connected!');
     end
