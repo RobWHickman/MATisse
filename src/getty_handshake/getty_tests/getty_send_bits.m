@@ -8,8 +8,4 @@ number_of_channels = length(device.Channels);
 bit_vec = zeros(1, number_of_channels);
 bit_vec(output_line) = bits;
 
-disp('sending bit on');
-disp(device);
-disp('sending bit vector');
-disp(bit_vec);
 outputSingleScan(device, bit_vec);

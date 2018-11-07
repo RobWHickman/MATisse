@@ -1,5 +1,6 @@
 %BDM task function
 function [results, parameters] = Run(parameters, stimuli, hardware, modifiers, results, task_window)
+disp('initialising trial');
 
 %generate the task timings
 %truncated times have a flat hazard rate
@@ -83,28 +84,29 @@ for frame = 1:parameters.timings.TrialTime('ITI')
     if frame == parameters.timings.TrialTime('ITI')
         flip_screen(frame, parameters, task_window, 'ITI');
         
-%         if parameters.getty.on
-%             getty_send_vals(parameters.trials.total_trials + 1);
-%             
-%             n=0;
-%             disp('receiving getty handshake');
-%             
-%             while n==0
-%                 %is handshake up
-%                 shake_in_value = inputSingleScan(parameters.getty.bits.shake_in);
-%                 if shake_in_value==1
-%                     break
-%                 end
-%             end
-%             
-%             %send hard trigger
-%             disp('sending hard trigger');
-%             outputSingleScan(parameters.getty.bits.trigger_out, 1)
-%             pause(0.1)
-%             % set the hardtrigger down
-%             outputSingleScan(parameters.getty.bits.trigger_out, 0)
-%            
-%         end
+        if parameters.getty.on
+            getty_send_vals(parameters.trials.total_trials + 1);
+            disp(parameters.trials.total_trials);
+            
+            n=0;
+            while n==0
+                %is handshake up
+                shake_in_value = inputSingleScan(parameters.getty.shake_in);
+                if shake_in_value==1
+                    break
+                end
+            end
+            
+            %send hard trigger
+            disp('sending hard trigger');
+            %outputSingleScan(parameters.getty.bits, 1)
+            getty_send_bits(parameters.getty.bits, 22, 1)
+            pause(0.1)
+            % set the hardtrigger down
+            %outputSingleScan(parameters.getty.bits, 0)
+            getty_send_bits(parameters.getty.bits, 22, 0)
+           
+        end
     end
     
     %draw the seventh epoch
@@ -115,6 +117,7 @@ end
 
 %set the systime for the start of the trial
 results = time_trial(results, 'start');
+disp('starting trial');
 
 % %fixation epoch
 %only continue to epochs if no task failure or a pavlovian paradigm task
@@ -175,7 +178,8 @@ for frame = 1:parameters.timings.TrialTime('fractal_offer')
         else
             bit_out = 0;
         end
-%         outputSingleScan(getty.bits.fractal_display, bit_out)
+        %outputSingleScan(parameters.getty.bits.fractal_display, bit_out)
+        getty_send_bits(parameters.getty.bits, 8, bit_out)
     end
 
 end
@@ -330,12 +334,14 @@ Screen('Flip', task_window, [], 0)
 results = output_results(results, parameters, hardware);
 results = set_trial_metadata(parameters, stimuli, hardware, modifiers, results);
 
-% if getty.on
-%     disp('closing trial');
-%     outputSingleScan(parameters.bits.shake_out, 1)
-%     pause(0.1)
-%     outputSingleScan(parameters.bits.shake_out, 0)
-% end
+if parameters.getty.on
+    disp('closing trial');
+    %outputSingleScan(parameters.getty.bits.shake_out, 1)
+    getty_send_bits(parameters.getty.bits, 23, 1)
+    pause(0.1)
+    %outputSingleScan(parameters.getty.bits.shake_out, 0)
+    getty_send_bits(parameters.getty.bits, 23, 0)
+end
 
 
 

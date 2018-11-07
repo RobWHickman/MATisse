@@ -11,7 +11,7 @@ if strcmp(payout, 'budget')
         tap = hardware.solenoid.release.budget_tap;
         tap_open_time = calculate_open_time(tap, results.outputs.budget_liquid);
         %release the liquid
-        release_liquid(hardware, tap, tap_open_time)
+        release_liquid(parameters, hardware, tap, tap_open_time)
     end
 elseif strcmp(payout, 'reward')
     %calculate the amount of reward to give
@@ -28,7 +28,7 @@ elseif strcmp(payout, 'reward')
         tap = hardware.solenoid.release.reward_tap;
         tap_open_time = calculate_open_time(tap, results.outputs.reward_liquid);
         %release the liquid
-        release_liquid(hardware, tap, tap_open_time)
+        release_liquid(parameters, hardware, tap, tap_open_time)
     end
 end
 
