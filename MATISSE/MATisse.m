@@ -684,12 +684,12 @@ set(handles.manual_bias,'Value', 0.5);
 %edit the bias manually in the GUI
 function Set_y_offset_Callback(hObject, eventdata, handles)
     clear handles.hardware.joystick.bias.y_offset;
-    handles.hardware.joystick.bias.y_offset = get(handles.Set_y_offset,'String');
+    handles.hardware.joystick.bias.y_offset = str2num(get(handles.Set_y_offset,'String'));
     disp('set new joystick Y bias');
 guidata(hObject, handles);
 function Set_x_offset_Callback(hObject, eventdata, handles)
     clear handles.hardware.joystick.bias.x_offset;
-    handles.hardware.joystick.bias.x_offset = get(handles.Set_x_offset,'String');
+    handles.hardware.joystick.bias.x_offset = str2num(get(handles.Set_x_offset,'String'));
     disp('set new joystick X bias');
 guidata(hObject, handles);
 function Set_y_offset_CreateFcn(hObject, eventdata, handles)
@@ -714,9 +714,9 @@ guidata(hObject, handles);
 %joystick movement below to pass a centered check
 function Centre_sensitivity_Callback(hObject, eventdata, handles)
     clear handles.hardware.joystick.sensitivity.centered;
-    joystick_sensitivity = get(handles.Joystick_sensitivty,'String');
-    handles.hardware.joystick.sensitivity.centered = str2num(joystick_sensitivity);
-    disp(['set joystick sensitivity to ', joystick_sensitivity]);
+    centre_sensitivity = get(handles.Centre_sensitivity,'String');
+    handles.hardware.joystick.sensitivity.centered = str2num(centre_sensitivity);
+    disp(['set joystick sensitivity to ', centre_sensitivity]);
 guidata(hObject, handles);
 function Centre_sensitivity_CreateFcn(hObject, eventdata, handles)
     handles.hardware.joystick.sensitivity.centered = str2num('0.1');
@@ -939,7 +939,7 @@ guidata(hObject, handles);
         guidata(hObject, handles);
 
 function Display_button_Callback(hObject, eventdata, handles)
-    display(handles.parameters.getty_connected);
+    display(handles.hardware.joystick.bias.y_offset);
 function Display_button_CreateFcn(hObject, eventdata, handles)
 
 function Choice_stimuli_Callback(hObject, eventdata, handles)
