@@ -40,8 +40,8 @@ if parameters.trials.random_stimuli == 0
     parameters.trials.combinations = create_stimuli_order(modifiers, parameters, stimuli);
 end
 
-if parameters.getty.on
+%if parameters.getty.on
     parameters.getty.bits = getty_bit_output();
     parameters.getty.shake_in = daq.createSession('ni');
     addDigitalChannel(parameters.getty.shake_in,'Dev1','Port1/Line7','InputOnly');
-end
+%end

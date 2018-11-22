@@ -85,8 +85,12 @@ for frame = 1:parameters.timings.TrialTime('ITI')
         flip_screen(frame, parameters, task_window, 'ITI');
         
         if parameters.getty.on
-            getty_send_vals(parameters.trials.total_trials + 1);
-            disp(parameters.trials.total_trials);
+            if ~isfield(results, 'block_results')
+                trial = 1;
+            else
+                trial = results.block_results.completed + 1;
+            end
+            getty_send_vals(trial, results.single_trial, parameters);
             
             n=0;
             while n==0
@@ -173,13 +177,15 @@ for frame = 1:parameters.timings.TrialTime('fractal_offer')
     flip_screen(frame, parameters, task_window, 'fractal_offer');
     
     if frame == 1 || frame == parameters.timings.TrialTime('fixation')
-        if frame == 1
-            bit_out = 1;
-        else
-            bit_out = 0;
+        if parameters.getty.on
+            if frame == 1
+                bit_out = 1;
+            else
+                bit_out = 0;
+            end
+            %outputSingleScan(parameters.getty.bits.fractal_display, bit_out)
+            getty_send_bits(parameters.getty.bits, 8, bit_out)
         end
-        %outputSingleScan(parameters.getty.bits.fractal_display, bit_out)
-        getty_send_bits(parameters.getty.bits, 8, bit_out)
     end
 
 end
@@ -222,6 +228,7 @@ for frame = 1:parameters.timings.TrialTime('bidding')
         if (hardware.joystick.movement.stationary_count > round(parameters.task_checks.finalisation_pause * hardware.screen.refresh_rate) &&...
                 frame > latest_frame)
             parameters.task_checks.table.Status('stabilised_offer') = 0;
+            getty_send_bits(parameters.getty.bits, 10, 1)
         else
             parameters.task_checks.table.Status('stabilised_offer') = 1;
         end
@@ -251,6 +258,22 @@ for frame = 1:parameters.timings.TrialTime('bidding')
     %draw the task after all the checks and flip the screen
     draw_bidding_epoch(parameters, stimuli, modifiers, hardware, results, task_window, parameters.task.type)
     flip_screen(frame, parameters, task_window, 'bidding');
+
+    %send the bit for the bidding epoch
+    if frame == 1 || frame == parameters.timings.TrialTime('fixation')
+        if parameters.getty.on
+            if frame == 1
+                bit_out = 1;
+            else
+                bit_out = 0;
+            end
+            getty_send_bits(parameters.getty.bits, 9, bit_out)
+        end
+        if frame == parameters.timings.TrialTime('fixation')
+            getty_send_bits(parameters.getty.bits, 10, 0)
+        end
+    end
+
 end
 results = check_requirements(parameters, results);
 end
@@ -283,6 +306,19 @@ for frame = 1:parameters.timings.TrialTime('budget_payout')
     end
      
     flip_screen(frame, parameters, task_window, 'budget_payout');
+    
+    %send the bit for the results epoch
+    if (frame == 1 || frame == parameters.timings.TrialTime('fixation')) && results.outputs.reward > 0
+        if parameters.getty.on
+            if frame == 1
+                bit_out = 1;
+            else
+                bit_out = 0;
+            end
+            getty_send_bits(parameters.getty.bits, 11, bit_out)
+        end
+    end
+
 end
 results = check_requirements(parameters, results);
 end

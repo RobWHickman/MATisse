@@ -1,6 +1,9 @@
-function getty_send_vals(trial)
+function getty_send_vals(trial, trial_variables, parameters)
 
-valToGetty = fake_getty_array(trial);
+%fake data for testing
+%valToGetty = fake_getty_array(trial);
+
+valToGetty = getty_create_array(trial, trial_variables, parameters);
 
 disp('sending vals to getty');
 disp(valToGetty);
