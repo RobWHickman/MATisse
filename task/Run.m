@@ -284,8 +284,16 @@ end
 %displays plain red screen
 %no error output (e.g. sound) yet but can be implemented
 if results.single_trial.task_failure && ~strcmp(parameters.task.type, 'PAV')
-for frame = 1:parameters.timings.TrialTime('error_timeout')
-    if frame == 1 || frame == parameters.timings.TrialTime('error_timeout')
+    if parameters.timing.error_timing_static == 1
+        error_time = parameters.timings.TrialTime('error_timeout');
+    else
+        non_error_epochs = results.behaviour_table(find(~strcmp(results.behaviour_table.epoch, 'error_timeout')),:);
+        remaining_frames = non_error_epochs(isnan(non_error_epochs.joy_x),:);
+        %ADD IN SECS AS PARAMETER HERE
+        error_time = height(remaining_frames) + (1*60);
+    end
+for frame = 1:error_time
+    if frame == 1 || frame == error_time
         draw_error_epoch(hardware, task_window)
         sound_error_tone()
     end

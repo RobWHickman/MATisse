@@ -939,7 +939,7 @@ guidata(hObject, handles);
         guidata(hObject, handles);
 
 function Display_button_Callback(hObject, eventdata, handles)
-    display(handles.results.behaviour_table);
+    display(handles.parameters.timing);
 function Display_button_CreateFcn(hObject, eventdata, handles)
 
 function Choice_stimuli_Callback(hObject, eventdata, handles)
@@ -1299,5 +1299,19 @@ function Sound_button_Callback(hObject, eventdata, handles)
 guidata(hObject, handles);
 function Sound_button_CreateFcn(hObject, eventdata, handles)
     handles.hardware.sound = 1;
+guidata(hObject, handles);
+    
+%whether error times will be static (fixed in parameters)
+%or use the remaining time
+function Static_errors_Callback(hObject, eventdata, handles)
+    error_time_status = get(handles.Sound_button, 'Value');
+    if error_time_status == 1
+        handles.parameters.timing.error_timing_static = 1;
+    else
+        handles.parameters.timing.error_timing_static = 0;
+    end
+guidata(hObject, handles);
+function Static_errors_CreateFcn(hObject, eventdata, handles)
+    handles.parameters.timing.error_timing_static = 1;
 guidata(hObject, handles);
     
