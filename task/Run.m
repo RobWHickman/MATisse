@@ -287,6 +287,7 @@ if results.single_trial.task_failure && ~strcmp(parameters.task.type, 'PAV')
 for frame = 1:parameters.timings.TrialTime('error_timeout')
     if frame == 1 || frame == parameters.timings.TrialTime('error_timeout')
         draw_error_epoch(hardware, task_window)
+        sound_error_tone()
     end
     
     if frame == 2

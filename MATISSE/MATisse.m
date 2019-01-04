@@ -1287,3 +1287,17 @@ function Touch_percent_Callback(hObject, eventdata, handles)
         handles.hardware.touch.touch_req = 'any';
     end
 guidata(hObject, handles);
+
+%whether or not to play the error sound
+function Sound_button_Callback(hObject, eventdata, handles)
+    sound_status = get(handles.Sound_button, 'Value');
+    if sound_status == 1
+        handles.hardware.sound = 1;
+    else
+        handles.hardware.sound = 0;
+    end
+guidata(hObject, handles);
+function Sound_button_CreateFcn(hObject, eventdata, handles)
+    handles.hardware.sound = 1;
+guidata(hObject, handles);
+    
