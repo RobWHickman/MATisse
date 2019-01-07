@@ -301,7 +301,8 @@ for frame = 1:parameters.timings.TrialTime('budget_payout')
     end
     
     %payout the budget results on the last frame
-    if frame == parameters.timings.TrialTime('budget_payout')
+    if frame == 1
+    %if frame == parameters.timings.TrialTime('budget_payout')
         results = payout_results(stimuli, parameters, modifiers, hardware, results, 'budget');
     end
      
@@ -332,7 +333,8 @@ for frame = 1:parameters.timings.TrialTime('reward_payout')
     end
     
     %payout the results on the last frame
-    if frame == parameters.timings.TrialTime('reward_payout')
+    if frame == 1
+    %if frame == parameters.timings.TrialTime('reward_payout')
         results = payout_results(stimuli, parameters, modifiers, hardware, results, 'reward');
     end
      
