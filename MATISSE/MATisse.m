@@ -111,8 +111,13 @@ function Run_button_Callback(hObject, eventdata, handles)
                 set(handles.Right_choice, 'String', handles.results.block_results.right);
             end
             
-            %save the data every 10 trials
-            save_data(handles.parameters, handles.results);
+            %save metadata on first trial
+            if handles.results.block_results.completed == 1
+                save_data(handles.parameters, handles.results, 'task_metadata');
+            end
+            
+            %save the data
+            save_data(handles.parameters, handles.results, 'task_results');
             disp('data saved!')
             
             %update the GUI with these fields

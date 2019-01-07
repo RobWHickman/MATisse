@@ -301,7 +301,7 @@ for frame = 1:parameters.timings.TrialTime('budget_payout')
     end
     
     %payout the budget results on the last frame
-    if frame == 1
+    if frame == 2
     %if frame == parameters.timings.TrialTime('budget_payout')
         results = payout_results(stimuli, parameters, modifiers, hardware, results, 'budget');
     end
@@ -333,7 +333,7 @@ for frame = 1:parameters.timings.TrialTime('reward_payout')
     end
     
     %payout the results on the last frame
-    if frame == 1
+    if frame == 2
     %if frame == parameters.timings.TrialTime('reward_payout')
         results = payout_results(stimuli, parameters, modifiers, hardware, results, 'reward');
     end
@@ -370,7 +370,9 @@ draw_ITI(stimuli, task_window);
 Screen('Flip', task_window, [], 0)
 %output the results of the trial to save and update the GUI
 results = output_results(results, parameters, hardware);
-results = set_trial_metadata(parameters, stimuli, hardware, modifiers, results);
+if results.block_results.completed == 1
+    results = set_trial_metadata(parameters, stimuli, hardware, modifiers, results);
+end
 
 if parameters.getty.on
     disp('closing trial');
