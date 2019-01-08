@@ -82,7 +82,6 @@ for frame = 1:parameters.timings.TrialTime('ITI')
     
     %Getty Handshake on final frame
     if frame == parameters.timings.TrialTime('ITI')
-        flip_screen(frame, parameters, task_window, 'ITI');
         
         if parameters.getty.on
             if ~isfield(results, 'block_results')
@@ -117,6 +116,7 @@ for frame = 1:parameters.timings.TrialTime('ITI')
     if frame == 1 || frame == parameters.timings.TrialTime('ITI')
         draw_ITI(stimuli, task_window);
     end
+flip_screen(frame, parameters, task_window, 'ITI');
 end
 
 %set the systime for the start of the trial
@@ -373,7 +373,7 @@ results = time_trial(results, 'end');
 
 %draw the ITI again to output the results from the trial briefly
 draw_ITI(stimuli, task_window);
-Screen('Flip', task_window, [], 0)
+flip_screen(frame, parameters, task_window, 'ITI');
 %output the results of the trial to save and update the GUI
 results = output_results(results, parameters, hardware);
 if results.block_results.completed == 1
