@@ -111,8 +111,13 @@ function Run_button_Callback(hObject, eventdata, handles)
                 set(handles.Right_choice, 'String', handles.results.block_results.right);
             end
             
-            %save the data every 10 trials
-            save_data(handles.parameters, handles.results);
+            %save metadata on first trial
+            if handles.results.block_results.completed == 1
+                save_data(handles.parameters, handles.results, 'task_metadata');
+            end
+            
+            %save the data
+            save_data(handles.parameters, handles.results, 'task_results');
             disp('data saved!')
             
             %update the GUI with these fields
@@ -684,12 +689,12 @@ set(handles.manual_bias,'Value', 0.5);
 %edit the bias manually in the GUI
 function Set_y_offset_Callback(hObject, eventdata, handles)
     clear handles.hardware.joystick.bias.y_offset;
-    handles.hardware.joystick.bias.y_offset = get(handles.Set_y_offset,'String');
+    handles.hardware.joystick.bias.y_offset = str2num(get(handles.Set_y_offset,'String'));
     disp('set new joystick Y bias');
 guidata(hObject, handles);
 function Set_x_offset_Callback(hObject, eventdata, handles)
     clear handles.hardware.joystick.bias.x_offset;
-    handles.hardware.joystick.bias.x_offset = get(handles.Set_x_offset,'String');
+    handles.hardware.joystick.bias.x_offset = str2num(get(handles.Set_x_offset,'String'));
     disp('set new joystick X bias');
 guidata(hObject, handles);
 function Set_y_offset_CreateFcn(hObject, eventdata, handles)
@@ -714,9 +719,9 @@ guidata(hObject, handles);
 %joystick movement below to pass a centered check
 function Centre_sensitivity_Callback(hObject, eventdata, handles)
     clear handles.hardware.joystick.sensitivity.centered;
-    joystick_sensitivity = get(handles.Joystick_sensitivty,'String');
-    handles.hardware.joystick.sensitivity.centered = str2num(joystick_sensitivity);
-    disp(['set joystick sensitivity to ', joystick_sensitivity]);
+    centre_sensitivity = get(handles.Centre_sensitivity,'String');
+    handles.hardware.joystick.sensitivity.centered = str2num(centre_sensitivity);
+    disp(['set joystick sensitivity to ', centre_sensitivity]);
 guidata(hObject, handles);
 function Centre_sensitivity_CreateFcn(hObject, eventdata, handles)
     handles.hardware.joystick.sensitivity.centered = str2num('0.1');
@@ -1236,21 +1241,6 @@ function Touch_samples_CreateFcn(hObject, eventdata, handles)
     handles.hardware.touch.touch_samples = 10;
 guidata(hObject, handles);
 
-%Turn on to enforce handshake with Getty and sending of bits to Getty
-%computer
-function Getty_switch_Callback(hObject, eventdata, handles)
-    getty_on = get(handles.Getty_switch, 'Value');
-    if getty_on == 1
-        handles.parameters.Getty = 1;
-        set(handles.Getty_switch,'string','GETTY ON','enable','on','BackgroundColor','green');
-    else
-        handles.parameters.Getty = 0;
-        set(handles.Getty_switch,'string','GETTY OFF','enable','on','BackgroundColor','red');
-    end
-guidata(hObject, handles);
-function Getty_switch_CreateFcn(hObject, eventdata, handles)
-    handles.parameters.Getty = 0;
-guidata(hObject, handles);
 
 %Clears all requirements
 function Clear_requirements_Callback(hObject, eventdata, handles)
@@ -1315,3 +1305,75 @@ function Static_errors_CreateFcn(hObject, eventdata, handles)
     handles.parameters.timing.error_timing_static = 1;
 guidata(hObject, handles);
     
+%%%GETTY TESTING%%%
+
+%Turn on to enforce handshake with Getty and sending of bits to Getty
+%computer
+function Getty_switch_Callback(hObject, eventdata, handles)
+    getty_on = get(handles.Getty_switch, 'Value');
+    if getty_on == 1
+        handles.parameters.getty.on = 1;
+        handles.parameters.getty.getty_connected = MODIG_tcp_open_connection();
+        if handles.parameters.getty.getty_connected
+            set(handles.Getty_switch,'string','CONNECTED TO GETTY','enable','on','BackgroundColor','green');
+        end
+    else
+        handles.parameters.getty.on = 0;
+        if handles.parameters.getty.getty_connected
+            MODIG_tcp_close_connection();  
+            handles.parameters.getty.getty_connected = 0;
+        end
+        set(handles.Getty_switch,'string','DISCONNECTED FROM GETTY','enable','on','BackgroundColor','red');
+    end
+guidata(hObject, handles);
+function Getty_switch_CreateFcn(hObject, eventdata, handles)
+    handles.parameters.getty.on = 0;
+guidata(hObject, handles);
+
+
+%These are test functions that need to be deleted from the final MATisse
+
+%make the array of data to send Getty
+%its all bullshit for testing
+
+%Array consists of 4 variables
+%Length: the length of the array before adding itself
+%Reward: the value of the reward fractal 1-3
+%Bid: the value of the bid 1-10
+%Win/Lose: if the monkey won or lost 0-1
+function GETTYMAKEARRAY_Callback(hObject, eventdata, handles)
+    Reward = randi(3);
+    Bid = randi(11) - 1;
+    Win_lose = randi(2)-1;
+    Length = 3;
+    handles.valToGetty = [Length, Reward, Bid, Win_lose];
+    disp('valToGetty');
+    disp(handles.valToGetty);
+ guidata(hObject, handles);
+function GETTYMAKEARRAY_CreateFcn(hObject, eventdata, handles)
+guidata(hObject, handles);
+
+
+%runs a 'pseudo-task' and sends bits to getty
+function GETTYSENDBITS_Callback(hObject, eventdata, handles)
+    if handles.parameters.Getty && handles.parameters.getty_connected
+        disp('connecting ni card');
+        
+        %set up the outputs for the timings and the juice
+        bits_out = getty_bit_output;
+        shake_in = daq.createSession('ni');
+        addDigitalChannel(shake_in,'Dev1','Port1/Line7','InputOnly');
+        disp('outputs connected!');
+        
+        %run a fake trial- turn bits on and off
+        %this mirrors a pavlovian trial fairly well
+        for trial = 1:100
+            disp('running fake trial');
+            disp(trial);
+            disp('----------------------');
+            getty_fake_trial(bits_out, shake_in, trial)
+        end
+    else
+        disp('make sure getty is on and connected!');
+    end
+guidata(hObject, handles);

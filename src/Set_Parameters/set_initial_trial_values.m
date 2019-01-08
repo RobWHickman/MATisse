@@ -186,7 +186,7 @@ else
     struct_table = array2table(transpose(table2array(combinations_column)));
     struct_table.Properties.VariableNames = combinations_column.Properties.RowNames;
     
-    all_fields = {'subtask', 'reward_value', 'second_reward_value', 'reward_chance', 'second_reward_chance', 'budget_magnitude', 'budget_value', 'second_budget_value', 'starting_bid', 'computer_bid', 'primary_side'};
+    all_fields = {'subtask', 'reward_value', 'second_reward_value', 'reward_chance', 'second_reward_chance', 'budget_magnitude', 'budget_value', 'second_budget_value', 'starting_bid', 'computer_bid', 'primary_side', 'target_box_size', 'target_box_shift'};
     missing = ~ismember(all_fields, struct_table.Properties.VariableNames);
     missing_table = array2table(1:length(find(missing)));
     missing_table.Properties.VariableNames = all_fields(find(missing));
@@ -209,6 +209,30 @@ else
             auctions = {'BDM', 'FP'};
             results.single_trial.subtask = auctions(results.single_trial.subtask);
         end
+        
+        %need to set up target box for BDM task
+        if parameters.task_checks.table.Requirement('targeted_offer')
+            if stimuli.target_box.static
+                results.single_trial.target_box_size = stimuli.target_box.startsize;
+                
+                shifts = 0:0.1:1;
+                shifts = shifts(shifts > results.single_trial.target_box_size);
+                results.single_trial.target_box_shift = 1 - shifts(randi(length(shifts)));
+            else
+                if parameters.trials.total_trials < 1
+                    correct = 0;
+                else
+                    correct = results.experiment_summary.correct;
+                end
+                minimum_size = stimuli.bidspace.dimensions.height * 0.05;
+                maximum_size = stimuli.bidspace.dimensions.height * stimuli.target_box.startsize;
+                results.single_trial.target_box_size = ((maximum_size - minimum_size) - ((maximum_size - minimum_size) * (1/ (1 + exp(1) ^ (-(correct-50)/20))))) + minimum_size;
+                results.single_trial.target_box_size = results.single_trial.target_box_size / stimuli.bidspace.dimensions.height;
+                
+                results.single_trial.target_box_shift = (rand() * results.single_trial.target_box_size);
+            end
+        end
+
     elseif strcmp(parameters.task.type, 'BC')
         results.single_trial.starting_bid = 0.5;
         sides = {'left', 'right'};
@@ -227,6 +251,8 @@ else
         end
     end
 end
+
+
 
 %set the task failure to false at the start of the task
 results.single_trial.task_failure = false;
