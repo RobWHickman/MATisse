@@ -36,7 +36,8 @@ timing_cols = table2array(parameters.timings(:,6)) / hardware.screen.refresh_rat
 timing_cols = array2table(timing_cols.');
 timing_cols.Properties.VariableNames = parameters.timings.Properties.RowNames;
 
-trial_col = array2table(parameters.trials.total_trials);
+trial_col = array2table(results.block_results.completed);
+trial_col.Properties.VariableNames = {'trial_no'};
 
 %convert to tables and horzcat
 trial_output_table = horzcat(struct2table(results.trial_results,'AsArray',true),...

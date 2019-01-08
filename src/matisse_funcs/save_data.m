@@ -15,8 +15,7 @@ if strcmp(type, 'task_results')
     %save as .csv
     %order the table columns alphabetically
     sorted_table = results.full_output_table(:,sort(results.full_output_table.Properties.VariableNames));
-    writetable(results.full_output_table, fullfile(dir, regexprep(char(strcat(string(datetime('now')), human, '_', monkey, 'COMPACT_RESULTS.csv')), ':', '')));
-    writetable(sorted_table, fullfile(dir, regexprep(char(strcat(string(datetime('now')), human, '_', monkey, 'COMPACT_RESULTSlol.csv')), ':', '')));
+    writetable(sorted_table, fullfile(dir, regexprep(char(strcat(string(datetime('now')), human, '_', monkey, 'COMPACT_RESULTS.csv')), ':', '')));
 end
 
 if strcmp(type, 'task_metadata')

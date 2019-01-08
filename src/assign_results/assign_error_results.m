@@ -13,3 +13,4 @@ end
 
 results.outputs.results = strcat('fail_',...
     string(parameters.task_checks.table.Description(min(find(parameters.task_checks.table.Status & parameters.task_checks.table.Requirement)))));
+

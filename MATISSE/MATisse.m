@@ -944,7 +944,7 @@ guidata(hObject, handles);
         guidata(hObject, handles);
 
 function Display_button_Callback(hObject, eventdata, handles)
-    display(handles.parameters.timing);
+    display(handles.parameters.timing.error_timing_static);
 function Display_button_CreateFcn(hObject, eventdata, handles)
 
 function Choice_stimuli_Callback(hObject, eventdata, handles)
@@ -1294,7 +1294,7 @@ guidata(hObject, handles);
 %whether error times will be static (fixed in parameters)
 %or use the remaining time
 function Static_errors_Callback(hObject, eventdata, handles)
-    error_time_status = get(handles.Sound_button, 'Value');
+    error_time_status = get(handles.Static_errors, 'Value');
     if error_time_status == 1
         handles.parameters.timing.error_timing_static = 1;
     else
