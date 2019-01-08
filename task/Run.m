@@ -348,12 +348,9 @@ end
 %no error output (e.g. sound) yet but can be implemented
 if results.single_trial.task_failure && ~strcmp(parameters.task.type, 'PAV')
     if parameters.timing.error_timing_static ~= 1
-        disp('times');
-        disp(parameters.timings);
         non_error_epochs = results.behaviour_table(find(~strcmp(results.behaviour_table.epoch, 'error_timeout')),:);
         remaining_frames = non_error_epochs(isnan(non_error_epochs.joy_x),:);
         parameters.timings.TrialTime('error_timeout') = height(remaining_frames) + (1*60);
-        disp(parameters.timings);
     end
 for frame = 1:parameters.timings.TrialTime('error_timeout')
     if frame == 1 || frame == parameters.timings.TrialTime('error_timeout')
