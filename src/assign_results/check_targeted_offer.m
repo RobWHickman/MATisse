@@ -7,8 +7,13 @@ function parameters = check_targeted_offer(parameters, results, stimuli)
 %check if the offer is between the y values of the target box
 %if so, the targeted offer check passes, else it fails
 
+%see update bid position for comments
+bidding = find(strcmp(results.behaviour_table.epoch, 'bidding'));
+total_movement = nansum(results.behaviour_table.stimuli_movement(bidding,:));
+
+%calculate if the bid is targeted
 bid_position = stimuli.bidspace.position(4) - ...
-    (stimuli.bidspace.dimensions.height * (results.single_trial.starting_bid + results.movement.total_movement));
+    (stimuli.bidspace.dimensions.height * (results.single_trial.starting_bid + total_movement));
 
 if bid_position > stimuli.target_box.position(2) && bid_position < stimuli.target_box.position(4)
     parameters.task_checks.table.Status('targeted_offer') = 0;
