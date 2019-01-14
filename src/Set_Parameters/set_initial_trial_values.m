@@ -86,6 +86,11 @@ if parameters.trials.random_stimuli
         if ~modifiers.fractals.no_fractals
             results.single_trial.reward_value = randi(height(stimuli.fractals.fractal_properties));
             results.single_trial.reward_chance = stimuli.fractals.fractal_properties.probability(results.single_trial.reward_value);
+            %could probably be done neater elsewhere- make sure second
+            %reward is init as NaN
+            results.single_trial.second_reward_value = NaN;
+            results.single_trial.second_reward_chance = NaN;
+
         %if no fractals then no reward values
         else
             results.single_trial.reward_value = NaN;
