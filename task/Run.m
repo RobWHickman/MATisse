@@ -101,10 +101,10 @@ for frame = 1:parameters.timings.TrialTime('ITI')
             end
             
             %send hard trigger
-            disp('sending hard trigger');
+            disp('pausing on hard trigger');
             %outputSingleScan(parameters.getty.bits, 1)
             getty_send_bits(parameters.getty.bits, 22, 1)
-            pause(0.1)
+            pause(1)
             % set the hardtrigger down
             %outputSingleScan(parameters.getty.bits, 0)
             getty_send_bits(parameters.getty.bits, 22, 0)
