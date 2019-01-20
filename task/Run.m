@@ -94,7 +94,7 @@ for frame = 1:parameters.timings.TrialTime('ITI')
             n=0;
             while n==0
                 %is handshake up
-                shake_in_value = inputSingleScan(parameters.getty.shake_in);
+               shake_in_value = inputSingleScan(parameters.getty.shake_in);
                 if shake_in_value==1
                     break
                 end

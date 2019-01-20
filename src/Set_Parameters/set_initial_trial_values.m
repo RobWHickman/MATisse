@@ -33,6 +33,7 @@ if parameters.trials.random_stimuli
         %rewards
         results.single_trial.reward_value = randi(height(stimuli.fractals.fractal_properties));
         results.single_trial.second_reward_value = NaN;
+        disp('set line 36 --INSERT REWARD OFFERED--');
         results.single_trial.reward_chance = stimuli.fractals.fractal_properties.probability(results.single_trial.reward_value);
         results.single_trial.second_reward_chance = NaN;
         
@@ -256,6 +257,19 @@ else
         end
     end
 end
+
+%set themangitude (ml of juice) of the reward
+if ~isnan(results.single_trial.second_reward_value)
+    results.single_trial.second_reward_magnitude = stimuli.fractals.fractal_properties.magnitude(results.single_trial.second_reward_value);
+else
+    results.single_trial.second_reward_magnitude = NaN;
+end
+if ~isnan(results.single_trial.second_reward_value)
+    results.single_trial.second_reward_magnitude = stimuli.fractals.fractal_properties.magnitude(results.single_trial.second_reward_value);
+else
+    results.single_trial.second_reward_magnitude = NaN;
+end
+
 
 
 

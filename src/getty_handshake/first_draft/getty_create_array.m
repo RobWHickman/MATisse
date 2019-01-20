@@ -67,6 +67,7 @@ if getty_task == 1
 else
     situation = 0;
 end
+situation = 1;
     
 % generate final array (bytes 3 and 4 are used by getty to save the trial duration)
 dataToGetty=[];
