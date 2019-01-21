@@ -29,9 +29,10 @@ if strcmp(task, 'BDM')
     
     
     if strcmp(payout, 'budget')
+        Screen('FillRect', task_window, stimuli.background_colour, stimuli.fractals.position);
     elseif strcmp(payout, 'reward')
-        Screen('FillRect', task_window, stimuli.background_colour, [stimuli.bidspace.position(1) - modifiers.budget.overhang, 0,...
-            stimuli.bidspace.position(3) + modifiers.budget.overhang, hardware.screen.dimensions.height]);
+%         Screen('FillRect', task_window, stimuli.background_colour, [stimuli.bidspace.position(1) - modifiers.budget.overhang, 0,...
+%             stimuli.bidspace.position(3) + modifiers.budget.overhang, hardware.screen.dimensions.height]);
     end
 
 elseif strcmp(task, 'BC')

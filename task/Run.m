@@ -260,7 +260,7 @@ for frame = 1:parameters.timings.TrialTime('bidding')
     flip_screen(frame, parameters, task_window, 'bidding');
 
     %send the bit for the bidding epoch
-    if frame == 1 || frame == parameters.timings.TrialTime('fixation')
+    if frame == 1 || frame == parameters.timings.TrialTime('bidding')
         if parameters.getty.on
             if frame == 1
                 bit_out = 1;
@@ -269,7 +269,7 @@ for frame = 1:parameters.timings.TrialTime('bidding')
             end
             getty_send_bits(parameters.getty.bits, 9, bit_out)
         end
-        if frame == parameters.timings.TrialTime('fixation')
+        if frame == parameters.timings.TrialTime('bidding')
             getty_send_bits(parameters.getty.bits, 10, 0)
         end
     end
@@ -290,26 +290,26 @@ end
 %paayout the budget and then reward
 %same 'epoch' but split in two for ease of parsing
 %for pavlovian tasks, this is just filler
-if ~results.single_trial.task_failure || strcmp(parameters.task.type, 'PAV')
-for frame = 1:parameters.timings.TrialTime('budget_payout')
+if ~results.single_trial.task_failure
+for frame = 1:parameters.timings.TrialTime('reward_payout')
     
     %in first frame assign payouts and draw epoch
     if frame == 1
         %assign the payouts
         results = assign_payouts(parameters, modifiers, stimuli, results);
-        draw_payout_epoch(parameters, modifiers, results, stimuli, hardware, task_window, parameters.task.type, 'budget')
+        draw_payout_epoch(parameters, modifiers, results, stimuli, hardware, task_window, parameters.task.type, 'reward')
     end
     
     %payout the budget results on the last frame
-    if frame == 2
-    %if frame == parameters.timings.TrialTime('budget_payout')
-        results = payout_results(stimuli, parameters, modifiers, hardware, results, 'budget');
+    %if frame == 2
+    if frame == parameters.timings.TrialTime('reward_payout')
+        results = payout_results(stimuli, parameters, modifiers, hardware, results, 'reward');
     end
      
-    flip_screen(frame, parameters, task_window, 'budget_payout');
+    flip_screen(frame, parameters, task_window, 'reward_payout');
     
-    %send the bit for the results epoch
-    if (frame == 1 || frame == parameters.timings.TrialTime('fixation')) && results.outputs.reward > 0
+    %send the bit for the reward epoch
+    if (frame == 1 || frame == parameters.timings.TrialTime('reward_payout')) && results.outputs.reward > 0
         if parameters.getty.on
             if frame == 1
                 bit_out = 1;
@@ -326,19 +326,19 @@ end
 
 %then finally pay out the reward (if any)
 if ~results.single_trial.task_failure || strcmp(parameters.task.type, 'PAV')
-for frame = 1:parameters.timings.TrialTime('reward_payout')
+for frame = 1:parameters.timings.TrialTime('budget_payout')
     %draw the first epoch
-    if frame == 1 || frame == parameters.timings.TrialTime('reward_payout')
-        draw_payout_epoch(parameters, modifiers, results, stimuli, hardware, task_window, parameters.task.type, 'reward')
+    if frame == 1 || frame == parameters.timings.TrialTime('budget_payout')
+        draw_payout_epoch(parameters, modifiers, results, stimuli, hardware, task_window, parameters.task.type, 'budget')
     end
     
     %payout the results on the last frame
     if frame == 2
     %if frame == parameters.timings.TrialTime('reward_payout')
-        results = payout_results(stimuli, parameters, modifiers, hardware, results, 'reward');
+        results = payout_results(stimuli, parameters, modifiers, hardware, results, 'budget');
     end
      
-    flip_screen(frame, parameters, task_window, 'reward_payout');
+    flip_screen(frame, parameters, task_window, 'budget_payout');
 end
 results = check_requirements(parameters, results);
 end
