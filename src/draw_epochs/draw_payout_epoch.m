@@ -45,9 +45,10 @@ elseif strcmp(task, 'BC')
     end
     
     if strcmp(payout, 'budget')
+        Screen('FillRect', task_window, stimuli.background_colour, stimuli.fractals.position);
     elseif strcmp(payout, 'reward') && strcmp(results.single_trial.subtask, 'bundle_choice')
-        Screen('FillRect', task_window, stimuli.background_colour, stimuli.bidspace.initial_position +...
-            [-10, -10, bidspace_reflector + 10, 10]);
+%         Screen('FillRect', task_window, stimuli.background_colour, stimuli.bidspace.initial_position +...
+%             [-10, -10, bidspace_reflector + 10, 10]);
     end
 
 elseif strcmp(task, 'PAV')

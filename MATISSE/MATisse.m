@@ -1377,3 +1377,20 @@ function GETTYSENDBITS_Callback(hObject, eventdata, handles)
         disp('make sure getty is on and connected!');
     end
 guidata(hObject, handles);
+
+
+%inverts the direction of the joystick
+%(e.g. left now equals right)
+function Joyaxis_invert_Callback(hObject, eventdata, handles)
+    invert_joy_axis = get(handles.Joyaxis_invert, 'Value');
+    %if x axis button selected set movement to x axis, else set it to y
+    %axis
+    if invert_joy_axis == 1
+        handles.hardware.joystick.inverted = -1;
+    else
+        handles.hardware.joystick.inverted = 1;
+    end
+guidata(hObject, handles);
+function Joyaxis_invert_CreateFcn(hObject, eventdata, handles)
+        handles.hardware.joystick.inverted = 1;
+guidata(hObject, handles);
