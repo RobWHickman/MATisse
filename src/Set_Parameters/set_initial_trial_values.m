@@ -259,10 +259,10 @@ else
 end
 
 %set themangitude (ml of juice) of the reward
-if ~isnan(results.single_trial.second_reward_value)
-    results.single_trial.second_reward_magnitude = stimuli.fractals.fractal_properties.magnitude(results.single_trial.second_reward_value);
+if ~isnan(results.single_trial.reward_value)
+    results.single_trial.reward_magnitude = stimuli.fractals.fractal_properties.magnitude(results.single_trial.reward_value);
 else
-    results.single_trial.second_reward_magnitude = NaN;
+    results.single_trial.reward_magnitude = NaN;
 end
 if ~isnan(results.single_trial.second_reward_value)
     results.single_trial.second_reward_magnitude = stimuli.fractals.fractal_properties.magnitude(results.single_trial.second_reward_value);
