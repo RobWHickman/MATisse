@@ -944,7 +944,7 @@ guidata(hObject, handles);
         guidata(hObject, handles);
 
 function Display_button_Callback(hObject, eventdata, handles)
-    display(handles.parameters.timing.error_timing_static);
+    display(handles.hardware.touch.touch_req);
 function Display_button_CreateFcn(hObject, eventdata, handles)
 
 function Choice_stimuli_Callback(hObject, eventdata, handles)
@@ -1260,7 +1260,7 @@ guidata(hObject, handles);
 function Touch_any_Callback(hObject, eventdata, handles)
     any_touch_required = get(handles.Touch_any, 'Value');
     if any_touch_required == 1
-        handles.hardware.touch.percent_touch_req = 'any';
+        handles.hardware.touch.touch_req = 'any';
     else
         handles.hardware.touch.touch_req = 'percent';
     end
@@ -1272,7 +1272,7 @@ function Touch_percent_CreateFcn(hObject, eventdata, handles)
 function Touch_percent_Callback(hObject, eventdata, handles)
     perc_touch_required = get(handles.Touch_percent, 'Value');
     if perc_touch_required == 1
-        handles.hardware.touch.percent_touch_req = 'percent';
+        handles.hardware.touch.touch_req = 'percent';
     else
         handles.hardware.touch.touch_req = 'any';
     end
