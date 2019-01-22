@@ -174,6 +174,16 @@ function Set_primate_CreateFcn(hObject, eventdata, handles)
     %defaults to Ulysses
     handles.parameters.participants.primate = 'Ulysses';
 guidata(hObject, handles);
+% set the block no
+function Block_no_Callback(hObject, eventdata, handles)
+    clear handles.parameters.participants.block_no
+    block = get(handles.Block_no, 'String');
+    handles.parameters.participants.block_no = str2double(block);
+guidata(hObject, handles);
+function Block_no_CreateFcn(hObject, eventdata, handles)
+    handles.parameters.participants.block_no = 1;
+guidata(hObject, handles);
+
 %set the task up using these parameters
 %this will set the inputs and ask you to find two folders:
 %1) to set where the data from the experiment will be saved at the end of
@@ -1394,3 +1404,6 @@ guidata(hObject, handles);
 function Joyaxis_invert_CreateFcn(hObject, eventdata, handles)
         handles.hardware.joystick.inverted = 1;
 guidata(hObject, handles);
+
+
+   
