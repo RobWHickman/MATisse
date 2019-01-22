@@ -13,7 +13,6 @@ monkey = parameters.participants.primate;
 date = datestr(now,'yyyy-dd-mm');
 block = parameters.participants.block_no;
 
-
 if strcmp(type, 'task_results')
     %save as .csv
     %order the table columns alphabetically

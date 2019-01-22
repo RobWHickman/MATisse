@@ -110,9 +110,9 @@ function Run_button_Callback(hObject, eventdata, handles)
             set(handles.unrewarded_text, 'String', handles.results.block_results.unrewarded);
             set(handles.water_text, 'String', handles.results.block_results.water);
             set(handles.juice_text, 'String', handles.results.block_results.juice);
-            if strcmp(handles.parameters.task, 'BC')
-                set(handles.Left_choice, 'String', handles.results.block_results.left);
-                set(handles.Right_choice, 'String', handles.results.block_results.right);
+            if strcmp(handles.parameters.task.type, 'BC')
+                set(handles.Left_choice, 'String', num2str(handles.results.block_results.left));
+                set(handles.Right_choice, 'String', num2str(handles.results.block_results.right));
             end
             
             %save the data
@@ -953,7 +953,7 @@ guidata(hObject, handles);
         guidata(hObject, handles);
 
 function Display_button_Callback(hObject, eventdata, handles)
-    display(handles.hardware.touch.touch_req);
+    display(handles.parameters.participants.block_no);
 function Display_button_CreateFcn(hObject, eventdata, handles)
 
 function Choice_stimuli_Callback(hObject, eventdata, handles)
