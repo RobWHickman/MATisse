@@ -10,19 +10,20 @@ function [] = save_data(parameters, results, type)
 dir = parameters.directories.save;
 human = parameters.participants.experimenter;
 monkey = parameters.participants.primate;
+date = datestr(now,'yyyy-dd-mm');
 
 if strcmp(type, 'task_results')
     %save as .csv
     %order the table columns alphabetically
     sorted_table = results.full_output_table(:,sort(results.full_output_table.Properties.VariableNames));
-    writetable(sorted_table, fullfile(dir, regexprep(char(strcat(string(datetime('now')), human, '_', monkey, 'COMPACT_RESULTS.csv')), ':', '')));
+    writetable(sorted_table, fullfile(dir, regexprep(char(strcat(date, human, '_', monkey, 'COMPACT_RESULTS.csv')), ':', '')));
 end
 
 if strcmp(type, 'task_metadata')
     disp('saving trial metadata after first trial')
     %save metadata as .mat
     metadata = results.experiment_metadata;
-    save(fullfile(dir, regexprep(char(strcat(string(datetime('now')), human, '_', monkey, 'METADATA.mat')), ':', '')), 'metadata');
+    save(fullfile(dir, regexprep(char(strcat(date, human, '_', monkey, 'METADATA.mat')), ':', '')), 'metadata');
 end
 
 
