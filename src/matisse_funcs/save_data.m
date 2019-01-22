@@ -22,9 +22,9 @@ if strcmp(type, 'task_results')
 end
 
 if strcmp(type, 'task_metadata')
-    disp('saving trial metadata after first trial')
+    disp('saving trial metadata')
     %save metadata as .mat
-    metadata = results.experiment_metadata;
+    metadata = results;
     save(fullfile(dir, regexprep(char(strcat(date, human, '_', monkey, '_block', num2str(block), 'METADATA.mat')), ':', '')), 'metadata');
 end
 

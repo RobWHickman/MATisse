@@ -71,6 +71,10 @@ function Gen_button_Callback(hObject, eventdata, handles)
     else
         disp('save_info not found! Did you remember to run Set?')
     end
+    
+    %save metadata before start
+    metadata = set_trial_metadata(handles.parameters, handles.stimuli, handles.hardware, handles.modifiers, handles.results);
+    save_data(handles.parameters, metadata, 'task_metadata');
 guidata(hObject, handles);
 
 %function to actually run the task
@@ -109,11 +113,6 @@ function Run_button_Callback(hObject, eventdata, handles)
             if strcmp(handles.parameters.task, 'BC')
                 set(handles.Left_choice, 'String', handles.results.block_results.left);
                 set(handles.Right_choice, 'String', handles.results.block_results.right);
-            end
-            
-            %save metadata on first trial
-            if handles.results.block_results.completed == 1
-                save_data(handles.parameters, handles.results, 'task_metadata');
             end
             
             %save the data

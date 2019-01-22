@@ -376,9 +376,6 @@ draw_ITI(stimuli, task_window);
 flip_screen(frame, parameters, task_window, 'ITI');
 %output the results of the trial to save and update the GUI
 results = output_results(results, parameters, hardware);
-if results.block_results.completed == 1
-    results = set_trial_metadata(parameters, stimuli, hardware, modifiers, results);
-end
 
 if parameters.getty.on
     disp('closing trial');
