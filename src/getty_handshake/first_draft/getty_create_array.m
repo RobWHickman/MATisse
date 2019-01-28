@@ -6,7 +6,6 @@ getty_trial_number = fi_numTo2bytes(trial);
 %the task the trial will run
 if strcmp(parameters.task.type, 'BDM')
     getty_task = 1;
-    
     if strcmp(trial_variables.subtask, 'BDM')
         getty_subtask = 1;
     elseif strcmp(trial_variables.subtask, 'FP')
@@ -67,8 +66,10 @@ if getty_task == 1
 else
     situation = 0;
 end
+
+situation = str2num(strcat(num2str(getty_task), num2str(getty_subtask), num2str(trial_reward_value)));
 situation = 1;
-    
+
 % generate final array (bytes 3 and 4 are used by getty to save the trial duration)
 dataToGetty=[];
 dataToGetty(1:2) = getty_trial_number;

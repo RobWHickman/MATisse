@@ -33,13 +33,14 @@ if strcmp(hardware.ni_inputs, 'analog')
 elseif strcmp(hardware.ni_inputs, 'digital')
     if tap == 1 %water
         tap_open = [0 1 0];
-        tap_to_open = 13;
-    elseif tap == 2 %ulysses water reward tap
+        tap_to_open = 18;
+    elseif tap == 2 %ulysses reward tap
+        disp('pay reward5');
         tap_open = [0 0 1];
-        tap_to_open = 14;
+        tap_to_open = 17;
     elseif tap == 3 %vicer juice reward tap
         tap_open = [1 0 0];
-        tap_to_open = 12;
+        tap_to_open = 19;
     else
         disp('no other tap found!');
     end
@@ -49,6 +50,7 @@ elseif strcmp(hardware.ni_inputs, 'digital')
     %outputSingleScan(hardware.solenoid.device, tap_open);
     
     if(tap_open_time > 0)
+        disp('pay reward6');
         getty_send_bits(parameters.getty.bits, tap_to_open, 1)
 
         %wait with the tap open

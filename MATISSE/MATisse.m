@@ -867,7 +867,7 @@ function Reward_tap_Callback(hObject, eventdata, handles)
     disp(['reward tap set to ', reward_tap]);
 guidata(hObject, handles);
 function Reward_tap_CreateFcn(hObject, eventdata, handles)
-    handles.hardware.solenoid.release.reward_tap = 3;
+    handles.hardware.solenoid.release.reward_tap = 2;
 guidata(hObject, handles);
 %set whether to give free juice or free water via the GUI
 function Free_water_CreateFcn(hObject, eventdata, handles)

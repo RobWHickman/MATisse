@@ -10,7 +10,7 @@ function [] = save_data(parameters, results, type)
 dir = parameters.directories.save;
 human = parameters.participants.experimenter;
 monkey = parameters.participants.primate;
-date = datestr(now,'yyyy-dd-mm');
+date = datestr(now,'yyyy-mm-dd');
 block = parameters.participants.block_no;
 
 if strcmp(type, 'task_results')

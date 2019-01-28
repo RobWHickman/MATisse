@@ -122,6 +122,23 @@ end
 %set the systime for the start of the trial
 results = time_trial(results, 'start');
 disp('starting trial');
+for frame = 1:parameters.timings.TrialTime('trial_start')
+    if frame == 1 || frame == parameters.timings.TrialTime('trial_start')
+        draw_ITI(stimuli, task_window);
+    end
+    if frame == 1 || frame == parameters.timings.TrialTime('trial_start')
+        if parameters.getty.on
+            if frame == 1
+                bit_out = 1;
+            else
+                bit_out = 0;
+            end
+            %outputSingleScan(parameters.getty.bits.fractal_display, bit_out)
+            getty_send_bits(parameters.getty.bits, 8, bit_out)
+        end
+    end
+    flip_screen(frame, parameters, task_window, 'trial_start');
+end
 
 % %fixation epoch
 %only continue to epochs if no task failure or a pavlovian paradigm task
@@ -144,6 +161,17 @@ for frame = 1:parameters.timings.TrialTime('fixation')
     end
     if parameters.task_checks.table.Status('touch_joystick') && parameters.task_checks.table.Requirement('touch_joystick')
         break
+    end
+    if frame == 1 || frame == parameters.timings.TrialTime('fixation')
+        if parameters.getty.on
+            if frame == 1
+                bit_out = 1;
+            else
+                bit_out = 0;
+            end
+            %outputSingleScan(parameters.getty.bits.fractal_display, bit_out)
+            getty_send_bits(parameters.getty.bits, 9, bit_out)
+        end
     end
     
     %clear the screen and draw the task
@@ -176,7 +204,7 @@ for frame = 1:parameters.timings.TrialTime('fractal_offer')
 
     flip_screen(frame, parameters, task_window, 'fractal_offer');
     
-    if frame == 1 || frame == parameters.timings.TrialTime('fixation')
+    if frame == 1 || frame == parameters.timings.TrialTime('fractal_offer')
         if parameters.getty.on
             if frame == 1
                 bit_out = 1;
@@ -184,7 +212,7 @@ for frame = 1:parameters.timings.TrialTime('fractal_offer')
                 bit_out = 0;
             end
             %outputSingleScan(parameters.getty.bits.fractal_display, bit_out)
-            getty_send_bits(parameters.getty.bits, 8, bit_out)
+            getty_send_bits(parameters.getty.bits, 10, bit_out)
         end
     end
 
@@ -228,7 +256,7 @@ for frame = 1:parameters.timings.TrialTime('bidding')
         if (hardware.joystick.movement.stationary_count > round(parameters.task_checks.finalisation_pause * hardware.screen.refresh_rate) &&...
                 frame > latest_frame)
             parameters.task_checks.table.Status('stabilised_offer') = 0;
-            getty_send_bits(parameters.getty.bits, 10, 1)
+            getty_send_bits(parameters.getty.bits, 12, 1)
         else
             parameters.task_checks.table.Status('stabilised_offer') = 1;
         end
@@ -267,10 +295,7 @@ for frame = 1:parameters.timings.TrialTime('bidding')
             else
                 bit_out = 0;
             end
-            getty_send_bits(parameters.getty.bits, 9, bit_out)
-        end
-        if frame == parameters.timings.TrialTime('bidding')
-            getty_send_bits(parameters.getty.bits, 10, 0)
+            getty_send_bits(parameters.getty.bits, 11, bit_out)
         end
     end
 
@@ -287,7 +312,7 @@ if strcmp(parameters.task.type, 'BDM') && strcmp(results.single_trial.subtask, '
     stimuli = generate_reverse_bidspace(parameters, results, stimuli, modifiers, task_window);
 end    
 
-%paayout the budget and then reward
+%paayout the reard and then budget
 %same 'epoch' but split in two for ease of parsing
 %for pavlovian tasks, this is just filler
 if ~results.single_trial.task_failure
@@ -303,7 +328,16 @@ for frame = 1:parameters.timings.TrialTime('reward_payout')
     %payout the budget results on the last frame
     %if frame == 2
     if frame == parameters.timings.TrialTime('reward_payout')
+        disp('pay reward2');
+        %monkey expects reward
+        if parameters.getty.on
+            getty_send_bits(parameters.getty.bits, 14, 1)
+        end
         results = payout_results(stimuli, parameters, modifiers, hardware, results, 'reward');
+        %monkey stops expecting budget
+        if parameters.getty.on
+            getty_send_bits(parameters.getty.bits, 14, 0)
+        end
     end
      
     flip_screen(frame, parameters, task_window, 'reward_payout');
@@ -316,7 +350,7 @@ for frame = 1:parameters.timings.TrialTime('reward_payout')
             else
                 bit_out = 0;
             end
-            getty_send_bits(parameters.getty.bits, 11, bit_out)
+            getty_send_bits(parameters.getty.bits, 13, bit_out)
         end
     end
 
@@ -334,8 +368,15 @@ for frame = 1:parameters.timings.TrialTime('budget_payout')
     
     %payout the results on the last frame
     if frame == parameters.timings.TrialTime('budget_payout')
-    %if frame == parameters.timings.TrialTime('reward_payout')
+        %monkey expects budget
+        if parameters.getty.on
+            getty_send_bits(parameters.getty.bits, 15, 1)
+        end
         results = payout_results(stimuli, parameters, modifiers, hardware, results, 'budget');
+        %monkey stops expecting budget
+        if parameters.getty.on
+            getty_send_bits(parameters.getty.bits, 15, 0)
+        end
     end
      
     flip_screen(frame, parameters, task_window, 'budget_payout');
@@ -364,12 +405,42 @@ for frame = 1:parameters.timings.TrialTime('error_timeout')
         results = assign_error_results(results, parameters);
     end
     
+    if frame == 1 || frame == parameters.timings.TrialTime('trial_end')
+        if parameters.getty.on
+            if frame == 1
+                bit_out = 1;
+            else
+                bit_out = 0;
+            end
+            %outputSingleScan(parameters.getty.bits.fractal_display, bit_out)
+            getty_send_bits(parameters.getty.bits, 21, bit_out)
+        end
+    end
+   
     flip_screen(frame, parameters, task_window, 'error_timeout');
 end    
 end
 
 %get the time of the end of the task to match up with neuro data
 results = time_trial(results, 'end');
+for frame = 1:parameters.timings.TrialTime('trial_end')
+    if frame == 1 || frame == parameters.timings.TrialTime('trial_end')
+        draw_ITI(stimuli, task_window);
+    end
+    if frame == 1 || frame == parameters.timings.TrialTime('trial_end')
+        if parameters.getty.on
+            if frame == 1
+                bit_out = 1;
+            else
+                bit_out = 0;
+            end
+            %outputSingleScan(parameters.getty.bits.fractal_display, bit_out)
+            getty_send_bits(parameters.getty.bits, 20, bit_out)
+        end
+    end
+    flip_screen(frame, parameters, task_window, 'trial_end');
+end
+
 
 %draw the ITI again to output the results from the trial briefly
 draw_ITI(stimuli, task_window);
