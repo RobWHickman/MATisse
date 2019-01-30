@@ -53,6 +53,8 @@ if results.block_results.completed == 1
     full_output_table = trial_output_table;
 else
     trial_output_table = removevars(trial_output_table,{'fractal_means','graph_output'});
+    disp(results.full_output_table);
+    disp(trial_output_table);
     full_output_table = vertcat(results.full_output_table, trial_output_table);
 end
 
@@ -61,8 +63,13 @@ if strcmp(parameters.task.type, 'BDM')
     results.block_results.fractal_means = grpstats(full_output_table.monkey_bid, full_output_table.reward_value);
     results.block_results.graph_output = results.block_results.fractal_means;
 elseif strcmp(parameters.task.type, 'BC')
-    results.block_results.fractal_means = grpstats(full_output_table.monkey_bid, full_output_table.reward_value);
-    results.block_results.graph_output = results.block_results.fractal_means;
+    if strcmp(results.single_trial.subtask, 'bundle_choice')
+        results.block_results.fractal_means = grpstats(full_output_table.monkey_bid, full_output_table.reward_value);
+        results.block_results.graph_output = results.block_results.fractal_means;
+    else
+        results.block_results.fractal_means = grpstats(full_output_table.monkey_bid, full_output_table.second_budget_value);
+        results.block_results.graph_output = results.block_results.fractal_means;
+    end
 elseif strcmp(parameters.task.type, 'PAV')
     %dont care about means of anything for pavlovian
     results.block_results.fractal_means = NaN;

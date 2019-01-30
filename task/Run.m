@@ -71,10 +71,8 @@ for frame = 1:parameters.timings.TrialTime('ITI')
         %if the side of stimuli (the fractal side) is the right then flip
         %everything over
         %only for binary choice paradigms
-        if(strcmp(results.single_trial.primary_side, 'right'))
-            stimuli = reflect_stimuli(stimuli, hardware, modifiers);
-            disp('reflected stuff');
-        end
+        stimuli = reflect_stimuli(stimuli, hardware, modifiers, results.single_trial.primary_side);
+        disp('reflected stuff');
     else
         %currently we don't sample behaviour in the ITI
         %could be worth changing
@@ -328,7 +326,6 @@ for frame = 1:parameters.timings.TrialTime('reward_payout')
     %payout the budget results on the last frame
     %if frame == 2
     if frame == parameters.timings.TrialTime('reward_payout')
-        disp('pay reward2');
         %monkey expects reward
         if parameters.getty.on
             getty_send_bits(parameters.getty.bits, 14, 1)

@@ -17,7 +17,6 @@ elseif strcmp(payout, 'reward')
     disp('pay reward2');
     %calculate the amount of reward to give
     if results.outputs.reward > 0
-        disp('pay reward3');
         results.outputs.reward_liquid = stimuli.fractals.fractal_properties.magnitude(results.outputs.reward); %increments of 0.15ml of juice
     else
         results.outputs.reward_liquid = 0;
@@ -26,7 +25,6 @@ elseif strcmp(payout, 'reward')
     if parameters.break.testmode
         sound_payout(results, 'reward');
     else
-        disp('pay reward4');
         %get the tap and use this taps calibration to get the open time
         tap = hardware.solenoid.release.reward_tap;
         disp(tap);
