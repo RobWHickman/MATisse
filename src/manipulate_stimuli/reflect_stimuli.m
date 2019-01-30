@@ -22,7 +22,6 @@ if strcmp(side, 'right')
     end
 elseif strcmp(side, 'left')
     if modifiers.fractals.no_fractals
-        disp('reflecting to left side- reflect_stim line 25');
         stimuli.bidspace.second_reverse_texture_position = stimuli.bidspace.second_reverse_texture_position + [bidspace_reflector, 0, bidspace_reflector, 0];
     end
 end

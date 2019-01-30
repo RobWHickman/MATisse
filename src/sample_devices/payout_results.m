@@ -14,7 +14,6 @@ if strcmp(payout, 'budget')
         release_liquid(parameters, hardware, tap, tap_open_time)
     end
 elseif strcmp(payout, 'reward')
-    disp('pay reward2');
     %calculate the amount of reward to give
     if results.outputs.reward > 0
         results.outputs.reward_liquid = stimuli.fractals.fractal_properties.magnitude(results.outputs.reward); %increments of 0.15ml of juice

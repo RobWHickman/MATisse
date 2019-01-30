@@ -154,10 +154,8 @@ if parameters.trials.random_stimuli
         results.single_trial.target_box_shift = NaN;
         results.single_trial.target_box_size = NaN;
         if(round(rand))
-            disp('left chosen')
             results.single_trial.primary_side = 'left';
         else
-            disp('right chosen')
             results.single_trial.primary_side = 'right';
         end
         
