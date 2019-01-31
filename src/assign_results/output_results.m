@@ -53,8 +53,6 @@ if results.block_results.completed == 1
     full_output_table = trial_output_table;
 else
     trial_output_table = removevars(trial_output_table,{'fractal_means','graph_output'});
-    disp(results.full_output_table);
-    disp(trial_output_table);
     full_output_table = vertcat(results.full_output_table, trial_output_table);
 end
 
