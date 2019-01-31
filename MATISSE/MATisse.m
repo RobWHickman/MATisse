@@ -953,7 +953,7 @@ guidata(hObject, handles);
         guidata(hObject, handles);
 
 function Display_button_Callback(hObject, eventdata, handles)
-    display(handles.parameters.participants.block_no);
+    display(handles.stimuli.reverse_shadow_strength);
 function Display_button_CreateFcn(hObject, eventdata, handles)
 
 function Choice_stimuli_Callback(hObject, eventdata, handles)
@@ -1406,3 +1406,24 @@ guidata(hObject, handles);
 
 
    
+
+%and the strength (0-1) of that box
+function Shadow_strength_Callback(hObject, eventdata, handles)
+    handles.stimuli.reverse_shadow_strength = str2num(get(handles.Shadow_strength,'String'));
+guidata(hObject, handles);
+function Shadow_strength_CreateFcn(hObject, eventdata, handles)
+    handles.stimuli.reverse_shadow_strength = 0.5;
+guidata(hObject, handles);
+
+
+function Budget_shadow_Callback(hObject, eventdata, handles)
+    show_budget_shadow = get(handles.Budget_shadow, 'Value');
+    if show_budget_shadow == 1
+        handles.stimuli.reverse_shadow = 1;
+    else
+        handles.stimuli.reverse_shadow = 0;
+    end
+guidata(hObject, handles);
+function Budget_shadow_CreateFcn(hObject, eventdata, handles)
+    handles.stimuli.reverse_shadow = 0;
+guidata(hObject, handles);

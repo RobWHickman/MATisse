@@ -56,6 +56,7 @@ elseif strcmp(task, 'BC')
         if ~strcmp(results.single_trial.subtask, 'binary_choice')
             Screen('DrawTexture', task_window, stimuli.bidspace.texture, [], stimuli.bidspace.position, 0);
             Screen('DrawTexture', task_window, stimuli.bidspace.reverse_texture, [], stimuli.bidspace.reverse_texture_position, 0);
+            Screen('FillRect', task_window, [1 0 0], stimuli.bidspace.reverse_texture_position);
             Screen('FrameRect', task_window, [hardware.screen.colours.white], stimuli.bidspace.bidspace_bounding_box, stimuli.bidspace.dimensions.bounding_width);
         end
         
@@ -63,6 +64,7 @@ elseif strcmp(task, 'BC')
         Screen('DrawTexture', task_window, stimuli.bidspace.texture, [], stimuli.bidspace.position + [bidspace_reflector, 0, bidspace_reflector, 0], 0);
         if isfield(stimuli.bidspace, 'second_reverse_texture')
             Screen('DrawTexture', task_window, stimuli.bidspace.second_reverse_texture, [], stimuli.bidspace.second_reverse_texture_position, 0);
+            Screen('FillRect', task_window, [1 0 0], stimuli.bidspace.second_reverse_texture_position);
         end
     end
     
