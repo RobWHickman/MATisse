@@ -71,8 +71,10 @@ for frame = 1:parameters.timings.TrialTime('ITI')
         %if the side of stimuli (the fractal side) is the right then flip
         %everything over
         %only for binary choice paradigms
-        stimuli = reflect_stimuli(stimuli, hardware, modifiers, results.single_trial.primary_side);
-        disp('reflected stuff');
+        if ~strcmp(parameters.task.type, 'PAV')
+            stimuli = reflect_stimuli(stimuli, hardware, modifiers, results.single_trial.primary_side);
+            disp('reflected stuff');
+        end
     else
         %currently we don't sample behaviour in the ITI
         %could be worth changing
