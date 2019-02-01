@@ -33,7 +33,6 @@ if parameters.trials.random_stimuli
         %rewards
         results.single_trial.reward_value = randi(height(stimuli.fractals.fractal_properties));
         results.single_trial.second_reward_value = NaN;
-        disp('set line 36 --INSERT REWARD OFFERED--');
         results.single_trial.reward_chance = stimuli.fractals.fractal_properties.probability(results.single_trial.reward_value);
         results.single_trial.second_reward_chance = NaN;
         
@@ -172,7 +171,7 @@ if parameters.trials.random_stimuli
         results.single_trial.starting_bid = NaN;
         results.single_trial.computer_bid = NaN;
         results.single_trial.target_box_shift = NaN;
-        results.single_trial.target_box_size = NaN;
+        results.single_trial.target_box_size = NaNi;
         results.single_trial.subtask = 'Pavlovian';
         results.single_trial.primary_side = 'left';
     end

@@ -26,9 +26,7 @@ elseif strcmp(payout, 'reward')
     else
         %get the tap and use this taps calibration to get the open time
         tap = hardware.solenoid.release.reward_tap;
-        disp(tap);
         tap_open_time = calculate_open_time(tap, results.outputs.reward_liquid);
-        disp(tap_open_time);
         %release the liquid
         release_liquid(parameters, hardware, tap, tap_open_time)
     end
