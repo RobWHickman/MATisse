@@ -172,7 +172,11 @@ if parameters.trials.random_stimuli
         results.single_trial.computer_bid = NaN;
         results.single_trial.target_box_shift = NaN;
         results.single_trial.target_box_size = NaN;
-        results.single_trial.subtask = 'Pavlovian';
+        if modifiers.fractals.no_fractals
+            results.single_trial.subtask = 'Blind_Pav';
+        else
+            results.single_trial.subtask = 'Pav';
+        end
         results.single_trial.primary_side = 'left';
     end
     results.single_trial.ordered = 'random';

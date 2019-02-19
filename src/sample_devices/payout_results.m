@@ -21,7 +21,12 @@ if strcmp(payout, 'budget')
 elseif strcmp(payout, 'reward')
     %calculate the amount of reward to give
     if results.outputs.reward > 0
-        results.outputs.reward_liquid = stimuli.fractals.fractal_properties.magnitude(results.outputs.reward); %increments of 0.15ml of juice
+        if strcmp(results.single_trial.subtask, 'Blind_Pav')
+            %creates a random amount in ml between 0.5 and 1ml of juice
+            results.outputs.reward_liquid = (0.5 * rand) + 0.5;
+        else
+            results.outputs.reward_liquid = stimuli.fractals.fractal_properties.magnitude(results.outputs.reward); %increments of 0.15ml of juice
+        end
     else
         results.outputs.reward_liquid = 0;
     end
