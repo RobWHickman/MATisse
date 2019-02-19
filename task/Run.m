@@ -73,7 +73,6 @@ for frame = 1:parameters.timings.TrialTime('ITI')
         %only for binary choice paradigms
         if ~strcmp(parameters.task.type, 'PAV')
             stimuli = reflect_stimuli(stimuli, hardware, modifiers, results.single_trial.primary_side);
-            disp('reflected stuff');
         end
     else
         %currently we don't sample behaviour in the ITI
@@ -122,6 +121,7 @@ end
 %set the systime for the start of the trial
 results = time_trial(results, 'start');
 disp('starting trial');
+disp(strcat('running ', parameters.task.type, ' trial'));
 for frame = 1:parameters.timings.TrialTime('trial_start')
     if frame == 1 || frame == parameters.timings.TrialTime('trial_start')
         draw_ITI(stimuli, task_window);
@@ -146,8 +146,10 @@ end
 if ~results.single_trial.task_failure || strcmp(parameters.task.type, 'PAV')
 for frame = 1:parameters.timings.TrialTime('fixation')
     %draw the first epoch
-    if frame == 1 || frame == parameters.timings.TrialTime('fixation')
-        draw_fixation_epoch(stimuli, hardware, task_window, parameters.task.type);
+    if ~(modifiers.fractals.no_fractals && strcmp(parameters.task.type, 'PAV'))
+        if frame == 1 || frame == parameters.timings.TrialTime('fixation')
+            draw_fixation_epoch(stimuli, hardware, task_window, parameters.task.type);
+        end
     end
     
     %sample the input devices and munge into behaviour table
@@ -186,8 +188,10 @@ end
 if ~results.single_trial.task_failure || strcmp(parameters.task.type, 'PAV')
 for frame = 1:parameters.timings.TrialTime('fractal_offer')
     %draw the first epoch
-    if frame == 1 || frame == parameters.timings.TrialTime('fractal_offer')
-        draw_fractaloffer_epoch(stimuli, modifiers, hardware, task_window, parameters.task.type)
+    if ~(modifiers.fractals.no_fractals && strcmp(parameters.task.type, 'PAV'))
+        if frame == 1 || frame == parameters.timings.TrialTime('fractal_offer')
+            draw_fractaloffer_epoch(stimuli, modifiers, hardware, task_window, parameters.task.type)
+        end
     end
     
     %sample behaviour
@@ -201,7 +205,7 @@ for frame = 1:parameters.timings.TrialTime('fractal_offer')
     if parameters.task_checks.table.Status('touch_joystick') && parameters.task_checks.table.Requirement('touch_joystick')
         break
     end
-
+    
     flip_screen(frame, parameters, task_window, 'fractal_offer');
     
     if frame == 1 || frame == parameters.timings.TrialTime('fractal_offer')
@@ -284,7 +288,9 @@ for frame = 1:parameters.timings.TrialTime('bidding')
     end
     
     %draw the task after all the checks and flip the screen
-    draw_bidding_epoch(parameters, stimuli, modifiers, hardware, results, task_window, parameters.task.type)
+    if ~(modifiers.fractals.no_fractals && strcmp(parameters.task.type, 'PAV'))
+        draw_bidding_epoch(parameters, stimuli, modifiers, hardware, results, task_window, parameters.task.type)
+    end
     flip_screen(frame, parameters, task_window, 'bidding');
 
     %send the bit for the bidding epoch
@@ -312,17 +318,21 @@ if strcmp(parameters.task.type, 'BDM') && strcmp(results.single_trial.subtask, '
     stimuli = generate_reverse_bidspace(parameters, results, stimuli, modifiers, task_window);
 end    
 
-%paayout the reard and then budget
+%payout the reward and then budget
 %same 'epoch' but split in two for ease of parsing
 %for pavlovian tasks, this is just filler
-if ~results.single_trial.task_failure
+if ~results.single_trial.task_failure || strcmp(parameters.task.type, 'PAV')
 for frame = 1:parameters.timings.TrialTime('reward_payout')
     
     %in first frame assign payouts and draw epoch
     if frame == 1
         %assign the payouts
         results = assign_payouts(parameters, modifiers, stimuli, results);
-        draw_payout_epoch(parameters, modifiers, results, stimuli, hardware, task_window, parameters.task.type, 'reward')
+        disp('results');
+        disp(results.outputs);
+        if ~(modifiers.fractals.no_fractals && strcmp(parameters.task.type, 'PAV'))
+            draw_payout_epoch(parameters, modifiers, results, stimuli, hardware, task_window, parameters.task.type, 'reward')
+        end
     end
     
     %payout the budget results on the last frame
@@ -362,7 +372,9 @@ if ~results.single_trial.task_failure || strcmp(parameters.task.type, 'PAV')
 for frame = 1:parameters.timings.TrialTime('budget_payout')
     %draw the first epoch
     if frame == 1 || frame == parameters.timings.TrialTime('budget_payout')
-        draw_payout_epoch(parameters, modifiers, results, stimuli, hardware, task_window, parameters.task.type, 'budget')
+        if ~(modifiers.fractals.no_fractals && strcmp(parameters.task.type, 'PAV'))
+            draw_payout_epoch(parameters, modifiers, results, stimuli, hardware, task_window, parameters.task.type, 'budget')
+        end
     end
     
     %payout the results on the last frame

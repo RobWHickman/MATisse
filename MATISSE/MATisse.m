@@ -62,7 +62,7 @@ function Gen_button_Callback(hObject, eventdata, handles)
             get(handles.Maximal_check, 'Value')];
         handles.parameters.task_checks.requirements = requirement_vector';
         %generate the task
-        [handles.parameters, handles.hardware, handles.stimuli, handles.task_window] =  matisse_generate(handles.parameters, handles.hardware, handles.stimuli, handles.modifiers);
+        [handles.parameters, handles.hardware, handles.stimuli, handles.task_window] =  matisse_generate(handles.parameters, handles.hardware, handles.stimuli, handles.modifiers, 'initial');
         %update the GUI with the calculated max trials
         %this can be edted after
         set(handles.Total_trials,'String', num2str(handles.parameters.trials.max_trials));
@@ -219,7 +219,11 @@ function Binary_choice_Callback(hObject, eventdata, handles)
     elseif binary_button_state == get(hObject,'Min')
         set(handles.Binary_choice,'string','Binary Choice','enable','on','BackgroundColor','red');
         handles.parameters.task.type = 'BDM';
+        disp('switched back to BDM');
         %handles.parameters = rmfield(handles.parameters, 'binary_choice');
+    end
+    if handles.results.block_results.completed > 0
+        [handles.parameters, handles.hardware, handles.stimuli, handles.task_window] =  matisse_generate(handles.parameters, handles.hardware, handles.stimuli, handles.modifiers, handles.task_window);
     end
 guidata(hObject, handles);
 function Pavlovian_learning_Callback(hObject, eventdata, handles)
@@ -234,6 +238,10 @@ function Pavlovian_learning_Callback(hObject, eventdata, handles)
     elseif pav_button_state == get(hObject,'Min')
         set(handles.Pavlovian_learning,'string','Pavlovian','enable','on','BackgroundColor','red');
         handles.parameters.task.type = 'BDM';
+        disp('switched back to BDM');
+    end
+    if handles.results.block_results.completed > 0
+        [handles.parameters, handles.hardware, handles.stimuli, handles.task_window] =  matisse_generate(handles.parameters, handles.hardware, handles.stimuli, handles.modifiers, handles.task_window);
     end
 guidata(hObject, handles);
 
@@ -1403,8 +1411,6 @@ guidata(hObject, handles);
 function Joyaxis_invert_CreateFcn(hObject, eventdata, handles)
         handles.hardware.joystick.inverted = 1;
 guidata(hObject, handles);
-
-
    
 
 %and the strength (0-1) of that box

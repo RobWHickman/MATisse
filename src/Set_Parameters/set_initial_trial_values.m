@@ -171,7 +171,7 @@ if parameters.trials.random_stimuli
         results.single_trial.starting_bid = NaN;
         results.single_trial.computer_bid = NaN;
         results.single_trial.target_box_shift = NaN;
-        results.single_trial.target_box_size = NaNi;
+        results.single_trial.target_box_size = NaN;
         results.single_trial.subtask = 'Pavlovian';
         results.single_trial.primary_side = 'left';
     end
