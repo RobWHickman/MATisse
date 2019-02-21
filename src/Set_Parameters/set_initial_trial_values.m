@@ -33,7 +33,12 @@ if parameters.trials.random_stimuli
         %rewards
         results.single_trial.reward_value = randi(height(stimuli.fractals.fractal_properties));
         results.single_trial.second_reward_value = NaN;
-        results.single_trial.reward_chance = stimuli.fractals.fractal_properties.probability(results.single_trial.reward_value);
+        if ~modifiers.fractals.set_prob
+            results.single_trial.reward_chance = stimuli.fractals.fractal_properties.probability(results.single_trial.reward_value);
+        else
+            results.single_trial.reward_chance = modifiers.fractals.probability
+        end
+
         results.single_trial.second_reward_chance = NaN;
         
         %budgets
@@ -85,7 +90,11 @@ if parameters.trials.random_stimuli
         %rewards
         if ~modifiers.fractals.no_fractals
             results.single_trial.reward_value = randi(height(stimuli.fractals.fractal_properties));
-            results.single_trial.reward_chance = stimuli.fractals.fractal_properties.probability(results.single_trial.reward_value);
+            if ~modifiers.fractals.set_prob
+                results.single_trial.reward_chance = stimuli.fractals.fractal_properties.probability(results.single_trial.reward_value);
+            else
+                results.single_trial.reward_chance = modifiers.fractals.probability
+            end
             %could probably be done neater elsewhere- make sure second
             %reward is init as NaN
             results.single_trial.second_reward_value = NaN;
@@ -144,7 +153,11 @@ if parameters.trials.random_stimuli
             while(results.single_trial.reward_value == results.single_trial.second_reward_value)
                 results.single_trial.second_reward_value = randi(height(stimuli.fractals.fractal_properties));
             end
-            results.single_trial.second_reward_chance = stimuli.fractals.fractal_properties.probability(results.single_trial.reward_value);
+            if ~modifiers.fractals.set_prob
+                results.single_trial.reward_chance = stimuli.fractals.fractal_properties.probability(results.single_trial.reward_value);
+            else
+                results.single_trial.reward_chance = modifiers.fractals.probability
+            end
         end
         
         %bids
@@ -162,7 +175,11 @@ if parameters.trials.random_stimuli
         %only care about rewards for pavlovian
         results.single_trial.reward_value = randi(height(stimuli.fractals.fractal_properties));
         results.single_trial.second_reward_value = NaN;
-        results.single_trial.reward_chance = stimuli.fractals.fractal_properties.probability(results.single_trial.reward_value);
+        if ~modifiers.fractals.set_prob
+            results.single_trial.reward_chance = stimuli.fractals.fractal_properties.probability(results.single_trial.reward_value);
+        else
+            results.single_trial.reward_chance = modifiers.fractals.probability
+        end
         results.single_trial.second_reward_chance = NaN;
         
         results.single_trial.budget_magnitude = NaN;
@@ -207,7 +224,12 @@ else
     results.single_trial.ordered = 'ordered';
     
     results.single_trial.budget_magnitude = modifiers.budget.magnitude;
-    results.single_trial.reward_chance = stimuli.fractals.fractal_properties.probability(results.single_trial.reward_value);
+    if ~modifiers.fractals.set_prob
+        results.single_trial.reward_chance = stimuli.fractals.fractal_properties.probability(results.single_trial.reward_value);
+    else
+        results.single_trial.reward_chance = modifiers.fractals.probability
+    end
+
     
     if strcmp(parameters.task.type, 'BDM')
         if strcmp(modifiers.specific_tasks.BDM.contingency, 'BDM')
@@ -272,8 +294,6 @@ if ~isnan(results.single_trial.second_reward_value)
 else
     results.single_trial.second_reward_magnitude = NaN;
 end
-
-
 
 
 %set the task failure to false at the start of the task

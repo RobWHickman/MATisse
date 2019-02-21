@@ -1024,7 +1024,7 @@ guidata(hObject, handles);
         guidata(hObject, handles);
 
 function Display_button_Callback(hObject, eventdata, handles)
-    display(handles.stimuli.reverse_shadow_strength);
+    display(handles.modifiers.fractals);
 function Display_button_CreateFcn(hObject, eventdata, handles)
 
 function Choice_stimuli_Callback(hObject, eventdata, handles)
@@ -1505,4 +1505,23 @@ function Budget_shadow_Callback(hObject, eventdata, handles)
 guidata(hObject, handles);
 function Budget_shadow_CreateFcn(hObject, eventdata, handles)
     handles.stimuli.reverse_shadow = 0;
+guidata(hObject, handles);
+
+%override the probability of the fractal
+function Reward_probability_Callback(hObject, eventdata, handles)
+    handles.modifiers.fractals.probability = str2num(get(handles.Reward_probability,'String'));
+guidata(hObject, handles);
+function Reward_probability_CreateFcn(hObject, eventdata, handles)
+    handles.modifiers.fractals.probability = 1;
+guidata(hObject, handles);
+function Override_p_Callback(hObject, eventdata, handles)
+    override_prob = get(handles.Override_p, 'Value');
+    if override_prob == 1
+        handles.modifiers.fractals.set_prob = 1;
+    else
+        handles.modifiers.fractals.set_prob = 0;
+    end
+guidata(hObject, handles);
+function Override_p_CreateFcn(hObject, eventdata, handles)
+    handles.modifiers.fractals.set_prob = 0;
 guidata(hObject, handles);

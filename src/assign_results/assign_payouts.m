@@ -11,8 +11,7 @@ if strcmp(parameters.task.type, 'BDM')
     %if the monkey wins the auction
     if(results.single_trial.computer_bid < results.trial_results.monkey_bid)
         results.outputs.results = 'win';
-        
-       results = pay_notpay(results);    
+        results = pay_notpay(results);    
        
         if strcmp(results.single_trial.subtask, 'BDM')
             results.outputs.budget = (1 -  results.single_trial.computer_bid);

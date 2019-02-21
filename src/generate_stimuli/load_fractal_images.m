@@ -9,9 +9,26 @@ else
     fractals_table = load(fullfile(modifiers.fractals.folder, modifiers.fractals.fractals_file));
 end
 
+%select only active fractals
 fractals_table = fractals_table.fractals(find(fractals_table.fractals.active),:);
-fractal_filenames = fractals_table.file;
 
+%select out by the subtask being used
+if strcmp(parameters.task.type, 'BDM')
+    subtask = 'BDM';
+elseif strcmp(parameters.task.type, 'BC')
+    subtask = 'BC';
+elseif strcmp(parameters.task.type, 'PAV')
+   if modifiers.fractals.no_fractals
+       subtask = 'FREE';
+   else
+       subtask = 'PAV';
+   end
+end
+
+task = fractals_table.task;
+fractals_table = fractals_table(find(arrayfun(@(n) any(strcmp(task{n},subtask)),1:numel(task))),:);
+fractal_filenames = fractals_table.file;
+disp(fractal_filenames);
 %find all the matching images
 all_images = [repmat(modifiers.fractals.folder, length(fractal_filenames),1), char(fractal_filenames), repmat('.jpg', length(fractal_filenames),1)];
 

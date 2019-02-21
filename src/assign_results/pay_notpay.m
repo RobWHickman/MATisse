@@ -14,7 +14,7 @@ if strcmp(results.single_trial.subtask, 'Blind_Pav')
 else
     if(results.single_trial.reward_chance ~= 1)
         random_number_check = rand;
-        if(random_number_check > results.single_trial.reward_chance)
+        if(random_number_check < results.single_trial.reward_chance)
             results.outputs.reward = results.single_trial.reward_value;
             results.outputs.paid = 1;
             results.outputs.results = [results.outputs.results, '_paid'];

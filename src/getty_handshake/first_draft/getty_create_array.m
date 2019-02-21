@@ -5,13 +5,16 @@ getty_trial_number = fi_numTo2bytes(trial);
 
 %the task the trial will run
 if strcmp(parameters.task.type, 'BDM')
-    getty_task = 1;
+    getty_task = 0;
     if strcmp(trial_variables.subtask, 'BDM')
         getty_subtask = 1;
+        %getty_task = 1;
     elseif strcmp(trial_variables.subtask, 'FP')
         getty_subtask = 2;
+        %getty_task = 2;
     elseif strcmp(trial_variables.subtask, 'BDM_FP')
         getty_subtask = 3;
+        %getty_task = 3;
     end
 
 elseif strcmp(parameters.task.type, 'BC')
@@ -26,8 +29,15 @@ elseif strcmp(parameters.task.type, 'BC')
     end
     
 elseif strcmp(parameters.task.type, 'PAV')
-    getty_task = 3;
-    getty_subtask = 7;
+    %getty_task = 3;
+    
+    if strcmp(trial_variables.subtask, 'Pav')
+        getty_subtask = 7;
+        getty_task = 3;
+    elseif strcmp(trial_variables.subtask, 'Blind_Pav')
+        getty_subtask = 8;
+        getty_task = 6;
+    end
 end
 
 if ~isnan(trial_variables.reward_value)
@@ -67,8 +77,9 @@ end
 %     situation = 0;
 % end
 
-situation = str2num(strcat(num2str(getty_task), num2str(getty_subtask), num2str(trial_reward_value)));
+%situation = str2num(strcat(num2str(getty_task), num2str(getty_subtask), num2str(trial_reward_value)));
 %situation = 1;
+situation = getty_task + trial_reward_value;
 
 % generate final array (bytes 3 and 4 are used by getty to save the trial duration)
 dataToGetty=[];
