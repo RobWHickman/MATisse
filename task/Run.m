@@ -352,13 +352,15 @@ for frame = 1:parameters.timings.TrialTime('reward_payout')
     flip_screen(frame, parameters, task_window, 'reward_payout');
     
     %send the bit for the reward epoch
-    if (frame == 1 || frame == parameters.timings.TrialTime('reward_payout')) && results.outputs.reward > 0
+    %only send win bit when monkey wins or not
+    if (frame == 1 || frame == parameters.timings.TrialTime('reward_payout'))% && results.outputs.reward > 0
         if parameters.getty.on
             if frame == 1
                 bit_out = 1;
             else
                 bit_out = 0;
             end
+            %only send win bit when monkey wins
             getty_send_bits(parameters.getty.bits, 13, bit_out)
         end
     end
