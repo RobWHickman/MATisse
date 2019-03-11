@@ -145,6 +145,8 @@ end
 %can never fail trials on pavlovian tasks
 if ~results.single_trial.task_failure || strcmp(parameters.task.type, 'PAV')
 for frame = 1:parameters.timings.TrialTime('fixation')
+    free_reward_key();
+    
     %draw the first epoch
     if ~(modifiers.fractals.no_fractals && strcmp(parameters.task.type, 'PAV'))
         if frame == 1 || frame == parameters.timings.TrialTime('fixation')

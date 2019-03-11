@@ -26,12 +26,6 @@ else
     task_window = generation;
 end
 
-%set the free reward key
-KbName('UnifyKeyNames');
-free_reward = [KbName('f')];
-RestrictKeysForKbCheck(free_reward);
-ListenChar(2);
-
 %load/ generate the stimuli for the task
 stimuli = load_stimuli(parameters, hardware, stimuli, modifiers, task_window);
 
@@ -50,6 +44,14 @@ parameters.trials.max_trials = parameters.trials.max_trials + mod(parameters.tri
 if parameters.trials.random_stimuli == 0
     parameters.trials.combinations = create_stimuli_order(modifiers, parameters, stimuli);
 end
+
+%set the free reward key
+KbName('UnifyKeyNames');
+free_reward = [KbName('f')];
+RestrictKeysForKbCheck(free_reward);
+ListenChar(2);
+
+free_reward_key();
 
 if strcmp(generation, 'initial')
     %if parameters.getty.on
