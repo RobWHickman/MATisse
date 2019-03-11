@@ -375,7 +375,7 @@ end
 results = check_requirements(parameters, results);
 end
 
-%then finally pay out the reward (if any)
+%then finally pay out the budget (if any)
 if ~results.single_trial.task_failure || strcmp(parameters.task.type, 'PAV')
 for frame = 1:parameters.timings.TrialTime('budget_payout')
     %draw the first epoch

@@ -6,8 +6,8 @@ function [hardware, trial_free_reward] = free_reward_key(hardware, parameters, t
 reward_press_time = GetSecs();
 
 if keyIsDown
-    %only works at most once every 5 seconds
-    if reward_press_time - hardware.solenoid.release.last_free_reward < 2
+    %only works at most once every 1 seconds
+    if reward_press_time - hardware.solenoid.release.last_free_reward < 1
         %in reality this spams the console because key presses last longer
         %than one refresh
         %disp('too soon since last key press');
@@ -39,12 +39,14 @@ if keyIsDown
 
         if(tap_open_time > 0)
             getty_send_bits(parameters.getty.bits, tap_to_open, 1)
-
+            getty_send_bits(parameters.getty.bits, 16, 1)
+            
             %wait with the tap open
             WaitSecs(tap_open_time);
 
             %outputSingleScan(hardware.solenoid.device, tap_closed);
             getty_send_bits(parameters.getty.bits, tap_to_open, 0)
+            getty_send_bits(parameters.getty.bits, 16, 0)
         end
     end
     
