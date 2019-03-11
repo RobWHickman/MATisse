@@ -17,6 +17,7 @@ end
 %% the different epochs in the task if all checks are met %%
 %inter trial interval
 for frame = 1:parameters.timings.TrialTime('ITI')
+    hardware = free_reward_key(hardware, parameters);
 
     %get trial values for the offer, computer bid and random monkey bid
     %start position
@@ -123,6 +124,7 @@ results = time_trial(results, 'start');
 disp('starting trial');
 disp(strcat('running ', parameters.task.type, ' trial'));
 for frame = 1:parameters.timings.TrialTime('trial_start')
+    hardware = free_reward_key(hardware, parameters);
     if frame == 1 || frame == parameters.timings.TrialTime('trial_start')
         draw_ITI(stimuli, task_window);
     end
@@ -145,7 +147,7 @@ end
 %can never fail trials on pavlovian tasks
 if ~results.single_trial.task_failure || strcmp(parameters.task.type, 'PAV')
 for frame = 1:parameters.timings.TrialTime('fixation')
-    free_reward_key();
+    hardware = free_reward_key(hardware, parameters);
     
     %draw the first epoch
     if ~(modifiers.fractals.no_fractals && strcmp(parameters.task.type, 'PAV'))
@@ -189,6 +191,7 @@ end
 %display fractal
 if ~results.single_trial.task_failure || strcmp(parameters.task.type, 'PAV')
 for frame = 1:parameters.timings.TrialTime('fractal_offer')
+    hardware = free_reward_key(hardware, parameters);
     %draw the first epoch
     if ~(modifiers.fractals.no_fractals && strcmp(parameters.task.type, 'PAV'))
         if frame == 1 || frame == parameters.timings.TrialTime('fractal_offer')
