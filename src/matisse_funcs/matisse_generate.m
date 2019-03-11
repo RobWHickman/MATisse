@@ -26,6 +26,12 @@ else
     task_window = generation;
 end
 
+%set the free reward key
+KbName('UnifyKeyNames');
+free_reward = [KbName('f')];
+RestrictKeysForKbCheck(free_reward);
+ListenChar(2);
+
 %load/ generate the stimuli for the task
 stimuli = load_stimuli(parameters, hardware, stimuli, modifiers, task_window);
 
