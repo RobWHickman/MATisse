@@ -11,10 +11,14 @@ end
 results.block_results.percent_correct = (results.block_results.correct / results.block_results.completed) * 100;
 
 %update whether or not block was rewarded with juice
-if results.outputs.reward ~= 0
-    results.block_results.rewarded = results.block_results.rewarded + 1;
-else%if ~isnan(results.output.budget)
-    results.block_results.unrewarded = results.block_results.unrewarded + 1;
+if results.single_trial.task_failure ~= 1
+    if results.outputs.reward ~= 0
+        results.block_results.rewarded = results.block_results.rewarded + 1;
+    else
+        if  ~results.single_trial.task_failure
+            results.block_results.unrewarded = results.block_results.unrewarded + 1;
+        end
+    end
 end
 %update the amounts of liquid given out
 results.block_results.water = results.block_results.water + results.outputs.budget_liquid;
@@ -32,7 +36,8 @@ timing_cols = table2array(parameters.timings(:,6)) / hardware.screen.refresh_rat
 timing_cols = array2table(timing_cols.');
 timing_cols.Properties.VariableNames = parameters.timings.Properties.RowNames;
 
-trial_col = array2table(parameters.trials.total_trials);
+trial_col = array2table(results.block_results.completed);
+trial_col.Properties.VariableNames = {'trial_no'};
 
 %convert to tables and horzcat
 trial_output_table = horzcat(struct2table(results.trial_results,'AsArray',true),...
@@ -56,8 +61,13 @@ if strcmp(parameters.task.type, 'BDM')
     results.block_results.fractal_means = grpstats(full_output_table.monkey_bid, full_output_table.reward_value);
     results.block_results.graph_output = results.block_results.fractal_means;
 elseif strcmp(parameters.task.type, 'BC')
-    results.block_results.fractal_means = grpstats(full_output_table.monkey_bid, full_output_table.reward_value);
-    results.block_results.graph_output = results.block_results.fractal_means;
+    if strcmp(results.single_trial.subtask, 'bundle_choice')
+        results.block_results.fractal_means = grpstats(full_output_table.monkey_bid, full_output_table.reward_value);
+        results.block_results.graph_output = results.block_results.fractal_means;
+    else
+        results.block_results.fractal_means = grpstats(full_output_table.monkey_bid, full_output_table.second_budget_value);
+        results.block_results.graph_output = results.block_results.fractal_means;
+    end
 elseif strcmp(parameters.task.type, 'PAV')
     %dont care about means of anything for pavlovian
     results.block_results.fractal_means = NaN;

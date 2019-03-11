@@ -11,8 +11,7 @@ if strcmp(parameters.task.type, 'BDM')
     %if the monkey wins the auction
     if(results.single_trial.computer_bid < results.trial_results.monkey_bid)
         results.outputs.results = 'win';
-        
-       results = pay_notpay(results);    
+        results = pay_notpay(results);    
        
         if strcmp(results.single_trial.subtask, 'BDM')
             results.outputs.budget = (1 -  results.single_trial.computer_bid);
@@ -51,8 +50,16 @@ elseif strcmp(parameters.task.type, 'BC')
         results.outputs.results = 'fractal_chosen';
         results.outputs.budget = 0;
     elseif strcmp(results.single_trial.subtask, 'binary_budget_choice')
-        results.outputs.results = 'budget_chosen';
+        if (strcmp(results.single_trial.primary_side, 'right') && results.trial_results.monkey_bid * 100 > modifiers.specific_tasks.binary_choice.bundle_width) ||...
+                (strcmp(results.single_trial.primary_side, 'left') && results.trial_results.monkey_bid * 100 < 100 - modifiers.specific_tasks.binary_choice.bundle_width)
+            results.outputs.results = 'second_budget_chosen';
+            results.outputs.budget = results.single_trial.second_budget_value;
+        else
+            results.outputs.results = 'budget_chosen';
+            results.outputs.budget = results.single_trial.budget_value;
+        end
         results.outputs.reward = 0;
+        results.outputs.paid = 0;
     end
     
 %for pavlovian trials, reward is always equal to offer value

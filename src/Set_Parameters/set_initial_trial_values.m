@@ -33,7 +33,12 @@ if parameters.trials.random_stimuli
         %rewards
         results.single_trial.reward_value = randi(height(stimuli.fractals.fractal_properties));
         results.single_trial.second_reward_value = NaN;
-        results.single_trial.reward_chance = stimuli.fractals.fractal_properties.probability(results.single_trial.reward_value);
+        if ~modifiers.fractals.set_prob
+            results.single_trial.reward_chance = stimuli.fractals.fractal_properties.probability(results.single_trial.reward_value);
+        else
+            results.single_trial.reward_chance = modifiers.fractals.probability
+        end
+
         results.single_trial.second_reward_chance = NaN;
         
         %budgets
@@ -85,7 +90,16 @@ if parameters.trials.random_stimuli
         %rewards
         if ~modifiers.fractals.no_fractals
             results.single_trial.reward_value = randi(height(stimuli.fractals.fractal_properties));
-            results.single_trial.reward_chance = stimuli.fractals.fractal_properties.probability(results.single_trial.reward_value);
+            if ~modifiers.fractals.set_prob
+                results.single_trial.reward_chance = stimuli.fractals.fractal_properties.probability(results.single_trial.reward_value);
+            else
+                results.single_trial.reward_chance = modifiers.fractals.probability
+            end
+            %could probably be done neater elsewhere- make sure second
+            %reward is init as NaN
+            results.single_trial.second_reward_value = NaN;
+            results.single_trial.second_reward_chance = NaN;
+
         %if no fractals then no reward values
         else
             results.single_trial.reward_value = NaN;
@@ -139,7 +153,11 @@ if parameters.trials.random_stimuli
             while(results.single_trial.reward_value == results.single_trial.second_reward_value)
                 results.single_trial.second_reward_value = randi(height(stimuli.fractals.fractal_properties));
             end
-            results.single_trial.second_reward_chance = stimuli.fractals.fractal_properties.probability(results.single_trial.reward_value);
+            if ~modifiers.fractals.set_prob
+                results.single_trial.reward_chance = stimuli.fractals.fractal_properties.probability(results.single_trial.reward_value);
+            else
+                results.single_trial.reward_chance = modifiers.fractals.probability
+            end
         end
         
         %bids
@@ -157,7 +175,11 @@ if parameters.trials.random_stimuli
         %only care about rewards for pavlovian
         results.single_trial.reward_value = randi(height(stimuli.fractals.fractal_properties));
         results.single_trial.second_reward_value = NaN;
-        results.single_trial.reward_chance = stimuli.fractals.fractal_properties.probability(results.single_trial.reward_value);
+        if ~modifiers.fractals.set_prob
+            results.single_trial.reward_chance = stimuli.fractals.fractal_properties.probability(results.single_trial.reward_value);
+        else
+            results.single_trial.reward_chance = modifiers.fractals.probability
+        end
         results.single_trial.second_reward_chance = NaN;
         
         results.single_trial.budget_magnitude = NaN;
@@ -167,7 +189,11 @@ if parameters.trials.random_stimuli
         results.single_trial.computer_bid = NaN;
         results.single_trial.target_box_shift = NaN;
         results.single_trial.target_box_size = NaN;
-        results.single_trial.subtask = 'Pavlovian';
+        if modifiers.fractals.no_fractals
+            results.single_trial.subtask = 'Blind_Pav';
+        else
+            results.single_trial.subtask = 'Pav';
+        end
         results.single_trial.primary_side = 'left';
     end
     results.single_trial.ordered = 'random';
@@ -186,7 +212,7 @@ else
     struct_table = array2table(transpose(table2array(combinations_column)));
     struct_table.Properties.VariableNames = combinations_column.Properties.RowNames;
     
-    all_fields = {'subtask', 'reward_value', 'second_reward_value', 'reward_chance', 'second_reward_chance', 'budget_magnitude', 'budget_value', 'second_budget_value', 'starting_bid', 'computer_bid', 'primary_side'};
+    all_fields = {'subtask', 'reward_value', 'second_reward_value', 'reward_chance', 'second_reward_chance', 'budget_magnitude', 'budget_value', 'second_budget_value', 'starting_bid', 'computer_bid', 'primary_side', 'target_box_size', 'target_box_shift'};
     missing = ~ismember(all_fields, struct_table.Properties.VariableNames);
     missing_table = array2table(1:length(find(missing)));
     missing_table.Properties.VariableNames = all_fields(find(missing));
@@ -198,7 +224,12 @@ else
     results.single_trial.ordered = 'ordered';
     
     results.single_trial.budget_magnitude = modifiers.budget.magnitude;
-    results.single_trial.reward_chance = stimuli.fractals.fractal_properties.probability(results.single_trial.reward_value);
+    if ~modifiers.fractals.set_prob
+        results.single_trial.reward_chance = stimuli.fractals.fractal_properties.probability(results.single_trial.reward_value);
+    else
+        results.single_trial.reward_chance = modifiers.fractals.probability
+    end
+
     
     if strcmp(parameters.task.type, 'BDM')
         if strcmp(modifiers.specific_tasks.BDM.contingency, 'BDM')
@@ -209,6 +240,30 @@ else
             auctions = {'BDM', 'FP'};
             results.single_trial.subtask = auctions(results.single_trial.subtask);
         end
+        
+        %need to set up target box for BDM task
+        if parameters.task_checks.table.Requirement('targeted_offer')
+            if stimuli.target_box.static
+                results.single_trial.target_box_size = stimuli.target_box.startsize;
+                
+                shifts = 0:0.1:1;
+                shifts = shifts(shifts > results.single_trial.target_box_size);
+                results.single_trial.target_box_shift = 1 - shifts(randi(length(shifts)));
+            else
+                if parameters.trials.total_trials < 1
+                    correct = 0;
+                else
+                    correct = results.experiment_summary.correct;
+                end
+                minimum_size = stimuli.bidspace.dimensions.height * 0.05;
+                maximum_size = stimuli.bidspace.dimensions.height * stimuli.target_box.startsize;
+                results.single_trial.target_box_size = ((maximum_size - minimum_size) - ((maximum_size - minimum_size) * (1/ (1 + exp(1) ^ (-(correct-50)/20))))) + minimum_size;
+                results.single_trial.target_box_size = results.single_trial.target_box_size / stimuli.bidspace.dimensions.height;
+                
+                results.single_trial.target_box_shift = (rand() * results.single_trial.target_box_size);
+            end
+        end
+
     elseif strcmp(parameters.task.type, 'BC')
         results.single_trial.starting_bid = 0.5;
         sides = {'left', 'right'};
@@ -227,6 +282,19 @@ else
         end
     end
 end
+
+%set themangitude (ml of juice) of the reward
+if ~isnan(results.single_trial.reward_value)
+    results.single_trial.reward_magnitude = stimuli.fractals.fractal_properties.magnitude(results.single_trial.reward_value);
+else
+    results.single_trial.reward_magnitude = NaN;
+end
+if ~isnan(results.single_trial.second_reward_value)
+    results.single_trial.second_reward_magnitude = stimuli.fractals.fractal_properties.magnitude(results.single_trial.second_reward_value);
+else
+    results.single_trial.second_reward_magnitude = NaN;
+end
+
 
 %set the task failure to false at the start of the task
 results.single_trial.task_failure = false;

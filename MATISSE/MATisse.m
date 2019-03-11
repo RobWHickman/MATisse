@@ -62,7 +62,7 @@ function Gen_button_Callback(hObject, eventdata, handles)
             get(handles.Maximal_check, 'Value')];
         handles.parameters.task_checks.requirements = requirement_vector';
         %generate the task
-        [handles.parameters, handles.hardware, handles.stimuli, handles.task_window] =  matisse_generate(handles.parameters, handles.hardware, handles.stimuli, handles.modifiers);
+        [handles.parameters, handles.hardware, handles.stimuli, handles.task_window] =  matisse_generate(handles.parameters, handles.hardware, handles.stimuli, handles.modifiers, 'initial');
         %update the GUI with the calculated max trials
         %this can be edted after
         set(handles.Total_trials,'String', num2str(handles.parameters.trials.max_trials));
@@ -71,6 +71,10 @@ function Gen_button_Callback(hObject, eventdata, handles)
     else
         disp('save_info not found! Did you remember to run Set?')
     end
+    
+    %save metadata before start
+    metadata = set_trial_metadata(handles.parameters, handles.stimuli, handles.hardware, handles.modifiers, handles.results);
+    save_data(handles.parameters, metadata, 'task_metadata');
 guidata(hObject, handles);
 
 %function to actually run the task
@@ -106,13 +110,13 @@ function Run_button_Callback(hObject, eventdata, handles)
             set(handles.unrewarded_text, 'String', handles.results.block_results.unrewarded);
             set(handles.water_text, 'String', handles.results.block_results.water);
             set(handles.juice_text, 'String', handles.results.block_results.juice);
-            if strcmp(handles.parameters.task, 'BC')
-                set(handles.Left_choice, 'String', handles.results.block_results.left);
-                set(handles.Right_choice, 'String', handles.results.block_results.right);
+            if strcmp(handles.parameters.task.type, 'BC')
+                set(handles.Left_choice, 'String', num2str(handles.results.block_results.left));
+                set(handles.Right_choice, 'String', num2str(handles.results.block_results.right));
             end
             
-            %save the data every 10 trials
-            save_data(handles.parameters, handles.results);
+            %save the data
+            save_data(handles.parameters, handles.results, 'task_results');
             disp('data saved!')
             
             %update the GUI with these fields
@@ -169,6 +173,16 @@ function Set_primate_CreateFcn(hObject, eventdata, handles)
     %defaults to Ulysses
     handles.parameters.participants.primate = 'Ulysses';
 guidata(hObject, handles);
+% set the block no
+function Block_no_Callback(hObject, eventdata, handles)
+    clear handles.parameters.participants.block_no
+    block = get(handles.Block_no, 'String');
+    handles.parameters.participants.block_no = str2double(block);
+guidata(hObject, handles);
+function Block_no_CreateFcn(hObject, eventdata, handles)
+    handles.parameters.participants.block_no = 1;
+guidata(hObject, handles);
+
 %set the task up using these parameters
 %this will set the inputs and ask you to find two folders:
 %1) to set where the data from the experiment will be saved at the end of
@@ -205,7 +219,11 @@ function Binary_choice_Callback(hObject, eventdata, handles)
     elseif binary_button_state == get(hObject,'Min')
         set(handles.Binary_choice,'string','Binary Choice','enable','on','BackgroundColor','red');
         handles.parameters.task.type = 'BDM';
+        disp('switched back to BDM');
         %handles.parameters = rmfield(handles.parameters, 'binary_choice');
+    end
+    if handles.results.block_results.completed > 0
+        [handles.parameters, handles.hardware, handles.stimuli, handles.task_window] =  matisse_generate(handles.parameters, handles.hardware, handles.stimuli, handles.modifiers, handles.task_window);
     end
 guidata(hObject, handles);
 function Pavlovian_learning_Callback(hObject, eventdata, handles)
@@ -220,6 +238,10 @@ function Pavlovian_learning_Callback(hObject, eventdata, handles)
     elseif pav_button_state == get(hObject,'Min')
         set(handles.Pavlovian_learning,'string','Pavlovian','enable','on','BackgroundColor','red');
         handles.parameters.task.type = 'BDM';
+        disp('switched back to BDM');
+    end
+    if handles.results.block_results.completed > 0
+        [handles.parameters, handles.hardware, handles.stimuli, handles.task_window] =  matisse_generate(handles.parameters, handles.hardware, handles.stimuli, handles.modifiers, handles.task_window);
     end
 guidata(hObject, handles);
 
@@ -260,12 +282,75 @@ guidata(hObject, handles);
 %these don't need functions as they will simply be read from and used to
 %create a vector of requirements in Generate()
 function Centered_check_Callback(hObject, eventdata, handles)
+    requirement_vector = [get(handles.Fixation_check, 'Value'),...
+        get(handles.Centered_check, 'Value'),...
+        get(handles.Touch_check, 'Value'),...
+        get(handles.Bidding_check, 'Value'),...
+        get(handles.Finalised_check, 'Value'),...
+        get(handles.Targeted_check, 'Value'),...
+        get(handles.Maximal_check, 'Value')];
+        handles.parameters.task_checks.requirements = requirement_vector';
+guidata(hObject, handles);
 function Fixation_check_Callback(hObject, eventdata, handles)
+    requirement_vector = [get(handles.Fixation_check, 'Value'),...
+        get(handles.Centered_check, 'Value'),...
+        get(handles.Touch_check, 'Value'),...
+        get(handles.Bidding_check, 'Value'),...
+        get(handles.Finalised_check, 'Value'),...
+        get(handles.Targeted_check, 'Value'),...
+        get(handles.Maximal_check, 'Value')];
+        handles.parameters.task_checks.requirements = requirement_vector';
+guidata(hObject, handles);
 function Bidding_check_Callback(hObject, eventdata, handles)
+    requirement_vector = [get(handles.Fixation_check, 'Value'),...
+        get(handles.Centered_check, 'Value'),...
+        get(handles.Touch_check, 'Value'),...
+        get(handles.Bidding_check, 'Value'),...
+        get(handles.Finalised_check, 'Value'),...
+        get(handles.Targeted_check, 'Value'),...
+        get(handles.Maximal_check, 'Value')];
+        handles.parameters.task_checks.requirements = requirement_vector';
+guidata(hObject, handles);
 function Finalised_check_Callback(hObject, eventdata, handles)
+    requirement_vector = [get(handles.Fixation_check, 'Value'),...
+        get(handles.Centered_check, 'Value'),...
+        get(handles.Touch_check, 'Value'),...
+        get(handles.Bidding_check, 'Value'),...
+        get(handles.Finalised_check, 'Value'),...
+        get(handles.Targeted_check, 'Value'),...
+        get(handles.Maximal_check, 'Value')];
+        handles.parameters.task_checks.requirements = requirement_vector';
+guidata(hObject, handles);
 function Targeted_check_Callback(hObject, eventdata, handles)
+    requirement_vector = [get(handles.Fixation_check, 'Value'),...
+        get(handles.Centered_check, 'Value'),...
+        get(handles.Touch_check, 'Value'),...
+        get(handles.Bidding_check, 'Value'),...
+        get(handles.Finalised_check, 'Value'),...
+        get(handles.Targeted_check, 'Value'),...
+        get(handles.Maximal_check, 'Value')];
+        handles.parameters.task_checks.requirements = requirement_vector';
+guidata(hObject, handles);
 function Maximal_check_Callback(hObject, eventdata, handles)
+    requirement_vector = [get(handles.Fixation_check, 'Value'),...
+        get(handles.Centered_check, 'Value'),...
+        get(handles.Touch_check, 'Value'),...
+        get(handles.Bidding_check, 'Value'),...
+        get(handles.Finalised_check, 'Value'),...
+        get(handles.Targeted_check, 'Value'),...
+        get(handles.Maximal_check, 'Value')];
+        handles.parameters.task_checks.requirements = requirement_vector';
+guidata(hObject, handles);
 function Touch_check_Callback(hObject, eventdata, handles)
+    requirement_vector = [get(handles.Fixation_check, 'Value'),...
+        get(handles.Centered_check, 'Value'),...
+        get(handles.Touch_check, 'Value'),...
+        get(handles.Bidding_check, 'Value'),...
+        get(handles.Finalised_check, 'Value'),...
+        get(handles.Targeted_check, 'Value'),...
+        get(handles.Maximal_check, 'Value')];
+        handles.parameters.task_checks.requirements = requirement_vector';
+guidata(hObject, handles);
 
 %function which determines which file (if not the default
 %interval_times.mat) should set the timings of the epochs
@@ -684,12 +769,12 @@ set(handles.manual_bias,'Value', 0.5);
 %edit the bias manually in the GUI
 function Set_y_offset_Callback(hObject, eventdata, handles)
     clear handles.hardware.joystick.bias.y_offset;
-    handles.hardware.joystick.bias.y_offset = get(handles.Set_y_offset,'String');
+    handles.hardware.joystick.bias.y_offset = str2num(get(handles.Set_y_offset,'String'));
     disp('set new joystick Y bias');
 guidata(hObject, handles);
 function Set_x_offset_Callback(hObject, eventdata, handles)
     clear handles.hardware.joystick.bias.x_offset;
-    handles.hardware.joystick.bias.x_offset = get(handles.Set_x_offset,'String');
+    handles.hardware.joystick.bias.x_offset = str2num(get(handles.Set_x_offset,'String'));
     disp('set new joystick X bias');
 guidata(hObject, handles);
 function Set_y_offset_CreateFcn(hObject, eventdata, handles)
@@ -714,9 +799,9 @@ guidata(hObject, handles);
 %joystick movement below to pass a centered check
 function Centre_sensitivity_Callback(hObject, eventdata, handles)
     clear handles.hardware.joystick.sensitivity.centered;
-    joystick_sensitivity = get(handles.Joystick_sensitivty,'String');
-    handles.hardware.joystick.sensitivity.centered = str2num(joystick_sensitivity);
-    disp(['set joystick sensitivity to ', joystick_sensitivity]);
+    centre_sensitivity = get(handles.Centre_sensitivity,'String');
+    handles.hardware.joystick.sensitivity.centered = str2num(centre_sensitivity);
+    disp(['set joystick sensitivity to ', centre_sensitivity]);
 guidata(hObject, handles);
 function Centre_sensitivity_CreateFcn(hObject, eventdata, handles)
     handles.hardware.joystick.sensitivity.centered = str2num('0.1');
@@ -853,7 +938,7 @@ function Reward_tap_Callback(hObject, eventdata, handles)
     disp(['reward tap set to ', reward_tap]);
 guidata(hObject, handles);
 function Reward_tap_CreateFcn(hObject, eventdata, handles)
-    handles.hardware.solenoid.release.reward_tap = 3;
+    handles.hardware.solenoid.release.reward_tap = 2;
 guidata(hObject, handles);
 %set whether to give free juice or free water via the GUI
 function Free_water_CreateFcn(hObject, eventdata, handles)
@@ -865,8 +950,25 @@ guidata(hObject, handles);
 function Free_reward_Callback(hObject, eventdata, handles)
     handles.hardware.solenoid.release.free_liquid = 'juice';
 guidata(hObject, handles);
-function Free_juice_Callback(hObject, eventdata, handles)
-%make the button release free juice
+%how much free reward should be given out when pressing the f key
+function Key_reward_Callback(hObject, eventdata, handles)
+    free_reward_amount = get(handles.Key_reward, 'String');
+    %keep amount between 0.1 and 3ml
+    if free_reward_amount > 3
+        free_reward_amount = 3;
+        disp('free reward amount capped to 3ml max');
+    elseif free_reward_amount < 0.1
+        free_reward_amount = 0.1;
+        disp('free reward amount capped to 0.1ml min');
+    end
+    handles.hardware.solenoid.release.free_amount = str2num(free_reward_amount);
+guidata(hObject, handles);
+%default to 1ml
+function Key_reward_CreateFcn(hObject, eventdata, handles)
+    handles.hardware.solenoid.release.free_amount = 1;
+    %init thelast reward to when MATisse is initialised
+    handles.hardware.solenoid.release.last_free_reward = GetSecs();
+guidata(hObject, handles);
 
 %Functions that determine the targeting box presented to the monkey if
 %target_check is active
@@ -939,7 +1041,7 @@ guidata(hObject, handles);
         guidata(hObject, handles);
 
 function Display_button_Callback(hObject, eventdata, handles)
-    display(handles.results.behaviour_table);
+    display(handles.hardware.solenoid.release.free_amount);
 function Display_button_CreateFcn(hObject, eventdata, handles)
 
 function Choice_stimuli_Callback(hObject, eventdata, handles)
@@ -1236,21 +1338,6 @@ function Touch_samples_CreateFcn(hObject, eventdata, handles)
     handles.hardware.touch.touch_samples = 10;
 guidata(hObject, handles);
 
-%Turn on to enforce handshake with Getty and sending of bits to Getty
-%computer
-function Getty_switch_Callback(hObject, eventdata, handles)
-    getty_on = get(handles.Getty_switch, 'Value');
-    if getty_on == 1
-        handles.parameters.Getty = 1;
-        set(handles.Getty_switch,'string','GETTY ON','enable','on','BackgroundColor','green');
-    else
-        handles.parameters.Getty = 0;
-        set(handles.Getty_switch,'string','GETTY OFF','enable','on','BackgroundColor','red');
-    end
-guidata(hObject, handles);
-function Getty_switch_CreateFcn(hObject, eventdata, handles)
-    handles.parameters.Getty = 0;
-guidata(hObject, handles);
 
 %Clears all requirements
 function Clear_requirements_Callback(hObject, eventdata, handles)
@@ -1262,6 +1349,16 @@ function Clear_requirements_Callback(hObject, eventdata, handles)
     set(handles.Targeted_check,'value',0);
     set(handles.Maximal_check,'value',0);
     set(handles.Clear_requirements,'value',0);
+    
+    %update the task checks with the values of the checkboxes
+    requirement_vector = [get(handles.Fixation_check, 'Value'),...
+        get(handles.Centered_check, 'Value'),...
+        get(handles.Touch_check, 'Value'),...
+        get(handles.Bidding_check, 'Value'),...
+        get(handles.Finalised_check, 'Value'),...
+        get(handles.Targeted_check, 'Value'),...
+        get(handles.Maximal_check, 'Value')];
+        handles.parameters.task_checks.requirements = requirement_vector';
 guidata(hObject, handles);
 function Clear_requirements_CreateFcn(hObject, eventdata, handles)
 guidata(hObject, handles);
@@ -1270,7 +1367,7 @@ guidata(hObject, handles);
 function Touch_any_Callback(hObject, eventdata, handles)
     any_touch_required = get(handles.Touch_any, 'Value');
     if any_touch_required == 1
-        handles.hardware.touch.percent_touch_req = 'any';
+        handles.hardware.touch.touch_req = 'any';
     else
         handles.hardware.touch.touch_req = 'percent';
     end
@@ -1282,8 +1379,171 @@ function Touch_percent_CreateFcn(hObject, eventdata, handles)
 function Touch_percent_Callback(hObject, eventdata, handles)
     perc_touch_required = get(handles.Touch_percent, 'Value');
     if perc_touch_required == 1
-        handles.hardware.touch.percent_touch_req = 'percent';
+        handles.hardware.touch.touch_req = 'percent';
     else
         handles.hardware.touch.touch_req = 'any';
     end
 guidata(hObject, handles);
+
+%whether or not to play the error sound
+function Sound_button_Callback(hObject, eventdata, handles)
+    sound_status = get(handles.Sound_button, 'Value');
+    if sound_status == 1
+        handles.hardware.sound = 1;
+    else
+        handles.hardware.sound = 0;
+    end
+guidata(hObject, handles);
+function Sound_button_CreateFcn(hObject, eventdata, handles)
+    handles.hardware.sound = 1;
+guidata(hObject, handles);
+    
+%whether error times will be static (fixed in parameters)
+%or use the remaining time
+function Static_errors_Callback(hObject, eventdata, handles)
+    error_time_status = get(handles.Static_errors, 'Value');
+    if error_time_status == 1
+        handles.parameters.timing.error_timing_static = 1;
+    else
+        handles.parameters.timing.error_timing_static = 0;
+    end
+guidata(hObject, handles);
+function Static_errors_CreateFcn(hObject, eventdata, handles)
+    handles.parameters.timing.error_timing_static = 1;
+guidata(hObject, handles);
+    
+%%%GETTY TESTING%%%
+
+%Turn on to enforce handshake with Getty and sending of bits to Getty
+%computer
+function Getty_switch_Callback(hObject, eventdata, handles)
+    getty_on = get(handles.Getty_switch, 'Value');
+    if getty_on == 1
+        handles.parameters.getty.on = 1;
+        handles.parameters.getty.getty_connected = MODIG_tcp_open_connection();
+        if handles.parameters.getty.getty_connected
+            set(handles.Getty_switch,'string','CONNECTED TO GETTY','enable','on','BackgroundColor','green');
+        end
+    else
+        handles.parameters.getty.on = 0;
+        if handles.parameters.getty.getty_connected
+            MODIG_tcp_close_connection();  
+            handles.parameters.getty.getty_connected = 0;
+        end
+        set(handles.Getty_switch,'string','DISCONNECTED FROM GETTY','enable','on','BackgroundColor','red');
+    end
+guidata(hObject, handles);
+function Getty_switch_CreateFcn(hObject, eventdata, handles)
+    handles.parameters.getty.on = 0;
+guidata(hObject, handles);
+
+
+%These are test functions that need to be deleted from the final MATisse
+
+%make the array of data to send Getty
+%its all bullshit for testing
+
+%Array consists of 4 variables
+%Length: the length of the array before adding itself
+%Reward: the value of the reward fractal 1-3
+%Bid: the value of the bid 1-10
+%Win/Lose: if the monkey won or lost 0-1
+function GETTYMAKEARRAY_Callback(hObject, eventdata, handles)
+    Reward = randi(3);
+    Bid = randi(11) - 1;
+    Win_lose = randi(2)-1;
+    Length = 3;
+    handles.valToGetty = [Length, Reward, Bid, Win_lose];
+    disp('valToGetty');
+    disp(handles.valToGetty);
+ guidata(hObject, handles);
+function GETTYMAKEARRAY_CreateFcn(hObject, eventdata, handles)
+guidata(hObject, handles);
+
+
+%runs a 'pseudo-task' and sends bits to getty
+function GETTYSENDBITS_Callback(hObject, eventdata, handles)
+    if handles.parameters.Getty && handles.parameters.getty_connected
+        disp('connecting ni card');
+        
+        %set up the outputs for the timings and the juice
+        bits_out = getty_bit_output;
+        shake_in = daq.createSession('ni');
+        addDigitalChannel(shake_in,'Dev1','Port1/Line7','InputOnly');
+        disp('outputs connected!');
+        
+        %run a fake trial- turn bits on and off
+        %this mirrors a pavlovian trial fairly well
+        for trial = 1:100
+            disp('running fake trial');
+            disp(trial);
+            disp('----------------------');
+            getty_fake_trial(bits_out, shake_in, trial)
+        end
+    else
+        disp('make sure getty is on and connected!');
+    end
+guidata(hObject, handles);
+
+
+%inverts the direction of the joystick
+%(e.g. left now equals right)
+function Joyaxis_invert_Callback(hObject, eventdata, handles)
+    invert_joy_axis = get(handles.Joyaxis_invert, 'Value');
+    %if x axis button selected set movement to x axis, else set it to y
+    %axis
+    if invert_joy_axis == 1
+        handles.hardware.joystick.inverted = -1;
+    else
+        handles.hardware.joystick.inverted = 1;
+    end
+guidata(hObject, handles);
+function Joyaxis_invert_CreateFcn(hObject, eventdata, handles)
+        handles.hardware.joystick.inverted = 1;
+guidata(hObject, handles);
+   
+
+%and the strength (0-1) of that box
+function Shadow_strength_Callback(hObject, eventdata, handles)
+    handles.stimuli.reverse_shadow_strength = str2num(get(handles.Shadow_strength,'String'));
+guidata(hObject, handles);
+function Shadow_strength_CreateFcn(hObject, eventdata, handles)
+    handles.stimuli.reverse_shadow_strength = 0.5;
+guidata(hObject, handles);
+
+
+function Budget_shadow_Callback(hObject, eventdata, handles)
+    show_budget_shadow = get(handles.Budget_shadow, 'Value');
+    if show_budget_shadow == 1
+        handles.stimuli.reverse_shadow = 1;
+    else
+        handles.stimuli.reverse_shadow = 0;
+    end
+guidata(hObject, handles);
+function Budget_shadow_CreateFcn(hObject, eventdata, handles)
+    handles.stimuli.reverse_shadow = 0;
+guidata(hObject, handles);
+
+%override the probability of the fractal
+function Reward_probability_Callback(hObject, eventdata, handles)
+    handles.modifiers.fractals.probability = str2num(get(handles.Reward_probability,'String'));
+guidata(hObject, handles);
+function Reward_probability_CreateFcn(hObject, eventdata, handles)
+    handles.modifiers.fractals.probability = 1;
+guidata(hObject, handles);
+function Override_p_Callback(hObject, eventdata, handles)
+    override_prob = get(handles.Override_p, 'Value');
+    if override_prob == 1
+        handles.modifiers.fractals.set_prob = 1;
+    else
+        handles.modifiers.fractals.set_prob = 0;
+    end
+guidata(hObject, handles);
+function Override_p_CreateFcn(hObject, eventdata, handles)
+    handles.modifiers.fractals.set_prob = 0;
+guidata(hObject, handles);
+
+
+
+
+

@@ -2,24 +2,29 @@
 %loads as much as possible without opening a task window
 %gets information on the screen being used and task parameters (how many
 %trials/ which monitor/ etc.)
-function [parameters, hardware, stimuli, task_window] =  matisse_generate(parameters, hardware, stimuli, modifiers)
-%skip sync tests when just testing out code
-if parameters.break.testmode
-    Screen('Preference', 'SkipSyncTests', 1);
-    Screen('Preference', 'SkipSyncTests', 2);
-end
+function [parameters, hardware, stimuli, task_window] =  matisse_generate(parameters, hardware, stimuli, modifiers, generation)
 
-%open a psychtoolbox screen for the task
-%set it to black for now
-[task_window, task_windowrect] = PsychImaging('OpenWindow', hardware.screen.number, 0);
-Screen('BlendFunction', task_window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
+if strcmp(generation, 'initial')
+    %skip sync tests when just testing out code
+    if parameters.break.testmode
+        Screen('Preference', 'SkipSyncTests', 1);
+        Screen('Preference', 'SkipSyncTests', 2);
+    end
 
-%set psychtoolbox to be the computers priority
-%Priority(MaxPriority(task_window));
+    %open a psychtoolbox screen for the task
+    %set it to black for now
+    [task_window, task_windowrect] = PsychImaging('OpenWindow', hardware.screen.number, 0);
+    Screen('BlendFunction', task_window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
+
+    %set psychtoolbox to be the computers priority
+    %Priority(MaxPriority(task_window));
 
 %find all necessary devices
 %task_window is needed to find the mouse
 hardware = get_task_devices(parameters, hardware, task_window);
+else
+    task_window = generation;
+end
 
 %load/ generate the stimuli for the task
 stimuli = load_stimuli(parameters, hardware, stimuli, modifiers, task_window);
@@ -40,9 +45,16 @@ if parameters.trials.random_stimuli == 0
     parameters.trials.combinations = create_stimuli_order(modifiers, parameters, stimuli);
 end
 
-if parameters.Getty
-    %set up the handshake for getty
-    hardware.getty_handshake = set_up_handshake();
-    outputSingleScan(hardware.getty_handshake.to_getty, 0);
-    disp('set getty handshake to 0');
+%set the free reward key
+KbName('UnifyKeyNames');
+free_reward = [KbName('f')];
+RestrictKeysForKbCheck(free_reward);
+ListenChar(2);
+
+if strcmp(generation, 'initial')
+    %if parameters.getty.on
+        parameters.getty.bits = getty_bit_output();
+        parameters.getty.shake_in = daq.createSession('ni');
+        addDigitalChannel(parameters.getty.shake_in,'Dev1','Port1/Line7','InputOnly');
+    %end
 end

@@ -54,7 +54,7 @@ if strcmp(epoch, 'bidding')
     
     %the joystick 'movement' is equal to the impetus times the speed of
     %each movement
-    hardware.joystick.movement.joy_movement = hardware.joystick.movement.speed * impetus;
+    hardware.joystick.movement.joy_movement = hardware.joystick.movement.speed * impetus * hardware.joystick.inverted;
 else
     %if not in the bidding phase the movement is NaN obviously
     hardware.joystick.movement.joy_movement = NaN;

@@ -85,8 +85,6 @@ if strcmp(parameters.task.type, 'BDM')
     
     comb_vector = [comb_vector; starts; computer];
     rownames = {'reward_value', 'subtask', 'starting_bid', 'computer_bid'};
-    
-    disp(comb_vector);
 end
 
 comb_table = array2table(comb_vector,'RowNames',rownames);

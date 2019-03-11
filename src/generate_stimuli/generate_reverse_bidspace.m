@@ -30,7 +30,7 @@ if strcmp(parameters.task.type, 'BC')
 
     stimuli.bidspace.reverse_texture = Screen('MakeTexture', task_window, reverse_bidspace_crop);
     
-    if modifiers.budget.random || modifiers.budget.pegged
+    if modifiers.budget.random || modifiers.budget.pegged || modifiers.fractals.no_fractals
         reverse_budget_crop = imcrop(bidspace.reverse_bidspace_image,...
             [0, bidspace.dimensions.height - (bidspace.dimensions.height * second_value)...
             bidspace.dimensions.width bidspace.dimensions.height]);

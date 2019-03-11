@@ -29,9 +29,10 @@ if strcmp(task, 'BDM')
     
     
     if strcmp(payout, 'budget')
+        Screen('FillRect', task_window, stimuli.background_colour, stimuli.fractals.position);
     elseif strcmp(payout, 'reward')
-        Screen('FillRect', task_window, stimuli.background_colour, [stimuli.bidspace.position(1) - modifiers.budget.overhang, 0,...
-            stimuli.bidspace.position(3) + modifiers.budget.overhang, hardware.screen.dimensions.height]);
+%         Screen('FillRect', task_window, stimuli.background_colour, [stimuli.bidspace.position(1) - modifiers.budget.overhang, 0,...
+%             stimuli.bidspace.position(3) + modifiers.budget.overhang, hardware.screen.dimensions.height]);
     end
 
 elseif strcmp(task, 'BC')
@@ -44,9 +45,10 @@ elseif strcmp(task, 'BC')
     end
     
     if strcmp(payout, 'budget')
+        Screen('FillRect', task_window, stimuli.background_colour, stimuli.fractals.position);
     elseif strcmp(payout, 'reward') && strcmp(results.single_trial.subtask, 'bundle_choice')
-        Screen('FillRect', task_window, stimuli.background_colour, stimuli.bidspace.initial_position +...
-            [-10, -10, bidspace_reflector + 10, 10]);
+%         Screen('FillRect', task_window, stimuli.background_colour, stimuli.bidspace.initial_position +...
+%             [-10, -10, bidspace_reflector + 10, 10]);
     end
 
 elseif strcmp(task, 'PAV')
