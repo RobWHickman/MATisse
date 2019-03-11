@@ -952,7 +952,15 @@ function Free_reward_Callback(hObject, eventdata, handles)
 guidata(hObject, handles);
 %how much free reward should be given out when pressing the f key
 function Key_reward_Callback(hObject, eventdata, handles)
-    free_reward_amount = get(handles.Reward_tap, 'String');
+    free_reward_amount = get(handles.Key_reward, 'String');
+    %keep amount between 0.1 and 3ml
+    if free_reward_amount > 3
+        free_reward_amount = 3;
+        disp('free reward amount capped to 3ml max');
+    elseif free_reward_amount < 0.1
+        free_reward_amount = 0.1;
+        disp('free reward amount capped to 0.1ml min');
+    end
     handles.hardware.solenoid.release.free_amount = str2num(free_reward_amount);
 guidata(hObject, handles);
 %default to 1ml
@@ -1033,7 +1041,7 @@ guidata(hObject, handles);
         guidata(hObject, handles);
 
 function Display_button_Callback(hObject, eventdata, handles)
-    display(handles.modifiers.fractals);
+    display(handles.hardware.solenoid.release.free_amount);
 function Display_button_CreateFcn(hObject, eventdata, handles)
 
 function Choice_stimuli_Callback(hObject, eventdata, handles)

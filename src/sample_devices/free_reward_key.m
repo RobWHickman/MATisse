@@ -1,4 +1,4 @@
-function [hardware] = free_reward_key(hardware, parameters)
+function [hardware, trial_free_reward] = free_reward_key(hardware, parameters, trial_free_reward)
 
 %check if the free reward button has been pressed
 [keyIsDown, keyTime, keyCode] = KbCheck;
@@ -7,11 +7,13 @@ reward_press_time = GetSecs();
 
 if keyIsDown
     %only works at most once every 5 seconds
-    if reward_press_time - hardware.solenoid.release.last_free_reward < 5
+    if reward_press_time - hardware.solenoid.release.last_free_reward < 2
         %in reality this spams the console because key presses last longer
         %than one refresh
         %disp('too soon since last key press');
     else
+        %output message
+        disp(strcat('releasing ', num2str(hardware.solenoid.release.free_amount), 'ml of ', hardware.solenoid.release.free_liquid, ' for free'));
         %update to the new time
         hardware.solenoid.release.last_free_reward = reward_press_time;
         
@@ -45,4 +47,7 @@ if keyIsDown
             getty_send_bits(parameters.getty.bits, tap_to_open, 0)
         end
     end
+    
+    %update the free reward the monkey has got this trial
+    trial_free_reward = trial_free_reward + hardware.solenoid.release.free_amount;
 end

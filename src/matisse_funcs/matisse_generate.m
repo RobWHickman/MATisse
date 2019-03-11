@@ -51,8 +51,6 @@ free_reward = [KbName('f')];
 RestrictKeysForKbCheck(free_reward);
 ListenChar(2);
 
-free_reward_key();
-
 if strcmp(generation, 'initial')
     %if parameters.getty.on
         parameters.getty.bits = getty_bit_output();
