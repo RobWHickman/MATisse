@@ -45,6 +45,12 @@ if parameters.trials.random_stimuli == 0
     parameters.trials.combinations = create_stimuli_order(modifiers, parameters, stimuli);
 end
 
+%set the free reward key
+KbName('UnifyKeyNames');
+free_reward = [KbName('f')];
+RestrictKeysForKbCheck(free_reward);
+ListenChar(2);
+
 if strcmp(generation, 'initial')
     %if parameters.getty.on
         parameters.getty.bits = getty_bit_output();

@@ -950,8 +950,25 @@ guidata(hObject, handles);
 function Free_reward_Callback(hObject, eventdata, handles)
     handles.hardware.solenoid.release.free_liquid = 'juice';
 guidata(hObject, handles);
-function Free_juice_Callback(hObject, eventdata, handles)
-%make the button release free juice
+%how much free reward should be given out when pressing the f key
+function Key_reward_Callback(hObject, eventdata, handles)
+    free_reward_amount = get(handles.Key_reward, 'String');
+    %keep amount between 0.1 and 3ml
+    if free_reward_amount > 3
+        free_reward_amount = 3;
+        disp('free reward amount capped to 3ml max');
+    elseif free_reward_amount < 0.1
+        free_reward_amount = 0.1;
+        disp('free reward amount capped to 0.1ml min');
+    end
+    handles.hardware.solenoid.release.free_amount = str2num(free_reward_amount);
+guidata(hObject, handles);
+%default to 1ml
+function Key_reward_CreateFcn(hObject, eventdata, handles)
+    handles.hardware.solenoid.release.free_amount = 1;
+    %init thelast reward to when MATisse is initialised
+    handles.hardware.solenoid.release.last_free_reward = GetSecs();
+guidata(hObject, handles);
 
 %Functions that determine the targeting box presented to the monkey if
 %target_check is active
@@ -1024,7 +1041,7 @@ guidata(hObject, handles);
         guidata(hObject, handles);
 
 function Display_button_Callback(hObject, eventdata, handles)
-    display(handles.modifiers.fractals);
+    display(handles.hardware.solenoid.release.free_amount);
 function Display_button_CreateFcn(hObject, eventdata, handles)
 
 function Choice_stimuli_Callback(hObject, eventdata, handles)
@@ -1525,3 +1542,8 @@ guidata(hObject, handles);
 function Override_p_CreateFcn(hObject, eventdata, handles)
     handles.modifiers.fractals.set_prob = 0;
 guidata(hObject, handles);
+
+
+
+
+
