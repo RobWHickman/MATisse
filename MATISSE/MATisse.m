@@ -955,10 +955,10 @@ function Key_reward_Callback(hObject, eventdata, handles)
     free_reward_amount = get(handles.Key_reward, 'String');
     %keep amount between 0.1 and 3ml
     if free_reward_amount > 3
-        free_reward_amount = 3;
+        free_reward_amount = '3';
         disp('free reward amount capped to 3ml max');
     elseif free_reward_amount < 0.1
-        free_reward_amount = 0.1;
+        free_reward_amount = '0.1';
         disp('free reward amount capped to 0.1ml min');
     end
     handles.hardware.solenoid.release.free_amount = str2num(free_reward_amount);
