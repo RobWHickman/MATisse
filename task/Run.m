@@ -16,9 +16,10 @@ end
 %% EPOCHS %%
 %% the different epochs in the task if all checks are met %%
 %inter trial interval
+open_float.trial_free_reward = 0;
 for frame = 1:parameters.timings.TrialTime('ITI')
-    trial_free_reward = 0;
-    [hardware, trial_free_reward] = free_reward_key(hardware, parameters, trial_free_reward);
+    
+    [hardware, open_float] = free_reward_key(hardware, parameters, open_float);
 
     %get trial values for the offer, computer bid and random monkey bid
     %start position
@@ -125,7 +126,7 @@ results = time_trial(results, 'start');
 disp('starting trial');
 disp(strcat('running ', parameters.task.type, ' trial'));
 for frame = 1:parameters.timings.TrialTime('trial_start')
-    [hardware, trial_free_reward] = free_reward_key(hardware, parameters, trial_free_reward);
+    [hardware, open_float] = free_reward_key(hardware, parameters, open_float)
     if frame == 1 || frame == parameters.timings.TrialTime('trial_start')
         draw_ITI(stimuli, task_window);
     end
@@ -148,7 +149,7 @@ end
 %can never fail trials on pavlovian tasks
 if ~results.single_trial.task_failure || strcmp(parameters.task.type, 'PAV')
 for frame = 1:parameters.timings.TrialTime('fixation')
-    [hardware, trial_free_reward] = free_reward_key(hardware, parameters, trial_free_reward);
+    [hardware, open_float] = free_reward_key(hardware, parameters, open_float)
     
     %draw the first epoch
     if ~(modifiers.fractals.no_fractals && strcmp(parameters.task.type, 'PAV'))
@@ -192,7 +193,7 @@ end
 %display fractal
 if ~results.single_trial.task_failure || strcmp(parameters.task.type, 'PAV')
 for frame = 1:parameters.timings.TrialTime('fractal_offer')
-    [hardware, trial_free_reward] = free_reward_key(hardware, parameters, trial_free_reward);
+    [hardware, open_float] = free_reward_key(hardware, parameters, open_float)
     %draw the first epoch
     if ~(modifiers.fractals.no_fractals && strcmp(parameters.task.type, 'PAV'))
         if frame == 1 || frame == parameters.timings.TrialTime('fractal_offer')
@@ -234,7 +235,7 @@ end
 if ~results.single_trial.task_failure || strcmp(parameters.task.type, 'PAV')
 %results.movement = initialise_movement(parameters);
 for frame = 1:parameters.timings.TrialTime('bidding')
-    [hardware, trial_free_reward] = free_reward_key(hardware, parameters, trial_free_reward);
+    [hardware, open_float] = free_reward_key(hardware, parameters, open_float)
    
     %sample behaviour
     hardware = sample_input_devices(parameters, hardware);
@@ -413,7 +414,7 @@ if results.single_trial.task_failure && ~strcmp(parameters.task.type, 'PAV')
         parameters.timings.TrialTime('error_timeout') = height(remaining_frames) + (1*60);
     end
 for frame = 1:parameters.timings.TrialTime('error_timeout')
-    [hardware, trial_free_reward] = free_reward_key(hardware, parameters, trial_free_reward);
+    [hardware, open_float] = free_reward_key(hardware, parameters, open_float)
 
     if frame == 1 || frame == parameters.timings.TrialTime('error_timeout')
         draw_error_epoch(hardware, task_window)
@@ -445,7 +446,7 @@ end
 %get the time of the end of the task to match up with neuro data
 results = time_trial(results, 'end');
 for frame = 1:parameters.timings.TrialTime('trial_end')
-    [hardware, trial_free_reward] = free_reward_key(hardware, parameters, trial_free_reward);
+    [hardware, open_float] = free_reward_key(hardware, parameters, open_float)
 
     if frame == 1 || frame == parameters.timings.TrialTime('trial_end')
         draw_ITI(stimuli, task_window);

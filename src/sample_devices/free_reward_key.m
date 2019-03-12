@@ -1,4 +1,4 @@
-function [hardware, trial_free_reward] = free_reward_key(hardware, parameters, trial_free_reward)
+function [hardware, open_float] = free_reward_key(hardware, parameters, open_float)
 
 %check if the free reward button has been pressed
 [keyIsDown, keyTime, keyCode] = KbCheck;
@@ -24,32 +24,36 @@ if keyIsDown
         end
         
         %calculate the open time of the tap
-        tap_open_time = calculate_open_time(tap, hardware.solenoid.release.free_amount);
+        open_float.tap_open_time = calculate_open_time(tap, hardware.solenoid.release.free_amount);
         
         %get the right tap bit to open
         if tap == 1 %water
-            tap_to_open = 18;
+            open_float.tap_to_open = 18;
         elseif tap == 2 %ulysses reward tap
-            tap_to_open = 17;
+            open_float.tap_to_open = 17;
         elseif tap == 3 %vicer juice reward tap
-            tap_to_open = 19;
+            open_float.tap_to_open = 19;
         else
             disp('no other tap found!');
         end
 
-        if(tap_open_time > 0)
-            getty_send_bits(parameters.getty.bits, tap_to_open, 1)
-            getty_send_bits(parameters.getty.bits, 16, 1)
+        if(open_float.tap_open_time > 0)
+            disp('RELEASING FREE REWARD');
+            getty_send_bits(parameters.getty.bits, [open_float.tap_to_open, 16], 1)
+            open_float.open_tap = 1;
             
-            %wait with the tap open
-            WaitSecs(tap_open_time);
-
-            %outputSingleScan(hardware.solenoid.device, tap_closed);
-            getty_send_bits(parameters.getty.bits, tap_to_open, 0)
-            getty_send_bits(parameters.getty.bits, 16, 0)
         end
+        %update the free reward the monkey has got this trial
+        open_float.trial_free_reward = open_float.trial_free_reward + hardware.solenoid.release.free_amount;
+        disp(strcat('now paid', num2str(open_float.trial_free_reward), 'ml for free this trial'));
     end
-    
-    %update the free reward the monkey has got this trial
-    trial_free_reward = trial_free_reward + hardware.solenoid.release.free_amount;
+end
+
+%close the tap
+if isfield(open_float, 'tap_open_time') && open_float.open_tap
+    if GetSecs > hardware.solenoid.release.last_free_reward + open_float.tap_open_time
+        disp('CLOSING FREE REWARD');
+        open_float.open_tap = 0;
+        getty_send_bits(parameters.getty.bits, [open_float.tap_to_open, 16], 0)
+    end
 end
