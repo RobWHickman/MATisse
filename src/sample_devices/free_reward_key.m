@@ -39,7 +39,7 @@ if keyIsDown
 
         if(open_float.tap_open_time > 0)
             disp('RELEASING FREE REWARD');
-            getty_send_bits(parameters.getty.bits, [open_float.tap_to_open, 16], 1)
+            getty_send_bits(parameters.getty.bits, [open_float.tap_to_open, 16], 1, hardware.solenoid.sample);
             open_float.open_tap = 1;
             
         end
@@ -54,6 +54,6 @@ if isfield(open_float, 'tap_open_time') && open_float.open_tap
     if GetSecs > hardware.solenoid.release.last_free_reward + open_float.tap_open_time
         disp('CLOSING FREE REWARD');
         open_float.open_tap = 0;
-        getty_send_bits(parameters.getty.bits, [open_float.tap_to_open, 16], 0)
+        getty_send_bits(parameters.getty.bits, [open_float.tap_to_open, 16], 0);
     end
 end

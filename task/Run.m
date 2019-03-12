@@ -105,11 +105,11 @@ for frame = 1:parameters.timings.TrialTime('ITI')
             %send hard trigger
             disp('pausing on hard trigger');
             %outputSingleScan(parameters.getty.bits, 1)
-            getty_send_bits(parameters.getty.bits, 22, 1)
+            getty_send_bits(parameters.getty.bits, 22, 1, hardware.solenoid.sample)
             pause(1)
             % set the hardtrigger down
             %outputSingleScan(parameters.getty.bits, 0)
-            getty_send_bits(parameters.getty.bits, 22, 0)
+            getty_send_bits(parameters.getty.bits, 22, 0, hardware.solenoid.sample)
            
         end
     end
@@ -138,7 +138,7 @@ for frame = 1:parameters.timings.TrialTime('trial_start')
                 bit_out = 0;
             end
             %outputSingleScan(parameters.getty.bits.fractal_display, bit_out)
-            getty_send_bits(parameters.getty.bits, 8, bit_out)
+            getty_send_bits(parameters.getty.bits, 8, bit_out, hardware.solenoid.sample)
         end
     end
     flip_screen(frame, parameters, task_window, 'trial_start');
@@ -178,7 +178,7 @@ for frame = 1:parameters.timings.TrialTime('fixation')
                 bit_out = 0;
             end
             %outputSingleScan(parameters.getty.bits.fractal_display, bit_out)
-            getty_send_bits(parameters.getty.bits, 9, bit_out)
+            getty_send_bits(parameters.getty.bits, 9, bit_out, hardware.solenoid.sample)
         end
     end
     
@@ -223,7 +223,7 @@ for frame = 1:parameters.timings.TrialTime('fractal_offer')
                 bit_out = 0;
             end
             %outputSingleScan(parameters.getty.bits.fractal_display, bit_out)
-            getty_send_bits(parameters.getty.bits, 10, bit_out)
+            getty_send_bits(parameters.getty.bits, 10, bit_out, hardware.solenoid.sample)
         end
     end
 
@@ -268,7 +268,7 @@ for frame = 1:parameters.timings.TrialTime('bidding')
         if (hardware.joystick.movement.stationary_count > round(parameters.task_checks.finalisation_pause * hardware.screen.refresh_rate) &&...
                 frame > latest_frame)
             parameters.task_checks.table.Status('stabilised_offer') = 0;
-            getty_send_bits(parameters.getty.bits, 12, 1)
+            getty_send_bits(parameters.getty.bits, 12, 1, hardware.solenoid.sample)
         else
             parameters.task_checks.table.Status('stabilised_offer') = 1;
         end
@@ -309,7 +309,7 @@ for frame = 1:parameters.timings.TrialTime('bidding')
             else
                 bit_out = 0;
             end
-            getty_send_bits(parameters.getty.bits, 11, bit_out)
+            getty_send_bits(parameters.getty.bits, 11, bit_out, hardware.solenoid.sample)
         end
     end
 
@@ -347,12 +347,12 @@ for frame = 1:parameters.timings.TrialTime('reward_payout')
     if frame == parameters.timings.TrialTime('reward_payout')
         %monkey expects reward
         if parameters.getty.on
-            getty_send_bits(parameters.getty.bits, 14, 1)
+            getty_send_bits(parameters.getty.bits, 14, 1, hardware.solenoid.sample)
         end
         results = payout_results(stimuli, parameters, modifiers, hardware, results, 'reward');
         %monkey stops expecting budget
         if parameters.getty.on
-            getty_send_bits(parameters.getty.bits, 14, 0)
+            getty_send_bits(parameters.getty.bits, 14, 0, hardware.solenoid.sample)
         end
     end
      
@@ -368,7 +368,7 @@ for frame = 1:parameters.timings.TrialTime('reward_payout')
                 bit_out = 0;
             end
             %only send win bit when monkey wins
-            getty_send_bits(parameters.getty.bits, 13, bit_out)
+            getty_send_bits(parameters.getty.bits, 13, bit_out, hardware.solenoid.sample)
         end
     end
 
@@ -390,12 +390,12 @@ for frame = 1:parameters.timings.TrialTime('budget_payout')
     if frame == parameters.timings.TrialTime('budget_payout')
         %monkey expects budget
         if parameters.getty.on
-            getty_send_bits(parameters.getty.bits, 15, 1)
+            getty_send_bits(parameters.getty.bits, 15, 1, hardware.solenoid.sample)
         end
         results = payout_results(stimuli, parameters, modifiers, hardware, results, 'budget');
         %monkey stops expecting budget
         if parameters.getty.on
-            getty_send_bits(parameters.getty.bits, 15, 0)
+            getty_send_bits(parameters.getty.bits, 15, 0, hardware.solenoid.sample)
         end
     end
      
@@ -435,7 +435,7 @@ for frame = 1:parameters.timings.TrialTime('error_timeout')
                 bit_out = 0;
             end
             %outputSingleScan(parameters.getty.bits.fractal_display, bit_out)
-            getty_send_bits(parameters.getty.bits, 21, bit_out)
+            getty_send_bits(parameters.getty.bits, 21, bit_out, hardware.solenoid.sample)
         end
     end
    
@@ -459,7 +459,7 @@ for frame = 1:parameters.timings.TrialTime('trial_end')
                 bit_out = 0;
             end
             %outputSingleScan(parameters.getty.bits.fractal_display, bit_out)
-            getty_send_bits(parameters.getty.bits, 20, bit_out)
+            getty_send_bits(parameters.getty.bits, 20, bit_out, hardware.solenoid.sample)
         end
     end
     flip_screen(frame, parameters, task_window, 'trial_end');
@@ -475,10 +475,10 @@ results = output_results(results, parameters, hardware);
 if parameters.getty.on
     disp('closing trial');
     %outputSingleScan(parameters.getty.bits.shake_out, 1)
-    getty_send_bits(parameters.getty.bits, 23, 1)
+    getty_send_bits(parameters.getty.bits, 23, 1, hardware.solenoid.sample)
     pause(0.1)
     %outputSingleScan(parameters.getty.bits.shake_out, 0)
-    getty_send_bits(parameters.getty.bits, 23, 0)
+    getty_send_bits(parameters.getty.bits, 23, 0, hardware.solenoid.sample)
 end
 
 
