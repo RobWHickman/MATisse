@@ -22,7 +22,10 @@ if strcmp(hardware.ni_inputs, 'analog')
 elseif strcmp(hardware.ni_inputs, 'digital')
     solenoid = daq.createSession('ni');
     addDigitalChannel(solenoid,'Dev1','Port0/Line12:14','OutputOnly');
-
+    solenoid_sample = daq.createSession('ni');
+    addDigitalChannel(solenoid_sample,'Dev1','Port1/Line2:3','InputOnly');
+    
     %prepare for output
     hardware.solenoid.device = solenoid;
+    hardware.solenoid.sample = solenoid_sample;
 end

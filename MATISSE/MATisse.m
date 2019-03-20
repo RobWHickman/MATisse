@@ -133,7 +133,7 @@ function Run_button_Callback(hObject, eventdata, handles)
 %most important is to save the data 
 %quick function that saves the output from the experiment
 function Save_button_Callback(hObject, eventdata, handles)
-    save_data(handles.parameters, handles.results);
+    save_data(handles.parameters, handles.results, 'manual');
     disp('data saved!');
 %small function to clear everything and restart MATisse
 function Clear_button_Callback(hObject, eventdata, handles)
@@ -689,6 +689,10 @@ function X_axis_bidding_Callback(hObject, eventdata, handles)
     else
         handles.hardware.joystick.direction = 'y';
     end
+    
+    %also set the axis to be inverted for x axis bidding by defualt
+    set(handles.Joyaxis_invert, 'Value', 1);
+    handles.hardware.joystick.inverted = -1;
 guidata(hObject, handles);
 function Y_axis_bidding_Callback(hObject, eventdata, handles)
     y_dimension_bidding = get(handles.Y_axis_bidding, 'Value');
@@ -702,6 +706,22 @@ function X_axis_bidding_CreateFcn(hObject, eventdata, handles)
     %default to y axis movement
     handles.hardware.joystick.direction = 'y';
 guidata(hObject, handles);
+%inverts the direction of the joystick
+%(e.g. left now equals right)
+function Joyaxis_invert_Callback(hObject, eventdata, handles)
+    invert_joy_axis = get(handles.Joyaxis_invert, 'Value');
+    %if x axis button selected set movement to x axis, else set it to y
+    %axis
+    if invert_joy_axis == 1
+        handles.hardware.joystick.inverted = -1;
+    else
+        handles.hardware.joystick.inverted = 1;
+    end
+guidata(hObject, handles);
+function Joyaxis_invert_CreateFcn(hObject, eventdata, handles)
+        handles.hardware.joystick.inverted = 1;
+guidata(hObject, handles);
+
 %tests the bias on the joystick
 %use this to correct to zero so that 'at rest' - when the monkey is not
 %moving it- it shows 0v
@@ -817,7 +837,7 @@ guidata(hObject, handles);
 %default is 8- reasonable for scalar based movement
 %will be mulitplied by 6 if switch to voltage based movement
 function Joystick_speed_CreateFcn(hObject, eventdata, handles)
-    handles.hardware.joystick.movement.speed = 8;
+    handles.hardware.joystick.movement.speed = 50;
 guidata(hObject, handles);
 %toggle button to decide if the joystick works via a scalar (moves forward
 %the same amount each frame) or uses the voltage through the joystick to
@@ -839,9 +859,9 @@ function Joystick_movement_Callback(hObject, eventdata, handles)
         set(handles.Joystick_speed, 'Value', handles.hardware.joystick.movement.speed/6)
     end
 guidata(hObject, handles);
-%set default to binary
+%set default to velocity
 function Joystick_movement_CreateFcn(hObject, eventdata, handles)
-    handles.hardware.joystick.movement.scaling = 0;
+    handles.hardware.joystick.movement.scaling = 1;
 guidata(hObject, handles);
 
 %Functions to allow the user to specify the monitor to use for the
@@ -955,10 +975,10 @@ function Key_reward_Callback(hObject, eventdata, handles)
     free_reward_amount = get(handles.Key_reward, 'String');
     %keep amount between 0.1 and 3ml
     if free_reward_amount > 3
-        free_reward_amount = 3;
+        free_reward_amount = '3';
         disp('free reward amount capped to 3ml max');
     elseif free_reward_amount < 0.1
-        free_reward_amount = 0.1;
+        free_reward_amount = '0.1';
         disp('free reward amount capped to 0.1ml min');
     end
     handles.hardware.solenoid.release.free_amount = str2num(free_reward_amount);
@@ -1041,7 +1061,7 @@ guidata(hObject, handles);
         guidata(hObject, handles);
 
 function Display_button_Callback(hObject, eventdata, handles)
-    display(handles.hardware.solenoid.release.free_amount);
+    display(handles.hardware.joystick.inverted);
 function Display_button_CreateFcn(hObject, eventdata, handles)
 
 function Choice_stimuli_Callback(hObject, eventdata, handles)
@@ -1408,8 +1428,10 @@ function Static_errors_Callback(hObject, eventdata, handles)
         handles.parameters.timing.error_timing_static = 0;
     end
 guidata(hObject, handles);
+%set default for errors to take as long as trial is left + extra
+%more punishing for errors
 function Static_errors_CreateFcn(hObject, eventdata, handles)
-    handles.parameters.timing.error_timing_static = 1;
+    handles.parameters.timing.error_timing_static = 0;
 guidata(hObject, handles);
     
 %%%GETTY TESTING%%%
@@ -1486,21 +1508,6 @@ function GETTYSENDBITS_Callback(hObject, eventdata, handles)
 guidata(hObject, handles);
 
 
-%inverts the direction of the joystick
-%(e.g. left now equals right)
-function Joyaxis_invert_Callback(hObject, eventdata, handles)
-    invert_joy_axis = get(handles.Joyaxis_invert, 'Value');
-    %if x axis button selected set movement to x axis, else set it to y
-    %axis
-    if invert_joy_axis == 1
-        handles.hardware.joystick.inverted = -1;
-    else
-        handles.hardware.joystick.inverted = 1;
-    end
-guidata(hObject, handles);
-function Joyaxis_invert_CreateFcn(hObject, eventdata, handles)
-        handles.hardware.joystick.inverted = 1;
-guidata(hObject, handles);
    
 
 %and the strength (0-1) of that box
