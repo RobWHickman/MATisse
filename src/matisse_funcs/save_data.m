@@ -27,4 +27,11 @@ if strcmp(type, 'task_metadata')
     save(fullfile(dir, regexprep(char(strcat(date, human, '_', monkey, '_block', num2str(block), 'METADATA.mat')), ':', '')), 'metadata');
 end
 
+%manually save on a trial
+if strcmp(type, 'manual')
+    disp('manaully saving')
+    %save as .csv
+    sorted_table = results.full_output_table(:,sort(results.full_output_table.Properties.VariableNames));
+    writetable(sorted_table, fullfile(dir, regexprep(char(strcat('MANUAL', results.block_results.completed, date, human, '_', monkey, '_block', num2str(block), 'COMPACT_RESULTS.csv')), ':', '')));
+end
 

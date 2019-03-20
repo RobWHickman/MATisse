@@ -11,9 +11,9 @@ if strcmp(side, 'right')
     %reflect the bundle and budget water reverses
     %if ~modifiers.fractals.no_fractals
         stimuli.bidspace.position = stimuli.bidspace.position + [bidspace_reflector, 0, bidspace_reflector, 0];
-        if modifiers.fractals.no_fractals
+        %if modifiers.fractals.no_fractals
             stimuli.bidspace.reverse_texture_position = stimuli.bidspace.reverse_texture_position + [bidspace_reflector, 0, bidspace_reflector, 0];
-        end
+        %end
         [bidspace_xcenter, bidspace_ycenter] = RectCenter(stimuli.bidspace.position);
         stimuli.bidspace.bidspace_bounding_box = CenterRectOnPointd(stimuli.bidspace.bidspace_frame, bidspace_xcenter, bidspace_ycenter);
     %end
