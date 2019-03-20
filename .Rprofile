@@ -1,7 +1,3 @@
 cat("Welcome to analysis of MATisse data!\n")
-require(ggplot2)
-require(ggthemes)
-require(dplyr)
-require(magrittr)
+require(tidyverse)
 require(data.table)
-require(tidyr)
