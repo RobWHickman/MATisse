@@ -24,11 +24,23 @@ elseif strcmp(parameters.task.type, 'PAV')
        subtask = 'PAV';
    end
 end
+%and by monkey
+working_monkey = parameters.participants.primate;
 
+%filter down
 task = fractals_table.task;
-fractals_table = fractals_table(find(arrayfun(@(n) any(strcmp(task{n},subtask)),1:numel(task))),:);
-fractal_filenames = fractals_table.file;
-disp(fractal_filenames);
+fractals_task_subset = fractals_table(find(arrayfun(@(n) any(strcmp(task{n},subtask)),1:numel(task))),:);
+monkey = fractals_task_subset.monkey;
+fractals_task_subset = fractals_task_subset(find(arrayfun(@(n) any(strcmp(monkey{n},working_monkey)),1:numel(monkey))),:);
+fractal_filenames = fractals_task_subset.file;
+
+%display the loaded fractals or a warning if none found
+if(length(fractal_filenames) < 1)
+    warning('No appropriate fractals found!!');
+else
+    disp(fractal_filenames);
+end
+
 %find all the matching images
 all_images = [repmat(modifiers.fractals.folder, length(fractal_filenames),1), char(fractal_filenames), repmat('.jpg', length(fractal_filenames),1)];
 
