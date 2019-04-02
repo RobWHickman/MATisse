@@ -71,11 +71,13 @@ if strcmp(parameters.task.type, 'BDM')
         starts = rand(1, length(comb_vector));
     elseif strcmp(modifiers.specific_tasks.bdm.bid_start, 'top_bottom')
         starts = repelem(0:1, floor(length(comb_vector)/2));
+        %shuffle vector
+        starts = starts(randperm(length(starts)));
         
         %if comb_length is odd add one extra start
-        if mod(comb_length, 2)
-            starts = [starts, round(rand)];
-        end
+        %if mod(comb_length, 2)
+        %    starts = [starts, round(rand)];
+        %end
     else
         starts = 1;
     end
