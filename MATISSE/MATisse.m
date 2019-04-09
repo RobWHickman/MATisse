@@ -420,6 +420,7 @@ guidata(hObject, handles);
 function Fractal_numbers_Callback(hObject, eventdata, handles)
     %set the number of fractals to load via string
     clear handles.modifiers.fractals.number;
+    clear handles.modifiers.fractals.vector;
     fractal_numbers = str2num(get(handles.Fractal_numbers, 'String'));
     handles.modifiers.fractals.number = fractal_numbers;
     disp(['looking for first', num2str(handles.modifiers.fractals.number), ' fractals in image folder']);
@@ -429,6 +430,7 @@ guidata(hObject, handles);
 function Fractal_numbers_CreateFcn(hObject, eventdata, handles)
     %set the default to 3
     handles.modifiers.fractals.number = 3;
+    handles.modifiers.fractals.vector = 1:3;
 guidata(hObject, handles);
 %set the names of the fractals to load (looks at the beginning of the
 %filename which should be 'R[a-z]'
@@ -1061,7 +1063,7 @@ guidata(hObject, handles);
         guidata(hObject, handles);
 
 function Display_button_Callback(hObject, eventdata, handles)
-    display(handles.stimuli.fractals.images);
+    display(handles.modifiers.fractals.number);
 function Display_button_CreateFcn(hObject, eventdata, handles)
 
 function Choice_stimuli_Callback(hObject, eventdata, handles)

@@ -36,7 +36,7 @@ if parameters.trials.random_stimuli
         if ~modifiers.fractals.set_prob
             results.single_trial.reward_chance = stimuli.fractals.fractal_properties.probability(results.single_trial.reward_value);
         else
-            results.single_trial.reward_chance = modifiers.fractals.probability
+            results.single_trial.reward_chance = modifiers.fractals.probability;
         end
 
         results.single_trial.second_reward_chance = NaN;
