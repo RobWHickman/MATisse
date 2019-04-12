@@ -6,10 +6,8 @@ function [parameters, hardware, stimuli, task_window] =  matisse_generate(parame
 
 if strcmp(generation, 'initial')
     %skip sync tests when just testing out code
-    if parameters.break.testmode
         Screen('Preference', 'SkipSyncTests', 1);
         Screen('Preference', 'SkipSyncTests', 2);
-    end
 
     %open a psychtoolbox screen for the task
     %set it to black for now
