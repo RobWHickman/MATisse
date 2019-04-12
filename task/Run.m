@@ -18,7 +18,9 @@ end
 %inter trial interval
 open_float.trial_free_reward = 0;
 %close any open reward
-getty_send_bits(parameters.getty.bits, [17, 18], 0)
+if parameters.getty.on
+    getty_send_bits(parameters.getty.bits, [17, 18], 0)
+end
 for frame = 1:parameters.timings.TrialTime('ITI')
     
 [hardware, open_float] = free_reward_key(hardware, parameters, open_float);

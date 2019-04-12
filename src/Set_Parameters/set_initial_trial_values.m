@@ -31,7 +31,10 @@ if parameters.trials.random_stimuli
 
     if strcmp(parameters.task.type, 'BDM')
         %rewards
-        results.single_trial.reward_value = randi(height(stimuli.fractals.fractal_properties));
+        chosen_fractal = randi(height(stimuli.fractals.fractal_properties));
+        disp(chosen_fractal);
+        results.single_trial.reward_value = modifiers.fractals.vector(chosen_fractal);
+        disp(results.single_trial.reward_value);
         results.single_trial.second_reward_value = NaN;
         if ~modifiers.fractals.set_prob
             results.single_trial.reward_chance = stimuli.fractals.fractal_properties.probability(results.single_trial.reward_value);
@@ -89,7 +92,9 @@ if parameters.trials.random_stimuli
     elseif strcmp(parameters.task.type, 'BC')
         %rewards
         if ~modifiers.fractals.no_fractals
-            results.single_trial.reward_value = randi(height(stimuli.fractals.fractal_properties));
+            %rewards
+            results.single_trial.reward_value = randsample(modifiers.fractals.vector, 1);
+
             if ~modifiers.fractals.set_prob
                 results.single_trial.reward_chance = stimuli.fractals.fractal_properties.probability(results.single_trial.reward_value);
             else
@@ -114,6 +119,7 @@ if parameters.trials.random_stimuli
             results.single_trial.budget_magnitude = modifiers.budget.magnitude;
             if modifiers.specific_tasks.binary_choice.bundles
                 results.single_trial.second_budget_value = randi(modifiers.budget.divisions) / modifiers.budget.divisions;
+                
                 if modifiers.budget.random
                     results.single_trial.budget_value = rand();
                 elseif modifiers.budget.pegged
