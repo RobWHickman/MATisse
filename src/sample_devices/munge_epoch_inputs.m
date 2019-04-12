@@ -17,8 +17,19 @@ else
     
     %if the sample joystick deflection is greater than the centering
     %sensitivty, monkey has broken the JCW condition
-    if((abs(hardware.joystick.movement.deflection_x) > sensitivity || abs(hardware.joystick.movement.deflection_y) > sensitivity) && ~strcmp(epoch, 'bidding'))
-        parameters.task_checks.table.Status('joystick_centered') = 1;
+    if(hardware.joystick.center_both)    
+        if((abs(hardware.joystick.movement.deflection_x) > sensitivity || abs(hardware.joystick.movement.deflection_y) > sensitivity) && ~strcmp(epoch, 'bidding'))
+            parameters.task_checks.table.Status('joystick_centered') = 1;
+        end
+    else
+        %only look for one direction of breaking centering
+        if(strcmp(hardware.joystick.direction, 'x'))
+            if((abs(hardware.joystick.movement.deflection_x) > sensitivity && ~strcmp(epoch, 'bidding'))
+                parameters.task_checks.table.Status('joystick_centered') = 1;
+            end
+        elseif(strcmp(hardware.joystick.direction, 'y'))
+            if((abs(hardware.joystick.movement.deflection_y) > sensitivity && ~strcmp(epoch, 'bidding'))
+        end
     end
 end
 
