@@ -354,7 +354,7 @@ guidata(hObject, handles);
 %whether to center joystick based on both axes or just the 
 %dominant one (e.g. Y for BDM)
 function Both_axes_center_check_Callback(hObject, eventdata, handles)
-    use_both_axes = get(Both_axes_center_check,'Value');
+    use_both_axes = get(handles.Both_axes_center_check,'Value');
     if use_both_axes
         handles.hardware.joystick.center_both = 1;
     else
@@ -363,7 +363,7 @@ function Both_axes_center_check_Callback(hObject, eventdata, handles)
 guidata(hObject, handles);    
 function Both_axes_center_check_CreateFcn(hObject, eventdata, handles)
     handles.hardware.joystick.center_both = 1;
-end
+guidata(hObject, handles);
 
 %function which determines which file (if not the default
 %interval_times.mat) should set the timings of the epochs
