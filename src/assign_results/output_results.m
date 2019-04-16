@@ -62,8 +62,14 @@ if strcmp(parameters.task.type, 'BDM')
     results.block_results.graph_output = results.block_results.fractal_means;
 elseif strcmp(parameters.task.type, 'BC')
     if strcmp(results.single_trial.subtask, 'bundle_choice')
-        results.block_results.fractal_means = grpstats(full_output_table.monkey_bid, full_output_table.reward_value);
-        results.block_results.graph_output = results.block_results.fractal_means;
+        if parameters.binomial_graphs
+            disp('CALCING BINOMAIL GRAPHS');
+            results.block_results.fractal_means = binomial_smooth_graph(full_output_table);
+            results.block_results.graph_output = results.block_results.fractal_means;
+        else
+            results.block_results.fractal_means = grpstats(full_output_table.monkey_bid, full_output_table.reward_value);
+            results.block_results.graph_output = results.block_results.fractal_means;
+        end
     else
         results.block_results.fractal_means = grpstats(full_output_table.monkey_bid, full_output_table.second_budget_value);
         results.block_results.graph_output = results.block_results.fractal_means;
