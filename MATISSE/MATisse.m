@@ -1077,7 +1077,7 @@ guidata(hObject, handles);
         guidata(hObject, handles);
 
 function Display_button_Callback(hObject, eventdata, handles)
-    display(handles.hardware.solenoid.device);
+    display(handles.results.block_results.graph_output);
 function Display_button_CreateFcn(hObject, eventdata, handles)
 
 function Choice_stimuli_Callback(hObject, eventdata, handles)
@@ -1568,7 +1568,27 @@ guidata(hObject, handles);
 
 
 
+%create the binomial logit graphs
+%for testing while it isn't fully implemented
+function Binomial_graphs_Callback(hObject, eventdata, handles)
+    binom_graphs = get(handles.Binomial_graphs, 'Value');
+    if binom_graphs == 1
+        handles.parameters.binomial_graphs = 1;
+    else
+        handles.parameters.binomial_graphs = 0;
+    end
+guidata(hObject, handles);
+function Binomial_graphs_CreateFcn(hObject, eventdata, handles)
+    handles.parameters.binomial_graphs = 0;
+guidata(hObject, handles);
 
 
-
-
+function draw_binom_Callback(hObject, eventdata, handles)
+if handles.parameters.binomial_graphs
+    graph_data = handles.results.block_results.graph_output;
+    %[h,ax,bigax] = gplotmatrix(graph_data(:,2),graph_data(:,3),graph_data(:,1));  
+    h = gscatter(graph_data(:,2),graph_data(:,3),graph_data(:,1));
+    set(h, 'linestyle', '-');
+else
+    disp('SAVE DATA AS A BINOMIAL REGRESSION YOU MORON');
+end

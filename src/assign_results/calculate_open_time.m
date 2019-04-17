@@ -1,11 +1,11 @@
 function tap_open_time = calculate_open_time(tap, liquid)
 
 if tap == 1
-    intercept = -0.1077;
-    gradient = 5.9679;
+    intercept = 0.1132;
+    gradient = 5.1638;
 elseif tap == 2
-    intercept = 0.0469; 
-    gradient = 5.1401;
+    intercept = 0.08763; 
+    gradient = 5.84300;
 elseif tap == 3
     intercept = -0.0936;
     gradient = 3.1693;
