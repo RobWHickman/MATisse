@@ -1,5 +1,4 @@
-function results = output_results(results, parameters, hardware)
-
+function results = output_results(results, parameters, hardware, open_float)
 %update the results for the block
 results.block_results.completed = results.block_results.completed + 1;
 %whether or not the trial was completed succesfully
@@ -22,7 +21,7 @@ if results.single_trial.task_failure ~= 1
 end
 %update the amounts of liquid given out
 results.block_results.water = results.block_results.water + results.outputs.budget_liquid;
-results.block_results.juice = results.block_results.juice + results.outputs.reward_liquid;
+results.block_results.juice = results.block_results.juice + results.outputs.reward_liquid + open_float.trial_free_reward;
 %for binary choice tasks include the left/right proportion
 if strcmp(parameters.task.type, 'BC')
     if results.trial_results.monkey_bid > 0.5

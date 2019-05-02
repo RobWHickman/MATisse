@@ -41,8 +41,8 @@ if ~parameters.break.testmode
     elseif strcmp(hardware.ni_inputs, 'digital')
         %get the joystick
         joystick = daq.createSession('ni');
-        addAnalogInputChannel(joystick, 'Dev1',0,'Voltage');
-        addAnalogInputChannel(joystick, 'Dev1',1,'Voltage');
+        addAnalogInputChannel(joystick, 'Dev1','ai8','Voltage');
+        addAnalogInputChannel(joystick, 'Dev1','ai9','Voltage');
         hardware.joystick.joystick = joystick;
         
         %get the touch sensor

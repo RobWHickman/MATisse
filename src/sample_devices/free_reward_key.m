@@ -1,4 +1,8 @@
 function [hardware, open_float] = free_reward_key(hardware, parameters, open_float)
+%set open float free reward to zero if first pass
+if ~isfield(open_float, 'trial_free_reward')
+    open_float.trial_free_reward = 0;
+end
 
 %check if the free reward button has been pressed
 [keyIsDown, keyTime, keyCode] = KbCheck;
@@ -45,6 +49,7 @@ if keyIsDown
         end
         %update the free reward the monkey has got this trial
         open_float.trial_free_reward = open_float.trial_free_reward + hardware.solenoid.release.free_amount;
+        %save the released amount into results
         disp(strcat('now paid', num2str(open_float.trial_free_reward), 'ml for free this trial'));
     end
 end

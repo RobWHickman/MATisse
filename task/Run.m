@@ -16,8 +16,8 @@ end
 %% EPOCHS %%
 %% the different epochs in the task if all checks are met %%
 %inter trial interval
-open_float.trial_free_reward = 0;
 %close any open reward
+open_float = [];
 if parameters.getty.on
     getty_send_bits(parameters.getty.bits, [17, 18], 0)
 end
@@ -129,6 +129,7 @@ end
 results = time_trial(results, 'start');
 disp('starting trial');
 disp(strcat('running ', parameters.task.type, ' trial'));
+
 for frame = 1:parameters.timings.TrialTime('trial_start')
     [hardware, open_float] = free_reward_key(hardware, parameters, open_float);
     if frame == 1 || frame == parameters.timings.TrialTime('trial_start')
@@ -476,7 +477,7 @@ end
 draw_ITI(stimuli, task_window);
 flip_screen(frame, parameters, task_window, 'ITI');
 %output the results of the trial to save and update the GUI
-results = output_results(results, parameters, hardware);
+results = output_results(results, parameters, hardware, open_float);
 
 if parameters.getty.on
     disp('closing trial');

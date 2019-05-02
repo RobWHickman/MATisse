@@ -268,7 +268,7 @@ function Random_stimuli_Callback(hObject, eventdata, handles)
     if stimuli_button_state == get(hObject,'Max')
         set(handles.Random_stimuli,'string','Random Stimuli','enable','on','BackgroundColor','green');
         handles.parameters.trials.random_stimuli = 1;
-    elseif button_state == get(hObject,'Min')
+    elseif stimuli_button_state == get(hObject,'Min')
         set(handles.Random_stimuli,'string','Pseudo-Random','enable','on','BackgroundColor','red');
         handles.parameters.trials.random_stimuli = 0;
     end

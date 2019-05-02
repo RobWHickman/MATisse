@@ -1,7 +1,6 @@
 function results = pay_notpay(results)
-
 %find last three results
-if results.single_trial.reward_chance ~= 1
+if results.single_trial.reward_chance ~= 1 && results.single_trial.reward_chance ~= 0
     if isfield(results, 'full_output_table') && height(results.full_output_table) > 2
         recent_payout = results.full_output_table.results((height(results.full_output_table)-2):height(results.full_output_table));
         if length(find(contains(recent_payout, '_paid'))) == length(recent_payout)
@@ -47,15 +46,27 @@ if results.single_trial.reward_chance ~= 1
             %end
         end
     else
-        %if trial no. 1 always pay
-        results.outputs.reward = results.single_trial.reward_value;    
-        results.outputs.paid = 1;
-        results.outputs.results = [results.outputs.results, '_paid'];
+        random_number_check = rand;
+        if(random_number_check < results.single_trial.reward_chance)
+            results.outputs.reward = results.single_trial.reward_value;
+            results.outputs.paid = 1;
+            results.outputs.results = [results.outputs.results, '_paid'];
+        else
+            results.outputs.reward = 0;
+            results.outputs.paid = 0;
+            results.outputs.results = [results.outputs.results, '_notpaid'];
+        end
     end
-else
+elseif results.single_trial.reward_chance == 1
+    disp('always paying for reward chance == 1');
     results.outputs.reward = results.single_trial.reward_value;
     results.outputs.paid = 1;
     results.outputs.results = [results.outputs.results, '_paid'];
+else
+    disp('never paying for reward chance == 0');
+    results.outputs.reward = 0;
+    results.outputs.paid = 0;
+    results.outputs.results = [results.outputs.results, '_notpaid'];
 end
 
    
