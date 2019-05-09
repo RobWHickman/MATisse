@@ -5,21 +5,16 @@ getty_trial_number = fi_numTo2bytes(trial);
 
 %the task the trial will run
 if strcmp(parameters.task.type, 'BDM')
-    getty_task = 0;
+    getty_task = 1;
     if strcmp(trial_variables.subtask, 'BDM')
         getty_subtask = 1;
-        %getty_task = 1;
     elseif strcmp(trial_variables.subtask, 'FP')
         getty_subtask = 2;
-        %getty_task = 2;
     elseif strcmp(trial_variables.subtask, 'BDM_FP')
         getty_subtask = 3;
-        %getty_task = 3;
     end
-
 elseif strcmp(parameters.task.type, 'BC')
     getty_task = 2;
-    
     if strcmp(trial_variables.subtask, 'binary_fractal_choice')
         getty_subtask = 4;
     elseif strcmp(trial_variables.subtask, 'binary_budget_choice')
@@ -27,16 +22,12 @@ elseif strcmp(parameters.task.type, 'BC')
     elseif strcmp(trial_variables.subtask, 'binary_choice')
         getty_subtask = 6;
     end
-    
 elseif strcmp(parameters.task.type, 'PAV')
-    %getty_task = 3;
-    
+    getty_task = 3;
     if strcmp(trial_variables.subtask, 'Pav')
         getty_subtask = 7;
-        getty_task = 3;
     elseif strcmp(trial_variables.subtask, 'Blind_Pav')
         getty_subtask = 8;
-        getty_task = 6;
     end
 end
 
@@ -65,21 +56,21 @@ else
 end
 
 %set up the situation
-% if getty_task == 1 || getty_task == 3
-%     if trial_reward_value == 1
-%         situation = 1;
-%     elseif trial_reward_value == 2
-%         situation = 2;
-%     elseif trial_reward_value == 3
-%         situation = 3;
-%     end
-% else
-%     situation = 0;
-% end
-
 %situation = str2num(strcat(num2str(getty_task), num2str(getty_subtask), num2str(trial_reward_value)));
-%situation = 1;
-situation = getty_task + trial_reward_value;
+if strcmp(parameters.task.type, 'BDM')
+    if trial_reward_value == 1
+        situation = 1;
+    elseif trial_reward_value == 2
+        situation = 2;
+    elseif trial_reward_value == 3
+        situation = 3;
+    end
+elseif strcmp(trial_variables.subtask, 'Blind_Pav')
+    situation = 4;
+end
+
+disp('the situation for getty is');
+disp(situation);
 
 % generate final array (bytes 3 and 4 are used by getty to save the trial duration)
 dataToGetty=[];

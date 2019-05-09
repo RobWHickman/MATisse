@@ -2,11 +2,12 @@
 %this will be either the joystick or the keyboard in either the x or y
 %dimension
 function hardware = find_external_inputs(parameters, hardware)
-%clear the hardware in use
-daqreset();
 
 %for upstairs- not testmode
-if ~parameters.break.testmode
+if ~parameters.break.testmode %&& ~parameters.break.gui_variables
+    %clear the hardware in use
+    daqreset();
+
     %only works for analog at the moment
     if strcmp(hardware.ni_inputs, 'analog')
         fprintf('finding analog ni devices');
@@ -67,6 +68,8 @@ else
     
     %no touch input for testmode
     hardware.touch = NaN;
+%elseif parameters.break.gui_variables
+    
 end
 
 %no lick or eye data input as yet
