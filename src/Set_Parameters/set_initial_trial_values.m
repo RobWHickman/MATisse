@@ -236,7 +236,7 @@ else
     if ~modifiers.fractals.set_prob
         results.single_trial.reward_chance = stimuli.fractals.fractal_properties.probability(results.single_trial.reward_value);
     else
-        results.single_trial.reward_chance = modifiers.fractals.probability
+        results.single_trial.reward_chance = modifiers.fractals.probability;
     end
 
     
@@ -288,6 +288,12 @@ else
             else
                 results.single_trial.subtask = 'binary_choice';
             end
+        end
+    elseif strcmp(parameters.task.type, 'PAV')
+        if modifiers.fractals.no_fractals
+            results.single_trial.subtask = 'Blind_Pav';
+        else
+            results.single_trial.subtask = 'Pav';
         end
     end
 end

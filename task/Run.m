@@ -22,8 +22,7 @@ if parameters.getty.on
     getty_send_bits(parameters.getty.bits, [17, 18], 0)
 end
 for frame = 1:parameters.timings.TrialTime('ITI')
-    
-[hardware, open_float] = free_reward_key(hardware, parameters, open_float);
+    [hardware, open_float] = free_reward_key(hardware, parameters, open_float);
 
     %get trial values for the offer, computer bid and random monkey bid
     %start position

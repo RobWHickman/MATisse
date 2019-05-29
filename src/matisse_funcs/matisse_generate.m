@@ -2,17 +2,18 @@
 %loads as much as possible without opening a task window
 %gets information on the screen being used and task parameters (how many
 %trials/ which monitor/ etc.)
-function [parameters, hardware, stimuli, task_window] =  matisse_generate(parameters, hardware, stimuli, modifiers, generation)
+function [parameters, hardware, stimuli, task_window] =  matisse_generate(parameters, hardware, stimuli, modifiers, task_window)
 
-if strcmp(generation, 'initial')
+if nargin < 5
+    disp('initial generation');
     %skip sync tests when just testing out code
         Screen('Preference', 'SkipSyncTests', 1);
         Screen('Preference', 'SkipSyncTests', 2);
 
     %open a psychtoolbox screen for the task
     %set it to black for now
-    [task_window, task_windowrect] = PsychImaging('OpenWindow', hardware.screen.number, 0);
-    Screen('BlendFunction', task_window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
+   [task_window, task_windowrect] = PsychImaging('OpenWindow', hardware.screen.number, 0);
+   Screen('BlendFunction', task_window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
 
     %set psychtoolbox to be the computers priority
     %Priority(MaxPriority(task_window));
@@ -21,7 +22,7 @@ if strcmp(generation, 'initial')
 %task_window is needed to find the mouse
 hardware = get_task_devices(parameters, hardware, task_window);
 else
-    task_window = generation;
+    hardware = get_task_devices(parameters, hardware, task_window);
 end
 
 %load/ generate the stimuli for the task
@@ -46,13 +47,13 @@ end
 %set the free reward key
 KbName('UnifyKeyNames');
 free_reward = [KbName('f')];
-RestrictKeysForKbCheck(free_reward);
+%RestrictKeysForKbCheck(free_reward);
 ListenChar(2);
 
-if strcmp(generation, 'initial')
+%if nargin < 5
     %if parameters.getty.on
         parameters.getty.bits = getty_bit_output();
         parameters.getty.shake_in = daq.createSession('ni');
         addDigitalChannel(parameters.getty.shake_in,'Dev1','Port1/Line7','InputOnly');
     %end
-end
+%end

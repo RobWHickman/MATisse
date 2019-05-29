@@ -62,7 +62,7 @@ function Gen_button_Callback(hObject, eventdata, handles)
             get(handles.Maximal_check, 'Value')];
         handles.parameters.task_checks.requirements = requirement_vector';
         %generate the task
-        [handles.parameters, handles.hardware, handles.stimuli, handles.task_window] =  matisse_generate(handles.parameters, handles.hardware, handles.stimuli, handles.modifiers, 'initial');
+        [handles.parameters, handles.hardware, handles.stimuli, handles.task_window] =  matisse_generate(handles.parameters, handles.hardware, handles.stimuli, handles.modifiers);
         %update the GUI with the calculated max trials
         %this can be edted after
         set(handles.Total_trials,'String', num2str(handles.parameters.trials.max_trials));
@@ -191,11 +191,21 @@ guidata(hObject, handles);
 %functions called Generate and Run inside it and a parameters file with the
 %task conditions
 function Set_button_Callback(hObject, eventdata, handles)
-    disp('Setting System...')
-    handles.parameters = matisse_set(handles.parameters);
-    %save this data
-guidata(hObject, handles);
+      disp('Setting System...')
+      handles.parameters = matisse_set(handles.parameters);
+      %save this data
 
+      dir = handles.parameters.directories.save;
+      human = handles.parameters.participants.experimenter;
+      monkey = handles.parameters.participants.primate;
+      date = datestr(now,'yyyy-mm-dd');
+      block = handles.parameters.participants.block_no;
+      csv_name = regexprep(char(strcat(date, human, '_', monkey, '_block', num2str(block), 'COMPACT_RESULTS.csv')), ':', '');
+      if exist(csv_name,'file')==2
+          errordlg(sprintf('This file already exists. Make the next file block %g.', block+1));
+      end
+
+ guidata(hObject, handles);
 %Functions to set the type of task that will be running
 %will be used to direct towards the correct task folder and
 %to modify src functions (e.g. no need to create budgets in Pavlovian task)
@@ -288,7 +298,8 @@ function Centered_check_Callback(hObject, eventdata, handles)
         get(handles.Bidding_check, 'Value'),...
         get(handles.Finalised_check, 'Value'),...
         get(handles.Targeted_check, 'Value'),...
-        get(handles.Maximal_check, 'Value')];
+        get(handles.Maximal_check, 'Value'),...
+        get(handles.Both_axes_center_check, 'Value')];
         handles.parameters.task_checks.requirements = requirement_vector';
 guidata(hObject, handles);
 function Fixation_check_Callback(hObject, eventdata, handles)
@@ -298,7 +309,8 @@ function Fixation_check_Callback(hObject, eventdata, handles)
         get(handles.Bidding_check, 'Value'),...
         get(handles.Finalised_check, 'Value'),...
         get(handles.Targeted_check, 'Value'),...
-        get(handles.Maximal_check, 'Value')];
+        get(handles.Maximal_check, 'Value'),...
+        get(handles.Both_axes_center_check, 'Value')];
         handles.parameters.task_checks.requirements = requirement_vector';
 guidata(hObject, handles);
 function Bidding_check_Callback(hObject, eventdata, handles)
@@ -308,7 +320,8 @@ function Bidding_check_Callback(hObject, eventdata, handles)
         get(handles.Bidding_check, 'Value'),...
         get(handles.Finalised_check, 'Value'),...
         get(handles.Targeted_check, 'Value'),...
-        get(handles.Maximal_check, 'Value')];
+        get(handles.Maximal_check, 'Value'),...
+        get(handles.Both_axes_center_check, 'Value')];
         handles.parameters.task_checks.requirements = requirement_vector';
 guidata(hObject, handles);
 function Finalised_check_Callback(hObject, eventdata, handles)
@@ -318,7 +331,8 @@ function Finalised_check_Callback(hObject, eventdata, handles)
         get(handles.Bidding_check, 'Value'),...
         get(handles.Finalised_check, 'Value'),...
         get(handles.Targeted_check, 'Value'),...
-        get(handles.Maximal_check, 'Value')];
+        get(handles.Maximal_check, 'Value'),...
+        get(handles.Both_axes_center_check, 'Value')];
         handles.parameters.task_checks.requirements = requirement_vector';
 guidata(hObject, handles);
 function Targeted_check_Callback(hObject, eventdata, handles)
@@ -328,7 +342,8 @@ function Targeted_check_Callback(hObject, eventdata, handles)
         get(handles.Bidding_check, 'Value'),...
         get(handles.Finalised_check, 'Value'),...
         get(handles.Targeted_check, 'Value'),...
-        get(handles.Maximal_check, 'Value')];
+        get(handles.Maximal_check, 'Value'),...
+        get(handles.Both_axes_center_check, 'Value')];
         handles.parameters.task_checks.requirements = requirement_vector';
 guidata(hObject, handles);
 function Maximal_check_Callback(hObject, eventdata, handles)
@@ -338,7 +353,8 @@ function Maximal_check_Callback(hObject, eventdata, handles)
         get(handles.Bidding_check, 'Value'),...
         get(handles.Finalised_check, 'Value'),...
         get(handles.Targeted_check, 'Value'),...
-        get(handles.Maximal_check, 'Value')];
+        get(handles.Maximal_check, 'Value'),...
+        get(handles.Both_axes_center_check, 'Value')];
         handles.parameters.task_checks.requirements = requirement_vector';
 guidata(hObject, handles);
 function Touch_check_Callback(hObject, eventdata, handles)
@@ -348,7 +364,8 @@ function Touch_check_Callback(hObject, eventdata, handles)
         get(handles.Bidding_check, 'Value'),...
         get(handles.Finalised_check, 'Value'),...
         get(handles.Targeted_check, 'Value'),...
-        get(handles.Maximal_check, 'Value')];
+        get(handles.Maximal_check, 'Value'),...
+        get(handles.Both_axes_center_check, 'Value')];
         handles.parameters.task_checks.requirements = requirement_vector';
 guidata(hObject, handles);
 %whether to center joystick based on both axes or just the 
@@ -1077,13 +1094,14 @@ guidata(hObject, handles);
         guidata(hObject, handles);
 
 function Display_button_Callback(hObject, eventdata, handles)
-    display(handles.results.block_results.graph_output);
+    display(isfield(handles, 'task_window'));
 function Display_button_CreateFcn(hObject, eventdata, handles)
 
 function Choice_stimuli_Callback(hObject, eventdata, handles)
     clear handles.modifiers.fractals.no_fractals;
     clear handles.modifiers.budgets.no_budgets;
     stimuli_present = get(handles.Choice_stimuli,'Value');
+    disp(stimuli_present);
     if ~ismember(2, stimuli_present)
         handles.modifiers.fractals.no_fractals = 1;
         disp('no longer showing fractals- trials will not be rewarded with juice');
@@ -1200,6 +1218,7 @@ function Probabilistic_fractals_CreateFcn(hObject, eventdata, handles)
     handles.modifiers.fractals.p_fractals_indexes = NaN;
 guidata(hObject, handles);
 
+%check if this is still active - may 21st 2019
 function Fractal_probability_Callback(hObject, eventdata, handles)
     fractal_probabilities = str2num(get(handles.Fractal_probability, 'String'));
     handles.modifiers.fractals.fractal_probability = fractal_probabilities;
@@ -1334,7 +1353,6 @@ guidata(hObject, handles);
 function Fractal_string_CreateFcn(hObject, eventdata, handles)
     handles.modifiers.fractals.fractals_file = missing;
 guidata(hObject, handles);
-
 
 function Background_colours_Callback(hObject, eventdata, handles)
     coloured_bgs = get(handles.Bundle_water, 'Value');
@@ -1592,3 +1610,153 @@ if handles.parameters.binomial_graphs
 else
     disp('SAVE DATA AS A BINOMIAL REGRESSION YOU MORON');
 end
+
+%   MESSY QUICK FIX FOR WOLFRAM MAY 22ND
+function f_start_bdm_Callback(hObject, eventdata, handles)
+    %set the monkey to Ulysses
+    set(handles.Set_primate,'string','Ulysses');
+    handles.parameters.participants.primate = 'Ulysses';
+    
+    %set the joystick parameters
+    set(handles.Joyaxis_invert,'value',1);
+    
+    handles.hardware.joystick.inverted = -1;
+    handles.hardware.joystick.sensitivity.movement = 0.15;
+    handles.hardware.joystick.sensitivity.centered = 0.3;
+    set(handles.Joystick_sensitivty,'string',num2str(handles.hardware.joystick.sensitivity.movement));
+    set(handles.Centre_sensitivity,'string',num2str(handles.hardware.joystick.sensitivity.centered));
+    %these will need to be updated for different joysticks/
+    %as the chair moves
+    handles.hardware.joystick.bias.x_offset = 0.28;
+    set(handles.Set_x_offset,'String', num2str(handles.hardware.joystick.bias.x_offset));
+    handles.hardware.joystick.bias.y_offset = 0;
+    set(handles.Set_y_offset,'String', num2str(handles.hardware.joystick.bias.y_offset));
+    %set off pavlovian stuff
+    set(handles.Centered_check, 'Value', 1);
+    set(handles.Touch_check, 'Value', 1);
+    set(handles.Bidding_check, 'Value', 1);
+    set(handles.Finalised_check, 'Value', 1);
+    set(handles.Both_axes_center_check, 'Value', 1);
+    set(handles.Override_p, 'Value', 0);
+    handles.modifiers.fractals.set_prob = 0;
+    set(handles.Pavlovian_learning,'Value', 0);
+    set(handles.Pavlovian_learning,'string','Pavlovian','enable','on','BackgroundColor','red');
+    handles.parameters.task.type = 'BDM';
+    handles.modifiers.fractals.no_fractals = 0;
+    handles.modifiers.specific_tasks.binary_choice.bundles = 0;
+    set(handles.Bundle_water,'value',0);
+    set(handles.Choice_stimuli,'Value', [1 2]);
+    
+         %set the correct fractals
+     recording_set_fractals(handles.modifiers, handles.parameters);
+
+   
+    %start the task
+    handles.parameters.directories.save = 'C:/Users/rob/Desktop/MATisse/savefiles';
+    handles.parameters.directories.run = 'C:/Users/rob/Desktop/MATisse/task';
+    cd(handles.parameters.directories.run)
+    
+    %generate
+    %update the task checks with the values of the checkboxes
+    requirement_vector = [get(handles.Fixation_check, 'Value'),...
+        get(handles.Centered_check, 'Value'),...
+        get(handles.Touch_check, 'Value'),...
+        get(handles.Bidding_check, 'Value'),...
+        get(handles.Finalised_check, 'Value'),...
+        get(handles.Targeted_check, 'Value'),...
+        get(handles.Maximal_check, 'Value')];
+    handles.parameters.task_checks.requirements = requirement_vector';
+    %generate the task
+    if isfield(handles, 'task_window')
+        [handles.parameters, handles.hardware, handles.stimuli, handles.task_window] =  matisse_generate(handles.parameters, handles.hardware, handles.stimuli, handles.modifiers, handles.task_window);
+    else
+%         handles.parameters.getty.on = 1;
+%         handles.parameters.getty.getty_connected = MODIG_tcp_open_connection();
+%         if handles.parameters.getty.getty_connected
+%             set(handles.Getty_switch,'string','CONNECTED TO GETTY','enable','on','BackgroundColor','green');
+%         end
+        [handles.parameters, handles.hardware, handles.stimuli, handles.task_window] =  matisse_generate(handles.parameters, handles.hardware, handles.stimuli, handles.modifiers);
+    end
+    set(handles.Total_trials,'String', num2str(handles.parameters.trials.max_trials));
+    disp('everything generated as expected')
+
+    %save metadata before start
+    metadata = set_trial_metadata(handles.parameters, handles.stimuli, handles.hardware, handles.modifiers, handles.results);
+    save_data(handles.parameters, metadata, 'task_metadata');
+    
+guidata(hObject, handles);
+    
+function f_start_blind_Callback(hObject, eventdata, handles)
+    %set the monkey to Ulysses
+    set(handles.Set_primate,'string','Ulysses');
+    handles.parameters.participants.primate = 'Ulysses';
+    
+    %take off requirements
+    set(handles.Fixation_check, 'Value', 0);
+    set(handles.Centered_check, 'Value', 0);
+    set(handles.Touch_check, 'Value', 0);
+    set(handles.Bidding_check, 'Value', 0);
+    set(handles.Finalised_check, 'Value', 0);
+    set(handles.Targeted_check, 'Value', 0);
+    set(handles.Maximal_check, 'Value', 0);
+    set(handles.Both_axes_center_check, 'Value', 0);
+    
+    %override probability
+    set(handles.Reward_probability, 'String', '0');
+    handles.modifiers.fractals.probability = 0;
+    set(handles.Override_p, 'Value', 1);
+    handles.modifiers.fractals.set_prob = 1;
+    
+    %set Pavlovian budgets on
+        set(handles.Pavlovian_learning,'string','Pavlovian','enable','on','BackgroundColor','green');
+     set(handles.Pavlovian_learning,'Value', 1);
+       set(handles.Binary_choice,'string','Binary Choice','enable','on','BackgroundColor','red');
+        set(handles.Binary_choice,'value',0);
+        handles.parameters.task.type = 'PAV';
+        handles.modifiers.fractals.no_fractals = 1;
+        handles.modifiers.specific_tasks.binary_choice.bundles = 0;
+        set(handles.Bundle_water,'value',0);
+     set(handles.Choice_stimuli,'Value', 1);
+     
+     %set the correct fractals
+     recording_set_fractals(handles.modifiers, handles.parameters);
+   
+    %start the task
+    handles.parameters.directories.save = 'C:/Users/rob/Desktop/MATisse/savefiles';
+    handles.parameters.directories.run = 'C:/Users/rob/Desktop/MATisse/task';
+    cd(handles.parameters.directories.run)
+    
+    %generate
+    %update the task checks with the values of the checkboxes
+    requirement_vector = [get(handles.Fixation_check, 'Value'),...
+        get(handles.Centered_check, 'Value'),...
+        get(handles.Touch_check, 'Value'),...
+        get(handles.Bidding_check, 'Value'),...
+        get(handles.Finalised_check, 'Value'),...
+        get(handles.Targeted_check, 'Value'),...
+        get(handles.Maximal_check, 'Value')];
+    handles.parameters.task_checks.requirements = requirement_vector';
+    %generate the task
+   if isfield(handles, 'task_window')
+       disp('task window already open');
+        [handles.parameters, handles.hardware, handles.stimuli, handles.task_window] =  matisse_generate(handles.parameters, handles.hardware, handles.stimuli, handles.modifiers, handles.task_window);
+        
+   else
+        disp('opening task window');
+%         handles.parameters.getty.on = 1;
+%         handles.parameters.getty.getty_connected = MODIG_tcp_open_connection();
+%         if handles.parameters.getty.getty_connected
+%             set(handles.Getty_switch,'string','CONNECTED TO GETTY','enable','on','BackgroundColor','green');
+%         end
+        [handles.parameters, handles.hardware, handles.stimuli, handles.task_window] =  matisse_generate(handles.parameters, handles.hardware, handles.stimuli, handles.modifiers);
+   end
+
+    %update the GUI with the calculated max trials
+    set(handles.Total_trials,'String', num2str(handles.parameters.trials.max_trials));
+    disp('everything generated as expected')
+
+    %save metadata before start
+    metadata = set_trial_metadata(handles.parameters, handles.stimuli, handles.hardware, handles.modifiers, handles.results);
+    save_data(handles.parameters, metadata, 'task_metadata');
+    
+guidata(hObject, handles);

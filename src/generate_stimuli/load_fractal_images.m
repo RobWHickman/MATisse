@@ -10,7 +10,7 @@ else
 end
 
 %select only active fractals
-fractals_table = fractals_table.fractals(find(fractals_table.fractals.active),:);
+fractals_table = fractals_table.fractals_data(find(fractals_table.fractals_data.active),:);
 
 %select out by the subtask being used
 if strcmp(parameters.task.type, 'BDM')
