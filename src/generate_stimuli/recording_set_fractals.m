@@ -5,7 +5,7 @@
 function recording_set_fractals(modifiers, parameters)
 
 %modify active fractals per task here
-pav_fractals = ['RU1'; 'RU2'; 'RU3'];
+pav_fractals = ['RU31'; 'RU32'; 'RU33'];
 water_fractals = ['RU51'; 'RU52'; 'RU53'];
 %this is a file called blank, not that it has been left blank
 blank_fractals = ['blank'];
@@ -25,6 +25,7 @@ if strcmp(parameters.task.type, 'PAV')
     if modifiers.fractals.no_fractals
         fractals = blank_fractals;
     else
+        disp('pav fractals');
         fractals = pav_fractals;
     end
 elseif strcmp(parameters.task.type, 'BDM')
