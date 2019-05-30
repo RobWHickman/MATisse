@@ -29,6 +29,9 @@ elseif strcmp(parameters.task.type, 'PAV')
     elseif strcmp(trial_variables.subtask, 'Blind_Pav')
         getty_subtask = 8;
     end
+else
+    disp('unknown task- set situation to 9';
+    situation = 9;
 end
 
 if ~isnan(trial_variables.reward_value)
@@ -64,6 +67,14 @@ if strcmp(parameters.task.type, 'BDM')
         situation = 2;
     elseif trial_reward_value == 3
         situation = 3;
+    end
+elseif strcmp(trial_variables.subtask, 'Pav')
+    if trial_reward_value == 1
+        situation = 5;
+    elseif trial_reward_value == 2
+        situation = 6;
+    elseif trial_reward_value == 3
+        situation = 7;
     end
 elseif strcmp(trial_variables.subtask, 'Blind_Pav')
     situation = 4;

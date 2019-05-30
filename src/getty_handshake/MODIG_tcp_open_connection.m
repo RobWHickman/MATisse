@@ -16,7 +16,7 @@ function success = MODIG_tcp_open_connection()
     
     
     output_port = 8154;
-    number_of_retries = 5; % set to -1 for infinite
+    number_of_retries = 3; % set to -1 for infinite
 
     retry             = 0;
 

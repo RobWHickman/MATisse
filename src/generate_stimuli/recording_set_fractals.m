@@ -25,7 +25,7 @@ if strcmp(parameters.task.type, 'PAV')
     if modifiers.fractals.no_fractals
         fractals = blank_fractals;
     else
-        if hardware.solenoid.release.reward_tap == 3
+        if hardware.solenoid.release.reward_tap == 2
             disp('pav fractals');
             fractals = pav_fractals;
         else
