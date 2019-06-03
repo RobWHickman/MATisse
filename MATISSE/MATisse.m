@@ -786,8 +786,16 @@ function Joystick_button_Callback(hObject, eventdata, handles)
     %assign this to the workspace to use later on
     assignin('base', 'joystick_bias_x', [handles.hardware.joystick.bias.x_offset]);
     assignin('base', 'joystick_bias_y', [handles.hardware.joystick.bias.y_offset]);
+    %save the data
+    disp('saving joystick bias data');
+    joy_data = [handles.hardware.joystick.bias.x_offset handles.hardware.joystick.bias.y_offset];
+    save('../src/get_devices/joy_data.mat', 'joy_data');
 guidata(hObject, handles);
-%function to reinsert already tested values for the joystick bias
+%load the saved data if it exists
+function Joystick_button_CreateFcn(hObject, eventdata, handles)
+    if(isfile('../src/get_devices/joy_data.mat'))
+        joystick_saved_data = load('../src/get_devices/joy_data.mat');
+    end%function to reinsert already tested values for the joystick bias
 function Reinsert_bias_Callback(hObject, eventdata, handles)
     %evaluate in the tested joystick bias
     bias_x = evalin('base', 'joystick_bias_x');
@@ -1631,9 +1639,9 @@ function f_start_bdm_Callback(hObject, eventdata, handles)
     set(handles.Centre_sensitivity,'string',num2str(handles.hardware.joystick.sensitivity.centered));
     %these will need to be updated for different joysticks/
     %as the chair moves
-    handles.hardware.joystick.bias.x_offset = 0.22;
+    handles.hardware.joystick.bias.x_offset = -0.01825;
     set(handles.Set_x_offset,'String', num2str(handles.hardware.joystick.bias.x_offset));
-    handles.hardware.joystick.bias.y_offset = 0;
+    handles.hardware.joystick.bias.y_offset = 0.15206;
     set(handles.Set_y_offset,'String', num2str(handles.hardware.joystick.bias.y_offset));
     %set off pavlovian stuff
     set(handles.Centered_check, 'Value', 1);
@@ -1940,9 +1948,9 @@ function f_start_bcb_Callback(hObject, eventdata, handles)
     set(handles.Centre_sensitivity,'string',num2str(handles.hardware.joystick.sensitivity.centered));
     %these will need to be updated for different joysticks/
     %as the chair moves
-    handles.hardware.joystick.bias.x_offset = 0.22;
+    handles.hardware.joystick.bias.x_offset = -0.01825;
     set(handles.Set_x_offset,'String', num2str(handles.hardware.joystick.bias.x_offset));
-    handles.hardware.joystick.bias.y_offset = 0;
+    handles.hardware.joystick.bias.y_offset = 0.15206;
     set(handles.Set_y_offset,'String', num2str(handles.hardware.joystick.bias.y_offset));
     %set off pavlovian stuff
     set(handles.Centered_check, 'Value', 1);
@@ -2026,3 +2034,20 @@ guidata(hObject, handles);
 
 
 function GO_TASK_Callback(hObject, eventdata, handles)
+
+
+%button press to initialise new getty session
+%disconnects from getty and stops task
+%then looks for reconnect and restarts task
+function Getty_new_session_Callback(hObject, eventdata, handles)
+    %pause the task
+   set(handles.Run_button,'string','stopped...','enable','on','BackgroundColor','[1, 1, 1]','Value',0);
+   disp('Task Paused');
+   if handles.parameters.getty.enabled
+       set(handles.Getty_switch,'string','DISCONNECTED','enable','on','BackgroundColor','red');
+       MODIG_tcp_close_connection()
+       disp('Getty Connection Closed');
+   end
+guidata(hObject, handles);
+
+   
