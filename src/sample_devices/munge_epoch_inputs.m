@@ -92,8 +92,6 @@ results.behaviour_table = vertcat(results.behaviour_table, datarow);
 
 %check touch inputs
 epoch_subset = results.behaviour_table(find(strcmp(results.behaviour_table.epoch, epoch)),:);
-disp(results.behaviour_table);
-disp(epoch_subset);
 
 %sample the last x frames
 if frame >= hardware.touch.touch_samples
