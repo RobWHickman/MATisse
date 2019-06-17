@@ -80,7 +80,10 @@ datacell = [parameters.trials.total_trials, {epoch}, frame,...
     hardware.joystick.movement.deflection_x, hardware.joystick.movement.deflection_y, hardware.touch.hold, hardware.missing.eye, hardware.missing.lick,...
     hardware.joystick.movement.joy_movement, NaN];
 
+% old (predetermined number of flips)
 results.behaviour_table(datarow,:) = datacell;
+
+%new (use systime- unknown number of flips)
 
 %check touch inputs
 epoch_subset = results.behaviour_table(find(strcmp(results.behaviour_table.epoch, epoch)),:);

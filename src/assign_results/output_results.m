@@ -48,6 +48,12 @@ trial_output_table = horzcat(struct2table(results.trial_results,'AsArray',true),
     trial_col);
 
 %vertcat unless the first trial
+trial_output_table = trial_output_table(:,sort(trial_output_table.Properties.VariableNames));
+disp('deleting superfluous type variable- output results line 51');
+trial_output_table = removevars(trial_output_table, {'type'});
+if strcmp(parameters.task.type, 'BC')
+    trial_output_table.primary_side = NaN;
+end
 if results.block_results.completed == 1
     full_output_table = trial_output_table;
 else

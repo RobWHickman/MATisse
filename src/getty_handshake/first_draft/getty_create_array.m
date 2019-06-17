@@ -15,6 +15,7 @@ if strcmp(parameters.task.type, 'BDM')
     end
 elseif strcmp(parameters.task.type, 'BC')
     getty_task = 2;
+    getty_subtask = 6;
     if strcmp(trial_variables.subtask, 'binary_fractal_choice')
         getty_subtask = 4;
     elseif strcmp(trial_variables.subtask, 'binary_budget_choice')
@@ -29,6 +30,9 @@ elseif strcmp(parameters.task.type, 'PAV')
     elseif strcmp(trial_variables.subtask, 'Blind_Pav')
         getty_subtask = 8;
     end
+else
+    disp('unknown task- set subtask to 9');
+    getty_subtask = 9;
 end
 
 if ~isnan(trial_variables.reward_value)
@@ -65,8 +69,19 @@ if strcmp(parameters.task.type, 'BDM')
     elseif trial_reward_value == 3
         situation = 3;
     end
+elseif strcmp(trial_variables.subtask, 'Pav')
+    if trial_reward_value == 1
+        situation = 5;
+    elseif trial_reward_value == 2
+        situation = 6;
+    elseif trial_reward_value == 3
+        situation = 7;
+    end
 elseif strcmp(trial_variables.subtask, 'Blind_Pav')
     situation = 4;
+else
+    disp('unknown task- set situation to 9');
+    situation = 9;
 end
 
 disp('the situation for getty is');

@@ -152,7 +152,12 @@ end
 %only continue to epochs if no task failure or a pavlovian paradigm task
 %can never fail trials on pavlovian tasks
 if ~results.single_trial.task_failure || strcmp(parameters.task.type, 'PAV')
+%tic;
+%frame = 0;
+%while toc < 3
+%    frame = frame + 1;
 for frame = 1:parameters.timings.TrialTime('fixation')
+
     [hardware, open_float] = free_reward_key(hardware, parameters, open_float);
     
     %draw the first epoch
@@ -164,6 +169,7 @@ for frame = 1:parameters.timings.TrialTime('fixation')
     
     %sample the input devices and munge into behaviour table
     hardware = sample_input_devices(parameters, hardware);
+    disp(frame);
     [parameters, hardware, results] = munge_epoch_inputs(parameters, hardware, results, frame, 'fixation');  
 
     %check that joystick fulfils the two constant checks

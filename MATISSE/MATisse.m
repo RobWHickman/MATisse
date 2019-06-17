@@ -786,8 +786,16 @@ function Joystick_button_Callback(hObject, eventdata, handles)
     %assign this to the workspace to use later on
     assignin('base', 'joystick_bias_x', [handles.hardware.joystick.bias.x_offset]);
     assignin('base', 'joystick_bias_y', [handles.hardware.joystick.bias.y_offset]);
+    %save the data
+    disp('saving joystick bias data');
+    joy_data = [handles.hardware.joystick.bias.x_offset handles.hardware.joystick.bias.y_offset];
+    save('../src/get_devices/joy_data.mat', 'joy_data');
 guidata(hObject, handles);
-%function to reinsert already tested values for the joystick bias
+%load the saved data if it exists
+function Joystick_button_CreateFcn(hObject, eventdata, handles)
+    if(isfile('../src/get_devices/joy_data.mat'))
+        joystick_saved_data = load('../src/get_devices/joy_data.mat');
+    end%function to reinsert already tested values for the joystick bias
 function Reinsert_bias_Callback(hObject, eventdata, handles)
     %evaluate in the tested joystick bias
     bias_x = evalin('base', 'joystick_bias_x');
@@ -1094,7 +1102,7 @@ guidata(hObject, handles);
         guidata(hObject, handles);
 
 function Display_button_Callback(hObject, eventdata, handles)
-    display(isfield(handles, 'task_window'));
+    display(handles.parameters.getty);
 function Display_button_CreateFcn(hObject, eventdata, handles)
 
 function Choice_stimuli_Callback(hObject, eventdata, handles)
@@ -1612,24 +1620,28 @@ else
 end
 
 %   MESSY QUICK FIX FOR WOLFRAM MAY 22ND
+
+%% QUICK LAUNCH BUTTONS
 function f_start_bdm_Callback(hObject, eventdata, handles)
+    set(handles.GO_TASK,'BackgroundColor','red','Value',0);
     %set the monkey to Ulysses
     set(handles.Set_primate,'string','Ulysses');
     handles.parameters.participants.primate = 'Ulysses';
-    
     %set the joystick parameters
+    handles.hardware.joystick.direction = 'y';
+    set(handles.X_axis_bidding, 'Value', 0);
+    set(handles.Y_axis_bidding, 'Value', 1);
     set(handles.Joyaxis_invert,'value',1);
-    
     handles.hardware.joystick.inverted = -1;
-    handles.hardware.joystick.sensitivity.movement = 0.15;
-    handles.hardware.joystick.sensitivity.centered = 0.3;
+    handles.hardware.joystick.sensitivity.movement = 0.2;
+    handles.hardware.joystick.sensitivity.centered = 0.2;
     set(handles.Joystick_sensitivty,'string',num2str(handles.hardware.joystick.sensitivity.movement));
     set(handles.Centre_sensitivity,'string',num2str(handles.hardware.joystick.sensitivity.centered));
     %these will need to be updated for different joysticks/
     %as the chair moves
-    handles.hardware.joystick.bias.x_offset = 0.28;
+    handles.hardware.joystick.bias.x_offset = -0.045;
     set(handles.Set_x_offset,'String', num2str(handles.hardware.joystick.bias.x_offset));
-    handles.hardware.joystick.bias.y_offset = 0;
+    handles.hardware.joystick.bias.y_offset = 0.12;
     set(handles.Set_y_offset,'String', num2str(handles.hardware.joystick.bias.y_offset));
     %set off pavlovian stuff
     set(handles.Centered_check, 'Value', 1);
@@ -1640,22 +1652,24 @@ function f_start_bdm_Callback(hObject, eventdata, handles)
     set(handles.Override_p, 'Value', 0);
     handles.modifiers.fractals.set_prob = 0;
     set(handles.Pavlovian_learning,'Value', 0);
-    set(handles.Pavlovian_learning,'string','Pavlovian','enable','on','BackgroundColor','red');
+    set(handles.Pavlovian_learning,'string','Pavlovian','enable','off','BackgroundColor','red');
+    set(handles.Binary_choice,'Value', 0);
+    set(handles.Binary_choice,'string','Binary Choice','enable','off','BackgroundColor','red');
     handles.parameters.task.type = 'BDM';
     handles.modifiers.fractals.no_fractals = 0;
     handles.modifiers.specific_tasks.binary_choice.bundles = 0;
     set(handles.Bundle_water,'value',0);
     set(handles.Choice_stimuli,'Value', [1 2]);
-    
-         %set the correct fractals
-     recording_set_fractals(handles.modifiers, handles.parameters);
-
-   
+    handles.hardware.solenoid.release.budget_tap = 1;
+    handles.hardware.solenoid.release.reward_tap = 2;
+    set(handles.Reward_tap,'string',2);
+    set(handles.Budget_tap,'string',1);
+    %set the correct fractals
+    recording_set_fractals(handles.modifiers, handles.parameters, handles.hardware);
     %start the task
     handles.parameters.directories.save = 'C:/Users/rob/Desktop/MATisse/savefiles';
     handles.parameters.directories.run = 'C:/Users/rob/Desktop/MATisse/task';
     cd(handles.parameters.directories.run)
-    
     %generate
     %update the task checks with the values of the checkboxes
     requirement_vector = [get(handles.Fixation_check, 'Value'),...
@@ -1668,29 +1682,36 @@ function f_start_bdm_Callback(hObject, eventdata, handles)
     handles.parameters.task_checks.requirements = requirement_vector';
     %generate the task
     if isfield(handles, 'task_window')
+        if handles.parameters.getty.enabled && ~handles.parameters.getty.on
+            handles.parameters.getty.on = 1;
+            handles.parameters.getty.getty_connected = MODIG_tcp_open_connection();
+            if handles.parameters.getty.getty_connected
+                set(handles.Getty_switch,'string','CONNECTED TO GETTY','enable','on','BackgroundColor','green');
+            end
+        end
         [handles.parameters, handles.hardware, handles.stimuli, handles.task_window] =  matisse_generate(handles.parameters, handles.hardware, handles.stimuli, handles.modifiers, handles.task_window);
     else
-%         handles.parameters.getty.on = 1;
-%         handles.parameters.getty.getty_connected = MODIG_tcp_open_connection();
-%         if handles.parameters.getty.getty_connected
-%             set(handles.Getty_switch,'string','CONNECTED TO GETTY','enable','on','BackgroundColor','green');
-%         end
+        if handles.parameters.getty.enabled
+            handles.parameters.getty.on = 1;
+            handles.parameters.getty.getty_connected = MODIG_tcp_open_connection();
+            if handles.parameters.getty.getty_connected
+                set(handles.Getty_switch,'string','CONNECTED TO GETTY','enable','on','BackgroundColor','green');
+            end
+        end
         [handles.parameters, handles.hardware, handles.stimuli, handles.task_window] =  matisse_generate(handles.parameters, handles.hardware, handles.stimuli, handles.modifiers);
     end
     set(handles.Total_trials,'String', num2str(handles.parameters.trials.max_trials));
-    disp('everything generated as expected')
-
     %save metadata before start
     metadata = set_trial_metadata(handles.parameters, handles.stimuli, handles.hardware, handles.modifiers, handles.results);
     save_data(handles.parameters, metadata, 'task_metadata');
-    
+    set(handles.GO_TASK,'BackgroundColor','green','Value',1);
 guidata(hObject, handles);
     
 function f_start_blind_Callback(hObject, eventdata, handles)
+    set(handles.GO_TASK,'BackgroundColor','red','Value',0);
     %set the monkey to Ulysses
     set(handles.Set_primate,'string','Ulysses');
     handles.parameters.participants.primate = 'Ulysses';
-    
     %take off requirements
     set(handles.Fixation_check, 'Value', 0);
     set(handles.Centered_check, 'Value', 0);
@@ -1700,32 +1721,31 @@ function f_start_blind_Callback(hObject, eventdata, handles)
     set(handles.Targeted_check, 'Value', 0);
     set(handles.Maximal_check, 'Value', 0);
     set(handles.Both_axes_center_check, 'Value', 0);
-    
     %override probability
     set(handles.Reward_probability, 'String', '0');
     handles.modifiers.fractals.probability = 0;
     set(handles.Override_p, 'Value', 1);
     handles.modifiers.fractals.set_prob = 1;
-    
     %set Pavlovian budgets on
-        set(handles.Pavlovian_learning,'string','Pavlovian','enable','on','BackgroundColor','green');
-     set(handles.Pavlovian_learning,'Value', 1);
-       set(handles.Binary_choice,'string','Binary Choice','enable','on','BackgroundColor','red');
-        set(handles.Binary_choice,'value',0);
-        handles.parameters.task.type = 'PAV';
-        handles.modifiers.fractals.no_fractals = 1;
-        handles.modifiers.specific_tasks.binary_choice.bundles = 0;
-        set(handles.Bundle_water,'value',0);
-     set(handles.Choice_stimuli,'Value', 1);
-     
-     %set the correct fractals
-     recording_set_fractals(handles.modifiers, handles.parameters);
-   
+    set(handles.Pavlovian_learning,'string','Pavlovian','enable','on','BackgroundColor','green');
+    set(handles.Pavlovian_learning,'Value', 1);
+    set(handles.Binary_choice,'string','Binary Choice','enable','off','BackgroundColor','red');
+    set(handles.Binary_choice,'value',0);
+    handles.parameters.task.type = 'PAV';
+    handles.modifiers.fractals.no_fractals = 1;
+    handles.modifiers.specific_tasks.binary_choice.bundles = 0;
+    set(handles.Bundle_water,'value',0);
+    set(handles.Choice_stimuli,'Value', 1);
+    handles.hardware.solenoid.release.budget_tap = 1;
+    handles.hardware.solenoid.release.reward_tap = 2;
+    set(handles.Reward_tap,'string',2);
+    set(handles.Budget_tap,'string',1);
+    %set the correct fractals
+    recording_set_fractals(handles.modifiers, handles.parameters, handles.hardware);
     %start the task
     handles.parameters.directories.save = 'C:/Users/rob/Desktop/MATisse/savefiles';
     handles.parameters.directories.run = 'C:/Users/rob/Desktop/MATisse/task';
     cd(handles.parameters.directories.run)
-    
     %generate
     %update the task checks with the values of the checkboxes
     requirement_vector = [get(handles.Fixation_check, 'Value'),...
@@ -1737,26 +1757,297 @@ function f_start_blind_Callback(hObject, eventdata, handles)
         get(handles.Maximal_check, 'Value')];
     handles.parameters.task_checks.requirements = requirement_vector';
     %generate the task
-   if isfield(handles, 'task_window')
-       disp('task window already open');
+    if isfield(handles, 'task_window')
+        if handles.parameters.getty.enabled && ~handles.parameters.getty.on
+            handles.parameters.getty.on = 1;
+            handles.parameters.getty.getty_connected = MODIG_tcp_open_connection();
+            if handles.parameters.getty.getty_connected
+                set(handles.Getty_switch,'string','CONNECTED TO GETTY','enable','on','BackgroundColor','green');
+            end
+        end
         [handles.parameters, handles.hardware, handles.stimuli, handles.task_window] =  matisse_generate(handles.parameters, handles.hardware, handles.stimuli, handles.modifiers, handles.task_window);
-        
-   else
-        disp('opening task window');
-%         handles.parameters.getty.on = 1;
-%         handles.parameters.getty.getty_connected = MODIG_tcp_open_connection();
-%         if handles.parameters.getty.getty_connected
-%             set(handles.Getty_switch,'string','CONNECTED TO GETTY','enable','on','BackgroundColor','green');
-%         end
+    else
+        if handles.parameters.getty.enabled
+            handles.parameters.getty.on = 1;
+            handles.parameters.getty.getty_connected = MODIG_tcp_open_connection();
+            if handles.parameters.getty.getty_connected
+                set(handles.Getty_switch,'string','CONNECTED TO GETTY','enable','on','BackgroundColor','green');
+            end
+        end
         [handles.parameters, handles.hardware, handles.stimuli, handles.task_window] =  matisse_generate(handles.parameters, handles.hardware, handles.stimuli, handles.modifiers);
-   end
-
+    end
     %update the GUI with the calculated max trials
     set(handles.Total_trials,'String', num2str(handles.parameters.trials.max_trials));
-    disp('everything generated as expected')
-
     %save metadata before start
     metadata = set_trial_metadata(handles.parameters, handles.stimuli, handles.hardware, handles.modifiers, handles.results);
     save_data(handles.parameters, metadata, 'task_metadata');
-    
+    set(handles.GO_TASK,'BackgroundColor','green','Value',1);
 guidata(hObject, handles);
+
+function f_start_pavlovian_Callback(hObject, eventdata, handles)
+    set(handles.GO_TASK,'BackgroundColor','red','Value',0);
+    %set the monkey to Ulysses
+    set(handles.Set_primate,'string','Ulysses');
+    handles.parameters.participants.primate = 'Ulysses';
+    %take off requirements
+    set(handles.Fixation_check, 'Value', 0);
+    set(handles.Centered_check, 'Value', 0);
+    set(handles.Touch_check, 'Value', 0);
+    set(handles.Bidding_check, 'Value', 0);
+    set(handles.Finalised_check, 'Value', 0);
+    set(handles.Targeted_check, 'Value', 0);
+    set(handles.Maximal_check, 'Value', 0);
+    set(handles.Both_axes_center_check, 'Value', 0);
+    %set Pavlovian budgets on
+    set(handles.Override_p, 'Value', 0);
+    handles.modifiers.fractals.set_prob = 0;
+    set(handles.Pavlovian_learning,'string','Pavlovian','enable','on','BackgroundColor','green');
+    set(handles.Pavlovian_learning,'Value', 1);
+    set(handles.Binary_choice,'string','Binary Choice','enable','off','BackgroundColor','red');
+    set(handles.Binary_choice,'value',0);
+    handles.parameters.task.type = 'PAV';
+    handles.modifiers.specific_tasks.binary_choice.bundles = 0;
+    handles.modifiers.fractals.no_fractals = 0;
+    set(handles.Choice_stimuli,'Value', [1 2]);
+    handles.hardware.solenoid.release.budget_tap = 1;
+    handles.hardware.solenoid.release.reward_tap = 2;
+    set(handles.Reward_tap,'string',2);
+    set(handles.Budget_tap,'string',1);
+    %set the correct fractals
+    recording_set_fractals(handles.modifiers, handles.parameters, handles.hardware);
+    %start the task
+    handles.parameters.directories.save = 'C:/Users/rob/Desktop/MATisse/savefiles';
+    handles.parameters.directories.run = 'C:/Users/rob/Desktop/MATisse/task';
+    cd(handles.parameters.directories.run)
+    %generate
+    %update the task checks with the values of the checkboxes
+    requirement_vector = [get(handles.Fixation_check, 'Value'),...
+        get(handles.Centered_check, 'Value'),...
+        get(handles.Touch_check, 'Value'),...
+        get(handles.Bidding_check, 'Value'),...
+        get(handles.Finalised_check, 'Value'),...
+        get(handles.Targeted_check, 'Value'),...
+        get(handles.Maximal_check, 'Value')];
+    handles.parameters.task_checks.requirements = requirement_vector';
+    %generate the task
+    if isfield(handles, 'task_window')
+        if handles.parameters.getty.enabled && ~handles.parameters.getty.on
+            handles.parameters.getty.on = 1;
+            handles.parameters.getty.getty_connected = MODIG_tcp_open_connection();
+            if handles.parameters.getty.getty_connected
+                set(handles.Getty_switch,'string','CONNECTED TO GETTY','enable','on','BackgroundColor','green');
+            end
+        end
+        [handles.parameters, handles.hardware, handles.stimuli, handles.task_window] =  matisse_generate(handles.parameters, handles.hardware, handles.stimuli, handles.modifiers, handles.task_window);
+    else
+        if handles.parameters.getty.enabled
+            handles.parameters.getty.on = 1;
+            handles.parameters.getty.getty_connected = MODIG_tcp_open_connection();
+            if handles.parameters.getty.getty_connected
+                set(handles.Getty_switch,'string','CONNECTED TO GETTY','enable','on','BackgroundColor','green');
+            end
+        end
+        [handles.parameters, handles.hardware, handles.stimuli, handles.task_window] =  matisse_generate(handles.parameters, handles.hardware, handles.stimuli, handles.modifiers);
+    end
+    %update the GUI with the calculated max trials
+    set(handles.Total_trials,'String', num2str(handles.parameters.trials.max_trials));
+    %save metadata before start
+    metadata = set_trial_metadata(handles.parameters, handles.stimuli, handles.hardware, handles.modifiers, handles.results);
+    save_data(handles.parameters, metadata, 'task_metadata');
+    set(handles.GO_TASK,'BackgroundColor','green','Value',1);
+guidata(hObject, handles);
+
+function f_start_pavwater_Callback(hObject, eventdata, handles)
+    set(handles.GO_TASK,'BackgroundColor','red','Value',0);
+    %set the monkey to Ulysses
+    set(handles.Set_primate,'string','Ulysses');
+    handles.parameters.participants.primate = 'Ulysses';
+    %take off requirements
+    set(handles.Fixation_check, 'Value', 0);
+    set(handles.Centered_check, 'Value', 0);
+    set(handles.Touch_check, 'Value', 0);
+    set(handles.Bidding_check, 'Value', 0);
+    set(handles.Finalised_check, 'Value', 0);
+    set(handles.Targeted_check, 'Value', 0);
+    set(handles.Maximal_check, 'Value', 0);
+    set(handles.Both_axes_center_check, 'Value', 0);
+    %set Pavlovian budgets on
+    set(handles.Override_p, 'Value', 0);
+    handles.modifiers.fractals.set_prob = 0;
+    set(handles.Pavlovian_learning,'string','Pavlovian','enable','on','BackgroundColor','green');
+    set(handles.Pavlovian_learning,'Value', 1);
+    set(handles.Binary_choice,'string','Binary Choice','enable','off','BackgroundColor','red');
+    set(handles.Binary_choice,'value',0);
+    handles.parameters.task.type = 'PAV';
+    %set water instead of juice
+    handles.hardware.solenoid.release.budget_tap = 2;
+    handles.hardware.solenoid.release.reward_tap = 1;
+    set(handles.Reward_tap,'string',1);
+    set(handles.Budget_tap,'string',2);
+    handles.modifiers.fractals.no_fractals = 0;
+    set(handles.Choice_stimuli,'Value', [1 2]);
+    %set the correct fractals
+    recording_set_fractals(handles.modifiers, handles.parameters, handles.hardware);
+    %start the task
+    handles.parameters.directories.save = 'C:/Users/rob/Desktop/MATisse/savefiles';
+    handles.parameters.directories.run = 'C:/Users/rob/Desktop/MATisse/task';
+    cd(handles.parameters.directories.run)
+    %generate
+    %update the task checks with the values of the checkboxes
+    requirement_vector = [get(handles.Fixation_check, 'Value'),...
+        get(handles.Centered_check, 'Value'),...
+        get(handles.Touch_check, 'Value'),...
+        get(handles.Bidding_check, 'Value'),...
+        get(handles.Finalised_check, 'Value'),...
+        get(handles.Targeted_check, 'Value'),...
+        get(handles.Maximal_check, 'Value')];
+    handles.parameters.task_checks.requirements = requirement_vector';
+    %generate the task
+    if isfield(handles, 'task_window')
+        if handles.parameters.getty.enabled && ~handles.parameters.getty.on
+            handles.parameters.getty.on = 1;
+            handles.parameters.getty.getty_connected = MODIG_tcp_open_connection();
+            if handles.parameters.getty.getty_connected
+                set(handles.Getty_switch,'string','CONNECTED TO GETTY','enable','on','BackgroundColor','green');
+            end
+        end
+        [handles.parameters, handles.hardware, handles.stimuli, handles.task_window] =  matisse_generate(handles.parameters, handles.hardware, handles.stimuli, handles.modifiers, handles.task_window);
+    else
+        if handles.parameters.getty.enabled
+            handles.parameters.getty.on = 1;
+            handles.parameters.getty.getty_connected = MODIG_tcp_open_connection();
+            if handles.parameters.getty.getty_connected
+                set(handles.Getty_switch,'string','CONNECTED TO GETTY','enable','on','BackgroundColor','green');
+            end
+        end
+        [handles.parameters, handles.hardware, handles.stimuli, handles.task_window] =  matisse_generate(handles.parameters, handles.hardware, handles.stimuli, handles.modifiers);
+    end
+    %update the GUI with the calculated max trials
+    set(handles.Total_trials,'String', num2str(handles.parameters.trials.max_trials));
+    disp('everything generated as expected')
+    %save metadata before start
+    metadata = set_trial_metadata(handles.parameters, handles.stimuli, handles.hardware, handles.modifiers, handles.results);
+    save_data(handles.parameters, metadata, 'task_metadata');
+    set(handles.GO_TASK,'BackgroundColor','green','Value',1);
+guidata(hObject, handles);
+
+function f_start_bcb_Callback(hObject, eventdata, handles)
+    set(handles.GO_TASK,'BackgroundColor','red','Value',0);
+    %set the monkey to Ulysses
+    set(handles.Set_primate,'string','Ulysses');
+    handles.parameters.participants.primate = 'Ulysses';
+    %set the joystick parameters
+    handles.hardware.joystick.direction = 'x';
+    set(handles.X_axis_bidding, 'Value', 1);
+    set(handles.Y_axis_bidding, 'Value', 0);
+    set(handles.Joyaxis_invert,'value',0);
+    handles.hardware.joystick.inverted = 1;
+    handles.hardware.joystick.sensitivity.movement = 0.25;
+    handles.hardware.joystick.sensitivity.centered = 0.25;
+    set(handles.Joystick_sensitivty,'string',num2str(handles.hardware.joystick.sensitivity.movement));
+    set(handles.Centre_sensitivity,'string',num2str(handles.hardware.joystick.sensitivity.centered));
+    %these will need to be updated for different joysticks/
+    %as the chair moves
+    handles.hardware.joystick.bias.x_offset = -0.01825;
+    set(handles.Set_x_offset,'String', num2str(handles.hardware.joystick.bias.x_offset));
+    handles.hardware.joystick.bias.y_offset = 0.15206;
+    set(handles.Set_y_offset,'String', num2str(handles.hardware.joystick.bias.y_offset));
+    %set off pavlovian stuff
+    set(handles.Centered_check, 'Value', 1);
+    set(handles.Touch_check, 'Value', 1);
+    set(handles.Bidding_check, 'Value', 1);
+    set(handles.Finalised_check, 'Value', 1);
+    set(handles.Both_axes_center_check, 'Value', 1);
+    set(handles.Override_p, 'Value', 0);
+    handles.modifiers.fractals.set_prob = 0;
+    set(handles.Pavlovian_learning,'Value', 0);
+    set(handles.Pavlovian_learning,'string','Pavlovian','enable','off','BackgroundColor','red');
+    set(handles.Binary_choice,'Value', 1);
+    set(handles.Binary_choice,'string','Binary Choice','enable','on','BackgroundColor','green');
+    handles.parameters.task.type = 'BC';
+    handles.modifiers.fractals.no_fractals = 0;
+    handles.modifiers.specific_tasks.binary_choice.bundles = 1;
+    set(handles.Bundle_water,'value',0);
+    set(handles.Choice_stimuli,'Value', [1 2]);
+    handles.hardware.solenoid.release.budget_tap = 1;
+    handles.hardware.solenoid.release.reward_tap = 2;
+    set(handles.Reward_tap,'string',2);
+    set(handles.Budget_tap,'string',1);
+    %set the correct fractals
+    recording_set_fractals(handles.modifiers, handles.parameters, handles.hardware);
+    %start the task
+    handles.parameters.directories.save = 'C:/Users/rob/Desktop/MATisse/savefiles';
+    handles.parameters.directories.run = 'C:/Users/rob/Desktop/MATisse/task';
+    cd(handles.parameters.directories.run)
+    %generate
+    %update the task checks with the values of the checkboxes
+    requirement_vector = [get(handles.Fixation_check, 'Value'),...
+        get(handles.Centered_check, 'Value'),...
+        get(handles.Touch_check, 'Value'),...
+        get(handles.Bidding_check, 'Value'),...
+        get(handles.Finalised_check, 'Value'),...
+        get(handles.Targeted_check, 'Value'),...
+        get(handles.Maximal_check, 'Value')];
+    handles.parameters.task_checks.requirements = requirement_vector';
+    %generate the task
+    if isfield(handles, 'task_window')
+        if handles.parameters.getty.enabled && ~handles.parameters.getty.on
+            handles.parameters.getty.on = 1;
+            handles.parameters.getty.getty_connected = MODIG_tcp_open_connection();
+            if handles.parameters.getty.getty_connected
+                set(handles.Getty_switch,'string','CONNECTED TO GETTY','enable','on','BackgroundColor','green');
+            end
+        end
+        [handles.parameters, handles.hardware, handles.stimuli, handles.task_window] =  matisse_generate(handles.parameters, handles.hardware, handles.stimuli, handles.modifiers, handles.task_window);
+    else
+        if handles.parameters.getty.enabled
+            handles.parameters.getty.on = 1;
+            handles.parameters.getty.getty_connected = MODIG_tcp_open_connection();
+            if handles.parameters.getty.getty_connected
+                set(handles.Getty_switch,'string','CONNECTED TO GETTY','enable','on','BackgroundColor','green');
+            end
+        end
+        [handles.parameters, handles.hardware, handles.stimuli, handles.task_window] =  matisse_generate(handles.parameters, handles.hardware, handles.stimuli, handles.modifiers);
+    end
+    set(handles.Total_trials,'String', num2str(handles.parameters.trials.max_trials));
+    %save metadata before start
+    metadata = set_trial_metadata(handles.parameters, handles.stimuli, handles.hardware, handles.modifiers, handles.results);
+    save_data(handles.parameters, metadata, 'task_metadata');
+    set(handles.GO_TASK,'BackgroundColor','green','Value',1);
+guidata(hObject, handles);
+
+%%
+
+
+%with fast buttons connects getty automatically unless told not to
+function getty_interface_on_Callback(hObject, eventdata, handles)
+    getty_interface = get(handles.getty_interface_on, 'Value');
+    if getty_interface == 1
+        handles.parameters.getty.enabled = 1;
+    else
+        handles.parameters.getty.enabled = 0;
+    end
+guidata(hObject, handles);
+function getty_interface_on_CreateFcn(hObject, eventdata, handles)
+    handles.parameters.getty.enabled = 1;
+guidata(hObject, handles);
+
+
+function GO_TASK_Callback(hObject, eventdata, handles)
+
+
+%button press to initialise new getty session
+%disconnects from getty and stops task
+%then looks for reconnect and restarts task
+function Getty_new_session_Callback(hObject, eventdata, handles)
+    %pause the task
+   set(handles.Run_button,'string','stopped...','enable','on','BackgroundColor','[1, 1, 1]','Value',0);
+   disp('Task Paused');
+   if handles.parameters.getty.enabled
+       set(handles.Getty_switch,'string','DISCONNECTED','enable','on','BackgroundColor','red');
+       MODIG_tcp_close_connection()
+       disp('Getty Connection Closed');
+   end
+guidata(hObject, handles);
+
+   

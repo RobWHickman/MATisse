@@ -2,10 +2,10 @@
 %hard code fractal names to select here
 %will fail if any two fractals in the sheet have the same name so watch for
 %that
-function recording_set_fractals(modifiers, parameters)
+function recording_set_fractals(modifiers, parameters, hardware)
 
 %modify active fractals per task here
-pav_fractals = ['RU1'; 'RU2'; 'RU3'];
+pav_fractals = ['RU31'; 'RU32'; 'RU33'];
 water_fractals = ['RU51'; 'RU52'; 'RU53'];
 %this is a file called blank, not that it has been left blank
 blank_fractals = ['blank'];
@@ -25,7 +25,13 @@ if strcmp(parameters.task.type, 'PAV')
     if modifiers.fractals.no_fractals
         fractals = blank_fractals;
     else
-        fractals = pav_fractals;
+        if hardware.solenoid.release.reward_tap == 2
+            disp('pav fractals');
+            fractals = pav_fractals;
+        else
+            disp('free water task');
+            fractals = water_fractals;
+        end
     end
 elseif strcmp(parameters.task.type, 'BDM')
     fractals = bdm_fractals;
