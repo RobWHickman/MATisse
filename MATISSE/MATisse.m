@@ -1633,15 +1633,15 @@ function f_start_bdm_Callback(hObject, eventdata, handles)
     set(handles.Y_axis_bidding, 'Value', 1);
     set(handles.Joyaxis_invert,'value',1);
     handles.hardware.joystick.inverted = -1;
-    handles.hardware.joystick.sensitivity.movement = 0.25;
-    handles.hardware.joystick.sensitivity.centered = 0.25;
+    handles.hardware.joystick.sensitivity.movement = 0.2;
+    handles.hardware.joystick.sensitivity.centered = 0.2;
     set(handles.Joystick_sensitivty,'string',num2str(handles.hardware.joystick.sensitivity.movement));
     set(handles.Centre_sensitivity,'string',num2str(handles.hardware.joystick.sensitivity.centered));
     %these will need to be updated for different joysticks/
     %as the chair moves
-    handles.hardware.joystick.bias.x_offset = -0.01825;
+    handles.hardware.joystick.bias.x_offset = -0.045;
     set(handles.Set_x_offset,'String', num2str(handles.hardware.joystick.bias.x_offset));
-    handles.hardware.joystick.bias.y_offset = 0.15206;
+    handles.hardware.joystick.bias.y_offset = 0.12;
     set(handles.Set_y_offset,'String', num2str(handles.hardware.joystick.bias.y_offset));
     %set off pavlovian stuff
     set(handles.Centered_check, 'Value', 1);
