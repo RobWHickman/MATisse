@@ -96,12 +96,14 @@ while toc < parameters.timings.TrialSecs('ITI')
     if frame == parameters.timings.TrialTime('ITI')
         
         if parameters.getty.on
+            disp('getty is on!');
             if ~isfield(results, 'block_results')
                 trial = 1;
             else
                 trial = results.block_results.completed + 1;
             end
-            getty_send_vals(trial, results.single_trial, parameters);
+            disp('sending vals to getty!');
+            getty_send_vals(trial, results.single_trial, parameters, results_table);
             
             n=0;
             while n==0
