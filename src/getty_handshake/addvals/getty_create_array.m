@@ -60,7 +60,8 @@ else
 end
 
 %add in variables from the last trials results
-results_addvals = generate_results_addvals(trial, {'percent_correct', 'reward'}, results_table);
+array_variables = {'budget_liquid', 'reward_liquid', 'monkey_bid', 'computer_bid'};
+results_addvals = generate_results_addvals(trial, array_variables, results_table);
 
 %set up the situation
 %situation = str2num(strcat(num2str(getty_task), num2str(getty_subtask), num2str(trial_reward_value)));

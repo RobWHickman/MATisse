@@ -93,17 +93,17 @@ while toc < parameters.timings.TrialSecs('ITI')
     end
     
     %Getty Handshake on final frame
-    if frame == parameters.timings.TrialTime('ITI')
+    if frame == 1
         
         if parameters.getty.on
-            disp('getty is on!');
-            if ~isfield(results, 'block_results')
+            if results.block_results.completed < 1
                 trial = 1;
+                getty_send_vals(trial, results.single_trial, parameters, NaN);
             else
                 trial = results.block_results.completed + 1;
+                getty_send_vals(trial, results.single_trial, parameters, results.full_output_table);
             end
-            disp('sending vals to getty!');
-            getty_send_vals(trial, results.single_trial, parameters, results_table);
+            
             
             n=0;
             while n==0

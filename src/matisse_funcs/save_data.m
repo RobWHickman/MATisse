@@ -12,19 +12,23 @@ human = parameters.participants.experimenter;
 monkey = parameters.participants.primate;
 date = datestr(now,'yyyy-mm-dd');
 block = parameters.participants.block_no;
+trial_no = num2str(results.block_results.completed);
+
+disp('saving data save_data line 17');
+disp(trial_no);
 
 if strcmp(type, 'task_results')
     %save as .csv
     %order the table columns alphabetically
     sorted_table = results.full_output_table(:,sort(results.full_output_table.Properties.VariableNames));
-    writetable(sorted_table, fullfile(dir, regexprep(char(strcat(date, human, '_', monkey, '_block', num2str(block), 'COMPACT_RESULTS.csv')), ':', '')));
+    writetable(sorted_table, fullfile(dir, regexprep(char(strcat(trial_no, '_', date, human, '_', monkey, '_block', num2str(block), 'COMPACT_RESULTS.csv')), ':', '')));
 end
 
 if strcmp(type, 'task_metadata')
     disp('saving trial metadata')
     %save metadata as .mat
     metadata = results;
-    save(fullfile(dir, regexprep(char(strcat(date, human, '_', monkey, '_block', num2str(block), 'METADATA.mat')), ':', '')), 'metadata');
+    save(fullfile(dir, regexprep(char(strcat(trial_no, '_', date, human, '_', monkey, '_block', num2str(block), 'METADATA.mat')), ':', '')), 'metadata');
 end
 
 %manually save on a trial

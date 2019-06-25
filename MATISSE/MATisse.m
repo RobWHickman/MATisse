@@ -1641,7 +1641,7 @@ function f_start_bdm_Callback(hObject, eventdata, handles)
     %as the chair moves
     handles.hardware.joystick.bias.x_offset = -0.045;
     set(handles.Set_x_offset,'String', num2str(handles.hardware.joystick.bias.x_offset));
-    handles.hardware.joystick.bias.y_offset = 0.12;
+    handles.hardware.joystick.bias.y_offset = 0.25;
     set(handles.Set_y_offset,'String', num2str(handles.hardware.joystick.bias.y_offset));
     %set off pavlovian stuff
     set(handles.Centered_check, 'Value', 1);
