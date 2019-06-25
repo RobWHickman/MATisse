@@ -117,6 +117,7 @@ function Run_button_Callback(hObject, eventdata, handles)
             
             %save the data
             save_data(handles.parameters, handles.results, 'task_results');
+            save_data(handles.parameters, handles.results, 'behaviour_data');
             disp('data saved!')
             
             %update the GUI with these fields

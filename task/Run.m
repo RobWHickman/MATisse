@@ -460,7 +460,7 @@ while toc < parameters.timings.TrialSecs('error_timeout')
     if frame == 2
         %munge to make sur error results row lines up with those from
         %succesful trials
-        results = assign_error_results(results, parameters);
+        results = assign_error_results(results, parameters,open_float);
     end
     
     if frame == 1 || frame == parameters.timings.TrialTime('trial_end')

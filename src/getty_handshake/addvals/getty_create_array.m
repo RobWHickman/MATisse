@@ -60,7 +60,7 @@ else
 end
 
 %add in variables from the last trials results
-array_variables = {'budget_liquid', 'reward_liquid', 'monkey_bid', 'computer_bid'};
+array_variables = {'correct', 'budget_liquid', 'budget_magnitude', 'reward_liquid', 'reward_magnitude', 'reward_chance', 'free_reward', 'monkey_bid', 'computer_bid'};
 results_addvals = generate_results_addvals(trial, array_variables, results_table);
 
 %set up the situation

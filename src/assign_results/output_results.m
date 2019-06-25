@@ -39,6 +39,7 @@ trial_col = array2table(results.block_results.completed);
 trial_col.Properties.VariableNames = {'trial_no'};
 
 %convert to tables and horzcat
+results.outputs.free_reward = open_float.trial_free_reward;
 trial_output_table = horzcat(struct2table(results.trial_results,'AsArray',true),...
     struct2table(results.outputs,'AsArray',true),...
     struct2table(results.single_trial,'AsArray',true),...
@@ -49,7 +50,7 @@ trial_output_table = horzcat(struct2table(results.trial_results,'AsArray',true),
 
 %vertcat unless the first trial
 trial_output_table = trial_output_table(:,sort(trial_output_table.Properties.VariableNames));
-disp('deleting superfluous type variable- output results line 51');
+%type is superfluous- have subtask and can cause crashes
 trial_output_table = removevars(trial_output_table, {'type'});
 if strcmp(parameters.task.type, 'BC')
     trial_output_table.primary_side = NaN;
