@@ -1640,9 +1640,9 @@ function f_start_bdm_Callback(hObject, eventdata, handles)
     set(handles.Centre_sensitivity,'string',num2str(handles.hardware.joystick.sensitivity.centered));
     %these will need to be updated for different joysticks/
     %as the chair moves
-    handles.hardware.joystick.bias.x_offset = -0.045;
+    handles.hardware.joystick.bias.x_offset = 0;
     set(handles.Set_x_offset,'String', num2str(handles.hardware.joystick.bias.x_offset));
-    handles.hardware.joystick.bias.y_offset = 0.25;
+    handles.hardware.joystick.bias.y_offset = 0;
     set(handles.Set_y_offset,'String', num2str(handles.hardware.joystick.bias.y_offset));
     %set off pavlovian stuff
     set(handles.Centered_check, 'Value', 1);
@@ -1949,9 +1949,9 @@ function f_start_bcb_Callback(hObject, eventdata, handles)
     set(handles.Centre_sensitivity,'string',num2str(handles.hardware.joystick.sensitivity.centered));
     %these will need to be updated for different joysticks/
     %as the chair moves
-    handles.hardware.joystick.bias.x_offset = -0.01825;
+    handles.hardware.joystick.bias.x_offset = 0;
     set(handles.Set_x_offset,'String', num2str(handles.hardware.joystick.bias.x_offset));
-    handles.hardware.joystick.bias.y_offset = 0.15206;
+    handles.hardware.joystick.bias.y_offset = 0;
     set(handles.Set_y_offset,'String', num2str(handles.hardware.joystick.bias.y_offset));
     %set off pavlovian stuff
     set(handles.Centered_check, 'Value', 1);

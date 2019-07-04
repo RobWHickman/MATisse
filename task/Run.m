@@ -241,7 +241,7 @@ while toc < parameters.timings.TrialSecs('fractal_offer')
         if parameters.getty.on
             if frame == 1
                 bit_out = 1;
-            else
+           else
                 bit_out = 0;
             end
             %outputSingleScan(parameters.getty.bits.fractal_display, bit_out)
@@ -292,8 +292,10 @@ while toc < parameters.timings.TrialSecs('bidding')
     if any(movement_vec ~= 0)
         if (hardware.joystick.movement.stationary_count > round(parameters.task_checks.finalisation_pause * hardware.screen.refresh_rate) &&...
                 frame > latest_frame)
+            if(parameters.task_checks.table.Status('stabilised_offer') == 1)
+                getty_send_bits(parameters.getty.bits, 12, 1, hardware.solenoid.sample)
+            end
             parameters.task_checks.table.Status('stabilised_offer') = 0;
-            getty_send_bits(parameters.getty.bits, 12, 1, hardware.solenoid.sample)
         else
             parameters.task_checks.table.Status('stabilised_offer') = 1;
         end

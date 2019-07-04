@@ -29,7 +29,7 @@ if strcmp(type, 'task_metadata')
     disp('saving trial metadata')
     %save metadata as .mat
     metadata = results;
-    save(fullfile(dir, regexprep(char(strcat(date, human, '_', monkey, '_block', num2str(block), 'METADATA.mat')), ':', '')), 'metadata');
+    save(fullfile(dir, regexprep(char(strcat(trial_no, '_', date, human, '_', monkey, '_block', num2str(block), 'METADATA.mat')), ':', '')), 'metadata');
 end
 
 %manually save on a trial
