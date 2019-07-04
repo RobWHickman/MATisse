@@ -1004,30 +1004,30 @@ function Reward_tap_CreateFcn(hObject, eventdata, handles)
 guidata(hObject, handles);
 %set whether to give free juice or free water via the GUI
 function Free_water_CreateFcn(hObject, eventdata, handles)
-    handles.hardware.solenoid.release.free_liquid = 'water';
+    handles.parameters.solenoid.release.free_liquid = 'water';
 guidata(hObject, handles);
 function Free_water_Callback(hObject, eventdata, handles)
-    handles.hardware.solenoid.release.free_liquid = 'water';
+    handles.parameters.solenoid.release.free_liquid = 'water';
 guidata(hObject, handles);
 function Free_reward_Callback(hObject, eventdata, handles)
-    handles.hardware.solenoid.release.free_liquid = 'juice';
+    handles.parameters.solenoid.release.free_liquid = 'juice';
 guidata(hObject, handles);
 %how much free reward should be given out when pressing the f key
 function Key_reward_Callback(hObject, eventdata, handles)
-    free_reward_amount = get(handles.Key_reward, 'String');
+    free_reward_amount = str2num(get(handles.Key_reward, 'String'));
     %keep amount between 0.1 and 3ml
     if free_reward_amount > 3
-        free_reward_amount = '3';
+        free_reward_amount = 3;
         disp('free reward amount capped to 3ml max');
     elseif free_reward_amount < 0.1
-        free_reward_amount = '0.1';
+        free_reward_amount = 0.1;
         disp('free reward amount capped to 0.1ml min');
     end
-    handles.hardware.solenoid.release.free_amount = str2num(free_reward_amount);
+    handles.parameters.solenoid.release.free_amount = free_reward_amount;
 guidata(hObject, handles);
 %default to 1ml
 function Key_reward_CreateFcn(hObject, eventdata, handles)
-    handles.hardware.solenoid.release.free_amount = 1;
+    handles.parameters.solenoid.release.free_amount = 1;
     %init thelast reward to when MATisse is initialised
     handles.hardware.solenoid.release.last_free_reward = GetSecs();
 guidata(hObject, handles);

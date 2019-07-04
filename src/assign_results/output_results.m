@@ -20,8 +20,13 @@ if results.single_trial.task_failure ~= 1
     end
 end
 %update the amounts of liquid given out
-results.block_results.water = results.block_results.water + results.outputs.budget_liquid;
-results.block_results.juice = results.block_results.juice + results.outputs.reward_liquid + open_float.trial_free_reward;
+if(strcmp(parameters.solenoid.release.free_liquid, 'juice'))
+    results.block_results.water = results.block_results.water + results.outputs.budget_liquid;
+    results.block_results.juice = results.block_results.juice + results.outputs.reward_liquid + open_float.trial_free_reward;
+elseif(strcmp(parameters.solenoid.release.free_liquid, 'water'))
+    results.block_results.water = results.block_results.water + results.outputs.budget_liquid + open_float.trial_free_reward;
+    results.block_results.juice = results.block_results.juice + results.outputs.reward_liquid;
+end
 %for binary choice tasks include the left/right proportion
 if strcmp(parameters.task.type, 'BC')
     if results.trial_results.monkey_bid > 0.5
