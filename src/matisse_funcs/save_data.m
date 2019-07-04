@@ -10,7 +10,7 @@ function [] = save_data(parameters, results, type)
 dir = parameters.directories.save;
 human = parameters.participants.experimenter;
 monkey = parameters.participants.primate;
-date = datestr(now,'yyyy-mm-dd');
+date = datestr(now,'yyyy-mm-dd_HH:MM');
 block = parameters.participants.block_no;
 trial_no = num2str(results.block_results.completed);
 
