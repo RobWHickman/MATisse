@@ -88,7 +88,16 @@ if strcmp(parameters.task.type, 'BDM')
     comb_vector = [comb_vector; starts; computer];
     rownames = {'reward_value', 'subtask', 'starting_bid', 'computer_bid'};
     
+    
+    if modifiers.fractals.reduce_high
+        high_val_trials = find(comb_vector(1,:) == max(n_fractals));
+        remove_trials = datasample(high_val_trials, length(high_val_trials)/modifiers.fractals.high_reduction);
+        comb_vector(:,remove_trials) = [];
+    end
+    
     disp(comb_vector);
+    disp('n max trials');
+    disp(length(find(comb_vector(1,:) == max(n_fractals))));
 end
 
 comb_table = array2table(comb_vector,'RowNames',rownames);

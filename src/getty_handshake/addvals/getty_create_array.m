@@ -1,4 +1,4 @@
-function dataToGetty = getty_create_array(trial, trial_variables, parameters)
+function dataToGetty = getty_create_array(trial, trial_variables, parameters, results_table)
 
 %trial number in two bits
 getty_trial_number = fi_numTo2bytes(trial);
@@ -59,6 +59,10 @@ else
     trial_computer_bid = 2;
 end
 
+%add in variables from the last trials results
+array_variables = {'correct', 'budget_liquid', 'budget_magnitude', 'reward_liquid', 'reward_magnitude', 'reward_chance', 'free_reward', 'monkey_bid', 'computer_bid'};
+results_addvals = generate_results_addvals(trial, array_variables, results_table);
+
 %set up the situation
 %situation = str2num(strcat(num2str(getty_task), num2str(getty_subtask), num2str(trial_reward_value)));
 if strcmp(parameters.task.type, 'BDM')
@@ -87,6 +91,7 @@ end
 disp('the situation for getty is');
 disp(situation);
 
+
 % generate final array (bytes 3 and 4 are used by getty to save the trial duration)
 dataToGetty=[];
 dataToGetty(1:2) = getty_trial_number;
@@ -98,6 +103,7 @@ dataToGetty(8) = trial_reward_value;
 dataToGetty(9) = trial_budget_value;
 dataToGetty(10) = trial_starting_bid;
 dataToGetty(11) = trial_computer_bid;
+dataToGetty = [dataToGetty, results_addvals];
 
 % add first value (array length)
 dataToGetty = [length(dataToGetty)+1 dataToGetty];

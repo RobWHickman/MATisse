@@ -7,10 +7,12 @@ disp('initialising trial');
 if parameters.trials.truncated_times
     times = generate_truncated_times(parameters);
     parameters.timings.TrialTime = rot90(round(times), 3);
+    parameters.timings.TrialSecs = parameters.timings.TrialTime / 60;
 else
     %otherwise just randomly sample from within the variation
     parameters.timings.TrialTime = parameters.timings.Frames +...
         times(parameters.timings.Variance', times(rand(height(parameters.timings),1)', randsample([-1 1], height(parameters.timings), 1)))';
+    parameters.timings.TrialSecs = parameters.timings.TrialTime / 60;
 end
 
 %% EPOCHS %%
@@ -21,7 +23,12 @@ open_float = [];
 if parameters.getty.on
     getty_send_bits(parameters.getty.bits, [17, 18], 0)
 end
-for frame = 1:parameters.timings.TrialTime('ITI')
+
+tic;
+frame = 0;
+while toc < parameters.timings.TrialSecs('ITI')
+    frame = frame + 1;
+%for frame = 1:parameters.timings.TrialTime('ITI')
     [hardware, open_float] = free_reward_key(hardware, parameters, open_float);
 
     %get trial values for the offer, computer bid and random monkey bid
@@ -86,15 +93,17 @@ for frame = 1:parameters.timings.TrialTime('ITI')
     end
     
     %Getty Handshake on final frame
-    if frame == parameters.timings.TrialTime('ITI')
+    if frame == 1
         
         if parameters.getty.on
-            if ~isfield(results, 'block_results')
+            if results.block_results.completed < 1
                 trial = 1;
+                getty_send_vals(trial, results.single_trial, parameters, NaN);
             else
                 trial = results.block_results.completed + 1;
+                getty_send_vals(trial, results.single_trial, parameters, results.full_output_table);
             end
-            getty_send_vals(trial, results.single_trial, parameters);
+            
             
             n=0;
             while n==0
@@ -129,7 +138,10 @@ results = time_trial(results, 'start');
 disp('starting trial');
 disp(strcat('running ', parameters.task.type, ' trial'));
 
-for frame = 1:parameters.timings.TrialTime('trial_start')
+tic;
+frame = 0;
+while toc < parameters.timings.TrialSecs('trial_start')
+    frame = frame + 1;
     [hardware, open_float] = free_reward_key(hardware, parameters, open_float);
     if frame == 1 || frame == parameters.timings.TrialTime('trial_start')
         draw_ITI(stimuli, task_window);
@@ -152,12 +164,10 @@ end
 %only continue to epochs if no task failure or a pavlovian paradigm task
 %can never fail trials on pavlovian tasks
 if ~results.single_trial.task_failure || strcmp(parameters.task.type, 'PAV')
-%tic;
-%frame = 0;
-%while toc < 3
-%    frame = frame + 1;
-for frame = 1:parameters.timings.TrialTime('fixation')
-
+tic;
+frame = 0;
+while toc < parameters.timings.TrialSecs('fixation')
+    frame = frame + 1;
     [hardware, open_float] = free_reward_key(hardware, parameters, open_float);
     
     %draw the first epoch
@@ -169,7 +179,6 @@ for frame = 1:parameters.timings.TrialTime('fixation')
     
     %sample the input devices and munge into behaviour table
     hardware = sample_input_devices(parameters, hardware);
-    disp(frame);
     [parameters, hardware, results] = munge_epoch_inputs(parameters, hardware, results, frame, 'fixation');  
 
     %check that joystick fulfils the two constant checks
@@ -202,7 +211,10 @@ end
 
 %display fractal
 if ~results.single_trial.task_failure || strcmp(parameters.task.type, 'PAV')
-for frame = 1:parameters.timings.TrialTime('fractal_offer')
+tic;
+frame = 0;
+while toc < parameters.timings.TrialSecs('fractal_offer')
+    frame = frame + 1;
     [hardware, open_float] = free_reward_key(hardware, parameters, open_float);
     %draw the first epoch
     if ~(modifiers.fractals.no_fractals && strcmp(parameters.task.type, 'PAV'))
@@ -229,7 +241,7 @@ for frame = 1:parameters.timings.TrialTime('fractal_offer')
         if parameters.getty.on
             if frame == 1
                 bit_out = 1;
-            else
+           else
                 bit_out = 0;
             end
             %outputSingleScan(parameters.getty.bits.fractal_display, bit_out)
@@ -244,7 +256,10 @@ end
 %bidding phase
 if ~results.single_trial.task_failure || strcmp(parameters.task.type, 'PAV')
 %results.movement = initialise_movement(parameters);
-for frame = 1:parameters.timings.TrialTime('bidding')
+tic;
+frame = 0;
+while toc < parameters.timings.TrialSecs('bidding')
+    frame = frame + 1;
     [hardware, open_float] = free_reward_key(hardware, parameters, open_float);
    
     %sample behaviour
@@ -277,8 +292,10 @@ for frame = 1:parameters.timings.TrialTime('bidding')
     if any(movement_vec ~= 0)
         if (hardware.joystick.movement.stationary_count > round(parameters.task_checks.finalisation_pause * hardware.screen.refresh_rate) &&...
                 frame > latest_frame)
+            if(parameters.task_checks.table.Status('stabilised_offer') == 1)
+                getty_send_bits(parameters.getty.bits, 12, 1, hardware.solenoid.sample)
+            end
             parameters.task_checks.table.Status('stabilised_offer') = 0;
-            getty_send_bits(parameters.getty.bits, 12, 1, hardware.solenoid.sample)
         else
             parameters.task_checks.table.Status('stabilised_offer') = 1;
         end
@@ -341,7 +358,14 @@ end
 %close any open reward
 getty_send_bits(parameters.getty.bits, [17, 18], 0)
 if ~results.single_trial.task_failure || strcmp(parameters.task.type, 'PAV')
-for frame = 1:parameters.timings.TrialTime('reward_payout')
+tic;
+frame = 0;
+while toc < parameters.timings.TrialSecs('reward_payout')
+    frame = frame + 1;
+    
+    if strcmp(parameters.task.type, 'PAV')
+        [hardware, open_float] = free_reward_key(hardware, parameters, open_float);
+    end
     
     %in first frame assign payouts and draw epoch
     if frame == 1
@@ -390,8 +414,16 @@ end
 
 %then finally pay out the budget (if any)
 if ~results.single_trial.task_failure || strcmp(parameters.task.type, 'PAV')
-for frame = 1:parameters.timings.TrialTime('budget_payout')
-    %draw the first epoch
+tic;
+frame = 0;
+while toc < parameters.timings.TrialSecs('budget_payout')
+    frame = frame + 1;
+    
+    if strcmp(parameters.task.type, 'PAV')
+        [hardware, open_float] = free_reward_key(hardware, parameters, open_float);
+    end
+
+    %draw the epoch
     if frame == 1 || frame == parameters.timings.TrialTime('budget_payout')
         if ~(modifiers.fractals.no_fractals && strcmp(parameters.task.type, 'PAV'))
             draw_payout_epoch(parameters, modifiers, results, stimuli, hardware, task_window, parameters.task.type, 'budget')
@@ -425,7 +457,10 @@ if results.single_trial.task_failure && ~strcmp(parameters.task.type, 'PAV')
         remaining_frames = non_error_epochs(isnan(non_error_epochs.joy_x),:);
         parameters.timings.TrialTime('error_timeout') = height(remaining_frames) + (1*60);
     end
-for frame = 1:parameters.timings.TrialTime('error_timeout')
+tic;
+frame = 0;
+while toc < parameters.timings.TrialSecs('error_timeout')
+    frame = frame + 1;
     [hardware, open_float] = free_reward_key(hardware, parameters, open_float);
 
     if frame == 1 || frame == parameters.timings.TrialTime('error_timeout')
@@ -433,10 +468,10 @@ for frame = 1:parameters.timings.TrialTime('error_timeout')
         sound_error_tone()
     end
     
-    if frame == 2
+    if frame == 1
         %munge to make sur error results row lines up with those from
         %succesful trials
-        results = assign_error_results(results, parameters);
+        results = assign_error_results(results, parameters,open_float);
     end
     
     if frame == 1 || frame == parameters.timings.TrialTime('trial_end')
@@ -457,7 +492,10 @@ end
 
 %get the time of the end of the task to match up with neuro data
 results = time_trial(results, 'end');
-for frame = 1:parameters.timings.TrialTime('trial_end')
+tic;
+frame = 0;
+while toc < parameters.timings.TrialSecs('trial_end')
+    frame = frame + 1;
     [hardware, open_float] = free_reward_key(hardware, parameters, open_float);
 
     if frame == 1 || frame == parameters.timings.TrialTime('trial_end')

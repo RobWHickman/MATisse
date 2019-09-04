@@ -17,18 +17,20 @@ if keyIsDown
         %disp('too soon since last key press');
     else
         %output message
-        disp(strcat('releasing ', num2str(hardware.solenoid.release.free_amount), 'ml of ', hardware.solenoid.release.free_liquid, ' for free'));
+        disp(strcat('releasing ', num2str(parameters.solenoid.release.free_amount), 'ml of ', parameters.solenoid.release.free_liquid, ' for free'));
         %update to the new time
         hardware.solenoid.release.last_free_reward = reward_press_time;
         
-        if strcmp(hardware.solenoid.release.free_liquid, 'juice')
+        if strcmp(parameters.solenoid.release.free_liquid, 'juice')
             tap = hardware.solenoid.release.reward_tap;
-        elseif strcmp(hardware.solenoid.release.free_liquid, 'water')
+        elseif strcmp(parameters.solenoid.release.free_liquid, 'water')
             tap = hardware.solenoid.release.budget_tap;
         end
         
         %calculate the open time of the tap
-        open_float.tap_open_time = calculate_open_time(tap, hardware.solenoid.release.free_amount);
+        disp('opening for');
+        disp(parameters.solenoid.release.free_amount);
+        open_float.tap_open_time = calculate_open_time(tap, parameters.solenoid.release.free_amount);
         
         %get the right tap bit to open
         if tap == 1 %water
@@ -48,7 +50,7 @@ if keyIsDown
             
         end
         %update the free reward the monkey has got this trial
-        open_float.trial_free_reward = open_float.trial_free_reward + hardware.solenoid.release.free_amount;
+        open_float.trial_free_reward = open_float.trial_free_reward + parameters.solenoid.release.free_amount;
         %save the released amount into results
         disp(strcat('now paid', num2str(open_float.trial_free_reward), 'ml for free this trial'));
     end

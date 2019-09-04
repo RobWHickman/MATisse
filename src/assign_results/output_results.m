@@ -20,8 +20,21 @@ if results.single_trial.task_failure ~= 1
     end
 end
 %update the amounts of liquid given out
-results.block_results.water = results.block_results.water + results.outputs.budget_liquid;
-results.block_results.juice = results.block_results.juice + results.outputs.reward_liquid + open_float.trial_free_reward;
+disp(results.outputs);
+if(~isfield(results.outputs, 'reward_liquid'))
+    results.outputs.reward_liquid = 0;
+end
+if(~isfield(results.outputs, 'budget_liquid'))
+    results.outputs.budget_liquid = 0;
+end
+
+if(strcmp(parameters.solenoid.release.free_liquid, 'juice'))
+    results.block_results.water = results.block_results.water + results.outputs.budget_liquid;
+    results.block_results.juice = results.block_results.juice + results.outputs.reward_liquid + open_float.trial_free_reward;
+elseif(strcmp(parameters.solenoid.release.free_liquid, 'water'))
+    results.block_results.water = results.block_results.water + results.outputs.budget_liquid + open_float.trial_free_reward;
+    results.block_results.juice = results.block_results.juice + results.outputs.reward_liquid;
+end
 %for binary choice tasks include the left/right proportion
 if strcmp(parameters.task.type, 'BC')
     if results.trial_results.monkey_bid > 0.5
@@ -39,6 +52,7 @@ trial_col = array2table(results.block_results.completed);
 trial_col.Properties.VariableNames = {'trial_no'};
 
 %convert to tables and horzcat
+results.outputs.free_reward = open_float.trial_free_reward;
 trial_output_table = horzcat(struct2table(results.trial_results,'AsArray',true),...
     struct2table(results.outputs,'AsArray',true),...
     struct2table(results.single_trial,'AsArray',true),...
@@ -49,7 +63,7 @@ trial_output_table = horzcat(struct2table(results.trial_results,'AsArray',true),
 
 %vertcat unless the first trial
 trial_output_table = trial_output_table(:,sort(trial_output_table.Properties.VariableNames));
-disp('deleting superfluous type variable- output results line 51');
+%type is superfluous- have subtask and can cause crashes
 trial_output_table = removevars(trial_output_table, {'type'});
 if strcmp(parameters.task.type, 'BC')
     trial_output_table.primary_side = NaN;

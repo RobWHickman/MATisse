@@ -75,15 +75,20 @@ end
 end
 
 %forma new row of data and slot this into the behaviour table
-datarow = find(results.behaviour_table.frame == frame & strcmp(results.behaviour_table.epoch, epoch));
-datacell = [parameters.trials.total_trials, {epoch}, frame,...
-    hardware.joystick.movement.deflection_x, hardware.joystick.movement.deflection_y, hardware.touch.hold, hardware.missing.eye, hardware.missing.lick,...
-    hardware.joystick.movement.joy_movement, NaN];
+%datarow = find(results.behaviour_table.frame == frame & strcmp(results.behaviour_table.epoch, epoch));
+%datacell = [parameters.trials.total_trials + 1, {epoch}, frame,...
+%    hardware.joystick.movement.deflection_x, hardware.joystick.movement.deflection_y, hardware.touch.hold, hardware.missing.eye, hardware.missing.lick,...
+%    hardware.joystick.movement.joy_movement, NaN];
 
 % old (predetermined number of flips)
-results.behaviour_table(datarow,:) = datacell;
+%results.behaviour_table(datarow,:) = datacell;
 
 %new (use systime- unknown number of flips)
+datarow = table(parameters.trials.total_trials + 1, {epoch}, frame,...
+    hardware.joystick.movement.deflection_x, hardware.joystick.movement.deflection_y, hardware.touch.hold, hardware.missing.eye, hardware.missing.lick,...
+    hardware.joystick.movement.joy_movement, NaN);
+datarow.Properties.VariableNames = results.behaviour_table.Properties.VariableNames;
+results.behaviour_table = vertcat(results.behaviour_table, datarow);
 
 %check touch inputs
 epoch_subset = results.behaviour_table(find(strcmp(results.behaviour_table.epoch, epoch)),:);

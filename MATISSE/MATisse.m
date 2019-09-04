@@ -86,7 +86,8 @@ function Run_button_Callback(hObject, eventdata, handles)
     disp('running!');
     if get(hObject,'Value')
         set(handles.Run_button,'string','running...','enable','on','BackgroundColor','[1, 0, 1]');
-        while get(hObject,'Value') && handles.results.block_results.correct < handles.parameters.trials.max_trials
+%        while get(hObject,'Value') && handles.results.block_results.correct < handles.parameters.trials.max_trials
+        while get(hObject,'Value') && handles.results.block_results.correct < 9999
             [handles.results, handles.parameters] = Run(handles.parameters, handles.stimuli, handles.hardware, handles.modifiers, handles.results, handles.task_window);
             %save the data about the experimental set up at the start of
             %the task
@@ -117,6 +118,7 @@ function Run_button_Callback(hObject, eventdata, handles)
             
             %save the data
             save_data(handles.parameters, handles.results, 'task_results');
+            save_data(handles.parameters, handles.results, 'behaviour_data');
             disp('data saved!')
             
             %update the GUI with these fields
@@ -266,7 +268,7 @@ function Total_trials_Callback(hObject, eventdata, handles)
 guidata(hObject, handles);
 function Total_trials_CreateFcn(hObject, eventdata, handles)
     %use 200 as a good initial estimate
-    handles.parameters.trials.max_trials = 200;
+    handles.parameters.trials.max_trials = 600;
     %will always start at 0 trials
     handles.parameters.trials.total_trials = 0;
 guidata(hObject, handles);
@@ -1003,30 +1005,30 @@ function Reward_tap_CreateFcn(hObject, eventdata, handles)
 guidata(hObject, handles);
 %set whether to give free juice or free water via the GUI
 function Free_water_CreateFcn(hObject, eventdata, handles)
-    handles.hardware.solenoid.release.free_liquid = 'water';
+    handles.parameters.solenoid.release.free_liquid = 'water';
 guidata(hObject, handles);
 function Free_water_Callback(hObject, eventdata, handles)
-    handles.hardware.solenoid.release.free_liquid = 'water';
+    handles.parameters.solenoid.release.free_liquid = 'water';
 guidata(hObject, handles);
 function Free_reward_Callback(hObject, eventdata, handles)
-    handles.hardware.solenoid.release.free_liquid = 'juice';
+    handles.parameters.solenoid.release.free_liquid = 'juice';
 guidata(hObject, handles);
 %how much free reward should be given out when pressing the f key
 function Key_reward_Callback(hObject, eventdata, handles)
-    free_reward_amount = get(handles.Key_reward, 'String');
+    free_reward_amount = str2num(get(handles.Key_reward, 'String'));
     %keep amount between 0.1 and 3ml
     if free_reward_amount > 3
-        free_reward_amount = '3';
+        free_reward_amount = 3;
         disp('free reward amount capped to 3ml max');
     elseif free_reward_amount < 0.1
-        free_reward_amount = '0.1';
+        free_reward_amount = 0.1;
         disp('free reward amount capped to 0.1ml min');
     end
-    handles.hardware.solenoid.release.free_amount = str2num(free_reward_amount);
+    handles.parameters.solenoid.release.free_amount = free_reward_amount;
 guidata(hObject, handles);
 %default to 1ml
 function Key_reward_CreateFcn(hObject, eventdata, handles)
-    handles.hardware.solenoid.release.free_amount = 1;
+    handles.parameters.solenoid.release.free_amount = 0.3;
     %init thelast reward to when MATisse is initialised
     handles.hardware.solenoid.release.last_free_reward = GetSecs();
 guidata(hObject, handles);
@@ -1102,7 +1104,7 @@ guidata(hObject, handles);
         guidata(hObject, handles);
 
 function Display_button_Callback(hObject, eventdata, handles)
-    display(handles.parameters.getty);
+    display(handles.parameters.trials.max_trials);
 function Display_button_CreateFcn(hObject, eventdata, handles)
 
 function Choice_stimuli_Callback(hObject, eventdata, handles)
@@ -1633,15 +1635,15 @@ function f_start_bdm_Callback(hObject, eventdata, handles)
     set(handles.Y_axis_bidding, 'Value', 1);
     set(handles.Joyaxis_invert,'value',1);
     handles.hardware.joystick.inverted = -1;
-    handles.hardware.joystick.sensitivity.movement = 0.2;
-    handles.hardware.joystick.sensitivity.centered = 0.2;
+    handles.hardware.joystick.sensitivity.movement = 0.15;
+    handles.hardware.joystick.sensitivity.centered = 0.25;
     set(handles.Joystick_sensitivty,'string',num2str(handles.hardware.joystick.sensitivity.movement));
     set(handles.Centre_sensitivity,'string',num2str(handles.hardware.joystick.sensitivity.centered));
     %these will need to be updated for different joysticks/
     %as the chair moves
-    handles.hardware.joystick.bias.x_offset = -0.045;
+    handles.hardware.joystick.bias.x_offset = -0.16;
     set(handles.Set_x_offset,'String', num2str(handles.hardware.joystick.bias.x_offset));
-    handles.hardware.joystick.bias.y_offset = 0.12;
+    handles.hardware.joystick.bias.y_offset = 0.015;
     set(handles.Set_y_offset,'String', num2str(handles.hardware.joystick.bias.y_offset));
     %set off pavlovian stuff
     set(handles.Centered_check, 'Value', 1);
@@ -1942,15 +1944,15 @@ function f_start_bcb_Callback(hObject, eventdata, handles)
     set(handles.Y_axis_bidding, 'Value', 0);
     set(handles.Joyaxis_invert,'value',0);
     handles.hardware.joystick.inverted = 1;
-    handles.hardware.joystick.sensitivity.movement = 0.25;
+    handles.hardware.joystick.sensitivity.movement = 0.15;
     handles.hardware.joystick.sensitivity.centered = 0.25;
     set(handles.Joystick_sensitivty,'string',num2str(handles.hardware.joystick.sensitivity.movement));
     set(handles.Centre_sensitivity,'string',num2str(handles.hardware.joystick.sensitivity.centered));
     %these will need to be updated for different joysticks/
     %as the chair moves
-    handles.hardware.joystick.bias.x_offset = -0.01825;
+    handles.hardware.joystick.bias.x_offset = -0.16;
     set(handles.Set_x_offset,'String', num2str(handles.hardware.joystick.bias.x_offset));
-    handles.hardware.joystick.bias.y_offset = 0.15206;
+    handles.hardware.joystick.bias.y_offset = 0.015;
     set(handles.Set_y_offset,'String', num2str(handles.hardware.joystick.bias.y_offset));
     %set off pavlovian stuff
     set(handles.Centered_check, 'Value', 1);
@@ -2032,9 +2034,7 @@ function getty_interface_on_CreateFcn(hObject, eventdata, handles)
     handles.parameters.getty.enabled = 1;
 guidata(hObject, handles);
 
-
 function GO_TASK_Callback(hObject, eventdata, handles)
-
 
 %button press to initialise new getty session
 %disconnects from getty and stops task
@@ -2051,3 +2051,22 @@ function Getty_new_session_Callback(hObject, eventdata, handles)
 guidata(hObject, handles);
 
    
+%function to reduce the number of high valued trials to a number set in the
+%create function
+%as a fraction of 1/number from equal- e.g. 2 means half as many as low/med
+function Reduce_highval_trials_Callback(hObject, eventdata, handles)
+    high_value_reduction = get(handles.Reduce_highval_trials, 'Value');
+    if high_value_reduction == 1
+        handles.modifiers.fractals.reduce_high = 1;
+        handles.modifiers.fractals.high_reduction = 4;
+        high_val_text = num2str(handles.modifiers.fractals.high_reduction);
+        disp(strcat('Reducing high balue fractal trials by a value of ', high_val_text, 'upon next generation'))
+    else
+        handles.modifiers.fractals.reduce_high = 0;
+        handles.modifiers.fractals.high_reduction = NaN;
+    end
+guidata(hObject, handles);
+function Reduce_highval_trials_CreateFcn(hObject, eventdata, handles)
+    handles.modifiers.fractals.reduce_high = 0;
+    handles.modifiers.fractals.high_reduction = NaN;
+guidata(hObject, handles);

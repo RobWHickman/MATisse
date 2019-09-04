@@ -1,10 +1,11 @@
-function results = assign_error_results(results, parameters)
+function results = assign_error_results(results, parameters,open_float)
 
 results.outputs.budget = NaN;
 results.outputs.reward = NaN;
 results.outputs.paid = NaN;
 results.outputs.budget_liquid = 0;
 results.outputs.reward_liquid = 0;
+results.outputs.free_reward = open_float.trial_free_reward;
 
 %if monkey did not get to make a bid 
 if ~isfield(results.trial_results, 'monkey_bid')
