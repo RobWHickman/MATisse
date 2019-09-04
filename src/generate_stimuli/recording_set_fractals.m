@@ -9,8 +9,8 @@ pav_fractals = ['RU31'; 'RU32'; 'RU33'];
 water_fractals = ['RU51'; 'RU52'; 'RU53'];
 %this is a file called blank, not that it has been left blank
 blank_fractals = ['blank'];
-bdm_fractals = ['RU21'; 'RU22'; 'RU23'];
-bcb_fractals = ['RU21'; 'RU22'; 'RU23'];
+bdm_fractals = ['RU61'; 'RU62'; 'RU63'];
+bcb_fractals = ['RU61'; 'RU62'; 'RU63'];
 
 %load fractals data
 folder = '../decorators/images';

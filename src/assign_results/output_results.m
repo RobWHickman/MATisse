@@ -20,6 +20,14 @@ if results.single_trial.task_failure ~= 1
     end
 end
 %update the amounts of liquid given out
+disp(results.outputs);
+if(~isfield(results.outputs, 'reward_liquid'))
+    results.outputs.reward_liquid = 0;
+end
+if(~isfield(results.outputs, 'budget_liquid'))
+    results.outputs.budget_liquid = 0;
+end
+
 if(strcmp(parameters.solenoid.release.free_liquid, 'juice'))
     results.block_results.water = results.block_results.water + results.outputs.budget_liquid;
     results.block_results.juice = results.block_results.juice + results.outputs.reward_liquid + open_float.trial_free_reward;

@@ -363,6 +363,10 @@ frame = 0;
 while toc < parameters.timings.TrialSecs('reward_payout')
     frame = frame + 1;
     
+    if strcmp(parameters.task.type, 'PAV')
+        [hardware, open_float] = free_reward_key(hardware, parameters, open_float);
+    end
+    
     %in first frame assign payouts and draw epoch
     if frame == 1
         %assign the payouts
@@ -414,6 +418,11 @@ tic;
 frame = 0;
 while toc < parameters.timings.TrialSecs('budget_payout')
     frame = frame + 1;
+    
+    if strcmp(parameters.task.type, 'PAV')
+        [hardware, open_float] = free_reward_key(hardware, parameters, open_float);
+    end
+
     %draw the epoch
     if frame == 1 || frame == parameters.timings.TrialTime('budget_payout')
         if ~(modifiers.fractals.no_fractals && strcmp(parameters.task.type, 'PAV'))
@@ -459,7 +468,7 @@ while toc < parameters.timings.TrialSecs('error_timeout')
         sound_error_tone()
     end
     
-    if frame == 2
+    if frame == 1
         %munge to make sur error results row lines up with those from
         %succesful trials
         results = assign_error_results(results, parameters,open_float);
