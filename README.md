@@ -1,4 +1,4 @@
-# PriMAT_BDM
+# MATisse
 ### MATLAB rewrite of the primate BDM task
 
 - version 2.1.0 
