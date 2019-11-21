@@ -18,3 +18,5 @@ Task suite allows for 3 main tasks:
   - fractal:budget- classical binary choice task
   - fractal + budget: budget - 'BCb' bundle choice task
 - Auction tasks where monkey must bid for a fractal and either pays the first or second price
+
+Also optimised for working in coordination with a C++ program to sample National Instruments cards and record electrophysiological data in realtime. Connection via TCP/IP handshake.
