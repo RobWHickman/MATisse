@@ -73,7 +73,7 @@ if strcmp(parameters.task.type, 'BDM')
     elseif trial_reward_value == 3
         situation = 3;
     end
-elseif strcmp(trial_variables.subtask, 'Pav')
+elseif strcmp(trial_variables.subtask, 'bundle_choice')
     if trial_reward_value == 1
         situation = 5;
     elseif trial_reward_value == 2

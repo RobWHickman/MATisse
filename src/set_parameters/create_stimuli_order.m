@@ -1,5 +1,13 @@
 function comb_table = create_stimuli_order(modifiers, parameters, stimuli)
 
+%magic number to increase number of combinations
+%how many times same fractal is likely to repeat in a row basically
+comn_length = 4;
+
+%matlab cant set random numbers so set a random seed based on clock time
+rng_nums = clock();
+rng(round(prod(rng_nums(2:6))));
+
 if strcmp(parameters.task.type, 'BC')
     if ~modifiers.fractals.no_fractals
         n_fractals = length(stimuli.fractals.images);
@@ -29,7 +37,7 @@ elseif strcmp(parameters.task.type, 'BDM')
         auctions = 1;
     end
     
-    comb_length = n_fractals * auctions;
+    comb_length = n_fractals * auctions * 4;
     
     %the targeting parameters
     if parameters.task_checks.table.Requirement('targeted_offer')
@@ -95,7 +103,7 @@ if strcmp(parameters.task.type, 'BDM')
         comb_vector(:,remove_trials) = [];
     end
     
-    disp(comb_vector);
+    disp(comb_vector(:,1:5));
     disp('n max trials');
     disp(length(find(comb_vector(1,:) == max(n_fractals))));
 end

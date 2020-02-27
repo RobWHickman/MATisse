@@ -16,7 +16,8 @@ if ~parameters.break.testmode
     
     %store the joystick movement data
     hardware.joystick.movement.deflection_x = joystick_sample(1);
-    hardware.joystick.movement.deflection_y = joystick_sample(2);
+    %change here Dec 4th
+    hardware.joystick.movement.deflection_y = -joystick_sample(2);
 
     if strcmp(hardware.eyetracker, 'missing')
         hardware.missing.eye = NaN;
@@ -32,7 +33,7 @@ if ~parameters.break.testmode
     %rob joystick error
     %hardware.joystick.movement.deflection_x = (hardware.joystick.movement.deflection_x + hardware.joystick.bias.x_offset) * - 1;
     hardware.joystick.movement.deflection_x = (hardware.joystick.movement.deflection_x + hardware.joystick.bias.x_offset);
-    hardware.joystick.movement.deflection_y = hardware.joystick.movement.deflection_y + hardware.joystick.bias.y_offset;
+    hardware.joystick.movement.deflection_y = (-hardware.joystick.movement.deflection_y + hardware.joystick.bias.y_offset) * -1;
     
 else
     [keyIsDown, secs, keyCode] = KbCheck;

@@ -1634,16 +1634,20 @@ function f_start_bdm_Callback(hObject, eventdata, handles)
     set(handles.X_axis_bidding, 'Value', 0);
     set(handles.Y_axis_bidding, 'Value', 1);
     set(handles.Joyaxis_invert,'value',1);
-    handles.hardware.joystick.inverted = -1;
+    handles.hardware.joystick.inverted = 1;
     handles.hardware.joystick.sensitivity.movement = 0.15;
     handles.hardware.joystick.sensitivity.centered = 0.25;
     set(handles.Joystick_sensitivty,'string',num2str(handles.hardware.joystick.sensitivity.movement));
     set(handles.Centre_sensitivity,'string',num2str(handles.hardware.joystick.sensitivity.centered));
     %these will need to be updated for different joysticks/
     %as the chair moves
-    handles.hardware.joystick.bias.x_offset = -0.16;
+    %handles.hardware.joystick.bias.x_offset = -0.16;
+    %set(handles.Set_x_offset,'String', num2str(handles.hardware.joystick.bias.x_offset));
+    %handles.hardware.joystick.bias.y_offset = 0.015;
+    %set(handles.Set_y_offset,'String', num2str(handles.hardware.joystick.bias.y_offset));
+    handles.hardware.joystick.bias.x_offset = 3.0924;
     set(handles.Set_x_offset,'String', num2str(handles.hardware.joystick.bias.x_offset));
-    handles.hardware.joystick.bias.y_offset = 0.015;
+    handles.hardware.joystick.bias.y_offset = -0.03;
     set(handles.Set_y_offset,'String', num2str(handles.hardware.joystick.bias.y_offset));
     %set off pavlovian stuff
     set(handles.Centered_check, 'Value', 1);
@@ -1950,13 +1954,13 @@ function f_start_bcb_Callback(hObject, eventdata, handles)
     set(handles.Centre_sensitivity,'string',num2str(handles.hardware.joystick.sensitivity.centered));
     %these will need to be updated for different joysticks/
     %as the chair moves
-    handles.hardware.joystick.bias.x_offset = -0.16;
+    handles.hardware.joystick.bias.x_offset = -0.17;
     set(handles.Set_x_offset,'String', num2str(handles.hardware.joystick.bias.x_offset));
-    handles.hardware.joystick.bias.y_offset = 0.015;
+    handles.hardware.joystick.bias.y_offset = 0.03;
     set(handles.Set_y_offset,'String', num2str(handles.hardware.joystick.bias.y_offset));
     %set off pavlovian stuff
     set(handles.Centered_check, 'Value', 1);
-    set(handles.Touch_check, 'Value', 1);
+    set(handles.Touch_check, 'Value', 0);
     set(handles.Bidding_check, 'Value', 1);
     set(handles.Finalised_check, 'Value', 1);
     set(handles.Both_axes_center_check, 'Value', 1);
@@ -2031,7 +2035,7 @@ function getty_interface_on_Callback(hObject, eventdata, handles)
     end
 guidata(hObject, handles);
 function getty_interface_on_CreateFcn(hObject, eventdata, handles)
-    handles.parameters.getty.enabled = 1;
+    handles.parameters.getty.enabled = 0;
 guidata(hObject, handles);
 
 function GO_TASK_Callback(hObject, eventdata, handles)

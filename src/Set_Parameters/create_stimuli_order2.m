@@ -1,5 +1,7 @@
 function comb_table = create_stimuli_order(modifiers, parameters, stimuli)
 
+disp( 'SETTING ORDER HERE2');
+
 if strcmp(parameters.task.type, 'BC')
     if ~modifiers.fractals.no_fractals
         n_fractals = length(stimuli.fractals.images);
