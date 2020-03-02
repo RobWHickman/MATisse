@@ -2,7 +2,11 @@ function comb_table = create_stimuli_order(modifiers, parameters, stimuli)
 
 %magic number to increase number of combinations
 %how many times same fractal is likely to repeat in a row basically
-comn_length = 4;
+comb_length = 4;
+
+%if you want to only select one specific fractal
+specific_fractal = NaN;
+%specific_fractal = 2;
 
 %matlab cant set random numbers so set a random seed based on clock time
 rng_nums = clock();
@@ -103,7 +107,12 @@ if strcmp(parameters.task.type, 'BDM')
         comb_vector(:,remove_trials) = [];
     end
     
+    if(~isnan(specific_fractal))
+        comb_vector = comb_vector(:,comb_vector(1,:) == 2);
+    end
+    
     disp(comb_vector(:,1:5));
+    disp(comb_vector);
     disp('n max trials');
     disp(length(find(comb_vector(1,:) == max(n_fractals))));
 end
